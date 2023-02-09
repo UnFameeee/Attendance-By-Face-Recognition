@@ -8,18 +8,21 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import NotFound from "./pages/notfound/NotFound";
+import Home from "./pages/home/Home";
+import Auth from "./pages/auth/Auth";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ChakraProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />}>
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-          // No other routes match
-          <Route path='*' element={<NotFound/>} />
+          <Route element={<Auth />}>
+            <Route path="/" element={<Login />} />
+            <Route path="sign-in" element={<Login />} />
+            <Route path="sign-up" element={<Register />} />
           </Route>
+          <Route path="home" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
