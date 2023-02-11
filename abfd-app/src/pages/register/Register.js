@@ -67,7 +67,7 @@ function Register() {
           </Button>
           <Flex justifyContent="center" gap="1">
             <Text>You have register already? </Text>
-            <Link to="/login">
+            <Link to="/sign-in">
               <span style={{ fontWeight: "bold" }}>Sign in Now</span>
             </Link>
           </Flex>
