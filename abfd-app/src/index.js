@@ -4,27 +4,35 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
+import { ProSidebarProvider } from "react-pro-sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import NotFound from "./pages/notfound/NotFound";
 import Home from "./pages/home/Home";
 import Auth from "./pages/auth/Auth";
+import Test from "./pages/test/Test";
+import Dashboard from "./pages/home/Admin/Dashboard";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ChakraProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Auth />}>
-            <Route path="/" element={<Login />} />
-            <Route path="sign-in" element={<Login />} />
-            <Route path="sign-up" element={<Register />} />
-          </Route>
-          <Route path="home" element={<Home />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <ProSidebarProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Auth />}>
+              <Route path="/" element={<Login />} />
+              <Route path="sign-in" element={<Login />} />
+              <Route path="sign-up" element={<Register />} />
+            </Route>
+            <Route path="home" element={<Home />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Test />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </ProSidebarProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

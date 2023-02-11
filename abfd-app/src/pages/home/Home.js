@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useState } from "react";
+import HomeHeader from "./HomeHeader";
+import HomeSidebar from "./HomeSidebar";
 
 function Home() {
   return (
-    <div>Home</div>
-  )
+    <>
+      <HomeHeader />
+      <HomeSidebar />
+    </>
+  );
 }
 
-export default Home
+export default Home;

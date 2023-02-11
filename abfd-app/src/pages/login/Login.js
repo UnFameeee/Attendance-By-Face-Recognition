@@ -60,7 +60,7 @@ function Login() {
           </Button>
           <Flex justifyContent="center" gap="1">
             <Text>Don't have an account? </Text>
-            <Link to="/register">
+            <Link to="/sign-up">
               <span style={{ fontWeight: "bold" }}>Sign up now!</span>
             </Link>
           </Flex>
