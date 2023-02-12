@@ -67,7 +67,7 @@ function HomeSidebar() {
                     parentItem.children.map((childItem, index) => (
                       <MenuItem
                         key={index}
-                        component={<NavLink to={childItem.link} />}
+                        component={<NavLink to={`${parentItem.url}/${childItem.url}`} />}
                       >
                         <Flex alignItems="center">
                           <Box flex="20%" display="grid" placeItems="start">
@@ -79,7 +79,7 @@ function HomeSidebar() {
                     ))}
                 </SubMenu>
               ) : (
-                <MenuItem key={index} component={<NavLink to={parentItem.link} />}>
+                <MenuItem key={index} component={<NavLink to={parentItem.url} />}>
                   <Flex alignItems="center">
                     <Box flex="20%" display="grid" placeItems="start">
                       {parentItem.icon}

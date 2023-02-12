@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { DashBoardData } from "../../../Utils/DashBoardData";
+import { DashBoardDataTop, DashBoardDataBottom } from "../../../Utils/DashBoardData";
 import { BsArrowRightCircle } from "react-icons/bs";
 import ReactDOM from "react-dom";
 import { Pie } from "@ant-design/plots";
@@ -28,8 +28,8 @@ function Dashboard() {
         spacing={4}
         gridTemplateColumns="repeat(auto-fit, minmax(350px,1fr))"
       >
-        {DashBoardData &&
-          DashBoardData.map((item, index) => (
+        {DashBoardDataTop &&
+          DashBoardDataTop.map((item, index) => (
             <Card key={index} bgColor={item.bgColor}>
               <CardBody color="white" paddingBottom={0}>
                 <Flex alignItems="center">
@@ -67,8 +67,8 @@ function Dashboard() {
         spacing={4}
         gridTemplateColumns="repeat(auto-fit, minmax(350px,1fr))"
       >
-        {DashBoardData &&
-          DashBoardData.map((item, index) => (
+        {DashBoardDataBottom &&
+          DashBoardDataBottom.map((item, index) => (
             <Card key={index} bgColor={item.bgColor}>
               <CardBody color="white" paddingBottom={0}>
                 <Flex alignItems="center">

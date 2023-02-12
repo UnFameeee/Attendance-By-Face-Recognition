@@ -29,9 +29,30 @@ root.render(
                 <Route path="sign-up" element={<Register />} />
               </Route>
               <Route path="home" element={<Home />}>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="project" element={<Test />} />
-                <Route path="test" element={<Test />} />
+                <Route path="admin">
+                  <Route path="dashboard" element={<Dashboard />} />
+                </Route>
+                <Route path="organization">
+                  <Route path="general-organization" element={<Test />} />
+                  <Route path="location" element={<Test />} />
+                  <Route path="department" element={<Test />} />
+                </Route>
+                <Route path="employees">
+                  <Route path="general-employees" element={<Test />} />
+                  <Route path="work-experience" element={<Test />} />
+                  <Route path="education" element={<Test />} />
+                  <Route path="skill" element={<Test />} />
+                </Route>
+                <Route path="payroll">
+                  <Route path="gross-net" element={<Test />} />
+                  <Route path="payslip" element={<Test />} />
+                </Route>
+                <Route path="work-shift" element={<Test />} />
+                <Route path="leave-request" element={<Test />} />
+                <Route path="attendance" element={<Test />} />
+                <Route path="setting">
+                  <Route path="profile" element={<Test />} />
+                </Route>
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
