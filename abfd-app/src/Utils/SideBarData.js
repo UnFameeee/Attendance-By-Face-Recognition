@@ -19,6 +19,8 @@ import { MdAvTimer } from "react-icons/md";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { SlOrganization } from "react-icons/sl";
 import { RiUserVoiceFill } from "react-icons/ri";
+import {GoReport} from 'react-icons/go'
+import {IoNotifications} from 'react-icons/io5'
 export const SideBarData = [
   {
     title: "Admin",
@@ -102,6 +104,16 @@ export const SideBarData = [
     title: "Work Shift",
     url: "work-shift",
     icon: <MdWork />,
+  },
+  {
+    title: "Notification",
+    url: "notification",
+    icon: <IoNotifications />,
+  },
+  {
+    title: "Report",
+    url: "report",
+    icon: <GoReport />,
   },
   {
     title: "Leave Request",

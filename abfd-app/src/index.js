@@ -48,6 +48,8 @@ root.render(
                   <Route path="payslip" element={<Test />} />
                 </Route>
                 <Route path="work-shift" element={<Test />} />
+                <Route path="notification" element={<Test />} />
+                <Route path="report" element={<Test />} />
                 <Route path="leave-request" element={<Test />} />
                 <Route path="attendance" element={<Test />} />
                 <Route path="setting">

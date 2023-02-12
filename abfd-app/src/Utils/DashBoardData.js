@@ -6,6 +6,7 @@ import { SlOrganization } from "react-icons/sl";
 import { MdWork } from "react-icons/md";
 import { RiUserVoiceFill } from "react-icons/ri";
 import { TbReportMoney } from "react-icons/tb";
+import {GoReport} from 'react-icons/go'
 
 const iconFontSize = "80px";
 export const DashBoardDataTop = [
@@ -31,7 +32,7 @@ export const DashBoardDataTop = [
     icon: <RiUserVoiceFill style={{ fontSize: iconFontSize }} />,
     link: "/home/leave-request",
     linkTitle: "Manage Leave Request",
-    bgColor: "#f39c14",
+    bgColor: "#da8909",
   },
   {
     title: "Work Shift",
@@ -39,7 +40,7 @@ export const DashBoardDataTop = [
     icon: <MdWork style={{ fontSize: iconFontSize }} />,
     link: "/home/work-shift",
     linkTitle: "Manage Work Shift",
-    bgColor: "#dd4b39",
+    bgColor: "#da4c3b",
   },
 ];
 
@@ -62,7 +63,7 @@ export const DashBoardDataBottom = [
   },
   {
     title: "Gross and Net",
-    content: "View / Download Reports",
+    content: "Management",
     icon: <TbReportMoney style={{ fontSize: iconFontSize }} />,
     link: "/home/payroll/gross-net",
     linkTitle: "Manage Gross and Net",
@@ -70,10 +71,18 @@ export const DashBoardDataBottom = [
   },
   {
     title: "Payslip",
-    content: "View / Download Reports",
+    content: "Management",
     icon: <GiPayMoney style={{ fontSize: iconFontSize }} />,
     link: "/home/payroll/payslip",
     linkTitle: "Manage Leave Request",
     bgColor: "#abad65",
+  },
+  {
+    title: "Report",
+    content: "View / Download Reports",
+    icon: <GoReport style={{ fontSize: iconFontSize }} />,
+    link: "/home/report",
+    linkTitle: "Manage Report",
+    bgColor: "#b46eb0",
   },
 ];

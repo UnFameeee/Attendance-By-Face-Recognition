@@ -18,7 +18,7 @@ import {
 import { useProSidebar } from "react-pro-sidebar";
 import { Link } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { BiWorld } from "react-icons/bi";
+import { IoNotifications } from "react-icons/io5";
 import { HiUserCircle } from "react-icons/hi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
@@ -30,7 +30,7 @@ function HomeHeader() {
   );
   const handleCollapseSidebar = () => {
     if (sideBarWidth === "250px") dispatch(collapsedHomeSideBar("56px"));
-    else{
+    else {
       dispatch(collapsedHomeSideBar("250px"));
     }
     collapseSidebar();
@@ -79,7 +79,31 @@ function HomeHeader() {
           gap: "5px",
         }}
       >
-        <Icon as={BiWorld} boxSize={6} _hover={{ cursor: "pointer" }} />
+        <Link to="/home/notification">
+          <Box display="flex" alignItems="center" position="relative">
+            <Icon
+              as={IoNotifications}
+              boxSize={6}
+              _hover={{ cursor: "pointer" }}
+            />
+            <Box
+              position="absolute"
+              right="17px"
+              bottom="8px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              className="notify-count"
+              bgColor="#eb8e2c"
+              boxSize={5}
+              rounded="full"
+            >
+              <Text color="black" fontWeight="bold">
+                5
+              </Text>
+            </Box>
+          </Box>
+        </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
           <Menu>
             <MenuButton>
