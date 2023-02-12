@@ -60,4 +60,9 @@ export const SideBarData = [
       },
     ],
   },
+  {
+    title: "Test",
+    icon: <SiSuperuser />,
+    link: "test",
+  },
 ];

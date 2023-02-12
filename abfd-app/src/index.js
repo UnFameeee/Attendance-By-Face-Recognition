@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { store } from "./store/store";
+import { Provider } from "react-redux";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import NotFound from "./pages/notfound/NotFound";
@@ -16,24 +18,27 @@ import Dashboard from "./pages/home/Admin/Dashboard";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <ProSidebarProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<Auth />}>
-              <Route path="/" element={<Login />} />
-              <Route path="sign-in" element={<Login />} />
-              <Route path="sign-up" element={<Register />} />
-            </Route>
-            <Route path="home" element={<Home />}>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="profile" element={<Test />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </ProSidebarProvider>
-    </ChakraProvider>
+    <Provider store={store}>
+      <ChakraProvider>
+        <ProSidebarProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<Auth />}>
+                <Route path="/" element={<Login />} />
+                <Route path="sign-in" element={<Login />} />
+                <Route path="sign-up" element={<Register />} />
+              </Route>
+              <Route path="home" element={<Home />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="project" element={<Test />} />
+                <Route path="test" element={<Test />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ProSidebarProvider>
+      </ChakraProvider>
+    </Provider>
   </React.StrictMode>
 );
 

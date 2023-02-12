@@ -1,5 +1,12 @@
 .App {
-    height:100vh;
-    width:100vw;
+  height: 100vh;
+  width: 100vw;
 }
 
+.ps-menu-button.active {
+  background-color: #c1dcf2;
+}
+.auth-header-nav.active .nav-wrapper {
+  background: aliceblue;
+  border-radius: 0.4rem;
+}

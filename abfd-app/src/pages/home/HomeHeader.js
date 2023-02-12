@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Avatar,
   Box,
@@ -20,9 +21,20 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { BiWorld } from "react-icons/bi";
 import { HiUserCircle } from "react-icons/hi";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
 function HomeHeader() {
   const { collapseSidebar } = useProSidebar();
-  const [hideHeadingLogo, setHideHeadingLogo] = useState(false);
+  const dispatch = useDispatch();
+  const sideBarWidth = useSelector(
+    (state) => state.responsive.homeSideBarWidth
+  );
+  const handleCollapseSidebar = () => {
+    if (sideBarWidth === "250px") dispatch(collapsedHomeSideBar("56px"));
+    else{
+      dispatch(collapsedHomeSideBar("250px"));
+    }
+    collapseSidebar();
+  };
   return (
     <Flex
       className="home-header"
@@ -32,7 +44,9 @@ function HomeHeader() {
       color="white"
       flexDirection="row"
       alignContent="center"
-      position='sticky'
+      position="sticky"
+      inset={0}
+      zIndex="sticky"
     >
       <Flex
         className="header-nav-left"
@@ -46,8 +60,7 @@ function HomeHeader() {
         <Flex justifyContent="flex-end">
           <Icon
             onClick={() => {
-              collapseSidebar();
-              setHideHeadingLogo((prev) => !prev);
+              handleCollapseSidebar();
             }}
             as={GiHamburgerMenu}
             boxSize={8}
