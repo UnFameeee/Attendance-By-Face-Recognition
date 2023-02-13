@@ -15,6 +15,7 @@ import Home from "./pages/home/Home";
 import Auth from "./pages/auth/Auth";
 import Test from "./pages/test/Test";
 import Dashboard from "./pages/home/Admin/Dashboard";
+import Profile from "./pages/home/Setting/Profile";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -29,9 +30,7 @@ root.render(
                 <Route path="sign-up" element={<Register />} />
               </Route>
               <Route path="home" element={<Home />}>
-                <Route path="admin">
-                  <Route path="dashboard" element={<Dashboard />} />
-                </Route>
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="organization">
                   <Route path="general-organization" element={<Test />} />
                   <Route path="location" element={<Test />} />
@@ -53,7 +52,7 @@ root.render(
                 <Route path="leave-request" element={<Test />} />
                 <Route path="attendance" element={<Test />} />
                 <Route path="setting">
-                  <Route path="profile" element={<Test />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>
               <Route path="*" element={<NotFound />} />

@@ -24,7 +24,7 @@ function DashboardCardGrid({dashboardData}) {
     >
       {dashboardData &&
         dashboardData.map((item, index) => (
-          <Card key={index} bgColor={item.bgColor}>
+          <Card shadow='lg' key={index} bgColor={item.bgColor}>
             <CardBody color="white" paddingBottom={0}>
               <Flex alignItems="center">
                 <Box display="flex" gap={2} flexDirection="column">

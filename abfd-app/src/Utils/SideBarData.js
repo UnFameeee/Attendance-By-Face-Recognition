@@ -23,16 +23,9 @@ import {GoReport} from 'react-icons/go'
 import {IoNotifications} from 'react-icons/io5'
 export const SideBarData = [
   {
-    title: "Admin",
-    url: "admin",
-    icon: <MdSpaceDashboard />,
-    children: [
-      {
-        title: "Dashboard",
-        url: "dashboard",
-        icon: <MdOutlineMonitor />,
-      },
-    ],
+    title: "Dashboard",
+    url: "dashboard",
+    icon: <MdOutlineMonitor />,
   },
   {
     title: "Organization ",

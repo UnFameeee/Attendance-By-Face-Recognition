@@ -39,7 +39,7 @@ function HomeHeader() {
     <Flex
       className="home-header"
       paddingX={2}
-      paddingY={1}
+      paddingY={3}
       bgColor="#224562"
       color="white"
       flexDirection="row"
@@ -114,7 +114,7 @@ function HomeHeader() {
               </Flex>
             </MenuButton>
             <MenuList color="black">
-              <Link to="profile">
+              <Link to="/home/setting/profile">
                 <MenuItem>Profile</MenuItem>
               </Link>
               <Link to="/sign-out">

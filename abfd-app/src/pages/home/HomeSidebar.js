@@ -92,7 +92,7 @@ function HomeSidebar() {
           </Menu>
         </Menu>
       </Sidebar>
-      <Box className="Main-content" width={`calc(100vw - ${sideBarWidth})`} >
+      <Box className="Main-content" width={`calc(100vw - ${sideBarWidth})`} height='100%' bgColor='#ebf0f378 ' >
         <Outlet />
       </Box>
     </div>
