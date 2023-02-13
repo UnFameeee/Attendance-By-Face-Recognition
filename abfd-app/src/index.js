@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { store } from "./store/store";
@@ -16,13 +16,20 @@ import Auth from "./pages/auth/Auth";
 import Test from "./pages/test/Test";
 import Dashboard from "./pages/home/Admin/Dashboard";
 import Profile from "./pages/home/Setting/Profile";
+import ScrollToTop from "./components/ScrollToTop";
+const theme = extendTheme({
+  colors: {
+    link: "#4374e3",
+  },
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <ProSidebarProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route element={<Auth />}>
                 <Route path="/" element={<Login />} />

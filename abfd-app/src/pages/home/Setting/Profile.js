@@ -138,8 +138,8 @@ function Profile() {
             <Heading fontSize="xl">Your Photo</Heading>
           </Box>
           <Divider />
-          <Flex p={4} px={8} gap={10}>
-            <Flex flex={1} gap={3} py={2} flexDirection="column">
+          <Flex height='100%' p={4} px={8} gap={10}>
+            <Flex flex={1} gap={7} py={2} flexDirection="column">
               <Flex gap={4} flexDirection="row" alignItems="center">
                 <Avatar src={ta_test_avt} boxSize="80px" />
                 <Box
@@ -153,18 +153,18 @@ function Profile() {
                     <Text cursor="pointer" color="#999">
                       Delete
                     </Text>
-                    <Text cursor="pointer" color="#4374e3">
+                    <Text cursor="pointer" color='link'>
                       Update
                     </Text>
                   </Flex>
                 </Box>
               </Flex>
-              <Box
+              <Center display='flex' flexDirection='column' flex={1}
                 cursor="pointer"
                 boxSizing="border-box"
                 rounded="lg"
                 border="2px dashed #999"
-                height="250px"
+                height="100%"
               >
                 <Center pt={10} pb={5}>
                   <Icon boxSize={20} color="#999" as={AiOutlineCloudUpload} />
@@ -179,9 +179,9 @@ function Profile() {
                   <Text>SVG, PNG, JPEG or GIF</Text>
                   <Text>(max. 800x400px)</Text>
                 </Center>
-              </Box>
+              </Center>
             </Flex>
-            <Box flex={1}>
+            <Box mt={2} flex={1}>
               <Flex alignItems="center" justifyContent="space-between">
                 <Image src={google_logo} width="150px" />
                 <Box p={2} rounded="md" bgColor="#d8ffee">
@@ -190,10 +190,10 @@ function Profile() {
                   </Text>
                 </Box>
               </Flex>
-              <Box pl={2} fontSize="1.3rem">
+              <Box mt={7} pl={2} fontSize="1.3rem">
                 <Text fontWeight="bold">Google</Text>
                 <Text>Use Google to sign in your account.</Text>
-                <Text color="#4374e3" cursor="pointer">
+                <Text color='link' cursor="pointer">
                   Click here to learn more.
                 </Text>
               </Box>

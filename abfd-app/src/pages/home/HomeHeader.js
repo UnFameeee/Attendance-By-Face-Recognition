@@ -83,19 +83,19 @@ function HomeHeader() {
           <Box display="flex" alignItems="center" position="relative">
             <Icon
               as={IoNotifications}
-              boxSize={6}
+              boxSize={8}
               _hover={{ cursor: "pointer" }}
             />
             <Box
               position="absolute"
-              right="17px"
-              bottom="8px"
+              right="18px"
+              bottom="12px"
               display="flex"
               alignItems="center"
               justifyContent="center"
               className="notify-count"
               bgColor="#eb8e2c"
-              boxSize={5}
+              boxSize={6}
               rounded="full"
             >
               <Text color="black" fontWeight="bold">
@@ -108,9 +108,9 @@ function HomeHeader() {
           <Menu>
             <MenuButton>
               <Flex _hover={{ cursor: "pointer" }}>
-                <Icon as={HiUserCircle} boxSize={6} />
-                <Text>Admin123</Text>
-                <Icon as={MdKeyboardArrowDown} boxSize={6} />
+                <Icon as={HiUserCircle} boxSize={8} />
+                <Text fontSize='1.2rem'>Admin123</Text>
+                <Icon as={MdKeyboardArrowDown} boxSize={8} />
               </Flex>
             </MenuButton>
             <MenuList color="black">

@@ -16,9 +16,11 @@ import { Link, NavLink } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";
 import avt_user from "../../assets/ta.jpeg";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 function HomeSidebar() {
-  const sideBarWidth = useSelector((state) => state.responsive.homeSideBarWidth)
+  const sideBarWidth = useSelector(
+    (state) => state.responsive.homeSideBarWidth
+  );
   return (
     <div style={{ display: "flex", height: "100%" }}>
       <Sidebar collapsedWidth="57px" width="250px">
@@ -59,7 +61,9 @@ function HomeSidebar() {
                       <Box flex="20%" display="grid" placeItems="start">
                         {parentItem.icon}
                       </Box>
-                      <Box flex="80%">{parentItem.title}</Box>
+                      <Box flex="80%" fontSize="1.2rem" fontWeight="medium">
+                        {parentItem.title}
+                      </Box>
                     </Flex>
                   }
                 >
@@ -67,24 +71,33 @@ function HomeSidebar() {
                     parentItem.children.map((childItem, index) => (
                       <MenuItem
                         key={index}
-                        component={<NavLink to={`${parentItem.url}/${childItem.url}`} />}
+                        component={
+                          <NavLink to={`${parentItem.url}/${childItem.url}`} />
+                        }
                       >
                         <Flex alignItems="center">
                           <Box flex="20%" display="grid" placeItems="start">
                             {childItem.icon}
                           </Box>
-                          <Box flex="80%">{childItem.title}</Box>
+                          <Box flex="80%" fontSize="1.1rem" fontWeight="medium">
+                            {childItem.title}
+                          </Box>
                         </Flex>
                       </MenuItem>
                     ))}
                 </SubMenu>
               ) : (
-                <MenuItem key={index} component={<NavLink to={parentItem.url} />}>
+                <MenuItem
+                  key={index}
+                  component={<NavLink to={parentItem.url} />}
+                >
                   <Flex alignItems="center">
                     <Box flex="20%" display="grid" placeItems="start">
                       {parentItem.icon}
                     </Box>
-                    <Box flex="80%">{parentItem.title}</Box>
+                    <Box flex="80%" fontSize="1.2rem" fontWeight="medium">
+                      {parentItem.title}
+                    </Box>
                   </Flex>
                 </MenuItem>
               )
@@ -92,7 +105,12 @@ function HomeSidebar() {
           </Menu>
         </Menu>
       </Sidebar>
-      <Box className="Main-content" width={`calc(100vw - ${sideBarWidth})`} height='100%' bgColor='#ebf0f378 ' >
+      <Box
+        className="Main-content"
+        width={`calc(100vw - ${sideBarWidth})`}
+        height="100%"
+        bgColor="#d7e2e978"
+      >
         <Outlet />
       </Box>
     </div>
