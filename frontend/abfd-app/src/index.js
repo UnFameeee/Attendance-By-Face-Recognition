@@ -5,7 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ProSidebarProvider } from "react-pro-sidebar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Switch } from "react-router-dom";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
 import Login from "./pages/login/Login";
@@ -16,6 +16,7 @@ import Auth from "./pages/auth/Auth";
 import Test from "./pages/test/Test";
 import Dashboard from "./pages/home/Admin/Dashboard";
 import Profile from "./pages/home/Setting/Profile";
+import ScrollToTop from "./components/ScrollToTop";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -23,13 +24,14 @@ root.render(
       <ChakraProvider>
         <ProSidebarProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route element={<Auth />}>
                 <Route path="/" element={<Login />} />
                 <Route path="sign-in" element={<Login />} />
                 <Route path="sign-up" element={<Register />} />
               </Route>
-              <Route path="home" element={<Home />}>
+              <Route element={<Home />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="organization">
                   <Route path="general-organization" element={<Test />} />

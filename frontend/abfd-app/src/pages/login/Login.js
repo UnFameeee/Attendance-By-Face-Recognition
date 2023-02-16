@@ -1,23 +1,20 @@
 import {
   Box,
   Flex,
-  Image,
   Center,
   Text,
   Heading,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  HStack,
   Stack,
-  InputRightAddon,
   Button,
   Icon,
 } from "@chakra-ui/react";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import { LockIcon, AtSignIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import React from "react";
+import AuthTextField from "../../components/AuthTextField";
 
 function Login() {
   return (
@@ -28,29 +25,52 @@ function Login() {
             <Heading fontSize="xl">Sign in to your Account</Heading>
             <Text>Welcome back!</Text>
           </Flex>
-          <Stack spacing="5">
-            <InputGroup>
-              <InputLeftAddon children={<AtSignIcon />} />
-              <Input placeholder="Email" />
-            </InputGroup>
-            <InputGroup>
-              <InputLeftAddon children={<LockIcon />} />
-              <Input placeholder="Password" />
-              <InputRightAddon cursor="pointer" children={<ViewOffIcon />} />
-            </InputGroup>
-          </Stack>
-          <Button
-            bgColor="blue.600"
-            color="whitesmoke"
-            _hover={{
-              color: "black",
-              background: "whitesmoke",
-              border:"1px solid black"
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={Yup.object({
+              password: Yup.string()
+                .required("Password required")
+                .min(6, "Password is too short"),
+              email: Yup.string()
+                .email("Invalid Email")
+                .required("Email required"),
+            })}
+            onSubmit={(values, actions) => {
+              alert(JSON.stringify(values, null, 2));
+              actions.resetForm();
             }}
           >
-            {" "}
-            Sign in
-          </Button>
+            {(formik) => (
+              <Stack spacing="5" as="form" onSubmit={formik.handleSubmit}>
+                <AuthTextField
+                  name="email"
+                  placeholder="Email"
+                  leftIcon={<AtSignIcon />}
+                />
+                <AuthTextField
+                  name="password"
+                  placeholder="********"
+                  type="password"
+                  leftIcon={<LockIcon />}
+                  rightIcon={<ViewIcon />}
+                  hideIcon={<ViewOffIcon />}
+                />
+                <Button
+                  type="submit"
+                  bgColor="blue.600"
+                  color="whitesmoke"
+                  _hover={{
+                    color: "black",
+                    background: "whitesmoke",
+                    border: "1px solid black",
+                  }}
+                >
+                  {" "}
+                  Sign in
+                </Button>
+              </Stack>
+            )}
+          </Formik>
           <Box display="flex" justifyContent="center">
             <Text> &mdash; Or Sign in with &mdash;</Text>
           </Box>

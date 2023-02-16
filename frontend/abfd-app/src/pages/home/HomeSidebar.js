@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from 'react-redux'
 function HomeSidebar() {
   const sideBarWidth = useSelector((state) => state.responsive.homeSideBarWidth)
   return (
-    <div style={{ display: "flex", height: "100%" }}>
+    <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar collapsedWidth="57px" width="250px">
         <Menu
           menuItemStyles={{
