@@ -18,7 +18,7 @@ function Header() {
         <Box flex="1">
           <nav>
             <Center justifyContent="flex-end" flexDirection="row" gap="2">
-              <Link to="home">
+              <Link to="dashboard">
                 <Button
                   bgColor="blue.600"
                   color="whitesmoke"
