@@ -7,7 +7,7 @@ export interface TokenData {
 
 export interface DataStoredInToken {
   id: string;
-  email: string;
+  email?: string;
 }
 
 export interface RequestWithProfile extends Request {

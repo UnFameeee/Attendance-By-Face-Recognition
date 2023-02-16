@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 require("dotenv").config();
 
-const authMiddleware = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<any> => {
+export const authMiddleware = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<any> => {
   try {
     const Authorization = req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null;
 
@@ -29,4 +29,26 @@ const authMiddleware = async (req: RequestWithProfile, res: Response, next: Next
   }
 }
 
-export default authMiddleware;
+export const refreshMiddleware = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const Authorization = req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null;
+
+    if (Authorization) {
+      const secretKey: string = process.env.REFRESH_KEY;
+      const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
+      const profileId = verificationResponse.id;
+      const profile = new PrismaClient().profile;
+      const findUser = await profile.findUnique({ where: { id: profileId } });
+      if (findUser) {
+        req.profile = findUser;
+        next();
+      } else {
+        next(new HttpException(401, 'Wrong authentication token'));
+      }
+    } else {
+      next(new HttpException(404, 'Authentication token missing'));
+    }
+  } catch (err) {
+    next(new HttpException(401, 'Wrong authentication token'));
+  }
+}
