@@ -1,8 +1,9 @@
+import { Box } from '@chakra-ui/layout'
 import React from 'react'
 
 function Test() {
   return (
-    <div>Test</div>
+    <Box minHeight='100vh'>Test</Box>
   )
 }
 

@@ -30,10 +30,10 @@ function Dashboard() {
     <Stack spacing={5} paddingX={5} paddingY={4}>
       <DashboardCardGrid dashboardData={DashBoardDataTop} />
       <Flex className="chart-section" justifyContent="space-between" gap={5}>
-        <Box width="49%">
+        <Box width="50%">
           <PieChart />
         </Box>
-        <Box width="49%">
+        <Box width="50%">
           <ColumnChart />
         </Box>
       </Flex>
