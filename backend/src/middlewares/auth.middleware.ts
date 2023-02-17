@@ -25,7 +25,7 @@ export const authMiddleware = async (req: RequestWithProfile, res: Response, nex
       next(new HttpException(404, 'Authentication token missing'));
     }
   } catch (err) {
-    next(new HttpException(401, 'Wrong authentication token'));
+    next(new HttpException(401, 'Wrong authentication token or it expired'));
   }
 }
 
@@ -48,7 +48,7 @@ export const refreshMiddleware = async (req: RequestWithProfile, res: Response, 
     } else {
       next(new HttpException(404, 'Authentication token missing'));
     }
-  } catch (err) {
-    next(new HttpException(401, 'Wrong authentication token'));
+  } catch (err: any) {
+    next(new HttpException(401, 'Wrong authentication token or it expired'));
   }
 }
