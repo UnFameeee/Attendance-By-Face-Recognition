@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "lib": [
+            "es2017"
+        ],
+        "module": "commonjs",
+        "outDir": "./dist",
+
+        "strict": true,
+        "strictFunctionTypes": false,
+
+        "strictNullChecks": false,
+        "strictPropertyInitialization": false,
+        
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
+
+// "noImplicitAny": false,
+// "noImplicitThis": false,
+// "alwaysStrict": true,
