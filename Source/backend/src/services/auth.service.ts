@@ -8,10 +8,11 @@ import * as jwt from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import { ResponseData } from "../config/ResponseData.config";
 import { ResponseToken } from "../config/ResponseToken.config";
+import { prisma } from '../database/prisma.singleton';
 require("dotenv").config();
 
 class AuthenticationService {
-  public profile = new PrismaClient().profile;
+  public profile = prisma.profile;
 
   public async createAccessToken(profileData: Profile): Promise<TokenData> {
     const expiresIn: number = Number.parseInt(process.env.SECRET_EXPRIED);
