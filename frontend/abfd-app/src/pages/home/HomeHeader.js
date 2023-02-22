@@ -79,7 +79,7 @@ function HomeHeader() {
           gap: "5px",
         }}
       >
-        <Link to="/home/notification">
+        <Link to="/notification">
           <Box display="flex" alignItems="center" position="relative">
             <Icon
               as={IoNotifications}
@@ -114,7 +114,7 @@ function HomeHeader() {
               </Flex>
             </MenuButton>
             <MenuList color="black">
-              <Link to="/home/setting/profile">
+              <Link to="/setting/profile">
                 <MenuItem>Profile</MenuItem>
               </Link>
               <Link to="/sign-out">

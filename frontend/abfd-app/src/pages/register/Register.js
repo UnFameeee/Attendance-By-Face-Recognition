@@ -40,10 +40,9 @@ function Register() {
               password: Yup.string()
                 .required("Password required")
                 .min(6, "Password is too short"),
-              confirmPassword: Yup.string().oneOf(
-                [Yup.ref("password"), null],
-                "Passwords must match"
-              ).required("Confirm password is required"),
+              confirmPassword: Yup.string()
+                .oneOf([Yup.ref("password"), null], "Passwords must match")
+                .required("Confirm password is required"),
             })}
             onSubmit={(values, actions) => {
               alert(JSON.stringify(values, null, 2));
@@ -53,11 +52,13 @@ function Register() {
             {(formik) => (
               <Stack spacing="5" as="form" onSubmit={formik.handleSubmit}>
                 <AuthTextField
+                  label="Email"
                   name="email"
                   placeholder="abc@gmail.com"
                   leftIcon={<AtSignIcon />}
                 />
                 <AuthTextField
+                  label="Password"
                   name="password"
                   placeholder="********"
                   type="password"
@@ -66,6 +67,7 @@ function Register() {
                   hideIcon={<ViewOffIcon />}
                 />
                 <AuthTextField
+                  label="Confirm password"
                   name="confirmPassword"
                   placeholder="********"
                   type="password"

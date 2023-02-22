@@ -43,11 +43,13 @@ function Login() {
             {(formik) => (
               <Stack spacing="5" as="form" onSubmit={formik.handleSubmit}>
                 <AuthTextField
+                  label="Email"
                   name="email"
                   placeholder="Email"
                   leftIcon={<AtSignIcon />}
                 />
                 <AuthTextField
+                  label="Password"
                   name="password"
                   placeholder="********"
                   type="password"
