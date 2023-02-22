@@ -18,17 +18,22 @@ function AuthTextField({ ...props }) {
   };
   return (
     <FormControl isInvalid={meta.error && meta.touched}>
+      <FormLabel>{props.label}</FormLabel>
       <InputGroup>
         <InputLeftAddon children={props.leftIcon} />
         {props.type === "password" ? (
           <Input
             {...field}
             type={!isShow ? "text" : "password"}
-            placeholder={props.placeholder ?? ''}
+            placeholder={props.placeholder ?? ""}
             autoComplete="on"
           />
         ) : (
-          <Input {...field} type={props.type} placeholder={props.placeholder ?? ''} />
+          <Input
+            {...field}
+            type={props.type}
+            placeholder={props.placeholder ?? ""}
+          />
         )}
         {props.rightIcon && props.hideIcon && (
           <InputRightAddon
@@ -38,10 +43,7 @@ function AuthTextField({ ...props }) {
           />
         )}
         {props.rightIcon && !props.hideIcon && (
-          <InputRightAddon
-            cursor="pointer"
-            children={props.rightIcon}
-          />
+          <InputRightAddon cursor="pointer" children={props.rightIcon} />
         )}
       </InputGroup>
       <FormErrorMessage>{meta.error}</FormErrorMessage>
