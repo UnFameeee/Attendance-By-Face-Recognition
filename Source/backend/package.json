@@ -10,8 +10,8 @@
     "dev": "nodemon src/server.ts",
     "debug": "ts-node src/server.ts",
     "build": "npx tsc",
-    "production": "npm run build && node dist/server.js",
-    "start": "npm run build && node dist/server.js"
+    "start": "npm run build && node dist/server.js",
+    "production": "npm run build && node dist/server.js"
   },
   "dependencies": {
     "@prisma/client": "^4.10.1",
