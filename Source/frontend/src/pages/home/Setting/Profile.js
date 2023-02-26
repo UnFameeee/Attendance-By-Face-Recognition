@@ -20,20 +20,33 @@ import {
   Button,
   ButtonGroup,
 } from "@chakra-ui/react";
-import { Formik } from "formik";
+import { Field, Formik } from "formik";
 import * as Yup from "yup";
-import React from "react";
-import { FaRegUserCircle } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import AsyncSelect from "react-select/async";
+import Select from "react-select";
+import axios from "axios";
+import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
+import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { BsCheckCircleFill, BsTelephone } from "react-icons/bs";
+import {
+  BsCheckCircleFill,
+  BsTelephone,
+  BsCalendar2Date,
+} from "react-icons/bs";
+import { RiFolderUserLine } from "react-icons/ri";
 import { AiOutlineCloudUpload } from "react-icons/ai";
+import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
 import google_logo from "../../../assets/google-ar21-removebg-preview.png";
 import FormTextField from "../../../components/FormTextField";
 import { phoneRegExp } from "../../../Utils/ValidationRegExp";
+import _ from "lodash";
+import SearchAndSelectAddressField from "../../../components/SearchAndSelectAddressField";
+
 function Profile() {
   return (
-    <Stack minHeight="100vh" spacing={3} paddingX={20} paddingY={8}>
+    <Stack minHeight="100vh" spacing={3} paddingX={20} paddingTop={2}>
       <Formik
         initialValues={{
           firstName: "",
@@ -42,6 +55,12 @@ function Profile() {
           phone: "",
           birthDate: undefined,
           about: "",
+          address: "",
+          department: "",
+          workLocation: "",
+          status: "",
+          joiningDate: undefined,
+          role:"",
         }}
         validationSchema={Yup.object({
           phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
@@ -107,22 +126,83 @@ function Profile() {
                       <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />
                     }
                   />
-                  {
+                  <Flex gap={8}>
                     <FormTextField
-                      name="phone"
-                      label="Phone number"
-                      type="number"
-                      placeholder="Enter your number"
-                      leftIcon={<BsTelephone color="#999" fontSize="1.4rem" />}
+                      name="department"
+                      label="Department"
+                      type="text"
+                      isReadOnly={true}
+                      placeholder="148Primas"
+                      leftIcon={
+                        <HiOutlineBuildingOffice2
+                          color="#999"
+                          fontSize="1.5rem"
+                        />
+                      }
                     />
-                  }
-
-
+                    <FormTextField
+                      name="workLocation"
+                      label="Work Location"
+                      type="text"
+                      isReadOnly={true}
+                      placeholder="148Primas"
+                      leftIcon={
+                        <GiOfficeChair color="#999" fontSize="1.5rem" />
+                      }
+                    />
+                  </Flex>
                   <FormTextField
-                    name="birthDate"
-                    isDateField={true}
-                    label="Birth Date"
+                    name="phone"
+                    label="Phone number"
+                    type="number"
+                    placeholder="Enter your number"
+                    leftIcon={<BsTelephone color="#999" fontSize="1.4rem" />}
                   />
+                  <Flex gap={8}>
+                    <FormTextField
+                      name="status"
+                      label="Status"
+                      type="text"
+                      isReadOnly={true}
+                      placeholder="Idle"
+                      leftIcon={<FaGrinStars color="#999" fontSize="1.5rem" />}
+                    />
+                    <FormTextField
+                      name="role"
+                      label="Role"
+                      type="text"
+                      isReadOnly={true}
+                      placeholder="Employee"
+                      leftIcon={
+                        <RiFolderUserLine color="#999" fontSize="1.5rem" />
+                      }
+                    />
+                  </Flex>
+                  <FormTextField
+                    name="address"
+                    isAddress={true}
+                    label="Address"
+                    placeholder="Search and select your address..."
+                    formik={formik}
+                  />
+                  <Flex gap={8}>
+                    <FormTextField
+                      name="joiningDate"
+                      label="Joining Date"
+                      type="text"
+                      isReadOnly={true}
+                      placeholder="2/23/2023"
+                      leftIcon={
+                        <BsCalendar2Date color="#999" fontSize="1.5rem" />
+                      }
+                    />
+                    <FormTextField
+                      name="birthDate"
+                      isDateField={true}
+                      label="Birth Date"
+                    />
+                  </Flex>
+
                   <FormTextField
                     name="about"
                     isTextAreaField={true}
@@ -141,8 +221,14 @@ function Profile() {
                   <Heading fontSize="xl">Your Photo</Heading>
                 </Box>
                 <Divider />
-                <Flex p={4} px={8} gap={10}>
-                  <Flex flex={1} gap={3} py={2} flexDirection="column">
+                <Flex flexDirection="column" p={4} px={8} gap={10}>
+                  <Flex
+                    alignItems="center"
+                    flex={1}
+                    gap={3}
+                    py={2}
+                    flexDirection="column"
+                  >
                     <Flex gap={4} flexDirection="row" alignItems="center">
                       <Avatar src={ta_test_avt} boxSize="80px" />
                       <Box
@@ -163,6 +249,7 @@ function Profile() {
                       </Box>
                     </Flex>
                     <Box
+                      width="100%"
                       cursor="pointer"
                       boxSizing="border-box"
                       rounded="lg"
