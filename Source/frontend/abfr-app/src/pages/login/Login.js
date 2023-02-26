@@ -7,6 +7,8 @@ import {
   Stack,
   Button,
   Icon,
+  Toast,
+  useToast,
 } from "@chakra-ui/react";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -15,8 +17,47 @@ import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import React from "react";
 import AuthTextField from "../../components/AuthTextField";
-
-function Login() {
+import { useMutation } from "react-query";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Cookies from "universal-cookie";
+import { login } from "../../services/auth/auth";
+import { setAuth, setUser } from "../../store/Slice/authSlice";
+import jwtDecode from "jwt-decode";
+export default function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const cookies = new Cookies();
+  const useLoginMutation = useMutation(login, {
+    onSuccess: (data) => {
+      const { refresh, access } = data;
+      const decoded = jwtDecode(refresh);
+      cookies.set("jwt_authentication", refresh, {
+        expires: new Date(decoded.exp * 1000),
+      });
+      localStorage.setItem("accessToken", JSON.stringify(access));
+      navigate("/dashboard");
+      dispatch(setUser(jwtDecode(access)));
+      toast({
+        title: "Sign in successfully",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      })
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   return (
     <Center height="100vh" width="100vw" bgColor="gray.200">
       <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">
@@ -36,7 +77,11 @@ function Login() {
                 .required("Email required"),
             })}
             onSubmit={(values, actions) => {
-              alert(JSON.stringify(values, null, 2));
+              const credential = {
+                email: values.email,
+                password: values.password,
+              };
+              useLoginMutation.mutate(credential);
               actions.resetForm();
             }}
           >
@@ -61,6 +106,7 @@ function Login() {
                   type="submit"
                   bgColor="blue.600"
                   color="whitesmoke"
+                  isLoading={useLoginMutation.isLoading}
                   _hover={{
                     color: "black",
                     background: "whitesmoke",
@@ -91,5 +137,3 @@ function Login() {
     </Center>
   );
 }
-
-export default Login;

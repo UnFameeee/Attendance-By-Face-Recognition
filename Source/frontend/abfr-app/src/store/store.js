@@ -1,7 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit'
-import responsiveReducer from './Slice/responsiveSlice'
+import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import responsiveReducer from "./Slice/responsiveSlice";
+import authReducer from "./Slice/authSlice";
 export const store = configureStore({
   reducer: {
-    responsive: responsiveReducer
+    responsive: responsiveReducer,
+    auth: authReducer,
   },
-})
+});

@@ -14,20 +14,32 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  useToast,
 } from "@chakra-ui/react";
 import { useProSidebar } from "react-pro-sidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoNotifications } from "react-icons/io5";
 import { HiUserCircle } from "react-icons/hi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
+import { useMutation } from "react-query";
+import Cookies from "universal-cookie";
+import { logout } from "../../services/auth/auth";
+import { setUser } from "../../store/Slice/authSlice";
 function HomeHeader() {
-  const { collapseSidebar } = useProSidebar();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const cookies = new Cookies();
+  const { collapseSidebar } = useProSidebar();
   const sideBarWidth = useSelector(
     (state) => state.responsive.homeSideBarWidth
   );
+
+  const accessTokenJSON = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(accessTokenJSON);
+  const refreshToken = cookies.get("jwt_authentication");
   const handleCollapseSidebar = () => {
     if (sideBarWidth === "250px") dispatch(collapsedHomeSideBar("56px"));
     else {
@@ -35,6 +47,27 @@ function HomeHeader() {
     }
     collapseSidebar();
   };
+  const useLogoutMutation = useMutation(logout, {
+    onSuccess: (data) => {
+      dispatch(setUser(null));
+      localStorage.removeItem("accessToken");
+      navigate("/sign-in");
+      toast({
+        title: "Sign out successfully",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+  const handleLogout = () => {
+    useLogoutMutation.mutate({ accessToken, refreshToken });
+  };
+
   return (
     <Flex
       className="home-header"
@@ -55,7 +88,13 @@ function HomeHeader() {
         width="241.2px"
       >
         <Flex flex={1} justifyContent="center">
-          <Heading fontSize="2xl">Home</Heading>
+          <Heading
+            cursor="pointer"
+            onClick={() => navigate("/dashboard")}
+            fontSize="2xl"
+          >
+            Home
+          </Heading>
         </Flex>
         <Flex justifyContent="flex-end">
           <Icon
@@ -109,7 +148,7 @@ function HomeHeader() {
             <MenuButton>
               <Flex _hover={{ cursor: "pointer" }}>
                 <Icon as={HiUserCircle} boxSize={8} />
-                <Text fontSize='1.2rem'>Admin123</Text>
+                <Text fontSize="1.2rem">Admin123</Text>
                 <Icon as={MdKeyboardArrowDown} boxSize={8} />
               </Flex>
             </MenuButton>
@@ -117,9 +156,7 @@ function HomeHeader() {
               <Link to="/setting/profile">
                 <MenuItem>Profile</MenuItem>
               </Link>
-              <Link to="/sign-out">
-                <MenuItem>Sign Out</MenuItem>
-              </Link>
+              <MenuItem onClick={handleLogout}>Sign Out</MenuItem>
             </MenuList>
           </Menu>
         </div>
