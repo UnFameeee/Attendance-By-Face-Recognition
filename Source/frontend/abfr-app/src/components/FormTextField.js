@@ -12,9 +12,9 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Field, useField } from "formik";
 import { useState } from "react";
+import SearchAndSelectAddressField from "./SearchAndSelectAddressField";
 function FormTextField({ ...props }) {
   const [field, meta] = useField(props);
-
   if (props.isDateField) {
     return (
       <FormControl isInvalid={meta.error && meta.touched}>
@@ -37,9 +37,25 @@ function FormTextField({ ...props }) {
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
-  } else {
+  } else if (props.isAddress) {
     return (
       <FormControl isInvalid={meta.error && meta.touched}>
+        <FormLabel>{props.label}</FormLabel>
+        <Field
+          {...field}
+          onChange={(e) => {
+            props.formik.setFieldValue("address", e);
+          }}
+          placeholder={props.placeholder ?? ""}
+          onBlur={props.formik.handleBlur}
+          as={SearchAndSelectAddressField}
+        />
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      </FormControl>
+    );
+  } else {
+    return (
+      <FormControl isRequired={props.isRequired} isInvalid={meta.error && meta.touched}>
         <FormLabel>{props.label}</FormLabel>
         <InputGroup>
           {props.leftIcon && (
