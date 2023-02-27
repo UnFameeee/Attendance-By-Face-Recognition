@@ -18,18 +18,6 @@ function Header() {
         <Box flex="1">
           <nav>
             <Center justifyContent="flex-end" flexDirection="row" gap="2">
-              <Link to="dashboard">
-                <Button
-                  bgColor="blue.600"
-                  color="whitesmoke"
-                  _hover={{
-                    color: "black",
-                    background: "whitesmoke",
-                  }}
-                >
-                  Home
-                </Button>
-              </Link>
               <NavLink to="sign-in" className="auth-header-nav">
                 <Box className="nav-wrapper" p="10px">
                   Sign in

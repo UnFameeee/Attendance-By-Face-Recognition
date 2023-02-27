@@ -129,11 +129,6 @@ export const SideBarData = [
         url: "profile",
         icon: <GrUserSettings fontSize={iconSize} />,
       },
-      {
-        title: "Sign out",
-        url: "sign-out",
-        icon: <GrLogout fontSize={iconSize} />,
-      },
     ],
   },
 ];
