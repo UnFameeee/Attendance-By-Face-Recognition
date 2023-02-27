@@ -1,22 +1,27 @@
-FROM node:14.20.0
+FROM node:14.20.0 as build
 
 WORKDIR /backend
 
-# COPY package.json and package-lock.json files
 COPY package.json .
 COPY package-lock.json .
-
-# COPY
 COPY prisma ./prisma/
-# COPY ENV variable
 COPY .env ./
-# COPY tsconfig.json file
 COPY tsconfig.json ./
 
 RUN npm install
 
 COPY . .
 
-RUN npx prisma generate
+RUN npm run build
+
+FROM node:14.20.0
+
+WORKDIR /backend
+
+COPY .env .
+COPY package.json .
+COPY --from=build /backend/dist ./dist
+COPY --from=build /backend/node_modules ./node_modules
+COPY --from=build /backend/prisma ./prisma
 
 CMD ["npm", "run", "production"]
