@@ -22,7 +22,7 @@ export const register = async ({ username, email, password }) => {
 export const logout = async ({ accessToken, refreshToken }) => {
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${accessToken}`,
+    'Authorization': `Bearer ${refreshToken}`,
   };
   const response = await axiosBase.delete(`auth/logout`,{headers});
   return response.data;
