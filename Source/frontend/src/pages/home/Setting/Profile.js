@@ -52,6 +52,7 @@ function Profile() {
           firstName: "",
           lastName: "",
           email: "",
+          gender: "",
           phone: "",
           birthDate: undefined,
           about: "",
@@ -60,12 +61,13 @@ function Profile() {
           workLocation: "",
           status: "",
           joiningDate: undefined,
-          role:"",
+          role: "",
         }}
         validationSchema={Yup.object({
           phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
         })}
         onSubmit={(values, actions) => {
+
           alert(JSON.stringify(values, null, 2));
           // actions.resetForm();
         }}
@@ -125,6 +127,16 @@ function Profile() {
                     leftIcon={
                       <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />
                     }
+                  />
+                  <FormTextField
+                    name="gender"
+                    isGender={true}
+                    label="Gender"
+                    arrayGender={[
+                      { label: "Male", value: "male" },
+                      { label: "Female", value: "female" },
+                    ]}
+                    formik={formik}
                   />
                   <Flex gap={8}>
                     <FormTextField

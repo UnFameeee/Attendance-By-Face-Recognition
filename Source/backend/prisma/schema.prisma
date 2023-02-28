@@ -12,7 +12,15 @@ model Profile {
   username     String
   password     String
   email        String   @unique
-  refreshToken String?   
+  gender       String
+  dateOfBirth  DateTime
+  role         String
+  phoneNumber  Int
+  description  String
+  address      String
+  picture      String
+  joiningDate  DateTime
+  refreshToken String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

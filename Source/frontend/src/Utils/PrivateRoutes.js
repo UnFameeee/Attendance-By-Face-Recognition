@@ -1,6 +1,6 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { isTokenExpired } from "./Helper";
+import { Helper, isTokenExpired } from "./Helper";
 
 const PrivateRoutes = () => {
   const jwt_tokenJSON = localStorage.getItem("accessToken");

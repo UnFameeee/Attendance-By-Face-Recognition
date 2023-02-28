@@ -7,12 +7,16 @@ import {
   InputLeftElement,
   InputRightElement,
   Input,
+  RadioGroup,
+  Stack,
+  Radio,
 } from "@chakra-ui/react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Field, useField } from "formik";
 import { useState } from "react";
 import SearchAndSelectAddressField from "./SearchAndSelectAddressField";
+import RadioGenderField from "./RadioGenderField";
 function FormTextField({ ...props }) {
   const [field, meta] = useField(props);
   if (props.isDateField) {
@@ -37,6 +41,22 @@ function FormTextField({ ...props }) {
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
+  } else if (props.isGender) {
+    return (
+      <FormControl isInvalid={meta.error && meta.touched}>
+        <FormLabel>{props.label}</FormLabel>
+        <Field
+          {...field}
+          arrayGender={props.arrayGender}
+          as={RadioGenderField}
+          onChange={(e) => {
+            props.formik.setFieldValue("gender", e);
+          }}
+          onBlur={props.formik.handleBlur}
+        />
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      </FormControl>
+    );
   } else if (props.isAddress) {
     return (
       <FormControl isInvalid={meta.error && meta.touched}>
@@ -55,7 +75,10 @@ function FormTextField({ ...props }) {
     );
   } else {
     return (
-      <FormControl isRequired={props.isRequired} isInvalid={meta.error && meta.touched}>
+      <FormControl
+        isRequired={props.isRequired}
+        isInvalid={meta.error && meta.touched}
+      >
         <FormLabel>{props.label}</FormLabel>
         <InputGroup>
           {props.leftIcon && (
