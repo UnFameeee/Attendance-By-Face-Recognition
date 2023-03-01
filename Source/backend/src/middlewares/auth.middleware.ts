@@ -2,7 +2,7 @@ import { DataStoredInToken, RequestWithProfile } from '../interfaces/auth.interf
 import { Response, NextFunction } from 'express';
 import { HttpException } from '../exceptions/HttpException';
 import * as jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../database/prisma.singleton';
 require("dotenv").config();
 
 export const authMiddleware = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<any> => {
@@ -12,9 +12,8 @@ export const authMiddleware = async (req: RequestWithProfile, res: Response, nex
     if (Authorization) {
       const secretKey: string = process.env.SECRET_KEY;
       const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
-      const profileId = verificationResponse.id;
-      const profile = new PrismaClient().profile;
-      const findUser = await profile.findUnique({ where: { id: profileId } });
+      const id = verificationResponse.id;
+      const findUser = await prisma.employee.findUnique({ where: { id: id } });
       if (findUser) {
         req.profile = findUser;
         next();
@@ -36,9 +35,8 @@ export const refreshMiddleware = async (req: RequestWithProfile, res: Response, 
     if (Authorization) {
       const secretKey: string = process.env.REFRESH_KEY;
       const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
-      const profileId = verificationResponse.id;
-      const profile = new PrismaClient().profile;
-      const findUser = await profile.findUnique({ where: { id: profileId } });
+      const id = verificationResponse.id;
+      const findUser = await prisma.employee.findUnique({ where: { id: id } });
       if (findUser) {
         req.profile = findUser;
         next();
