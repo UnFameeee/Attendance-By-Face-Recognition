@@ -7,25 +7,211 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id           String   @id @default(uuid())
-  username     String
-  password     String
-  email        String   @unique
-  gender       String
-  dateOfBirth  DateTime
-  role         String
-  phoneNumber  Int
-  description  String
+model Employee {
+  id           String      @id @default(uuid())
+  // departmentId
+  Department   Department? @relation(fields: [departmentId], references: [departmentId])
+  departmentId String?
+
+  // locationId
+  location   Location? @relation(fields: [locationId], references: [locationId])
+  locationId String?   @unique
+
+  picture               String?
+  fullname              String
+  email                 String         @unique
+  password              String
+  gender                String?
+  dateOfBirth           DateTime?
+  phoneNumber           Int?
+  description           String?
+  role                  String?
+  status                Boolean?
+  joiningDate           DateTime?
+  refreshToken          String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  attendances           Attendance[]
+  contracts             Contract[]
+  workshifts            Workshift[]
+  leaveRequests         LeaveRequest[] @relation("LeaveRequests")
+  leaveRequestApproveds LeaveRequest[] @relation("LeaveRequestApproveds")
+  payrolls              Payroll[]
+  departmentManager     Department?    @relation("DepartmentManager")
+}
+
+model Location {
+  locationId   String        @id @default(uuid())
   address      String
-  picture      String
-  joiningDate  DateTime
-  refreshToken String?
+  city         String
+  country      String
+  state        String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  organization Organization?
+  department   Department?
+  employee     Employee?
+}
+
+model Organization {
+  organizationId   String    @id @default(uuid())
+  organizationName String
+  // locationId
+  location         Location? @relation(fields: [locationId], references: [locationId])
+  locationId       String?   @unique
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  departments Department[]
+}
+
+model Department {
+  departmentId   String       @id @default(uuid())
+  // organizationId
+  Organization   Organization @relation(fields: [organizationId], references: [organizationId])
+  organizationId String
+
+  // locationId
+  location   Location? @relation(fields: [locationId], references: [locationId])
+  locationId String?   @unique
+
+  // managerId   
+  manager   Employee? @relation("DepartmentManager", fields: [managerId], references: [id])
+  managerId String    @unique
+
+  departmentName String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  employees      Employee[]
+}
+
+model Attendance {
+  attendanceId String @id @default(uuid())
+
+  // EmployeeId
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  attendanceDate DateTime
+  checkIn        DateTime
+  checkOut       DateTime
+  earlyDeparture DateTime
+  lateArrival    DateTime
+  totalHours     Float
+  absent         Boolean
+  note           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Workshift {
+  shiftId String @id @default(uuid())
+
+  // EmployeeId
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  // shiftTypeId DateTime
+  ShiftType   ShiftType @relation(fields: [shiftTypeId], references: [shiftTypeId])
+  shiftTypeId String
+
+  shiftDate DateTime
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ShiftType {
+  shiftTypeId String      @id @default(uuid())
+  shiftName   String
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  workshifts  Workshift[]
+}
+
+model Contract {
+  contractId String    @id @default(uuid())
+  // EmployeeId
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+
+  startDate     DateTime
+  endDate       DateTime
+  jobTitle      String
+  payFrequency  String
+  hoursPerWeek  Int
+  overTimeRate  Float
+  bonuses       Float
+  note          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  salaryReviews SalaryReview[]
+}
+
+model SalaryReview {
+  salaryReviewId String    @id @default(uuid())
+  // contractId
+  Contract       Contract? @relation(fields: [contractId], references: [contractId])
+  contractId     String?
+
+  date         DateTime
+  salary       Float
+  reason       String
+  payFrequency String
+  note         String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
-model Salary {
-  id     String @id @default(uuid())
-  amount Int
+model LeaveRequest {
+  leaveRequestId String   @id @default(uuid())
+  // EmployeeId
+  Employee       Employee @relation("LeaveRequests", fields: [employeeId], references: [id])
+  employeeId     String
+
+  // approverId
+  approver   Employee? @relation("LeaveRequestApproveds", fields: [approverId], references: [id])
+  approverId String?
+
+  // leaveTypeId
+  LeaveType   LeaveType @relation(fields: [leaveTypeId], references: [leaveTypeId])
+  leaveTypeId String
+
+  requestDate DateTime
+  startDate   DateTime
+  endDate     DateTime
+  isApproved  Boolean
+  reason      String
+  note        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LeaveType {
+  leaveTypeId   String         @id @default(uuid())
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  leaveRequests LeaveRequest[]
+}
+
+model Payroll {
+  payrollId  String   @id @default(uuid())
+  // EmployeeId
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  payDate        DateTime
+  payPeriodStart DateTime
+  payPeriodEnd   DateTime
+  hoursWorked    Float
+  hourlyRate     Float
+  GrossPay       Float
+  NetPay         Float
+  note           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
