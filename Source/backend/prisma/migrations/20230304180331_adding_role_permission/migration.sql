@@ -18,6 +18,7 @@ CREATE TABLE `Role` (
     `updatedAt` DATETIME(3) NOT NULL,
     `deletedAt` DATETIME(3) NULL,
 
+    UNIQUE INDEX `Role_roleName_key`(`roleName`),
     PRIMARY KEY (`roleId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -30,17 +31,20 @@ CREATE TABLE `Permission` (
     `updatedAt` DATETIME(3) NOT NULL,
     `deletedAt` DATETIME(3) NULL,
 
+    UNIQUE INDEX `Permission_permissionName_key`(`permissionName`),
     PRIMARY KEY (`permissionId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Resource` (
     `resourceId` VARCHAR(191) NOT NULL,
+    `resourceName` VARCHAR(191) NOT NULL,
     `deleted` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `deletedAt` DATETIME(3) NULL,
 
+    UNIQUE INDEX `Resource_resourceName_key`(`resourceName`),
     PRIMARY KEY (`resourceId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
