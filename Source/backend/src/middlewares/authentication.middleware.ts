@@ -1,6 +1,6 @@
-import { DataStoredInToken, RequestWithProfile } from '../interfaces/auth.interface';
+import { DataStoredInAccessToken, DataStoredInRefreshToken, RequestWithProfile } from '../interfaces/auth.interface';
 import { Response, NextFunction } from 'express';
-import { HttpException } from '../exceptions/HttpException';
+import { HttpException } from '../exceptions/httpException';
 import * as jwt from 'jsonwebtoken';
 import { prisma } from '../database/prisma.singleton';
 require("dotenv").config();
@@ -11,7 +11,7 @@ export const authMiddleware = async (req: RequestWithProfile, res: Response, nex
 
     if (Authorization) {
       const secretKey: string = process.env.SECRET_KEY;
-      const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
+      const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInAccessToken;
       const id = verificationResponse.id;
       const findUser = await prisma.employee.findUnique({ where: { id: id } });
       if (findUser) {
@@ -34,7 +34,7 @@ export const refreshMiddleware = async (req: RequestWithProfile, res: Response, 
 
     if (Authorization) {
       const secretKey: string = process.env.REFRESH_KEY;
-      const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
+      const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInRefreshToken;
       const id = verificationResponse.id;
       const findUser = await prisma.employee.findUnique({ where: { id: id } });
       if (findUser) {
