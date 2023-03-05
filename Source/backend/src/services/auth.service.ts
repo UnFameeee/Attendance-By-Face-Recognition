@@ -1,25 +1,23 @@
 import { PrismaClient, Employee } from "@prisma/client";
 import { CreateEmployeeDto } from '../dtos/createEmployee.dto';
-import { HttpException } from '../exceptions/HttpException';
+import { HttpException } from '../exceptions/httpException';
 import { LoginDto } from "../dtos/login.dto";
-import { TokenData, DataStoredInToken } from '../interfaces/auth.interface';
+import { TokenData, DataStoredInAccessToken, DataStoredInRefreshToken } from '../interfaces/auth.interface';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as argon2 from 'argon2';
-import { ResponseData } from "../config/ResponseData.config";
-import { ResponseToken } from "../config/ResponseToken.config";
+import { ResponseData } from "../config/responseData.config";
+import { ResponseToken } from "../config/responseToken.config";
 import { prisma } from '../database/prisma.singleton';
 require("dotenv").config();
 
 class AuthenticationService {
-  public employee = prisma.employee;
-
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {
     const expiresIn: number = Number.parseInt(process.env.SECRET_EXPRIED);
     const secret = process.env.SECRET_KEY;
-    const dataStoredInToken: DataStoredInToken = {
+    const dataStoredInToken: DataStoredInAccessToken = {
       id: employeeData.id,
-      email: employeeData.email
+      email: employeeData.email,
     }
     return {
       expiresIn,
@@ -30,7 +28,7 @@ class AuthenticationService {
   public async createRefreshToken(employeeData: Employee): Promise<TokenData> {
     const expiresIn: number = Number.parseInt(process.env.REFRESH_EXPIRED);
     const secret = process.env.REFRESH_KEY;
-    const dataStoredInToken: DataStoredInToken = {
+    const dataStoredInToken: DataStoredInRefreshToken = {
       id: employeeData.id,
     }
     return {
@@ -41,16 +39,24 @@ class AuthenticationService {
 
   public async registration(employeeData: CreateEmployeeDto): Promise<ResponseData<String>> {
     const response = new ResponseData<String>;
-    const findEmployee: Employee = await this.employee.findUnique({
+    const findEmployee: Employee = await prisma.employee.findUnique({
       where: {
         email: employeeData.email
       }
     })
     if (findEmployee) throw new HttpException(409, `This email ${employeeData.email} already exists`);
     const hashedPassword = await bcrypt.hash(employeeData.password, 10);
-    const createEmployeeData = await this.employee.create({
+    const role = await prisma.role.findUnique({
+      where: {
+        displayName: employeeData.displayName
+      }
+    })
+    const createEmployeeData = await prisma.employee.create({
       data: {
-        ...employeeData, password: hashedPassword
+        fullname: employeeData.fullname,
+        email: employeeData.email,
+        password: hashedPassword,
+        roleId: role.roleId,
       }
     });
     if (createEmployeeData) {
@@ -66,7 +72,7 @@ class AuthenticationService {
     const accessTokenData = await this.createAccessToken(employeeData);
     const refreshTokenData = await this.createRefreshToken(employeeData);
     //update the refresh token in database
-    await this.employee.update({
+    await prisma.employee.update({
       where: {
         id: employeeData.id,
       },
@@ -81,7 +87,7 @@ class AuthenticationService {
   }
 
   public async login(loginData: LoginDto): Promise<ResponseToken> {
-    const findEmployee: Employee = await this.employee.findUnique({
+    const findEmployee: Employee = await prisma.employee.findUnique({
       where: {
         email: loginData.email
       }
@@ -99,7 +105,7 @@ class AuthenticationService {
   public async logout(employee_id: string): Promise<ResponseData<boolean>> {
     const response = new ResponseData<boolean>();
     //delete refresh token
-    const queryData = await this.employee.update({
+    const queryData = await prisma.employee.update({
       where: {
         id: employee_id,
       },
@@ -113,7 +119,7 @@ class AuthenticationService {
 
   public async refreshToken(employee_id: string, refreshToken: string): Promise<ResponseToken> {
     //Get the token from database and compare refresh
-    const findEmployee = await this.employee.findUnique({
+    const findEmployee = await prisma.employee.findUnique({
       where: {
         id: employee_id
       }

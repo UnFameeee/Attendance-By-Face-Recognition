@@ -9,4 +9,7 @@ export class CreateEmployeeDto {
 
   @IsString()
   public password: string;
+
+  @IsString()
+  public displayName: string;
 }
