@@ -49,6 +49,7 @@ model Employee {
 model Role {
   roleId         String           @id @default(uuid())
   roleName       String           @unique
+  displayName    String           @unique
   deleted        Boolean          @default(false)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
