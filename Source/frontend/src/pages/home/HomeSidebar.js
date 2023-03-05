@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -17,13 +17,22 @@ import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";
 import avt_user from "../../assets/ta.jpeg";
 import { useSelector, useDispatch } from "react-redux";
+import { useRef } from "react";
 function HomeSidebar() {
   const sideBarWidth = useSelector(
     (state) => state.responsive.homeSideBarWidth
   );
+  const sideBarRef = useRef(null);
+  useEffect(() => {
+    console.log(
+      "width",
+      sideBarRef.current ? sideBarRef.current.offsetWidth : 0
+    );
+    // console.log("sideBarWidth",sideBarWidth)
+  }, [sideBarRef.current]);
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar collapsedWidth="64px" width="250px">
+      <Sidebar ref={sideBarRef} collapsedWidth="64px" width="250px">
         <Menu
           menuItemStyles={{
             button: ({ level, active, disabled }) => {
@@ -107,8 +116,9 @@ function HomeSidebar() {
       </Sidebar>
       <Box
         className="Main-content"
-        width={`calc(100vw - ${sideBarWidth})`}
-        height="100%"
+        flex='1'
+        // width={`calc(100vw - ${sideBarWidth})`}
+        minHeight="100vh"
         bgColor="#d7e2e978"
       >
         <Outlet />

@@ -9,3 +9,7 @@ export const isTokenExpired = (token) => {
   }
   return true;
 };
+
+export const Helper = {
+  isTokenExpired,
+};

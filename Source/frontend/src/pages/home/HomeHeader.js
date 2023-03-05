@@ -41,11 +41,11 @@ function HomeHeader() {
   const accessToken = JSON.parse(accessTokenJSON);
   const refreshToken = cookies.get("jwt_authentication");
   const handleCollapseSidebar = () => {
-    if (sideBarWidth === "250px") dispatch(collapsedHomeSideBar("56px"));
-    else {
-      dispatch(collapsedHomeSideBar("250px"));
-    }
-    collapseSidebar();
+    // if (sideBarWidth === "250px") dispatch(collapsedHomeSideBar("56px"));
+    // else {
+    //   dispatch(collapsedHomeSideBar("250px"));
+    // }
+    // collapseSidebar();
   };
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
@@ -80,6 +80,7 @@ function HomeHeader() {
       position="sticky"
       inset={0}
       zIndex="sticky"
+     
     >
       <Flex
         className="header-nav-left"

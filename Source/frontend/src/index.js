@@ -10,7 +10,7 @@ import { store } from "./store/store";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { createStandaloneToast } from '@chakra-ui/toast'
+import { createStandaloneToast } from "@chakra-ui/toast";
 
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
@@ -23,7 +23,8 @@ import Profile from "./pages/home/Setting/Profile";
 import ScrollToTop from "./components/ScrollToTop";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
-const { ToastContainer, toast } = createStandaloneToast()
+import General from "./pages/home/Employees/General";
+const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
     link: "#4374e3",
@@ -40,8 +41,8 @@ root.render(
           <ProSidebarProvider>
             <BrowserRouter>
               <ScrollToTop />
-              <ToastContainer/>
-              <GlobalHistory/>
+              <ToastContainer />
+              <GlobalHistory />
               <Routes>
                 <Route element={<Auth />}>
                   <Route path="/" element={<Login />} />
@@ -57,7 +58,7 @@ root.render(
                       <Route path="department" element={<Test />} />
                     </Route>
                     <Route path="employees">
-                      <Route path="general-employees" element={<Test />} />
+                      <Route path="general-employees" element={<General />} />
                       <Route path="work-experience" element={<Test />} />
                       <Route path="education" element={<Test />} />
                       <Route path="skill" element={<Test />} />
@@ -75,8 +76,8 @@ root.render(
                       <Route path="profile" element={<Profile />} />
                     </Route>
                   </Route>
-                  <Route path="*" element={<NotFound />} />
                 </Route>
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
           </ProSidebarProvider>
