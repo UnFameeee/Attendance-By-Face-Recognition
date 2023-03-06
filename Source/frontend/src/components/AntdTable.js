@@ -1,35 +1,48 @@
 import React, { useState } from "react";
-import { Button, Space, Table, Tag } from "antd";
-import { Avatar, Box } from "@chakra-ui/react";
+import { Button, Space, Table, Popconfirm, Drawer, Modal } from "antd";
+import { Avatar, Box, Icon } from "@chakra-ui/react";
+import { Button as ChakraButton } from "@chakra-ui/react";
 import { anTDTableDumpData } from "../pages/test/dumbTableData";
-
+import { MdDeleteForever, MdModeEdit } from "react-icons/md";
+import { Helper } from "../Utils/Helper";
+import AntDDrawver from "./AntDDrawver";
 function AntdTable() {
-  const data = [
-    {
-      key: "1",
-      name: "John Browndsad",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sydney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-  ];
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const columns = [
+    {
+      title: "Action",
+      key: "action",
+      filteredValue: filteredInfo.action || null,
+      render: (_, record) => (
+        <Space size="middle">
+          <ChakraButton
+            onClick={showDrawer}
+            variant="outline"
+            colorScheme="messenger"
+          >
+            <Icon boxSize="1.2rem" as={MdModeEdit} />
+          </ChakraButton>
+          <AntDDrawver open={open} setOpen={setOpen} />
+          <Popconfirm
+            title="Delete the record"
+            description="Are you sure to delete this record?"
+            onConfirm={() => confirm(record)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <ChakraButton variant="outline" colorScheme="orange">
+              <Icon boxSize="1.2rem" as={MdDeleteForever} />
+            </ChakraButton>
+          </Popconfirm>
+        </Space>
+      ),
+      width: "10px",
+    },
     {
       title: "Full Name",
       dataIndex: "fullName",
@@ -53,45 +66,40 @@ function AntdTable() {
       sortOrder: sortedInfo.columnKey === "fullName" ? sortedInfo.order : null,
     },
     {
+      title: "Picture",
+      key: "picture",
+      dataIndex: "picture",
+      filteredValue: filteredInfo.picture || null,
+      onFilter: (value, record) => record.picture.indexOf(value) === 0,
+      render: (record) => <Avatar src={record} />,
+    },
+    {
       title: "Role",
       dataIndex: "role",
       key: "role",
+      filteredValue: filteredInfo.role || null,
       onFilter: (value, record) => record.role.indexOf(value) === 0,
       sorter: (a, b) => a.role.length - b.role.length,
       sortOrder: sortedInfo.columnKey === "role" ? sortedInfo.order : null,
     },
     {
-        title: "Phone",
-        dataIndex: "phoneNumber",
-        key: "phoneNumber",
-        onFilter: (value, record) => record.phoneNumber.indexOf(value) === 0,
-        sorter: (a, b) => a.phoneNumber.length - b.phoneNumber.length,
-        sortOrder: sortedInfo.columnKey === "phoneNumber" ? sortedInfo.order : null,
-      },
+      title: "Phone",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      filteredValue: filteredInfo.phoneNumber || null,
+      onFilter: (value, record) => record.phoneNumber.indexOf(value) === 0,
+      sorter: (a, b) => a.phoneNumber.length - b.phoneNumber.length,
+      sortOrder:
+        sortedInfo.columnKey === "phoneNumber" ? sortedInfo.order : null,
+    },
     {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      filteredValue: filteredInfo.address || null,
       onFilter: (value, record) => record.address.indexOf(value) === 0,
       sorter: (a, b) => a.address.length - b.address.length,
       sortOrder: sortedInfo.columnKey === "address" ? sortedInfo.order : null,
-    },
-    {
-      title: "Picture",
-      key: "picture",
-      dataIndex: "picture",
-      onFilter: (value, record) => record.picture.indexOf(value) === 0,
-      render:(record) => <Avatar src={record} /> ,
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
-        </Space>
-      ),
     },
   ];
   const rowSelection = {
@@ -101,6 +109,7 @@ function AntdTable() {
         "selectedRows: ",
         selectedRows
       );
+      setSelectedRowKeys(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
       disabled: record.name === "Disabled User",
@@ -118,11 +127,56 @@ function AntdTable() {
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
+
+  const confirm = (record) => {
+    console.log(record);
+  };
+  const cancel = (e) => {
+    console.log(e);
+  };
+  const showDrawer = () => {
+    setOpen(true);
+    var query =
+      "div .ant-drawer.ant-drawer-right.css-dev-only-do-not-override-10ed4xt.ant-drawer-open";
+    var indicatorQuery =
+      "div .ant-drawer.ant-drawer-right.css-dev-only-do-not-override-10ed4xt.ant-drawer-open .ant-drawer-content-wrapper .table-action-drawer";
+    Helper.RemoveDuplicateDivs(query, indicatorQuery);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  const handleEdit = (record) => {
+    console.log(record);
+  };
   return (
     <>
-      <Box>
-        <Button onClick={clearAll}>Clear filters and sorters</Button>
-      </Box>
+      <Space>
+        <ChakraButton colorScheme="teal" onClick={clearAll}>
+          Clear filters and sorters
+        </ChakraButton>
+        {selectedRowKeys.length > 1 && (
+          <>
+            <ChakraButton
+              colorScheme="orange"
+              onClick={() => {
+                setModalOpen(true);
+              }}
+            >
+              Range Delete
+            </ChakraButton>
+            <Modal
+              title="Are you sure to delete these record?"
+              centered
+              open={modalOpen}
+              onOk={() => {
+                setModalOpen(false);
+                console.log(selectedRowKeys);
+              }}
+              onCancel={() => setModalOpen(false)}
+            ></Modal>
+          </>
+        )}
+      </Space>
       <Table
         columns={columns}
         dataSource={anTDTableDumpData}

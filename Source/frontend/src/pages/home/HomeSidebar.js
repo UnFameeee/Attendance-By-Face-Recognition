@@ -23,13 +23,13 @@ function HomeSidebar() {
     (state) => state.responsive.homeSideBarWidth
   );
   const sideBarRef = useRef(null);
-  useEffect(() => {
-    console.log(
-      "width",
-      sideBarRef.current ? sideBarRef.current.offsetWidth : 0
-    );
-    // console.log("sideBarWidth",sideBarWidth)
-  }, [sideBarRef.current]);
+  // useEffect(() => {
+  //   console.log(
+  //     "width",
+  //     sideBarRef.current ? sideBarRef.current.offsetWidth : 0
+  //   );
+  //   // console.log("sideBarWidth",sideBarWidth)
+  // }, [sideBarRef.current]);
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar ref={sideBarRef} collapsedWidth="64px" width="250px">
