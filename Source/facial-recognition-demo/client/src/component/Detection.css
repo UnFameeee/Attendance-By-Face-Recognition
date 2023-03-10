@@ -1,0 +1,19 @@
+.template {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#video {
+  width: 720px;
+  height: 560px;
+  border: 1px solid red;
+}
+
+#canvas {
+  position: absolute;
+}
