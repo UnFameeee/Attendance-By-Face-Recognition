@@ -60,14 +60,14 @@ function Profile() {
           workLocation: "",
           status: "",
           joiningDate: undefined,
-          role:"",
+          role: "",
         }}
         validationSchema={Yup.object({
           phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
         })}
         onSubmit={(values, actions) => {
           alert(JSON.stringify(values, null, 2));
-          // actions.resetForm();
+          actions.resetForm();
         }}
       >
         {(formik) => (
@@ -179,8 +179,8 @@ function Profile() {
                     />
                   </Flex>
                   <FormTextField
+                    isTextAreaField={true}
                     name="address"
-                    isAddress={true}
                     label="Address"
                     placeholder="Search and select your address..."
                     formik={formik}

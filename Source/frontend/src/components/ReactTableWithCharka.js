@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTable } from "react-table";
+import { usePagination, useRowSelect, useTable } from "react-table";
 import {
   Table,
   Tbody,
@@ -22,114 +22,173 @@ import {
   MenuItem,
   Menu,
   Stack,
+  Flex,
+  Input,
+  Select,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import avt_test from "../assets/ta.jpeg";
-import {
-  dumbTableData,
-  roleCodeColor,
-  tableRowAction,
-} from "../pages/test/dumbTableData";
-
-function ReactTableWithCharka() {
-  const data = React.useMemo(() => dumbTableData);
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Select",
-        accessor: "action", // accessor is the "key" in the data
-      },
-      {
-        Header: "Picture",
-        accessor: "picture",
-        isPicture: true,
-      },
-      {
-        Header: "Full Name",
-        accessor: "fullName",
-      },
-      {
-        Header: "Email",
-        accessor: "email",
-      },
-      {
-        Header: "Role",
-        accessor: "role",
-        isBadge: true,
-      },
-      {
-        Header: "Phone Number",
-        accessor: "phoneNumber",
-      },
-      {
-        Header: "Address",
-        accessor: "address",
-      },
-    ],
-    []
-  );
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
+import { dumbTableData, roleCodeColor } from "../pages/test/dumbTableData";
+import debounce from "lodash/debounce";
+function ReactTableWithCharka(props) {
+  const { data, columns, handleDeleteRange, tableRowAction } = props;
+  const debouncedGotoPage = debounce((value) => {
+    const pageNumber = value ? Number(value) - 1 : 0;
+    gotoPage(pageNumber);
+  }, 500);
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    page,
+    prepareRow,
+    selectedFlatRows,
+    nextPage,
+    previousPage,
+    gotoPage,
+    canNextPage,
+    canPreviousPage,
+    pageCount,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    {
       columns,
       data,
-    });
-
-  const [isCheckAll, setIsCheckAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
-  const [isCurrentPage, setIsCurrentPage] = useState(null);
-
-  const handleSelectAll = () => {
-    setIsCheckAll(!isCheckAll);
-    setIsCheck(data.map((_, index) => index.toString()));
-    if (isCheckAll) {
-      setIsCheck([]);
-    }
-  };
-  const handleClick = (id, checked) => {
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
-    }
-  };
-  const handleClickPaging = (id, isActive) => {
-    if (isActive == "false") {
-      console.log("page ", id + 1);
-      setIsCurrentPage(id);
-    }
-    return;
-  };
+      initialState: { pageIndex: 1, pageSize: 10 },
+    },
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+        {
+          id: "action",
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            <Flex gap="5px">
+              <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+              <Text>Action</Text>
+            </Flex>
+          ),
+          Cell: ({ row }) => (
+            <HStack>
+              <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+              <Menu>
+                <MenuButton colorScheme="blue" variant="outline" as={Button}>
+                  <Icon as={FiMoreVertical} />
+                </MenuButton>
+                <MenuList>
+                  {tableRowAction.map((item) => {
+                    return (
+                      <MenuItem
+                        key={item.actionName}
+                        onClick={() => item.func(row.values, item.actionName)}
+                      >
+                        {item.actionName}
+                      </MenuItem>
+                    );
+                  })}
+                </MenuList>
+              </Menu>
+            </HStack>
+          ),
+        },
+        ...columns,
+      ]);
+    },
+    usePagination,
+    useRowSelect
+  );
   return (
-    <Stack>
-      <Box className="tool-bar"></Box>
+    <Stack position="relative" marginTop="0px !important">
+      <HStack position="absolute" top="-40px" left="107px" display='flex' width={`calc(100% - 107px)`} className="tool-bar">
+        <HStack flex='1'>
+          <Button colorScheme="blue">Reset</Button>
+          <Button
+            onClick={() => handleDeleteRange(selectedFlatRows)}
+            isDisabled={selectedFlatRows.length < 2}
+            colorScheme="blue"
+          >
+            Delete Range
+          </Button>
+        </HStack>
+        <HStack
+          spacing="10px"
+          display="flex"
+          justifyContent="flex-end"
+          width="100%"
+        >
+          <Flex alignItems="center">
+            <Text fontWeight="semibold">
+              Page {pageIndex + 1} of {pageCount}
+            </Text>
+          </Flex>
+          <Button
+            colorScheme="blue"
+            onClick={() => gotoPage(0)}
+            isDisabled={!canPreviousPage}
+          >
+            <Icon as={MdSkipPrevious} />
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={() => previousPage()}
+            isDisabled={!canPreviousPage}
+          >
+            Previous
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={() => nextPage()}
+            isDisabled={!canNextPage}
+          >
+            Next
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={() => gotoPage(pageCount - 1)}
+            isDisabled={!canNextPage}
+          >
+            <Icon as={MdSkipNext} />
+          </Button>
+
+          <Flex alignItems="center"  gap="5px">
+            <Text fontWeight="semibold">Go to</Text>
+            <Input
+              flex="1"
+              type="number"
+              background="white"
+              defaultValue={pageIndex + 1}
+              onChange={(e) => debouncedGotoPage(e.target.value)}
+            />
+          </Flex>
+          <Select
+            width="200px"
+            value={pageSize}
+            background="white"
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+            }}
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+      </HStack>
       <TableContainer border="1px solid gray" rounded="lg">
         <Table variant="simple" {...getTableProps()}>
-          <Thead bgColor="#9cb8ca">
+          <Thead bgColor="#224562">
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, index) => {
-                  if (index == "0") {
-                    return (
-                      <Th paddingRight={0} {...column.getHeaderProps()}>
-                        <Checkbox
-                          isChecked={isCheckAll}
-                          onChange={handleSelectAll}
-                          colorScheme="green"
-                          size="lg"
-                        >
-                          <Text
-                            textTransform="capitalize"
-                            fontWeight="semibold"
-                            fontSize="1rem"
-                          ></Text>
-                        </Checkbox>
-                      </Th>
-                    );
-                  }
+                {headerGroup.headers.map((column) => {
                   return (
                     <Th
                       textTransform="capitalize"
                       fontSize="lg"
+                      color="white"
                       {...column.getHeaderProps()}
                     >
                       {column.render("Header")}
@@ -140,99 +199,26 @@ function ReactTableWithCharka() {
             ))}
           </Thead>
           <Tbody bgColor="white" {...getTableBodyProps()}>
-            {rows.map((row) => {
+            {page.map((row) => {
               prepareRow(row);
               return (
                 <Tr {...row.getRowProps()}>
-                  {row.cells.map((cell, index, id) => {
-                    if (index == "0") {
-                      return (
-                        <Td
-                          paddingRight={0}
-                          width="50px"
-                          {...cell.getCellProps()}
+                  {row.cells.map((cell) => {
+                    return (
+                      <Td {...cell.getCellProps()}>
+                        <Box
+                          width={
+                            cell.column.cellWidth
+                              ? cell.column.cellWidth
+                              : "none"
+                          }
+                          textOverflow="ellipsis"
+                          overflow="hidden"
                         >
-                          <HStack>
-                            <Checkbox
-                              key={id}
-                              id={id}
-                              isChecked={isCheck.includes(id[0].row.id)}
-                              onChange={(e) => {
-                                console.log(e);
-                                handleClick(id[0].row.id, e.target.checked);
-                              }}
-                              colorScheme="green"
-                              size="lg"
-                            ></Checkbox>
-                            <Menu>
-                              <MenuButton>
-                                {" "}
-                                <IconButton
-                                  colorScheme="blue"
-                                  variant="outline"
-                                  icon={<FiMoreVertical />}
-                                />
-                              </MenuButton>
-                              <MenuList>
-                                {tableRowAction.map((item) => {
-                                  return (
-                                    <MenuItem
-                                      key={item.label}
-                                      onClick={() =>
-                                        item.func(cell.row.values, item.label)
-                                      }
-                                    >
-                                      {item.label}
-                                    </MenuItem>
-                                  );
-                                })}
-                              </MenuList>
-                            </Menu>
-                          </HStack>
-                        </Td>
-                      );
-                    } else {
-                      if (cell.column.isPicture) {
-                        return (
-                          <Td>
-                            <Avatar src={cell.value} />
-                          </Td>
-                        );
-                      } else if (cell.column.isBadge) {
-                        return (
-                          <Td>
-                            {roleCodeColor.map((item) => {
-                              if (
-                                Object.keys(item)[0].toLowerCase() ===
-                                cell.value.toLowerCase()
-                              ) {
-                                return (
-                                  <Badge
-                                    colorScheme={Object.values(item)[0]}
-                                    fontSize="lg"
-                                  >
-                                    {cell.render("Cell")}
-                                  </Badge>
-                                );
-                              }
-                            })}
-                          </Td>
-                        );
-                      }
-                      return (
-                        <Td {...cell.getCellProps()}>
-                          <Text
-                            maxWidth={
-                              cell.column.mWidth ? cell.column.mWidth : "200px"
-                            }
-                            textOverflow="ellipsis"
-                            overflow="hidden"
-                          >
-                            {cell.render("Cell")}
-                          </Text>
-                        </Td>
-                      );
-                    }
+                          {cell.render("Cell")}
+                        </Box>
+                      </Td>
+                    );
                   })}
                 </Tr>
               );
@@ -240,31 +226,6 @@ function ReactTableWithCharka() {
           </Tbody>
         </Table>
       </TableContainer>
-      <Box display="flex" justifyContent="flex-end" className="paging">
-        <HStack>
-          <Button isDisabled={isCurrentPage == 0}>
-            <Icon boxSize="15px" as={GrPrevious} />
-          </Button>
-          {Array.from({ length: 5 }).map((_, index) => {
-            return (
-              <Button
-                onClick={(e) => {
-                  handleClickPaging(index, e.target.dataset.isactive);
-                }}
-                data-isActive={isCurrentPage == index}
-                isActive={!(isCurrentPage == index)}
-                bgColor="#99b0be"
-                color="white"
-              >
-                {index + 1}
-              </Button>
-            );
-          })}
-          <Button isDisabled={isCurrentPage == 4}>
-            <Icon boxSize="15px" as={GrNext} />
-          </Button>
-        </HStack>
-      </Box>
     </Stack>
   );
 }

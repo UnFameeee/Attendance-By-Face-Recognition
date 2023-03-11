@@ -15,15 +15,19 @@ import * as Yup from "yup";
 import { LockIcon, AtSignIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import React from "react";
+import React, { useEffect } from "react";
 import AuthTextField from "../../components/AuthTextField";
 import { useMutation } from "react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { login } from "../../services/auth/auth";
 import { setAuth, setUser } from "../../store/Slice/authSlice";
 import jwtDecode from "jwt-decode";
+import { useRowSelect } from "react-table";
+import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
+import { useProSidebar } from "react-pro-sidebar";
+
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();

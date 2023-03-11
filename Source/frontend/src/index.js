@@ -23,8 +23,7 @@ import Profile from "./pages/home/Setting/Profile";
 import ScrollToTop from "./components/ScrollToTop";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
-import General from "./pages/home/Employees/General";
-import ErrorBoundary from "antd/es/alert/ErrorBoundary";
+import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -59,7 +58,7 @@ root.render(
                       <Route path="department" element={<Test />} />
                     </Route>
                     <Route path="employees">
-                      <Route path="general-employees" element={<General />} />
+                      <Route path="general-employees" element={<EmployeesGeneral />} />
                       <Route path="work-experience" element={<Test />} />
                     </Route>
                     <Route path="payroll">
@@ -82,7 +81,6 @@ root.render(
           </ProSidebarProvider>
         </ChakraProvider>
       </Provider>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
 );

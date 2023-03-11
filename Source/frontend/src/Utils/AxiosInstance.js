@@ -43,6 +43,7 @@ axiosBase.interceptors.response.use(
         localStorage.setItem("accessToken", JSON.stringify(data.access));
         return axiosBase(originalRequest);
       } else {
+        debugger
         cookies.remove("jwt_authentication");
         localStorage.removeItem("accessToken");
         toast({
