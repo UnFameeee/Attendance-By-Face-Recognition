@@ -80,6 +80,7 @@ function HomeHeader() {
       position="sticky"
       inset={0}
       zIndex="sticky"
+     
     >
       <Flex
         className="header-nav-left"

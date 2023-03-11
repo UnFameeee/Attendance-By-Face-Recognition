@@ -27,10 +27,13 @@ import {
 } from "@chakra-ui/icons";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Form, Link, useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 import AuthTextField from "../../components/AuthTextField";
 import { useMutation } from "react-query";
 import { register } from "../../services/auth/auth";
+import { useProSidebar } from "react-pro-sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
 function Register() {
   const navigate = useNavigate();
   const toast = useToast();
@@ -55,6 +58,7 @@ function Register() {
       });
     },
   });
+  const dispatch = useDispatch()
   return (
     <Center height="100vh" width="100vw" bgColor="gray.200">
       <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">

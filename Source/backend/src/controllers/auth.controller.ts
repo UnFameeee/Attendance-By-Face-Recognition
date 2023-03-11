@@ -2,7 +2,6 @@ import { NextFunction, Request, Response, Router } from 'express';
 import AuthenticationService from '../services/auth.service';
 import { CreateEmployeeDto } from '../dtos/createEmployee.dto';
 import { LoginDto } from '../dtos/login.dto';
-import { ResponseData } from '../config/ResponseData.config';
 import { RequestWithProfile } from '../interfaces/auth.interface';
 
 class AuthenticationController {

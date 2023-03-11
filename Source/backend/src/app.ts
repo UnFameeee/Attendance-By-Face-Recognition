@@ -2,13 +2,11 @@ import express from 'express';
 
 import cors from "cors";
 import helmet from 'helmet';
-import morgan from 'morgan';
-import { logger, stream } from './utils/logger';
+import { logger } from './utils/logger';
 import errorMiddleware from './middlewares/error.middleware';
 import { Routes } from './interfaces/routes.interface';
 require("dotenv").config();
-
-import bodyParser from "body-parser";
+import { initializeRolePermission } from './database/initialize.permission';
 
 class App {
     public app: express.Application;
@@ -17,6 +15,7 @@ class App {
     constructor(routes: Routes[]) {
         this.app = express();
         this.port = process.env.PORT || 3000;
+        this.initializeData();
         this.initializeMiddlewares();
         this.initializeRoutes(routes);
         this.initializeErrorHandling();
@@ -34,6 +33,10 @@ class App {
         return this.app;
     }
 
+    private initializeData(){
+        initializeRolePermission()
+    }
+
     private initializeMiddlewares() {
         // this.app.use(morgan());
         this.app.use(cors());
@@ -44,7 +47,7 @@ class App {
 
     private initializeRoutes(routes: Routes[]) {
         routes.forEach(route => {
-            this.app.use('/', route.router);
+            this.app.use('/api', route.router);
         });
     }
 

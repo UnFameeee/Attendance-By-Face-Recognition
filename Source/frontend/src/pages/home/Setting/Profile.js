@@ -69,7 +69,7 @@ function Profile() {
         onSubmit={(values, actions) => {
 
           alert(JSON.stringify(values, null, 2));
-          // actions.resetForm();
+          actions.resetForm();
         }}
       >
         {(formik) => (
@@ -191,8 +191,8 @@ function Profile() {
                     />
                   </Flex>
                   <FormTextField
+                    isTextAreaField={true}
                     name="address"
-                    isAddress={true}
                     label="Address"
                     placeholder="Search and select your address..."
                     formik={formik}

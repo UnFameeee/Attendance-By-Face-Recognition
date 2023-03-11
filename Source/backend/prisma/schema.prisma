@@ -8,7 +8,12 @@ datasource db {
 }
 
 model Employee {
-  id           String      @id @default(uuid())
+  id String @id @default(uuid())
+
+  // roleId 
+  role   Role   @relation(fields: [roleId], references: [roleId])
+  roleId String
+
   // departmentId
   Department   Department? @relation(fields: [departmentId], references: [departmentId])
   departmentId String?
@@ -25,12 +30,13 @@ model Employee {
   dateOfBirth           DateTime?
   phoneNumber           Int?
   description           String?
-  role                  String?
   status                Boolean?
   joiningDate           DateTime?
   refreshToken          String?
+  deleted               Boolean        @default(false)
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
+  deletedAt             DateTime?
   attendances           Attendance[]
   contracts             Contract[]
   workshifts            Workshift[]
@@ -40,14 +46,69 @@ model Employee {
   departmentManager     Department?    @relation("DepartmentManager")
 }
 
+model Role {
+  roleId         String           @id @default(uuid())
+  roleName       String           @unique
+  displayName    String           @unique
+  deleted        Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  employee       Employee[]
+  rolePermission RolePermission[]
+}
+
+model Permission {
+  permissionId   String           @id @default(uuid())
+  permissionName String           @unique
+  deleted        Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  rolePermission RolePermission[]
+}
+
+model Resource {
+  resourceId     String           @id @default(uuid())
+  resourceName   String           @unique
+  deleted        Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  rolePermission RolePermission[]
+}
+
+model RolePermission {
+  // roleId
+  role   Role   @relation(fields: [roleId], references: [roleId])
+  roleId String
+
+  // permissionId
+  permission   Permission @relation(fields: [permissionId], references: [permissionId])
+  permissionId String
+
+  // resourceId
+  resource   Resource @relation(fields: [resourceId], references: [resourceId])
+  resourceId String
+
+  deleted   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@id([roleId, permissionId, resourceId])
+}
+
 model Location {
   locationId   String        @id @default(uuid())
   address      String
   city         String
   country      String
   state        String
+  deleted      Boolean       @default(false)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
   organization Organization?
   department   Department?
   employee     Employee?
@@ -60,8 +121,10 @@ model Organization {
   location         Location? @relation(fields: [locationId], references: [locationId])
   locationId       String?   @unique
 
+  deleted     Boolean      @default(false)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
   departments Department[]
 }
 
@@ -80,8 +143,10 @@ model Department {
   managerId String    @unique
 
   departmentName String
+  deleted        Boolean    @default(false)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?
   employees      Employee[]
 }
 
@@ -100,8 +165,10 @@ model Attendance {
   totalHours     Float
   absent         Boolean
   note           String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  deleted        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 }
 
 model Workshift {
@@ -118,8 +185,10 @@ model Workshift {
   shiftDate DateTime
   startTime DateTime
   endTime   DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deleted   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model ShiftType {
@@ -127,8 +196,10 @@ model ShiftType {
   shiftName   String
   startTime   DateTime
   endTime     DateTime
+  deleted     Boolean     @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
   workshifts  Workshift[]
 }
 
@@ -146,8 +217,10 @@ model Contract {
   overTimeRate  Float
   bonuses       Float
   note          String
+  deleted       Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
   salaryReviews SalaryReview[]
 }
 
@@ -162,8 +235,10 @@ model SalaryReview {
   reason       String
   payFrequency String
   note         String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  deleted      Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 }
 
 model LeaveRequest {
@@ -186,15 +261,19 @@ model LeaveRequest {
   isApproved  Boolean
   reason      String
   note        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  deleted     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 }
 
 model LeaveType {
   leaveTypeId   String         @id @default(uuid())
   name          String
+  deleted       Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
   leaveRequests LeaveRequest[]
 }
 
@@ -212,6 +291,8 @@ model Payroll {
   GrossPay       Float
   NetPay         Float
   note           String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  deleted        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 }

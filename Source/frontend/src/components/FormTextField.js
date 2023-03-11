@@ -10,6 +10,7 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  Select,
 } from "@chakra-ui/react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -35,7 +36,8 @@ function FormTextField({ ...props }) {
         <FormLabel>{props.label}</FormLabel>
         <Textarea
           {...field}
-          resize="none"
+          resize={props.isResize ?? "none"}
+          height={props.height ?? "none"}
           placeholder={props.placeholder ?? ""}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -54,6 +56,20 @@ function FormTextField({ ...props }) {
           }}
           onBlur={props.formik.handleBlur}
         />
+      </FormControl>
+    );
+  } else if (props.isSelectionField) {
+    return (
+      <FormControl isInvalid={meta.error && meta.touched}>
+        <FormLabel>{props.label}</FormLabel>
+        <Select {...field} placeholder={props.placeholder ?? ""}>
+          {props.selectionArray &&
+            props.selectionArray.map((item, index) => (
+              <option key={index} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+        </Select>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );

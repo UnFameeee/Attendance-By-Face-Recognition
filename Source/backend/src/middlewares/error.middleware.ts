@@ -1,7 +1,7 @@
-import { HttpException } from '../exceptions/HttpException';
+import { HttpException } from '../exceptions/httpException';
 import { NextFunction, Request, Response } from 'express';
 import { logger } from '../utils/logger';
-import { ResponseData } from '../config/ResponseData.config';
+import { ResponseData } from '../config/responseData.config';
 
 const errorMiddleware = (error: HttpException, req: Request, res: Response, next: NextFunction) => {
   var errorResponse = new ResponseData<String>();
