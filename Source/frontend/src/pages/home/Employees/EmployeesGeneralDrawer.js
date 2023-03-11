@@ -58,6 +58,7 @@ function EmployeesGeneralDrawer(props) {
   };
   const handleClose = () => {
     setOpenDrawerToEdit(false);
+    setEditData({})
     onClose();
   };
   useEffect(() => {

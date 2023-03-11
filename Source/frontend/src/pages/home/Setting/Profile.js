@@ -52,7 +52,7 @@ function Profile() {
           firstName: "",
           lastName: "",
           email: "",
-          gender: "",
+          gender: "male",
           phone: "",
           birthDate: undefined,
           about: "",
@@ -69,7 +69,7 @@ function Profile() {
         onSubmit={(values, actions) => {
 
           alert(JSON.stringify(values, null, 2));
-          actions.resetForm();
+          //actions.resetForm();
         }}
       >
         {(formik) => (

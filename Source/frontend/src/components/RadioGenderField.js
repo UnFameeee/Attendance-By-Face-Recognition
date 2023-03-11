@@ -7,7 +7,8 @@ function RadioGenderField({ name, onChange, onBlur, ...props }) {
       name={name}
       onBlur={onBlur}
       onChange={onChange}
-      defaultValue={props.arrayGender[0].value}
+      value={props.value}
+      defaultValue={ props.value || props.arrayGender[0].value}
     >
       <Stack direction="row">
         {props.arrayGender &&
