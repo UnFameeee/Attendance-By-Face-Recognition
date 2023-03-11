@@ -65,16 +65,6 @@ export const SideBarData = [
         url: "work-experience",
         icon: <FaUserClock fontSize={iconSize} />,
       },
-      {
-        title: "Education",
-        url: "education",
-        icon: <FaUserGraduate fontSize={iconSize} />,
-      },
-      {
-        title: "Skill",
-        url: "skill",
-        icon: <FaUserAstronaut fontSize={iconSize} />,
-      },
     ],
   },
   {

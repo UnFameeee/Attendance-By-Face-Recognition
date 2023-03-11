@@ -1,5 +1,5 @@
 import axios from "axios";
-import { isTokenExpired } from "./Helper";
+import { Helper, isTokenExpired } from "./Helper";
 import Cookies from "universal-cookie";
 import { createStandaloneToast } from "@chakra-ui/toast";
 import { globalNavigate } from "./GlobalHistory";
@@ -17,7 +17,7 @@ axiosBase.interceptors.request.use((config) => {
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
 
-  if (accessToken && !isTokenExpired(accessToken)) {
+  if (accessToken && !Helper.isTokenExpired(accessToken)) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
@@ -32,7 +32,7 @@ axiosBase.interceptors.response.use(
 
       const refreshToken = cookies.get("jwt_authentication");
 
-      if (refreshToken && !isTokenExpired(refreshToken)) {
+      if (refreshToken && !Helper.isTokenExpired(refreshToken)) {
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${refreshToken}`,
@@ -43,6 +43,7 @@ axiosBase.interceptors.response.use(
         localStorage.setItem("accessToken", JSON.stringify(data.access));
         return axiosBase(originalRequest);
       } else {
+        debugger
         cookies.remove("jwt_authentication");
         localStorage.removeItem("accessToken");
         toast({
