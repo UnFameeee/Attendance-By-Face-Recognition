@@ -7,17 +7,292 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id           String   @id @default(uuid())
-  username     String
-  password     String
-  email        String   @unique
-  refreshToken String?   
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+model Employee {
+  id String @id @default(uuid())
+
+  // roleId 
+  role   Role   @relation(fields: [roleId], references: [roleId])
+  roleId String
+
+  // departmentId
+  Department   Department? @relation(fields: [departmentId], references: [departmentId])
+  departmentId String?
+
+  // locationId
+  location   Location? @relation(fields: [locationId], references: [locationId])
+  locationId String?   @unique
+
+  picture               String?
+  fullname              String
+  email                 String         @unique
+  password              String
+  gender                String?
+  dateOfBirth           DateTime?
+  phoneNumber           String?
+  description           String?
+  status                Boolean?
+  joiningDate           DateTime?
+  refreshToken          String?
+  deleted               Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  deletedAt             DateTime?
+  attendances           Attendance[]
+  contracts             Contract[]
+  workshifts            Workshift[]
+  leaveRequests         LeaveRequest[] @relation("LeaveRequests")
+  leaveRequestApproveds LeaveRequest[] @relation("LeaveRequestApproveds")
+  payrolls              Payroll[]
+  departmentManager     Department?    @relation("DepartmentManager")
 }
 
-model Salary {
-  id     String @id @default(uuid())
-  amount Int
+model Role {
+  roleId         String           @id @default(uuid())
+  roleName       String           @unique
+  displayName    String           @unique
+  deleted        Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  employee       Employee[]
+  rolePermission RolePermission[]
+}
+
+model Permission {
+  permissionId   String           @id @default(uuid())
+  permissionName String           @unique
+  deleted        Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  rolePermission RolePermission[]
+}
+
+model Resource {
+  resourceId     String           @id @default(uuid())
+  resourceName   String           @unique
+  deleted        Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  rolePermission RolePermission[]
+}
+
+model RolePermission {
+  // roleId
+  role   Role   @relation(fields: [roleId], references: [roleId])
+  roleId String
+
+  // permissionId
+  permission   Permission @relation(fields: [permissionId], references: [permissionId])
+  permissionId String
+
+  // resourceId
+  resource   Resource @relation(fields: [resourceId], references: [resourceId])
+  resourceId String
+
+  deleted   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@id([roleId, permissionId, resourceId])
+}
+
+model Location {
+  locationId   String        @id @default(uuid())
+  address      String
+  city         String
+  country      String
+  state        String
+  deleted      Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  organization Organization?
+  department   Department?
+  employee     Employee?
+}
+
+model Organization {
+  organizationId   String    @id @default(uuid())
+  organizationName String
+  // locationId
+  location         Location? @relation(fields: [locationId], references: [locationId])
+  locationId       String?   @unique
+
+  deleted     Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  departments Department[]
+}
+
+model Department {
+  departmentId   String       @id @default(uuid())
+  // organizationId
+  Organization   Organization @relation(fields: [organizationId], references: [organizationId])
+  organizationId String
+
+  // locationId
+  location   Location? @relation(fields: [locationId], references: [locationId])
+  locationId String?   @unique
+
+  // managerId   
+  manager   Employee? @relation("DepartmentManager", fields: [managerId], references: [id])
+  managerId String    @unique
+
+  departmentName String
+  deleted        Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?
+  employees      Employee[]
+}
+
+model Attendance {
+  attendanceId String @id @default(uuid())
+
+  // EmployeeId
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  attendanceDate DateTime
+  checkIn        DateTime
+  checkOut       DateTime
+  earlyDeparture DateTime
+  lateArrival    DateTime
+  totalHours     Float
+  absent         Boolean
+  note           String
+  deleted        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+}
+
+model Workshift {
+  shiftId String @id @default(uuid())
+
+  // EmployeeId
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  // shiftTypeId DateTime
+  ShiftType   ShiftType @relation(fields: [shiftTypeId], references: [shiftTypeId])
+  shiftTypeId String
+
+  shiftDate DateTime
+  startTime DateTime
+  endTime   DateTime
+  deleted   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model ShiftType {
+  shiftTypeId String      @id @default(uuid())
+  shiftName   String
+  startTime   DateTime
+  endTime     DateTime
+  deleted     Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  workshifts  Workshift[]
+}
+
+model Contract {
+  contractId String    @id @default(uuid())
+  // EmployeeId
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+
+  startDate     DateTime
+  endDate       DateTime
+  jobTitle      String
+  payFrequency  String
+  hoursPerWeek  Int
+  overTimeRate  Float
+  bonuses       Float
+  note          String
+  deleted       Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  salaryReviews SalaryReview[]
+}
+
+model SalaryReview {
+  salaryReviewId String    @id @default(uuid())
+  // contractId
+  Contract       Contract? @relation(fields: [contractId], references: [contractId])
+  contractId     String?
+
+  date         DateTime
+  salary       Float
+  reason       String
+  payFrequency String
+  note         String
+  deleted      Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+}
+
+model LeaveRequest {
+  leaveRequestId String   @id @default(uuid())
+  // EmployeeId
+  Employee       Employee @relation("LeaveRequests", fields: [employeeId], references: [id])
+  employeeId     String
+
+  // approverId
+  approver   Employee? @relation("LeaveRequestApproveds", fields: [approverId], references: [id])
+  approverId String?
+
+  // leaveTypeId
+  LeaveType   LeaveType @relation(fields: [leaveTypeId], references: [leaveTypeId])
+  leaveTypeId String
+
+  requestDate DateTime
+  startDate   DateTime
+  endDate     DateTime
+  isApproved  Boolean
+  reason      String
+  note        String
+  deleted     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+model LeaveType {
+  leaveTypeId   String         @id @default(uuid())
+  name          String
+  deleted       Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  leaveRequests LeaveRequest[]
+}
+
+model Payroll {
+  payrollId  String   @id @default(uuid())
+  // EmployeeId
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  payDate        DateTime
+  payPeriodStart DateTime
+  payPeriodEnd   DateTime
+  hoursWorked    Float
+  hourlyRate     Float
+  GrossPay       Float
+  NetPay         Float
+  note           String
+  deleted        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 }

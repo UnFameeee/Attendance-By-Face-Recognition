@@ -1,25 +1,23 @@
-import { PrismaClient, Profile } from "@prisma/client";
-import { CreateProfileDto } from '../dtos/createProfile.dto';
-import { HttpException } from '../exceptions/HttpException';
+import { PrismaClient, Employee } from "@prisma/client";
+import { CreateEmployeeDto } from '../dtos/createEmployee.dto';
+import { HttpException } from '../exceptions/httpException';
 import { LoginDto } from "../dtos/login.dto";
-import { TokenData, DataStoredInToken } from '../interfaces/auth.interface';
+import { TokenData, DataStoredInAccessToken, DataStoredInRefreshToken } from '../interfaces/auth.interface';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as argon2 from 'argon2';
-import { ResponseData } from "../config/ResponseData.config";
-import { ResponseToken } from "../config/ResponseToken.config";
+import { ResponseData } from "../config/responseData.config";
+import { ResponseToken } from "../config/responseToken.config";
 import { prisma } from '../database/prisma.singleton';
 require("dotenv").config();
 
 class AuthenticationService {
-  public profile = prisma.profile;
-
-  public async createAccessToken(profileData: Profile): Promise<TokenData> {
+  public async createAccessToken(employeeData: Employee): Promise<TokenData> {
     const expiresIn: number = Number.parseInt(process.env.SECRET_EXPRIED);
     const secret = process.env.SECRET_KEY;
-    const dataStoredInToken: DataStoredInToken = {
-      id: profileData.id,
-      email: profileData.email
+    const dataStoredInToken: DataStoredInAccessToken = {
+      id: employeeData.id,
+      email: employeeData.email,
     }
     return {
       expiresIn,
@@ -27,11 +25,11 @@ class AuthenticationService {
     };
   }
 
-  public async createRefreshToken(profileData: Profile): Promise<TokenData> {
+  public async createRefreshToken(employeeData: Employee): Promise<TokenData> {
     const expiresIn: number = Number.parseInt(process.env.REFRESH_EXPIRED);
     const secret = process.env.REFRESH_KEY;
-    const dataStoredInToken: DataStoredInToken = {
-      id: profileData.id,
+    const dataStoredInToken: DataStoredInRefreshToken = {
+      id: employeeData.id,
     }
     return {
       expiresIn,
@@ -39,21 +37,29 @@ class AuthenticationService {
     };
   }
 
-  public async registration(profileData: CreateProfileDto): Promise<ResponseData<String>> {
+  public async registration(employeeData: CreateEmployeeDto): Promise<ResponseData<String>> {
     const response = new ResponseData<String>;
-    const findProfile: Profile = await this.profile.findUnique({
+    const findEmployee: Employee = await prisma.employee.findUnique({
       where: {
-        email: profileData.email
+        email: employeeData.email
       }
     })
-    if (findProfile) throw new HttpException(409, `This email ${profileData.email} already exists`);
-    const hashedPassword = await bcrypt.hash(profileData.password, 10);
-    const createProfileData = await this.profile.create({
+    if (findEmployee) throw new HttpException(409, `This email ${employeeData.email} already exists`);
+    const hashedPassword = await bcrypt.hash(employeeData.password, 10);
+    const role = await prisma.role.findUnique({
+      where: {
+        displayName: employeeData.displayName
+      }
+    })
+    const createEmployeeData = await prisma.employee.create({
       data: {
-        ...profileData, password: hashedPassword
+        fullname: employeeData.fullname,
+        email: employeeData.email,
+        password: hashedPassword,
+        roleId: role.roleId,
       }
     });
-    if (createProfileData) {
+    if (createEmployeeData) {
       response.result = "Register successfully"
     } else {
       response.message = "Register failed, try again!"
@@ -61,14 +67,14 @@ class AuthenticationService {
     return response;
   }
 
-  public async generateToken(profileData: Profile): Promise<ResponseToken> {
+  public async generateToken(employeeData: Employee): Promise<ResponseToken> {
     const response = new ResponseToken();
-    const accessTokenData = await this.createAccessToken(profileData);
-    const refreshTokenData = await this.createRefreshToken(profileData);
+    const accessTokenData = await this.createAccessToken(employeeData);
+    const refreshTokenData = await this.createRefreshToken(employeeData);
     //update the refresh token in database
-    await this.profile.update({
+    await prisma.employee.update({
       where: {
-        id: profileData.id,
+        id: employeeData.id,
       },
       data: {
         refreshToken: await argon2.hash(refreshTokenData.token),
@@ -81,27 +87,27 @@ class AuthenticationService {
   }
 
   public async login(loginData: LoginDto): Promise<ResponseToken> {
-    const findProfile: Profile = await this.profile.findUnique({
+    const findEmployee: Employee = await prisma.employee.findUnique({
       where: {
         email: loginData.email
       }
     })
-    if (!findProfile) throw new HttpException(409, `This email ${loginData.email} was not found`);
+    if (!findEmployee) throw new HttpException(409, `This email ${loginData.email} was not found`);
 
-    const isPasswordMatching = await bcrypt.compare(loginData.password, findProfile.password);
+    const isPasswordMatching = await bcrypt.compare(loginData.password, findEmployee.password);
     if (!isPasswordMatching) throw new HttpException(409, "Password is not matching");
 
-    findProfile.password = undefined;
+    findEmployee.password = undefined;
 
-    return await this.generateToken(findProfile);
+    return await this.generateToken(findEmployee);
   }
 
-  public async logout(profile_id: string): Promise<ResponseData<boolean>> {
+  public async logout(employee_id: string): Promise<ResponseData<boolean>> {
     const response = new ResponseData<boolean>();
     //delete refresh token
-    const queryData = await this.profile.update({
+    const queryData = await prisma.employee.update({
       where: {
-        id: profile_id,
+        id: employee_id,
       },
       data: {
         refreshToken: null,
@@ -111,21 +117,21 @@ class AuthenticationService {
     return response;
   }
 
-  public async refreshToken(profile_id: string, refreshToken: string): Promise<ResponseToken> {
+  public async refreshToken(employee_id: string, refreshToken: string): Promise<ResponseToken> {
     //Get the token from database and compare refresh
-    const findProfile = await this.profile.findUnique({
+    const findEmployee = await prisma.employee.findUnique({
       where: {
-        id: profile_id
+        id: employee_id
       }
     })
-    if (!findProfile)
+    if (!findEmployee)
       throw new HttpException(401, "Access denied");
 
-    const refreshTokenMatches = await argon2.verify(findProfile.refreshToken, refreshToken);
+    const refreshTokenMatches = await argon2.verify(findEmployee.refreshToken, refreshToken);
     if (!refreshTokenMatches)
       throw new HttpException(404, "Token invalid");
 
-    const tokens: ResponseToken = await this.generateToken(findProfile);
+    const tokens: ResponseToken = await this.generateToken(findEmployee);
     return tokens;
   }
 }
