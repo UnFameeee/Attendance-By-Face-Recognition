@@ -62,7 +62,11 @@ function FormTextField({ ...props }) {
     return (
       <FormControl isInvalid={meta.error && meta.touched}>
         <FormLabel>{props.label}</FormLabel>
-        <Select {...field} placeholder={props.placeholder ?? ""}>
+        <Select
+          {...field}
+          defaultValue=""
+          placeholder={props.placeholder ?? ""}
+        >
           {props.selectionArray &&
             props.selectionArray.map((item, index) => (
               <option key={index} value={item.value}>

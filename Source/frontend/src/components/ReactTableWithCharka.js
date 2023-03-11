@@ -25,26 +25,37 @@ import {
   Flex,
   Input,
   Select,
+  Image,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import avt_test from "../assets/ta.jpeg";
-import { dumbTableData, roleCodeColor } from "../pages/test/dumbTableData";
 import debounce from "lodash/debounce";
+import ChakraAlertDialog from "./ChakraAlertDialog";
 function ReactTableWithCharka(props) {
-  const { data, columns, handleDeleteRange, tableRowAction } = props;
+  const { data, columns, handleDeleteRange, onAddEditOpen, tableRowAction } =
+    props;
   const debouncedGotoPage = debounce((value) => {
     const pageNumber = value ? Number(value) - 1 : 0;
     gotoPage(pageNumber);
   }, 500);
   const {
-    getTableProps,
-    getTableBodyProps,
+    isOpen: isDeleteRangeOpen,
+    onOpen: onDeleteRangeOpen,
+    onClose: onDeleteRangeClose,
+  } = useDisclosure();
+  const {
     headerGroups,
     rows,
     page,
-    prepareRow,
     selectedFlatRows,
     nextPage,
     previousPage,
@@ -54,11 +65,14 @@ function ReactTableWithCharka(props) {
     pageCount,
     setPageSize,
     state: { pageIndex, pageSize },
+    getTableProps,
+    getTableBodyProps,
+    prepareRow,
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: 1, pageSize: 10 },
+      initialState: { pageIndex: 0, pageSize: 10 },
     },
     (hooks) => {
       hooks.visibleColumns.push((columns) => [
@@ -82,7 +96,7 @@ function ReactTableWithCharka(props) {
                     return (
                       <MenuItem
                         key={item.actionName}
-                        onClick={() => item.func(row.values, item.actionName)}
+                        onClick={() => item.func(row?.values, item.actionName)}
                       >
                         {item.actionName}
                       </MenuItem>
@@ -99,28 +113,46 @@ function ReactTableWithCharka(props) {
     usePagination,
     useRowSelect
   );
+  const handleDeleteRangeClick = () => {
+    onDeleteRangeOpen();
+  };
+  const handleDeleteRangeAlertAccept = () => {
+    onDeleteRangeClose();
+    handleDeleteRange(selectedFlatRows);
+  };
   return (
-    <Stack position="relative" marginTop="0px !important">
-      <HStack position="absolute" top="-40px" left="107px" display='flex' width={`calc(100% - 107px)`} className="tool-bar">
-        <HStack flex='1'>
+    <Stack marginTop="0px !important">
+      <HStack display="flex" width='100%' className="tool-bar">
+        <HStack >
+          <Button colorScheme="blue" onClick={onAddEditOpen}>
+            Add New
+          </Button>
           <Button colorScheme="blue">Reset</Button>
           <Button
-            onClick={() => handleDeleteRange(selectedFlatRows)}
+            onClick={handleDeleteRangeClick}
             isDisabled={selectedFlatRows.length < 2}
             colorScheme="blue"
           >
             Delete Range
           </Button>
+          <ChakraAlertDialog
+            isOpen={isDeleteRangeOpen}
+            onClose={onDeleteRangeClose}
+            onAccept={handleDeleteRangeAlertAccept}
+            message=""
+            title={`Delete ${selectedFlatRows.length} items`}
+          />
         </HStack>
         <HStack
           spacing="10px"
           display="flex"
           justifyContent="flex-end"
           width="100%"
+          flex="1"
         >
           <Flex alignItems="center">
             <Text fontWeight="semibold">
-              Page {pageIndex + 1} of {pageCount}
+              {pageIndex + 1}/{pageCount} {pageCount > 1 ? "pages" : "page"}
             </Text>
           </Flex>
           <Button
@@ -152,18 +184,19 @@ function ReactTableWithCharka(props) {
             <Icon as={MdSkipNext} />
           </Button>
 
-          <Flex alignItems="center"  gap="5px">
+          <Flex alignItems="center" gap="5px">
             <Text fontWeight="semibold">Go to</Text>
             <Input
               flex="1"
               type="number"
               background="white"
+              width="70px"
               defaultValue={pageIndex + 1}
               onChange={(e) => debouncedGotoPage(e.target.value)}
             />
           </Flex>
           <Select
-            width="200px"
+            width="150px"
             value={pageSize}
             background="white"
             onChange={(e) => {
@@ -198,31 +231,32 @@ function ReactTableWithCharka(props) {
               </Tr>
             ))}
           </Thead>
-          <Tbody bgColor="white" {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <Tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <Td {...cell.getCellProps()}>
-                        <Box
-                          width={
-                            cell.column.cellWidth
-                              ? cell.column.cellWidth
-                              : "none"
-                          }
-                          textOverflow="ellipsis"
-                          overflow="hidden"
-                        >
-                          {cell.render("Cell")}
-                        </Box>
-                      </Td>
-                    );
-                  })}
-                </Tr>
-              );
-            })}
+          <Tbody width="100%" bgColor="white" {...getTableBodyProps()}>
+            {rows?.length > 0 &&
+              page.map((row) => {
+                prepareRow(row);
+                return (
+                  <Tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <Td {...cell.getCellProps()}>
+                          <Box
+                            width={
+                              cell.column.cellWidth
+                                ? cell.column.cellWidth
+                                : "none"
+                            }
+                            textOverflow="ellipsis"
+                            overflow="hidden"
+                          >
+                            {cell.render("Cell")}
+                          </Box>
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
           </Tbody>
         </Table>
       </TableContainer>

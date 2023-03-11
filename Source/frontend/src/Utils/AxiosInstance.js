@@ -6,7 +6,7 @@ import { globalNavigate } from "./GlobalHistory";
 const { toast } = createStandaloneToast();
 
 const axiosBase = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL || "http://localhost:8081",
+  baseURL: process.env.REACT_APP_BASE_URL || "http://localhost:8081/api",
   headers: {
     "Content-Type": "application/json",
   },
