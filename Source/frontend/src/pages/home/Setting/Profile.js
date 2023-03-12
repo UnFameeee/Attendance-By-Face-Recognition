@@ -42,20 +42,18 @@ import google_logo from "../../../assets/google-ar21-removebg-preview.png";
 import FormTextField from "../../../components/FormTextField";
 import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
-import SearchAndSelectAddressField from "../../../components/SearchAndSelectAddressField";
 
 function Profile() {
   return (
     <Stack minHeight="100vh" spacing={3} paddingX={20} paddingTop={2}>
       <Formik
         initialValues={{
-          firstName: "",
-          lastName: "",
+          fullName: "",
           email: "",
+          gender: "male",
           phone: "",
           birthDate: undefined,
           about: "",
-          address: "",
           department: "",
           workLocation: "",
           status: "",
@@ -66,8 +64,9 @@ function Profile() {
           phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
         })}
         onSubmit={(values, actions) => {
+
           alert(JSON.stringify(values, null, 2));
-          actions.resetForm();
+          //actions.resetForm();
         }}
       >
         {(formik) => (
@@ -100,17 +99,9 @@ function Profile() {
                 <Stack spacing={3} p={4} px={8}>
                   <Flex gap={8}>
                     <FormTextField
-                      name="firstName"
-                      label="First Name"
-                      placeholder="Enter your First Name"
-                      leftIcon={
-                        <FaRegUserCircle color="#999" fontSize="1.5rem" />
-                      }
-                    />
-                    <FormTextField
-                      name="lastName"
-                      label="Last Name"
-                      placeholder="Enter your Last Name"
+                      name="fullName"
+                      label="Full Name"
+                      placeholder="Enter your Full Name"
                       leftIcon={
                         <FaRegUserCircle color="#999" fontSize="1.5rem" />
                       }
@@ -125,6 +116,16 @@ function Profile() {
                     leftIcon={
                       <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />
                     }
+                  />
+                  <FormTextField
+                    name="gender"
+                    isGender={true}
+                    label="Gender"
+                    arrayGender={[
+                      { label: "Male", value: "male" },
+                      { label: "Female", value: "female" },
+                    ]}
+                    formik={formik}
                   />
                   <Flex gap={8}>
                     <FormTextField
@@ -178,13 +179,6 @@ function Profile() {
                       }
                     />
                   </Flex>
-                  <FormTextField
-                    isTextAreaField={true}
-                    name="address"
-                    label="Address"
-                    placeholder="Search and select your address..."
-                    formik={formik}
-                  />
                   <Flex gap={8}>
                     <FormTextField
                       name="joiningDate"

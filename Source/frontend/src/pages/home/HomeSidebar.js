@@ -23,7 +23,7 @@ function HomeSidebar() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {true && (
-        <Sidebar collapsedWidth="64px" width="250px">
+        <Sidebar customBreakPoint="1005px" collapsedWidth="64px" width="250px">
           <Menu
             menuItemStyles={{
               button: ({ level, active, disabled }) => {

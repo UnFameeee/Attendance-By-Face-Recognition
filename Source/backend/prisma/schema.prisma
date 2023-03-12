@@ -28,7 +28,7 @@ model Employee {
   password              String
   gender                String?
   dateOfBirth           DateTime?
-  phoneNumber           String?
+  phoneNumber           Int?
   description           String?
   status                Boolean?
   joiningDate           DateTime?

@@ -7,6 +7,9 @@ import {
   InputLeftElement,
   InputRightElement,
   Input,
+  RadioGroup,
+  Stack,
+  Radio,
   Select,
 } from "@chakra-ui/react";
 import "react-phone-number-input/style.css";
@@ -14,6 +17,7 @@ import PhoneInput from "react-phone-number-input";
 import { Field, useField } from "formik";
 import { useState } from "react";
 import SearchAndSelectAddressField from "./SearchAndSelectAddressField";
+import RadioGenderField from "./RadioGenderField";
 function FormTextField({ ...props }) {
   const [field, meta] = useField(props);
   if (props.isDateField) {
@@ -39,11 +43,30 @@ function FormTextField({ ...props }) {
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
+  } else if (props.isGender) {
+    return (
+      <FormControl isInvalid={meta.error && meta.touched}>
+        <FormLabel>{props.label}</FormLabel>
+        <Field
+          {...field}
+          arrayGender={props.arrayGender}
+          as={RadioGenderField}
+          onChange={(e) => {
+            props.formik.setFieldValue("gender", e);
+          }}
+          onBlur={props.formik.handleBlur}
+        />
+      </FormControl>
+    );
   } else if (props.isSelectionField) {
     return (
       <FormControl isInvalid={meta.error && meta.touched}>
         <FormLabel>{props.label}</FormLabel>
-        <Select {...field} placeholder={props.placeholder ?? ""}>
+        <Select
+          {...field}
+          defaultValue=""
+          placeholder={props.placeholder ?? ""}
+        >
           {props.selectionArray &&
             props.selectionArray.map((item, index) => (
               <option key={index} value={item.value}>

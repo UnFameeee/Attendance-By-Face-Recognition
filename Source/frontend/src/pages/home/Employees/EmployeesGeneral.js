@@ -6,6 +6,7 @@ import {
   Heading,
   HStack,
   Stack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
@@ -14,22 +15,38 @@ import ColumnChart from "../../../components/ColumnChart";
 import ReactTableWithCharka from "../../../components/ReactTableWithCharka";
 import { dumbTableData, roleCodeColor } from "../../test/dumbTableData";
 import EmployeesGeneralDrawer from "./EmployeesGeneralDrawer";
+import NoDataToDisplay from "../../../components/NoDataToDisplay";
+import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 function EmployeesGeneral() {
   const screenPadding = "2rem";
-  const [openDrawerToEdit, setOpenDrawerToEdit] = useState(false);
   const [editData, setEditData] = useState({});
-  const AddNew = () => {
-    console.log("handleAddNew");
-  };
+  const [deleteSingleData, setDeleteSingleData] = useState({});
+
+  const {
+    isOpen: isDeleteSingleOpen,
+    onOpen: onDeleteSingleOpen,
+    onClose: onDeleteSingleClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAddEditOpen,
+    onOpen: onAddEditOpen,
+    onClose: onAddEditClose,
+  } = useDisclosure();
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
   const Delete = (row, action) => {
-    console.log(row, action);
+    setDeleteSingleData(row);
+    onDeleteSingleOpen();
+  };
+  const handleAcceptDelete = () => {
+    console.log(deleteSingleData);
+    setDeleteSingleData({});
+    onDeleteSingleClose();
   };
   const Edit = (row, action) => {
+    onAddEditOpen();
     setEditData(row);
-    setOpenDrawerToEdit(true);
   };
   const tableRowAction = [
     {
@@ -87,36 +104,46 @@ function EmployeesGeneral() {
     []
   );
   return (
-    <Box minHeight="100vh">
-      <Stack spacing={4} padding={screenPadding}>
-        <Heading fontSize="3xl" fontWeight="semibold">
-          Employees Overview
-        </Heading>
-        <Flex justifyContent="space-between" gap={5}>
-          <Box width="50%">
-            <PieChart />
-          </Box>
-          <Box width="50%">
-            <ColumnChart />
-          </Box>
-        </Flex>
-        <Box width="150px">
-          <EmployeesGeneralDrawer
-            openDrawerToEdit={openDrawerToEdit}
-            setOpenDrawerToEdit={setOpenDrawerToEdit}
-            editData={editData}
-            setEditData={setEditData}
-          />
+    <Stack minHeight="100vh" spacing={4} padding={screenPadding}>
+      <Heading fontSize="3xl" fontWeight="semibold">
+        Employees Overview
+      </Heading>
+      <Flex justifyContent="space-between" gap={5}>
+        <Box width="49%">
+          <PieChart />
         </Box>
-        <ReactTableWithCharka
-          handleAddNew={AddNew}
-          handleDeleteRange={DeleteRange}
-          tableRowAction={tableRowAction}
-          columns={columns}
-          data={data}
-        />
-      </Stack>
-    </Box>
+        <Box width="49%">
+          <ColumnChart />
+        </Box>
+      </Flex>
+      {data.length > 0 ? (
+        <>
+          <Box width="150px">
+            <EmployeesGeneralDrawer
+              isAddEditOpen={isAddEditOpen}
+              onAddEditClose={onAddEditClose}
+              editData={editData}
+              setEditData={setEditData}
+            />
+          </Box>
+          <ReactTableWithCharka
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={data}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+        </>
+      ) : (
+        <NoDataToDisplay />
+      )}
+    </Stack>
   );
 }
 

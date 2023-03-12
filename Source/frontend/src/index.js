@@ -34,7 +34,6 @@ const theme = extendTheme({
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <ChakraProvider theme={theme}>
@@ -82,7 +81,6 @@ root.render(
         </ChakraProvider>
       </Provider>
     </QueryClientProvider>
-  </React.StrictMode>
 );
 
 reportWebVitals();

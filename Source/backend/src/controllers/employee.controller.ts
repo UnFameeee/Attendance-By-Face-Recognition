@@ -11,6 +11,22 @@ class EmployeeController {
       next(err);
     }
   }
+
+  public updateEmployeeData = (req: Request, res: Response, next: NextFunction): any => {
+    try {
+
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public deleteEmployeeData = (req: Request, res: Response, next: NextFunction): any => {
+    try {
+
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default EmployeeController;
