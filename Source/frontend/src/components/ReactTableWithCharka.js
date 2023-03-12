@@ -40,6 +40,7 @@ import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import avt_test from "../assets/ta.jpeg";
 import debounce from "lodash/debounce";
 import ChakraAlertDialog from "./ChakraAlertDialog";
+import { Helper } from "../Utils/Helper";
 function ReactTableWithCharka(props) {
   const { data, columns, handleDeleteRange, onAddEditOpen, tableRowAction } =
     props;
@@ -52,6 +53,10 @@ function ReactTableWithCharka(props) {
     onOpen: onDeleteRangeOpen,
     onClose: onDeleteRangeClose,
   } = useDisclosure();
+  const handleDeleteRangeAlertAccept = () => {
+    onDeleteRangeClose();
+    handleDeleteRange(selectedFlatRows);
+  };
   const {
     headerGroups,
     rows,
@@ -113,23 +118,17 @@ function ReactTableWithCharka(props) {
     usePagination,
     useRowSelect
   );
-  const handleDeleteRangeClick = () => {
-    onDeleteRangeOpen();
-  };
-  const handleDeleteRangeAlertAccept = () => {
-    onDeleteRangeClose();
-    handleDeleteRange(selectedFlatRows);
-  };
+
   return (
     <Stack marginTop="0px !important">
-      <HStack display="flex" width='100%' className="tool-bar">
-        <HStack >
+      <HStack display="flex" width="100%" className="tool-bar">
+        <HStack>
           <Button colorScheme="blue" onClick={onAddEditOpen}>
             Add New
           </Button>
           <Button colorScheme="blue">Reset</Button>
           <Button
-            onClick={handleDeleteRangeClick}
+            onClick={onDeleteRangeOpen}
             isDisabled={selectedFlatRows.length < 2}
             colorScheme="blue"
           >
@@ -139,7 +138,6 @@ function ReactTableWithCharka(props) {
             isOpen={isDeleteRangeOpen}
             onClose={onDeleteRangeClose}
             onAccept={handleDeleteRangeAlertAccept}
-            message=""
             title={`Delete ${selectedFlatRows.length} items`}
           />
         </HStack>
@@ -203,15 +201,18 @@ function ReactTableWithCharka(props) {
               setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {[25, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Show {pageSize}
               </option>
             ))}
+            <option key={data.length} value={data.length}>
+              Show All
+            </option>
           </Select>
         </HStack>
       </HStack>
-      <TableContainer border="1px solid gray" rounded="lg">
+      <TableContainer rounded="lg">
         <Table variant="simple" {...getTableProps()}>
           <Thead bgColor="#224562">
             {headerGroups.map((headerGroup) => (
@@ -233,10 +234,13 @@ function ReactTableWithCharka(props) {
           </Thead>
           <Tbody width="100%" bgColor="white" {...getTableBodyProps()}>
             {rows?.length > 0 &&
-              page.map((row) => {
+              page.map((row, index) => {
                 prepareRow(row);
                 return (
-                  <Tr {...row.getRowProps()}>
+                  <Tr
+                    bg={!Helper.isOdd(index) ? "#e1e8ef" : "none"}
+                    {...row.getRowProps()}
+                  >
                     {row.cells.map((cell) => {
                       return (
                         <Td {...cell.getCellProps()}>

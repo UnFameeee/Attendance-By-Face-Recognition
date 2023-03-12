@@ -9,6 +9,9 @@ export const isTokenExpired = (token) => {
   }
   return true;
 };
+export const isOdd = (value) => {
+  return value % 2 === 0
+}
 export const Helper = {
-  isTokenExpired
+  isTokenExpired,isOdd
  }

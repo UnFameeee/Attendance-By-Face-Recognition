@@ -3,10 +3,12 @@ import { Helper, isTokenExpired } from "./Helper";
 import Cookies from "universal-cookie";
 import { createStandaloneToast } from "@chakra-ui/toast";
 import { globalNavigate } from "./GlobalHistory";
-const { toast } = createStandaloneToast();
+import jwtDecode from "jwt-decode";
 
+export const baseURL ="http://localhost:8081/api"
+const { toast } = createStandaloneToast();
 const axiosBase = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL || "http://localhost:8081/api",
+  baseURL: process.env.REACT_APP_BASE_URL || baseURL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -40,10 +42,14 @@ axiosBase.interceptors.response.use(
         const { data } = await axiosBase.post("auth/refreshToken", undefined, {
           headers,
         });
-        localStorage.setItem("accessToken", JSON.stringify(data.access));
+        const { refresh, access } = data;
+        const decoded = jwtDecode(refresh);
+        localStorage.setItem("accessToken", JSON.stringify(access));
+        cookies.set("jwt_authentication", refresh, {
+          expires: new Date(decoded.exp * 1000),
+        });
         return axiosBase(originalRequest);
       } else {
-        debugger
         cookies.remove("jwt_authentication");
         localStorage.removeItem("accessToken");
         toast({

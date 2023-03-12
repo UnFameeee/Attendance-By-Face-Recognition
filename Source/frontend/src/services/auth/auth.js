@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
 import axios from "axios";
 import { setAccessToken, setRefreshToken } from "../../store/Slice/authSlice";
-import axiosBase from "../../Utils/AxiosInstance";
+import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
+import jwtDecode from "jwt-decode";
+import Cookies from "universal-cookie";
 
 export const login = async ({ email, password }) => {
   const response = await axiosBase.post(`auth/login`, {
@@ -27,3 +29,21 @@ export const logout = async ({ accessToken, refreshToken }) => {
   const response = await axiosBase.delete(`auth/logout`,{headers});
   return response.data;
 };
+
+export const refreshToken = async ({refreshToken}) =>{
+  debugger
+  const cookies = new Cookies();
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${refreshToken}`,
+  };
+  const { data } = await axios.post(`${baseURL}/auth/refreshToken`, undefined, {
+    headers,
+  });
+  const { refresh, access } = data;
+  const decoded = jwtDecode(refresh);
+  localStorage.setItem("accessToken", JSON.stringify(access));
+  cookies.set("jwt_authentication", refresh, {
+    expires: new Date(decoded.exp * 1000),
+  });
+}

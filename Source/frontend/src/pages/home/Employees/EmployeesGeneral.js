@@ -19,7 +19,6 @@ import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 function EmployeesGeneral() {
   const screenPadding = "2rem";
-  const [openDrawerToEdit, setOpenDrawerToEdit] = useState(false);
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
 
@@ -123,8 +122,6 @@ function EmployeesGeneral() {
             <EmployeesGeneralDrawer
               isAddEditOpen={isAddEditOpen}
               onAddEditClose={onAddEditClose}
-              openDrawerToEdit={openDrawerToEdit}
-              setOpenDrawerToEdit={setOpenDrawerToEdit}
               editData={editData}
               setEditData={setEditData}
             />
