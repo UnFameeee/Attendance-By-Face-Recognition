@@ -41,6 +41,22 @@ import avt_test from "../assets/ta.jpeg";
 import debounce from "lodash/debounce";
 import ChakraAlertDialog from "./ChakraAlertDialog";
 import { Helper } from "../Utils/Helper";
+const IndeterminateCheckbox = React.forwardRef(
+  ({ indeterminate, ...rest }, ref) => {
+    const defaultRef = React.useRef();
+    const resolvedRef = ref || defaultRef;
+
+    React.useEffect(() => {
+      resolvedRef.current.indeterminate = indeterminate;
+    }, [resolvedRef, indeterminate]);
+
+    return (
+      <>
+        <input type="checkbox" ref={resolvedRef} {...rest} />
+      </>
+    );
+  }
+);
 function ReactTableWithCharka(props) {
   const { data, columns, handleDeleteRange, onAddEditOpen, tableRowAction } =
     props;
@@ -85,13 +101,13 @@ function ReactTableWithCharka(props) {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <Flex gap="5px">
-              <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()}  />
               <Text>Action</Text>
             </Flex>
           ),
           Cell: ({ row }) => (
             <HStack>
-              <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} type="checkbox" />
               <Menu>
                 <MenuButton colorScheme="blue" variant="outline" as={Button}>
                   <Icon as={FiMoreVertical} />

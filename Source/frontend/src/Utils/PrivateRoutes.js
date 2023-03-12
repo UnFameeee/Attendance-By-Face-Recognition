@@ -9,7 +9,6 @@ const PrivateRoutes = () => {
   const jwt_accessTokenJSON = localStorage.getItem("accessToken");
   const jwt_accessToken = JSON.parse(jwt_accessTokenJSON);
   const jtw_refreshToken = cookies.get("jwt_authentication");
-
   console.log("is expired", Helper.isTokenExpired(jwt_accessToken));
   if (Helper.isTokenExpired(jwt_accessToken)) {
     if (jtw_refreshToken && !Helper.isTokenExpired(jtw_refreshToken)) {
