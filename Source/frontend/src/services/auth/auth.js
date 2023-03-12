@@ -31,7 +31,6 @@ export const logout = async ({ accessToken, refreshToken }) => {
 };
 
 export const refreshToken = async ({refreshToken}) =>{
-  debugger
   const cookies = new Cookies();
   const headers = {
     "Content-Type": "application/json",

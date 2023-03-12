@@ -25,39 +25,16 @@ import {
   Flex,
   Input,
   Select,
-  Image,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
-import { GrPrevious, GrNext } from "react-icons/gr";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
-import avt_test from "../assets/ta.jpeg";
 import debounce from "lodash/debounce";
 import ChakraAlertDialog from "./ChakraAlertDialog";
 import { Helper } from "../Utils/Helper";
-const IndeterminateCheckbox = React.forwardRef(
-  ({ indeterminate, ...rest }, ref) => {
-    const defaultRef = React.useRef();
-    const resolvedRef = ref || defaultRef;
+import IndeterminateCheckbox from "./IndeterminateCheckbox";
 
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate]);
-
-    return (
-      <>
-        <input type="checkbox" ref={resolvedRef} {...rest} />
-      </>
-    );
-  }
-);
-function ReactTableWithCharka(props) {
+function DynamicTable(props) {
   const { data, columns, handleDeleteRange, onAddEditOpen, tableRowAction } =
     props;
   const debouncedGotoPage = debounce((value) => {
@@ -101,7 +78,8 @@ function ReactTableWithCharka(props) {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <Flex gap="5px">
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()}  />
+              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()}
+                />
               <Text>Action</Text>
             </Flex>
           ),
@@ -154,7 +132,7 @@ function ReactTableWithCharka(props) {
             isOpen={isDeleteRangeOpen}
             onClose={onDeleteRangeClose}
             onAccept={handleDeleteRangeAlertAccept}
-            title={`Delete ${selectedFlatRows.length} items`}
+            title={`Delete ${rows.length === selectedFlatRows.length ? 'All' :''} ${selectedFlatRows.length} items`}
           />
         </HStack>
         <HStack
@@ -284,4 +262,4 @@ function ReactTableWithCharka(props) {
   );
 }
 
-export default ReactTableWithCharka;
+export default DynamicTable;
