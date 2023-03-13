@@ -191,11 +191,11 @@ function EmployeesGeneral() {
       <Heading fontSize="3xl" fontWeight="semibold">
         Employees Overview
       </Heading>
-      <Flex justifyContent="space-between" gap={5}>
-        <Box width="49%">
+      <Flex justifyContent="space-between" gap={5} flexDirection={{base:'column', sm:'column',md:'row' ,lg:'row',xl:'row'}}>
+        <Box width={{ base:'100%',sm:'100%',md:'50%' ,lg:'50%',xl:'50%'}}>
           <PieChart />
         </Box>
-        <Box width="49%">
+        <Box width={{ base:'100%',sm:'100%',md:'50%' ,lg:'50%',xl:'50%'}}>
           <ColumnChart />
         </Box>
       </Flex>

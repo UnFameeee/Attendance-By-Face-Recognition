@@ -78,14 +78,16 @@ function DynamicTable(props) {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <Flex gap="5px">
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()}
-                />
+              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
               <Text>Action</Text>
             </Flex>
           ),
           Cell: ({ row }) => (
             <HStack>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} type="checkbox" />
+              <IndeterminateCheckbox
+                {...row.getToggleRowSelectedProps()}
+                type="checkbox"
+              />
               <Menu>
                 <MenuButton colorScheme="blue" variant="outline" as={Button}>
                   <Icon as={FiMoreVertical} />
@@ -115,8 +117,15 @@ function DynamicTable(props) {
 
   return (
     <Stack marginTop="0px !important">
-      <HStack display="flex" width="100%" className="tool-bar">
-        <HStack>
+      <HStack
+        display="flex"
+        width="100%"
+        className="tool-bar"
+        flexDirection={{ base:'column', sm: "column", md: "column", lg: "column", xl: "row" }}
+        gap="10px"
+        alignItems='flex-start'
+      >
+        <HStack flex="1">
           <Button colorScheme="blue" onClick={onAddEditOpen}>
             Add New
           </Button>
@@ -132,78 +141,86 @@ function DynamicTable(props) {
             isOpen={isDeleteRangeOpen}
             onClose={onDeleteRangeClose}
             onAccept={handleDeleteRangeAlertAccept}
-            title={`Delete ${rows.length === selectedFlatRows.length ? 'All' :''} ${selectedFlatRows.length} items`}
+            title={`Delete ${
+              rows.length === selectedFlatRows.length ? "All" : ""
+            } ${selectedFlatRows.length} items`}
           />
         </HStack>
-        <HStack
+        <HStack 
           spacing="10px"
           display="flex"
-          justifyContent="flex-end"
-          width="100%"
+          gap='10px'
           flex="1"
+          marginLeft="0px !important"
+          alignItems='flex-start'
+          flexDirection={{base:'column', sm: "column", md: "row", lg: "row", xl: "row" }}
+          justifyContent={{base:'flex-start', sm: "flex-start", md: "flex-end", lg: "flex-end", xl: "flex-end" }}
         >
-          <Flex alignItems="center">
-            <Text fontWeight="semibold">
-              {pageIndex + 1}/{pageCount} {pageCount > 1 ? "pages" : "page"}
-            </Text>
-          </Flex>
-          <Button
-            colorScheme="blue"
-            onClick={() => gotoPage(0)}
-            isDisabled={!canPreviousPage}
-          >
-            <Icon as={MdSkipPrevious} />
-          </Button>
-          <Button
-            colorScheme="blue"
-            onClick={() => previousPage()}
-            isDisabled={!canPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            colorScheme="blue"
-            onClick={() => nextPage()}
-            isDisabled={!canNextPage}
-          >
-            Next
-          </Button>
-          <Button
-            colorScheme="blue"
-            onClick={() => gotoPage(pageCount - 1)}
-            isDisabled={!canNextPage}
-          >
-            <Icon as={MdSkipNext} />
-          </Button>
-
-          <Flex alignItems="center" gap="5px">
-            <Text fontWeight="semibold">Go to</Text>
-            <Input
-              flex="1"
-              type="number"
+          <HStack  >
+            <Button
+              colorScheme="blue"
+              onClick={() => gotoPage(0)}
+              isDisabled={!canPreviousPage}
+            >
+              <Icon as={MdSkipPrevious} />
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => previousPage()}
+              isDisabled={!canPreviousPage}
+            >
+              Previous
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => nextPage()}
+              isDisabled={!canNextPage}
+            >
+              Next
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => gotoPage(pageCount - 1)}
+              isDisabled={!canNextPage}
+            >
+              <Icon as={MdSkipNext} />
+            </Button>
+          </HStack>
+          <HStack  >
+            <Flex alignItems="center">
+              <Text fontWeight="semibold">
+                {pageIndex + 1}/{pageCount} {pageCount > 1 ? "pages" : "page"}
+              </Text>
+            </Flex>
+            <Flex alignItems="center" gap="5px">
+              <Text fontWeight="semibold">Go to</Text>
+              <Input
+                flex="1"
+                type="number"
+                background="white"
+                width="70px"
+                defaultValue={pageIndex + 1}
+                onChange={(e) => debouncedGotoPage(e.target.value)}
+              />
+            </Flex>
+            <Select
+              width="150px"
+              value={pageSize}
               background="white"
-              width="70px"
-              defaultValue={pageIndex + 1}
-              onChange={(e) => debouncedGotoPage(e.target.value)}
-            />
-          </Flex>
-          <Select
-            width="150px"
-            value={pageSize}
-            background="white"
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-          >
-            {[25, 50, 100].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+            >
+              {[25, 50, 100].map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
+                </option>
+              ))}
+              <option key={data.length} value={data.length}>
+                Show All
               </option>
-            ))}
-            <option key={data.length} value={data.length}>
-              Show All
-            </option>
-          </Select>
+            </Select>
+          </HStack>
         </HStack>
       </HStack>
       <TableContainer rounded="lg">

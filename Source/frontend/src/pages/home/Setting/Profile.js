@@ -44,27 +44,28 @@ import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
 
 function Profile() {
+  const initialValues = {
+    fullName: "",
+    email: "",
+    gender: "male",
+    phone: "",
+    birthDate: undefined,
+    about: "",
+    department: "",
+    workLocation: "",
+    status: "",
+    joiningDate: undefined,
+    role: "",
+  };
+  const validationSchema = Yup.object().shape({
+    phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
+  })
   return (
-    <Stack minHeight="100vh" spacing={3} paddingX={20} paddingTop={2}>
+    <Stack minHeight="100vh" spacing={3} paddingX={{ base:'5', sm:'5',md:'10' ,lg:'20',xl:'20'}} paddingTop={2}>
       <Formik
-        initialValues={{
-          fullName: "",
-          email: "",
-          gender: "male",
-          phone: "",
-          birthDate: undefined,
-          about: "",
-          department: "",
-          workLocation: "",
-          status: "",
-          joiningDate: undefined,
-          role: "",
-        }}
-        validationSchema={Yup.object({
-          phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
-        })}
+        initialValues={initialValues}
+        validationSchema={validationSchema}
         onSubmit={(values, actions) => {
-
           alert(JSON.stringify(values, null, 2));
           //actions.resetForm();
         }}
@@ -85,7 +86,7 @@ function Profile() {
                 </Button>
               </HStack>
             </Flex>
-            <Flex gap={8}>
+            <Flex gap={8} flexDirection={{ base:'column', sm:'column',md:'column' ,lg:'column',xl:'row'}} >
               <Stack
                 bgColor="white"
                 flex="1"

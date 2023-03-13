@@ -23,14 +23,14 @@ export const register = async ({ username, email, password }) => {
 };
 export const logout = async ({ accessToken, refreshToken }) => {
   const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${refreshToken}`,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${refreshToken}`,
   };
-  const response = await axiosBase.delete(`auth/logout`,{headers});
+  const response = await axiosBase.delete(`auth/logout`, { headers });
   return response.data;
 };
 
-export const refreshToken = async ({refreshToken}) =>{
+export const refreshToken = async ({ refreshToken }) => {
   const cookies = new Cookies();
   const headers = {
     "Content-Type": "application/json",
@@ -45,4 +45,4 @@ export const refreshToken = async ({refreshToken}) =>{
   cookies.set("jwt_authentication", refresh, {
     expires: new Date(decoded.exp * 1000),
   });
-}
+};
