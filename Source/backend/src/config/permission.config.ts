@@ -14,6 +14,11 @@ export const application_permission = {
     `${ROLE.ADMIN}-${PERMISSION.ALL}`,
     `${ROLE.MANAGER}-${PERMISSION.READ}`,
     `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
+  ],
+  "organization-management": [
+    `${ROLE.ADMIN}-${PERMISSION.ALL}`,
+    `${ROLE.MANAGER}-${PERMISSION.READ}`,
+    `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
   ]
 }
 

@@ -20,4 +20,5 @@ export const RESOURCE: stringObject = {
   ACCOUNT_MANAGEMENT: "account-management",
   PROFILE_MANAGEMENT: "profile-management",
   DEPARTMENT_MANAGEMENT: "department-management",
+  ORGANIZATION_MANAGEMENT: "organization-management",
 }

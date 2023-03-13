@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { DepartmentService } from '../services/department.service';
-import { CreateDepartmentDTO } from '../model/dtos/department.dto';
+import { CreateDepartmentDTO, UpdateDepartmentDTO } from '../model/dtos/department.dto';
 import { HttpException } from '../config/httpException';
 import { RequestWithProfile } from '../interfaces/auth.interface';
 import { Page } from '../config/paginate.config';
@@ -30,7 +30,7 @@ export class DepartmentController {
 
   public createDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data: CreateDepartmentDTO = req.body;
+      const data: UpdateDepartmentDTO = req.body;
       const response = await this.departmentService.createDepartment(data);
       res.status(200).json(response);
     } catch (err) {

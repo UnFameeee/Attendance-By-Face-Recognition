@@ -11,7 +11,7 @@ import { pageSchema } from "../model/dtos/page.dto";
 export class DepartmentRoute implements Routes {
   public path = "/department";
   public router = Router();
-  public departmendController = new DepartmentController();
+  public departmentController = new DepartmentController();
 
   constructor() {
     this.initializeRoutes();
@@ -23,14 +23,14 @@ export class DepartmentRoute implements Routes {
       authMiddleware,
       zodValidate(pageSchema),
       await authorizeRoute(PERMISSION.READ, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmendController.getAllDepartment
+      this.departmentController.getAllDepartment
     );
 
     // api/department/:departmentId
-    this.router.get(`${this.path}/:departmendId`,
+    this.router.get(`${this.path}/:departmentId`,
       authMiddleware,
       await authorizeRoute(PERMISSION.READ, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmendController.getDepartmentById
+      this.departmentController.getDepartmentById
     );
 
     // api/department/createDepartment
@@ -38,29 +38,29 @@ export class DepartmentRoute implements Routes {
       authMiddleware,
       zodValidate(createDepartmentSchema),
       await authorizeRoute(PERMISSION.CREATE, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmendController.createDepartment
+      this.departmentController.createDepartment
     );
 
-    // api/department/updateDepartment/:departmendId
-    this.router.post(`${this.path}/updateDepartment/:departmentId`,
+    // api/department/updateDepartmentDetail/:departmentId
+    this.router.post(`${this.path}/updateDepartmentDetail/:departmentId`,
       authMiddleware,
       zodValidate(updateDepartmentSchema),
       await authorizeRoute(PERMISSION.UPDATE, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmendController.updateDepartmentDetail
+      this.departmentController.updateDepartmentDetail
     );
 
     // api/department/deleteDepartment/:departmentId
     this.router.delete(`${this.path}/deleteDepartment/:departmentId`,
       authMiddleware,
       await authorizeRoute(PERMISSION.DELETE, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmendController.deleteDepartment
+      this.departmentController.deleteDepartment
     );
 
     // api/department/deleteDepartments
     this.router.post(`${this.path}/deleteDepartments`,
       authMiddleware,
       await authorizeRoute(PERMISSION.DELETE, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmendController.deleteDepartments
+      this.departmentController.deleteDepartments
     );
   }
 }
