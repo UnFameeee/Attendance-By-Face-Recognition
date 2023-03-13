@@ -10,6 +10,11 @@ export const application_permission = {
     `${ROLE.MANAGER}-${PERMISSION.ALL}`,
     `${ROLE.EMPLOYEE}-${PERMISSION.ALL}`,
   ],
+  "department-management": [
+    `${ROLE.ADMIN}-${PERMISSION.ALL}`,
+    `${ROLE.MANAGER}-${PERMISSION.READ}`,
+    `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
+  ]
 }
 
 export const application_admin_account = {

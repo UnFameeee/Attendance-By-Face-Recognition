@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { HttpException } from "../config/httpException";
 // import {PythonShell} from 'python-shell';
 
 class IndexController {
@@ -8,7 +9,7 @@ class IndexController {
         hello: "world"
       });
     } catch (err) {
-      next(err);
+      next(new HttpException(500, "Server Error"));
     }
   }
 
@@ -23,7 +24,7 @@ class IndexController {
         res.send(data);
       });
     } catch (err) {
-      next(err);
+      next(new HttpException(500, "Server Error"));
     }
   }
 }

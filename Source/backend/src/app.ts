@@ -1,5 +1,4 @@
 import express from 'express';
-
 import cors from "cors";
 import helmet from 'helmet';
 import { logger } from './utils/logger';
@@ -38,7 +37,6 @@ class App {
     }
 
     private initializeMiddlewares() {
-        // this.app.use(morgan());
         this.app.use(cors());
         this.app.use(helmet());
         this.app.use(express.json());

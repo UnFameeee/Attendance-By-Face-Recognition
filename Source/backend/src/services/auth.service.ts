@@ -1,7 +1,6 @@
-import { PrismaClient, Employee } from "@prisma/client";
-import { CreateEmployeeDto } from '../dtos/createEmployee.dto';
-import { HttpException } from '../exceptions/httpException';
-import { LoginDto } from "../dtos/login.dto";
+import { Employee } from "@prisma/client";
+import { HttpException } from '../config/httpException';
+import { LoginDTO } from '../model/dtos/login.dto';
 import { TokenData, DataStoredInAccessToken, DataStoredInRefreshToken } from '../interfaces/auth.interface';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -9,6 +8,7 @@ import * as argon2 from 'argon2';
 import { ResponseData } from "../config/responseData.config";
 import { ResponseToken } from "../config/responseToken.config";
 import { prisma } from '../database/prisma.singleton';
+import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
 require("dotenv").config();
 
 class AuthenticationService {
@@ -37,7 +37,7 @@ class AuthenticationService {
     };
   }
 
-  public async registration(employeeData: CreateEmployeeDto): Promise<ResponseData<String>> {
+  public async registration(employeeData: CreateEmployeeDTO): Promise<ResponseData<String>> {
     const response = new ResponseData<String>;
     const findEmployee: Employee = await prisma.employee.findUnique({
       where: {
@@ -86,7 +86,7 @@ class AuthenticationService {
     return response;
   }
 
-  public async login(loginData: LoginDto): Promise<ResponseToken> {
+  public async login(loginData: LoginDTO): Promise<ResponseToken> {
     const findEmployee: Employee = await prisma.employee.findUnique({
       where: {
         email: loginData.email

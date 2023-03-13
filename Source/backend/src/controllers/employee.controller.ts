@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import EmployeeService from "../services/employee.service";
+import { HttpException } from "../config/httpException";
 
 class EmployeeController {
   public employeeService = new EmployeeService();
@@ -8,7 +9,7 @@ class EmployeeController {
     try {
 
     } catch (err) {
-      next(err);
+      next(new HttpException(500, "Server Error"));
     }
   }
 
@@ -16,7 +17,7 @@ class EmployeeController {
     try {
 
     } catch (err) {
-      next(err);
+      next(new HttpException(500, "Server Error"));
     }
   }
 
@@ -24,7 +25,7 @@ class EmployeeController {
     try {
 
     } catch (err) {
-      next(err);
+      next(new HttpException(500, "Server Error"));
     }
   }
 }
