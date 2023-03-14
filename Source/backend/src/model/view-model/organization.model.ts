@@ -1,6 +1,6 @@
 import { Location, Organization } from "@prisma/client";
 
-export interface OrganizationWithLocation extends
+export interface OrganizationModel extends
   Pick<Organization,
     "organizationId" |
     "organizationName"
@@ -13,7 +13,7 @@ export interface OrganizationWithLocation extends
   >,
 }
 
-export interface OrganizationList extends
+export interface OrganizationListModel extends
   Pick<Organization,
     "organizationId" |
     "organizationName"

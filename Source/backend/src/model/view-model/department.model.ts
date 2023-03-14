@@ -1,6 +1,6 @@
 import { Department, Location, Organization } from "@prisma/client";
 
-export interface DepartmentWithLocation extends
+export interface DepartmentModel extends
   Pick<Department,
     "departmentId" |
     "departmentName"

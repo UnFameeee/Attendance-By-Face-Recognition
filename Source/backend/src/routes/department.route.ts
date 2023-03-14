@@ -23,7 +23,7 @@ export class DepartmentRoute implements Routes {
       authMiddleware,
       zodValidate(pageSchema),
       await authorizeRoute(PERMISSION.READ, RESOURCE.DEPARTMENT_MANAGEMENT),
-      this.departmentController.getAllDepartment
+      this.departmentController.getAllDepartmentPaging
     );
 
     // api/department/:departmentId

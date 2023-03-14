@@ -8,10 +8,10 @@ import { Page } from '../config/paginate.config';
 export class DepartmentController {
   public departmentService = new DepartmentService();
 
-  public getAllDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  public getAllDepartmentPaging = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page: Page = req.body;
-      const response = await this.departmentService.getAllDepartment(page);
+      const response = await this.departmentService.getAllDepartmentPaging(page);
       res.status(200).json(response);
     } catch (err) {
       next(new HttpException(500, "Server Error"));

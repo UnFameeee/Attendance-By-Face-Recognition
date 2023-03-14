@@ -1,13 +1,13 @@
 import { prisma } from "../database/prisma.singleton"
-import { DepartmentWithLocation } from "../model/view-model/department.model";
+import { DepartmentModel } from "../model/view-model/department.model";
 import { CreateDepartmentDTO, UpdateDepartmentDTO } from '../model/dtos/department.dto';
 import { ResponseData } from "../config/responseData.config";
 import { Page, Paging, paginate } from '../config/paginate.config';
 
 export class DepartmentService {
-  public getAllDepartment = async (page: Page): Promise<ResponseData<Paging<DepartmentWithLocation[]>>> => {
-    const response = new ResponseData<Paging<DepartmentWithLocation[]>>;
-    const pageResponse = new Paging<DepartmentWithLocation[]>
+  public getAllDepartmentPaging = async (page: Page): Promise<ResponseData<Paging<DepartmentModel[]>>> => {
+    const response = new ResponseData<Paging<DepartmentModel[]>>;
+    const pageResponse = new Paging<DepartmentModel[]>
 
     const queryData = await prisma.department.findMany({
       where: {
@@ -36,7 +36,7 @@ export class DepartmentService {
       },
       ...paginate(page)
     })
-    
+
     const totalElement = await prisma.department.count({
       where: {
         deleted: false
@@ -50,8 +50,8 @@ export class DepartmentService {
   }
 
 
-  public getDepartmentById = async (departmentId: string): Promise<ResponseData<DepartmentWithLocation>> => {
-    const response = new ResponseData<DepartmentWithLocation>;
+  public getDepartmentById = async (departmentId: string): Promise<ResponseData<DepartmentModel>> => {
+    const response = new ResponseData<DepartmentModel>;
     const queryData = await prisma.department.findFirst({
       where: {
         departmentId: departmentId,
@@ -77,7 +77,7 @@ export class DepartmentService {
       }
     })
 
-    if(queryData){
+    if (queryData) {
       response.result = queryData
     } else {
       response.message = "The department isn't exist";
@@ -107,8 +107,8 @@ export class DepartmentService {
     return response;
   }
 
-  public updateDepartmentDetail = async (departmentId: string, data: UpdateDepartmentDTO): Promise<ResponseData<DepartmentWithLocation>> => {
-    const response = new ResponseData<DepartmentWithLocation>;
+  public updateDepartmentDetail = async (departmentId: string, data: UpdateDepartmentDTO): Promise<ResponseData<DepartmentModel>> => {
+    const response = new ResponseData<DepartmentModel>;
 
     const isValidDepartment = await prisma.department.findFirst({
       where: {
@@ -212,14 +212,14 @@ export class DepartmentService {
           in: departmentIds
         },
         deleted: false,
-      }, 
+      },
     })
 
     if (isValidDepartments != departmentIds.length) {
       response.message = `At least 1 of the department isn't exist`;
       return response;
     }
-    for(const departmentId of departmentIds){
+    for (const departmentId of departmentIds) {
       await prisma.department.update({
         where: {
           departmentId: departmentId
@@ -234,7 +234,7 @@ export class DepartmentService {
             },
           }
         },
-        
+
       })
     }
 
@@ -244,7 +244,7 @@ export class DepartmentService {
           in: departmentIds
         },
         deleted: false,
-      }, 
+      },
     })
 
     if (checkDeleted == 0) {

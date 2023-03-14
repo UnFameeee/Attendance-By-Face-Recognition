@@ -1,11 +1,11 @@
 import { ResponseData } from "../config/responseData.config";
 import { prisma } from "../database/prisma.singleton";
 import { CreateOrganizationDTO, UpdateOrganizationDTO } from "../model/dtos/organization.dto";
-import { OrganizationList, OrganizationWithLocation } from "../model/view-model/organization.model";
+import { OrganizationListModel, OrganizationModel } from "../model/view-model/organization.model";
 
 export class OrganizationService {
-  public getOrganizationDetail = async (): Promise<ResponseData<OrganizationWithLocation>> => {
-    const response = new ResponseData<OrganizationWithLocation>;
+  public getOrganizationDetail = async (): Promise<ResponseData<OrganizationModel>> => {
+    const response = new ResponseData<OrganizationModel>;
     const queryData = await prisma.organization.findFirst({
       where: {
         deleted: false
@@ -32,8 +32,8 @@ export class OrganizationService {
     return response;
   }
 
-  public getOrganizationList = async (): Promise<ResponseData<OrganizationList[]>> => {
-    const response = new ResponseData<OrganizationList[]>;
+  public getOrganizationList = async (): Promise<ResponseData<OrganizationListModel[]>> => {
+    const response = new ResponseData<OrganizationListModel[]>;
     const queryData = await prisma.organization.findMany({
       where: {
         deleted: false
@@ -70,8 +70,8 @@ export class OrganizationService {
     return response;
   }
 
-  public updateOrganizationDetail = async (organizationId: string, data: UpdateOrganizationDTO): Promise<ResponseData<OrganizationWithLocation>> => {
-    const response = new ResponseData<OrganizationWithLocation>;
+  public updateOrganizationDetail = async (organizationId: string, data: UpdateOrganizationDTO): Promise<ResponseData<OrganizationModel>> => {
+    const response = new ResponseData<OrganizationModel>;
 
     const isValidOrganization = await prisma.organization.findFirst({
       where: {

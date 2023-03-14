@@ -8,7 +8,7 @@ import { RESOURCE, PERMISSION } from '../constant/database.constant';
 import { zodValidate } from '../middlewares/zod.validation.middleware';
 import { createEmployeeSchema } from '../model/dtos/employee.dto';
 
-class AuthenticationRoute implements Routes {
+export class AuthenticationRoute implements Routes {
   public path = "/auth";
   public router = Router();
   public authController = new AuthenticationController();
@@ -41,5 +41,3 @@ class AuthenticationRoute implements Routes {
     );
   }
 }
-
-export default AuthenticationRoute;
