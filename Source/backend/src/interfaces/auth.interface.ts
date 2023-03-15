@@ -14,7 +14,6 @@ export interface DataStoredInRefreshToken {
   id: string;
 }
 
-
 export interface RequestWithProfile extends Request {
   profile: Employee;
 }

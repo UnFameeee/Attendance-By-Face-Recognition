@@ -1,6 +1,6 @@
 import { DataStoredInAccessToken, DataStoredInRefreshToken, RequestWithProfile } from '../interfaces/auth.interface';
 import { Response, NextFunction } from 'express';
-import { HttpException } from '../exceptions/httpException';
+import { HttpException } from '../config/httpException';
 import * as jwt from 'jsonwebtoken';
 import { prisma } from '../database/prisma.singleton';
 require("dotenv").config();

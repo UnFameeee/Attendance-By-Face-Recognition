@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { HttpException } from "../config/httpException";
 // import {PythonShell} from 'python-shell';
 
 class IndexController {
