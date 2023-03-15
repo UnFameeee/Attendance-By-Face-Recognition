@@ -4,13 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 
 function Header() {
   return (
-    <Box
-      paddingX="5"
-      paddingY="5"
-      position="absolute"
-      zIndex="1000"
-      width="100vw"
-    >
+    <Box paddingX="5" paddingY="5" height="80px" bg="gray.200" width="100vw">
       <Flex alignItems="center">
         <Box>
           <Heading fontSize="lg">Attendance By Face Recognition</Heading>

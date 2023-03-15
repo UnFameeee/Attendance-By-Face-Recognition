@@ -60,7 +60,7 @@ function Register() {
   });
   const dispatch = useDispatch()
   return (
-    <Center height="100vh" width="100vw" bgColor="gray.200">
+    <Center minHeight="calc(100vh - 160px)" width="100vw" bgColor="gray.200">
       <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">
         <Stack spacing="5">
           <Flex gap="2" flexDirection="column" alignItems="center">
