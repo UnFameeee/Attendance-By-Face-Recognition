@@ -12,7 +12,7 @@ export class OrganizationController {
       const response = await this.organizationService.getOrganizationDetail();
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -21,7 +21,7 @@ export class OrganizationController {
       const response = await this.organizationService.getOrganizationList();
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -31,7 +31,7 @@ export class OrganizationController {
       const response = await this.organizationService.createOrganization(data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -42,7 +42,7 @@ export class OrganizationController {
       const response = await this.organizationService.updateOrganizationDetail(organizationId, data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 }

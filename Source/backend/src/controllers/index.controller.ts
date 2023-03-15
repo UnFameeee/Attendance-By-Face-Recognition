@@ -9,7 +9,7 @@ class IndexController {
         hello: "world"
       });
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -24,7 +24,7 @@ class IndexController {
         res.send(data);
       });
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 }

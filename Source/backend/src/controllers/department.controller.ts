@@ -14,7 +14,7 @@ export class DepartmentController {
       const response = await this.departmentService.getAllDepartmentPaging(page);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -24,7 +24,7 @@ export class DepartmentController {
       const response = await this.departmentService.getDepartmentById(departmentId);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -34,7 +34,7 @@ export class DepartmentController {
       const response = await this.departmentService.createDepartment(data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -45,7 +45,7 @@ export class DepartmentController {
       const response = await this.departmentService.updateDepartmentDetail(departmentId, data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -55,7 +55,7 @@ export class DepartmentController {
       const response = await this.departmentService.deleteDepartment(departmentId);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -65,7 +65,7 @@ export class DepartmentController {
       const response = await this.departmentService.deleteDepartments(departmentIds);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 }

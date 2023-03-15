@@ -14,7 +14,7 @@ model Employee {
   role   Role   @relation(fields: [roleId], references: [roleId])
   roleId String
 
-  // departmentId
+  // organizationId
   department   Department? @relation(fields: [departmentId], references: [departmentId])
   departmentId String?
 
@@ -24,7 +24,7 @@ model Employee {
 
   picture               String?
   fullname              String
-  email                 String         @unique
+  email                 String              @unique
   password              String
   gender                String?
   dateOfBirth           DateTime?
@@ -33,17 +33,17 @@ model Employee {
   status                Boolean?
   joiningDate           DateTime?
   refreshToken          String?
-  deleted               Boolean        @default(false)
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  deleted               Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
   deletedAt             DateTime?
   attendances           Attendance[]
   contracts             Contract[]
   workshifts            Workshift[]
-  leaveRequests         LeaveRequest[] @relation("LeaveRequests")
-  leaveRequestApproveds LeaveRequest[] @relation("LeaveRequestApproveds")
+  leaveRequests         LeaveRequest[]      @relation("LeaveRequests")
+  leaveRequestApproveds LeaveRequest[]      @relation("LeaveRequestApproveds")
   payrolls              Payroll[]
-  departmentManager     Department?    @relation("DepartmentManager")
+  departmentManager     DepartmentManager[]
 }
 
 model Role {
@@ -115,7 +115,7 @@ model Location {
 }
 
 model Organization {
-  organizationId   String    @id @default(uuid())
+  organizationId   String   @id @default(uuid())
   organizationName String
   // locationId
   location         Location @relation(fields: [locationId], references: [locationId])
@@ -138,16 +138,30 @@ model Department {
   location   Location @relation(fields: [locationId], references: [locationId])
   locationId String   @unique
 
-  // managerId   
-  manager   Employee? @relation("DepartmentManager", fields: [managerId], references: [id])
-  managerId String?    @unique
+  departmentName    String
+  deleted           Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+  departmentManager DepartmentManager[]
+  employee          Employee[]
+}
 
-  departmentName String
-  deleted        Boolean    @default(false)
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  deletedAt      DateTime?
-  employees      Employee[]
+model DepartmentManager {
+  // managerId   
+  manager   Employee @relation(fields: [managerId], references: [id])
+  managerId String
+
+  // departmentId
+  department   Department @relation(fields: [departmentId], references: [departmentId])
+  departmentId String 
+
+  deleted   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@id([managerId, departmentId])
 }
 
 model Attendance {

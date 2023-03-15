@@ -30,14 +30,14 @@ export class EmployeeRoute implements Routes {
     this.router.post(`${this.path}/listEmpInDepartment/:departmentId`,
       authMiddleware,
       zodValidate(pageSchema),
-      await authorizeRoute(PERMISSION.READ, RESOURCE.EMPLOYEE_MANAGMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.getEmpListInDepartment
     );
 
     // api/employee/getEmployeeById/:employeeId
     this.router.get(`${this.path}/getEmployeeById/:employeeId`,
       authMiddleware,
-      await authorizeRoute(PERMISSION.READ, RESOURCE.EMPLOYEE_MANAGMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.getEmployeeById
     );
 
@@ -45,7 +45,7 @@ export class EmployeeRoute implements Routes {
     this.router.post(`${this.path}/updateEmployeeDetail/:employeeId`,
       authMiddleware,
       zodValidate(updateEmployeeSchema),
-      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.EMPLOYEE_MANAGMENT),
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.updateEmployeeDetail
     );
 
@@ -53,7 +53,7 @@ export class EmployeeRoute implements Routes {
     this.router.post(`${this.path}/assignEmployeeToDepartment`,
       authMiddleware,
       zodValidate(assignEmployeeDepartmentSchema),
-      await authorizeRoute(PERMISSION.GRANT_POSITION, RESOURCE.EMPLOYEE_MANAGMENT),
+      await authorizeRoute(PERMISSION.GRANT_POSITION, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.assignEmployeeToDepartment
     );
 
@@ -61,7 +61,7 @@ export class EmployeeRoute implements Routes {
     this.router.post(`${this.path}/assignManagerToDepartment`,
       authMiddleware,
       zodValidate(assignManagerDepartmentSchema),
-      await authorizeRoute(PERMISSION.GRANT_POSITION, RESOURCE.EMPLOYEE_MANAGMENT),
+      await authorizeRoute(PERMISSION.GRANT_POSITION, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.assignManagerToDepartment
     );
 
@@ -69,7 +69,7 @@ export class EmployeeRoute implements Routes {
     this.router.post(`${this.path}/changeRoleOfEmployee`,
       authMiddleware,
       zodValidate(changeEmployeeRoleSchema),
-      await authorizeRoute(PERMISSION.GRANT_PERMISSION, RESOURCE.EMPLOYEE_MANAGMENT),
+      await authorizeRoute(PERMISSION.GRANT_PERMISSION, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.changeRoleOfEmployee
     );
   }

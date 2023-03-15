@@ -24,11 +24,7 @@ export class OrganizationService {
       }
     })
 
-    if (queryData) {
-      response.result = queryData
-    } else {
-      response.message = "The Organization isn't exist";
-    }
+    response.result = queryData; 
     return response;
   }
 

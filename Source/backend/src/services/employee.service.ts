@@ -209,7 +209,6 @@ export class EmployeeService {
       },
     })
 
-    // console.log(queryData);
     response.result = queryData;
     return response;
   }
@@ -250,7 +249,11 @@ export class EmployeeService {
       }
     })
 
-    response.result = "Assign Employee to Department successfully";
+    if (queryData) {
+      response.result = "Assign Employee to Department successfully";
+    } else {
+      response.result = "Assign unsuccessfully"
+    }
     return response;
   }
 
@@ -262,7 +265,6 @@ export class EmployeeService {
         deleted: false,
       }
     })
-
     if (!isValidDepartment) {
       response.message = `The department isn't exist`;
       return response;
@@ -274,18 +276,38 @@ export class EmployeeService {
         deleted: false,
       }
     })
-
     if (!isValidEmployee) {
       response.message = `Employee isn't exist`;
       return response;
     }
 
-    await prisma.department.update({
+    const previousManagerOfDepartment = await prisma.departmentManager.findFirst({
       where: {
         departmentId: data.departmentId,
-      },
+        managerId: data.employeeId
+      }
+    });
+
+    //the previous manager is exsit
+    if (previousManagerOfDepartment) {
+      await prisma.departmentManager.update({
+        where: {
+          managerId_departmentId: {
+            departmentId: data.departmentId,
+            managerId: data.employeeId
+          }
+        },
+        data: {
+          deleted: false,
+          deletedAt: new Date(new Date().toISOString())
+        }
+      });
+    }
+    
+    await prisma.departmentManager.create({
       data: {
         managerId: data.employeeId,
+        departmentId: data.departmentId,
       }
     })
 

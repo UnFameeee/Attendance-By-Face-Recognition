@@ -14,7 +14,7 @@ class EmployeeController {
       const response = await this.employeeService.getListEmployee(page);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -25,7 +25,7 @@ class EmployeeController {
       const response = await this.employeeService.getEmpListInDepartment(departmentId, page);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -35,7 +35,7 @@ class EmployeeController {
       const response = await this.employeeService.getEmployeeById(employeeId);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -46,7 +46,7 @@ class EmployeeController {
       const response = await this.employeeService.updateEmployeeDetail(employeeId, data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -56,7 +56,7 @@ class EmployeeController {
       const response = await this.employeeService.assignEmployeeToDepartment(data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -66,7 +66,7 @@ class EmployeeController {
       const response = await this.employeeService.assignManagerToDepartment(data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 
@@ -76,7 +76,7 @@ class EmployeeController {
       const response = await this.employeeService.changeRoleOfEmployee(data);
       res.status(200).json(response);
     } catch (err) {
-      next(new HttpException(500, "Server Error"));
+      next(err);
     }
   }
 }

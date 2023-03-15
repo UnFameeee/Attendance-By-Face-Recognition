@@ -1,7 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { RequestWithProfile } from '../interfaces/auth.interface';
 import { prisma } from '../database/prisma.singleton';
-import { PERMISSION, ROLE } from '../constant/database.constant';
 import { ResponseData } from '../config/responseData.config';
 import { HttpException } from '../config/httpException';
 
@@ -20,10 +19,6 @@ export const authorizeRoute = async (permission: string, resource: string) => as
       }
     })
 
-    // if (role.roleName == ROLE.ADMIN) {
-    //   next();
-    // }
-
     const queryData = await prisma.rolePermission.findFirst({
       where: {
         resource: {
@@ -31,7 +26,7 @@ export const authorizeRoute = async (permission: string, resource: string) => as
         },
         roleId: role.roleId,
         permission: {
-          permissionName: { in: [permission] },
+          permissionName: permission,
         }
       }
     })

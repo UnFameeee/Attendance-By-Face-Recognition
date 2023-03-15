@@ -93,12 +93,9 @@ class AuthenticationService {
       }
     })
     if (!findEmployee) throw new HttpException(409, `This email ${loginData.email} was not found`);
-
     const isPasswordMatching = await bcrypt.compare(loginData.password, findEmployee.password);
     if (!isPasswordMatching) throw new HttpException(409, "Password is not matching");
-
     findEmployee.password = undefined;
-
     return await this.generateToken(findEmployee);
   }
 
