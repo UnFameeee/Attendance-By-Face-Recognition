@@ -4,7 +4,6 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 
 function Header() {
   const location = useLocation();
-  console.log("location", location);
   return (
     <Box paddingX="5" paddingY="5" height="80px" bg="gray.200" width="100vw">
       <Flex alignItems="center">
