@@ -71,8 +71,8 @@ function HomeSidebar() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {true && (
-        <Sidebar customBreakPoint="1005px" collapsedWidth="64px" width="250px">
+      <Box>
+        <Sidebar rootStyles={{overflowY:'overlay'}} customBreakPoint="1005px" collapsedWidth="64px" width="250px">
           <Menu
             menuItemStyles={{
               button: ({ level, active, disabled }) => {
@@ -91,7 +91,7 @@ function HomeSidebar() {
               gap="2"
               padding="2"
             >
-              <Flex flex="1" alignItems="center" gap="2">
+              <Flex flex="8" alignItems="center" gap="2">
                 <Avatar src={avt_user} />
                 <Box display="flex" flexDirection="column">
                   <Heading fontSize="large" color="black">
@@ -103,7 +103,7 @@ function HomeSidebar() {
                   </Box>
                 </Box>
               </Flex>
-              <Flex>
+              <Flex flex="2">
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
@@ -114,7 +114,7 @@ function HomeSidebar() {
               </Flex>
             </Flex>
             {collapsed && (
-              <Flex justifyContent="center" w="100%" mb='10px'>
+              <Flex justifyContent="center" w="100%" mb="10px">
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
@@ -195,7 +195,7 @@ function HomeSidebar() {
             </Menu>
           </Menu>
         </Sidebar>
-      )}
+      </Box>
       <Box
         className="Main-content"
         flex="1"

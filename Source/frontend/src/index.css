@@ -22,3 +22,6 @@ code {
 .ant-form-item-explain{
   color:red !important;
 }
+.ps-sidebar-container{
+  overflow-y:overlay !important
+}
