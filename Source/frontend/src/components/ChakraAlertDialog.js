@@ -9,8 +9,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-function ChakraAlertDialog({ isOpen, onClose, onAccept, message, title }) {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+function ChakraAlertDialog(props) {
+  const { isOpen, onClose, onAccept, message, title, acceptButtonLabel } =
+    props;
   const cancelRef = React.useRef();
 
   return (
@@ -27,15 +28,14 @@ function ChakraAlertDialog({ isOpen, onClose, onAccept, message, title }) {
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            {message ||
-              "Are you sure? You can't undo this action afterwards."}
+            {message || "Are you sure? You can't undo this action afterwards."}
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
             <Button colorScheme="red" onClick={onAccept} ml={3}>
-              Delete
+              {acceptButtonLabel ?? "Delete"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

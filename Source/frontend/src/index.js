@@ -28,6 +28,7 @@ const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
     link: "#4374e3",
+    mainBg:'#d7e2e978'
   },
 });
 // Create a client
