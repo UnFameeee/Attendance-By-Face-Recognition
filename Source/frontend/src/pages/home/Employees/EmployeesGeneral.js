@@ -23,6 +23,7 @@ import { dumbTableData, roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/DynamicDrawer";
+import { FilterType } from "../../../components/DynamicTable";
 function EmployeesGeneral() {
   const screenPadding = "2rem";
   const [editData, setEditData] = useState({});
@@ -79,10 +80,19 @@ function EmployeesGeneral() {
       {
         Header: "Full Name",
         accessor: "fullName",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+        cellWidth: "150px",
       },
       {
         Header: "Email",
         accessor: "email",
+        haveFilter: {
+          filterType: FilterType.Default,
+        },
+        haveSort: true,
       },
       {
         Header: "Role",
@@ -95,15 +105,28 @@ function EmployeesGeneral() {
             {value}
           </Badge>
         ),
+        haveFilter: {
+          filterType: FilterType.Default,
+        },
+        haveSort: true,
       },
       {
-        Header: "Phone Number",
+        Header: "Phone",
         accessor: "phoneNumber",
+        haveFilter: {
+          filterType: FilterType.Number,
+        },
+        haveSort: true,
+        cellWidth: "150px",
       },
       {
         Header: "Address",
         accessor: "address",
         cellWidth: "200px",
+        haveFilter: {
+          filterType: FilterType.DateTime,
+        },
+        haveSort: true,
       },
     ],
     []
@@ -155,7 +178,7 @@ function EmployeesGeneral() {
     {
       isSelectionField: true,
       selectionArray: roleArray,
-      isDisabled:true,
+      isDisabled: true,
       name: "role",
       label: "Role",
       type: "text",
@@ -163,11 +186,11 @@ function EmployeesGeneral() {
       leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
     },
     {
-      isTextAreaField:true,
-      name:"address",
-      label:"Address",
-      height:"150px",
-      placeholder:"Enter your address",
+      isTextAreaField: true,
+      name: "address",
+      label: "Address",
+      height: "150px",
+      placeholder: "Enter your address",
     },
   ];
   const initialValues = {
@@ -191,11 +214,25 @@ function EmployeesGeneral() {
       <Heading fontSize="3xl" fontWeight="semibold">
         Employees Overview
       </Heading>
-      <Flex justifyContent="space-between" gap={5} flexDirection={{base:'column', sm:'column',md:'row' ,lg:'row',xl:'row'}}>
-        <Box width={{ base:'100%',sm:'100%',md:'50%' ,lg:'50%',xl:'50%'}}>
+      <Flex
+        justifyContent="space-between"
+        gap={5}
+        flexDirection={{
+          base: "column",
+          sm: "column",
+          md: "row",
+          lg: "row",
+          xl: "row",
+        }}
+      >
+        <Box
+          width={{ base: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" }}
+        >
           <PieChart />
         </Box>
-        <Box width={{ base:'100%',sm:'100%',md:'50%' ,lg:'50%',xl:'50%'}}>
+        <Box
+          width={{ base: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" }}
+        >
           <ColumnChart />
         </Box>
       </Flex>

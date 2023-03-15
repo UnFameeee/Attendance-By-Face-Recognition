@@ -104,7 +104,7 @@ function HomeSidebar() {
                 </Box>
               </Flex>
               <Flex>
-                <IconButton
+                <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
                   fontSize="23px"
@@ -115,7 +115,7 @@ function HomeSidebar() {
             </Flex>
             {collapsed && (
               <Flex justifyContent="center" w="100%" mb='10px'>
-                <IconButton
+                <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
                   fontSize="23px"
