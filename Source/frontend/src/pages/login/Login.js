@@ -62,6 +62,15 @@ export default function Login() {
       });
     },
   });
+  const initialValues ={ email: "", password: "" }
+  const validationSchema = Yup.object().shape({
+    password: Yup.string()
+      .required("Password required")
+      .min(6, "Password is too short"),
+    email: Yup.string()
+      .email("Invalid Email")
+      .required("Email required"),
+  })
   return (
     <Center minHeight="calc(100vh - 160px)" width="100vw" bgColor="gray.200">
       <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">
@@ -71,15 +80,8 @@ export default function Login() {
             <Text>Welcome back!</Text>
           </Flex>
           <Formik
-            initialValues={{ email: "", password: "" }}
-            validationSchema={Yup.object({
-              password: Yup.string()
-                .required("Password required")
-                .min(6, "Password is too short"),
-              email: Yup.string()
-                .email("Invalid Email")
-                .required("Email required"),
-            })}
+            initialValues={initialValues}
+            validationSchema={validationSchema}
             onSubmit={(values, actions) => {
               const credential = {
                 email: values.email,
