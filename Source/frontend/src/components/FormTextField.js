@@ -18,57 +18,93 @@ import { Field, useField } from "formik";
 import { useState } from "react";
 import SearchAndSelectAddressField from "./SearchAndSelectAddressField";
 import RadioGenderField from "./RadioGenderField";
-function FormTextField({ ...props }) {
+function FormTextField(props) {
+  const {
+    leftIcon,
+    rightIcon,
+    isRequired,
+    label,
+    type,
+    placeholder,
+    selectionArray,
+    arrayGender,
+    isDateField,
+    isTextAreaField,
+    isGender,
+    isSelectionField,
+    isAddress,
+    formik,
+    isResize,
+    isReadOnly,
+    height,
+    isDisabled,
+  } = props;
   const [field, meta] = useField(props);
-  if (props.isDateField) {
+  if (isDateField) {
     return (
-      <FormControl isInvalid={meta.error && meta.touched}>
-        <FormLabel>{props.label}</FormLabel>
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
         <InputGroup>
-          <Input {...field} type={props.type ?? "date"} />
+          <Input {...field} type={type ?? "date"} />
         </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
-  } else if (props.isTextAreaField) {
+  } else if (isTextAreaField) {
     return (
-      <FormControl isInvalid={meta.error && meta.touched}>
-        <FormLabel>{props.label}</FormLabel>
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
         <Textarea
           {...field}
-          resize={props.isResize ?? "none"}
-          height={props.height ?? "none"}
-          placeholder={props.placeholder ?? ""}
+          resize={isResize ?? "none"}
+          height={height ?? "none"}
+          placeholder={placeholder ?? ""}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
-  } else if (props.isGender) {
+  } else if (isGender) {
     return (
-      <FormControl isInvalid={meta.error && meta.touched}>
-        <FormLabel>{props.label}</FormLabel>
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
         <Field
           {...field}
-          arrayGender={props.arrayGender}
+          arrayGender={arrayGender}
           as={RadioGenderField}
           onChange={(e) => {
-            props.formik.setFieldValue("gender", e);
+            formik.setFieldValue("gender", e);
           }}
-          onBlur={props.formik.handleBlur}
+          onBlur={formik.handleBlur}
         />
       </FormControl>
     );
-  } else if (props.isSelectionField) {
+  } else if (isSelectionField) {
     return (
-      <FormControl isInvalid={meta.error && meta.touched}>
-        <FormLabel>{props.label}</FormLabel>
-        <Select
-          {...field}
-          defaultValue=""
-          placeholder={props.placeholder ?? ""}
-        >
-          {props.selectionArray &&
-            props.selectionArray.map((item, index) => (
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
+        <Select {...field} placeholder={placeholder ?? ""}>
+          {selectionArray &&
+            selectionArray.map((item, index) => (
               <option key={index} value={item.value}>
                 {item.label}
               </option>
@@ -77,17 +113,22 @@ function FormTextField({ ...props }) {
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
-  } else if (props.isAddress) {
+  } else if (isAddress) {
     return (
-      <FormControl isInvalid={meta.error && meta.touched}>
-        <FormLabel>{props.label}</FormLabel>
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
         <Field
           {...field}
           onChange={(e) => {
-            props.formik.setFieldValue("address", e);
+            formik.setFieldValue("address", e);
           }}
-          placeholder={props.placeholder ?? ""}
-          onBlur={props.formik.handleBlur}
+          placeholder={placeholder ?? ""}
+          onBlur={formik.handleBlur}
           as={SearchAndSelectAddressField}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -96,22 +137,19 @@ function FormTextField({ ...props }) {
   } else {
     return (
       <FormControl
-        isRequired={props.isRequired}
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
         isInvalid={meta.error && meta.touched}
       >
-        <FormLabel>{props.label}</FormLabel>
+        <FormLabel>{label}</FormLabel>
         <InputGroup>
-          {props.leftIcon && (
-            <InputLeftElement pl={2} children={props.leftIcon} />
-          )}
-          {props.rightIcon && (
-            <InputRightElement pr={2} children={props.rightIcon} />
-          )}
+          {leftIcon && <InputLeftElement pl={2} children={leftIcon} />}
+          {rightIcon && <InputRightElement pr={2} children={rightIcon} />}
           <Input
-            isReadOnly={props.isReadOnly}
             {...field}
-            type={props.type ?? "text"}
-            placeholder={props.placeholder ?? ""}
+            type={type ?? "text"}
+            placeholder={placeholder ?? ""}
           />
         </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
