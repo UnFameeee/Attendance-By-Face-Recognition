@@ -178,7 +178,6 @@ function EmployeesGeneral() {
     {
       isSelectionField: true,
       selectionArray: roleArray,
-      isDisabled: true,
       name: "role",
       label: "Role",
       type: "text",

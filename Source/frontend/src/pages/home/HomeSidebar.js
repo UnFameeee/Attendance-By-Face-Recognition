@@ -18,6 +18,7 @@ import {
   Menu,
   MenuItem,
   useProSidebar,
+  sidebarClasses,
 } from "react-pro-sidebar";
 import { SideBarData } from "../../Utils/SideBarData";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -78,10 +79,11 @@ function HomeSidebar() {
               button: ({ level, active, disabled }) => {
                 // only apply styles on first level elements of the tree
                 if (level === 0)
-                  return {
-                    color: disabled ? "#f5d9ff" : "#d359ff",
-                    backgroundColor: active ? "#eecef9" : undefined,
-                  };
+                return{
+                  color: disabled ? '#f5d9ff' : '#d359ff',
+                  backgroundColor: active ? '#eecef9' : undefined,
+                }
+                 
               },
             }}
           >
@@ -90,6 +92,7 @@ function HomeSidebar() {
               justifyContent="start"
               gap="2"
               padding="2"
+              bg='#cadeee'
             >
               <Flex flex="8" alignItems="center" gap="2">
                 <Avatar src={avt_user} />
@@ -114,7 +117,7 @@ function HomeSidebar() {
               </Flex>
             </Flex>
             {collapsed && (
-              <Flex justifyContent="center" w="100%" mb="10px">
+              <Flex pb='10px' bg='#cadeee' justifyContent="center" w="100%" >
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
@@ -124,11 +127,12 @@ function HomeSidebar() {
                 />
               </Flex>
             )}
-            <Divider />
+           
             <Menu>
               {SideBarData.map((parentItem, index) =>
                 parentItem.children ? (
                   <SubMenu
+                  
                     key={index}
                     label={
                       <Flex alignItems="center">
@@ -144,7 +148,8 @@ function HomeSidebar() {
                     {parentItem.children &&
                       parentItem.children.map((childItem, index) => (
                         <MenuItem
-                          key={index}
+                       
+                          key={index}                     
                           component={
                             <NavLink
                               to={`${parentItem.url}/${childItem.url}`}

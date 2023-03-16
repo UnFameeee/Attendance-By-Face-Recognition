@@ -51,7 +51,7 @@ function PieChart() {
     ],
   };
   return (
-    <Box shadow='lg' rounded='md' p={3}>
+    <Box bg='white' shadow='lg' rounded='md' p={3}>
       <Pie {...config} />
     </Box>
   );
