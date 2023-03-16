@@ -13,10 +13,14 @@ export const PERMISSION: stringObject = {
   READ: "read",
   UPDATE: "update",
   DELETE: "delete",
-  ALL: "*"
+  GRANT_PERMISSION: "grant_permission",
+  GRANT_POSITION: "grant_position",
 }
 
 export const RESOURCE: stringObject = {
   ACCOUNT_MANAGEMENT: "account-management",
   PROFILE_MANAGEMENT: "profile-management",
+  DEPARTMENT_MANAGEMENT: "department-management",
+  ORGANIZATION_MANAGEMENT: "organization-management",
+  EMPLOYEE_MANAGEMENT: "employee-management",
 }
