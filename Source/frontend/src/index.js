@@ -1,15 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { ProSidebarProvider } from "react-pro-sidebar";
-import { BrowserRouter, Route, Routes, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { createStandaloneToast } from "@chakra-ui/toast";
 
 import Login from "./pages/login/Login";
@@ -83,5 +80,3 @@ root.render(
       </Provider>
     </QueryClientProvider>
 );
-
-reportWebVitals();
