@@ -45,7 +45,7 @@ import _ from "lodash";
 
 function Profile() {
   const initialValues = {
-    fullName: "",
+    fullname: "",
     email: "",
     gender: "male",
     phone: "",
@@ -100,7 +100,7 @@ function Profile() {
                 <Stack spacing={3} p={4} px={8}>
                   <Flex gap={8}>
                     <FormTextField
-                      name="fullName"
+                      name="fullname"
                       label="Full Name"
                       placeholder="Enter your Full Name"
                       leftIcon={

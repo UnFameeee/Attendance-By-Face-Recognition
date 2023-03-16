@@ -79,7 +79,7 @@ function EmployeesGeneral() {
       },
       {
         Header: "Full Name",
-        accessor: "fullName",
+        accessor: "fullname",
         haveFilter: {
           filterType: FilterType.Text,
         },
@@ -150,7 +150,7 @@ function EmployeesGeneral() {
   ];
   const drawerFieldData = [
     {
-      name: "fullName",
+      name: "fullname",
       label: "Full Name",
       placeholder: "Enter your Full Name",
       leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
@@ -193,7 +193,7 @@ function EmployeesGeneral() {
     },
   ];
   const initialValues = {
-    fullName: `${editData.fullName ? editData.fullName : ""}`,
+    fullname: `${editData.fullname ? editData.fullname : ""}`,
     email: `${editData.email ? editData.email : ""}`,
     phone: `${editData.phoneNumber ? editData.phoneNumber : ""}`,
     address: `${editData.address ? editData.address : ""}`,
@@ -201,7 +201,7 @@ function EmployeesGeneral() {
     role: `${editData.role ? editData.role : ""}`,
   };
   const validationSchema = Yup.object().shape({
-    fullName: Yup.string().required("This field is required"),
+    fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
     role: Yup.string().required("This field is required"),
