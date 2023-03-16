@@ -29,7 +29,7 @@ function Dashboard() {
   return (
     <Stack spacing={5} paddingX={5} paddingY={4}>
       <DashboardCardGrid dashboardData={DashBoardDataTop} />
-      <Flex className="chart-section" justifyContent="space-between" gap={5} flexDirection={{ sm:'column',md:'row' ,lg:'row',xl:'row'}}>
+      <Flex className="chart-section" justifyContent="space-between" gap={5} flexDirection={{base:'column', sm:'column',md:'row' ,lg:'row',xl:'row'}}>
         <Box width={{ sm:'100%%',md:'50%' ,lg:'50%',xl:'50%'}}>
           <PieChart />
         </Box>

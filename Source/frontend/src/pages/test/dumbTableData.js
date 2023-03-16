@@ -1,4 +1,4 @@
-import { memo } from "react";
+
 //export const dumbTableData =[]
 export const dumbTableData = [
   {
@@ -278,17 +278,4 @@ export const roleCodeColor = [
     Engineer: "pink",
   },
 ];
-const test = (row, action) => {
-  row.action = action;
-  console.log(row, action);
-};
-export const tableRowAction = [
-  {
-    actionName: "Edit",
-    func: test,
-  },
-  {
-    actionName: "Delete",
-    func: test,
-  },
-];
+

@@ -21,6 +21,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
 import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
+import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -50,7 +51,7 @@ root.render(
                   <Route element={<Home />}>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="organization">
-                      <Route path="general-organization" element={<Test />} />
+                      <Route path="general-organization" element={<OrganizationGeneral />} />
                       <Route path="location" element={<Test />} />
                       <Route path="department" element={<Test />} />
                     </Route>

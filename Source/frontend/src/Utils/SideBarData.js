@@ -13,14 +13,15 @@ import {
 } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { SiMagento } from "react-icons/si";
-import { GrUserSettings, GrMapLocation, GrLogout } from "react-icons/gr";
+import { GrUserSettings } from "react-icons/gr";
 import { MdAvTimer } from "react-icons/md";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { SlOrganization } from "react-icons/sl";
 import { RiUserVoiceFill } from "react-icons/ri";
 import {GoReport} from 'react-icons/go'
 import {IoNotifications} from 'react-icons/io5'
-
+import {SlLocationPin} from 'react-icons/sl'
+import {ImProfile} from 'react-icons/im'
 const iconSize ='23px'
 export const SideBarData = [
   {
@@ -41,7 +42,7 @@ export const SideBarData = [
       {
         title: "Location",
         url: "location",
-        icon: <GrMapLocation fontSize={iconSize} />,
+        icon: <SlLocationPin fontSize={iconSize} />,
       },
       {
         title: "Department",
@@ -117,7 +118,7 @@ export const SideBarData = [
       {
         title: "Profile",
         url: "profile",
-        icon: <GrUserSettings fontSize={iconSize} />,
+        icon: <ImProfile fontSize={iconSize} />,
       },
     ],
   },
