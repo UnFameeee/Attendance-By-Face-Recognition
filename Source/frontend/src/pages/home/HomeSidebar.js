@@ -21,7 +21,7 @@ import {
   sidebarClasses,
 } from "react-pro-sidebar";
 import { SideBarData } from "../../Utils/SideBarData";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";
 import avt_user from "../../assets/ta.jpeg";
@@ -46,6 +46,8 @@ function HomeSidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cookies = new Cookies();
+  const location = useLocation();
+  console.log("path name", location.pathname);
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
@@ -73,26 +75,19 @@ function HomeSidebar() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Box>
-        <Sidebar rootStyles={{overflowY:'overlay'}} customBreakPoint="1005px" collapsedWidth="64px" width="250px">
-          <Menu
-            menuItemStyles={{
-              button: ({ level, active, disabled }) => {
-                // only apply styles on first level elements of the tree
-                if (level === 0)
-                return{
-                  color: disabled ? '#f5d9ff' : '#d359ff',
-                  backgroundColor: active ? '#eecef9' : undefined,
-                }
-                 
-              },
-            }}
-          >
+        <Sidebar
+          rootStyles={{ overflowY: "overlay" }}
+          customBreakPoint="1005px"
+          collapsedWidth="64px"
+          width="250px"
+        >
+          <Menu>
             <Flex
               alignItems="center"
               justifyContent="start"
               gap="2"
               padding="2"
-              bg='#cadeee'
+              bg="#cadeee"
             >
               <Flex flex="8" alignItems="center" gap="2">
                 <Avatar src={avt_user} />
@@ -117,7 +112,7 @@ function HomeSidebar() {
               </Flex>
             </Flex>
             {collapsed && (
-              <Flex pb='10px' bg='#cadeee' justifyContent="center" w="100%" >
+              <Flex pb="10px" bg="#cadeee" justifyContent="center" w="100%">
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
@@ -127,13 +122,41 @@ function HomeSidebar() {
                 />
               </Flex>
             )}
-           
-            <Menu>
+
+            <Menu
+              menuItemStyles={{
+                button: ({ level, active, disabled }) => {
+                  // console.log("active", active);
+                  // console.log("level", level);
+
+                  // only apply styles on first level elements of the tree
+                  if (level === 0)
+                    return {
+                      backgroundColor: active ? "#224562" : undefined,
+                      color: active ? "white" : "undefined",
+                    };
+                  if (level === 1)
+                    return {
+                      backgroundColor: active ? "#224562" : undefined,
+                      color: active ? "white" : undefined,
+                    };
+                },
+                subMenuContent:({ level, active, disabled }) => {
+                  // console.log("active", active);
+                  console.log("level", level);
+                  // only apply styles on first level elements of the tree
+                  if (level === 0)
+                    return {
+                      backgroundColor: active ? "#224562" : undefined,
+                      color: active ? "white" : undefined,
+                    };
+                },
+              }}
+            >
               {SideBarData.map((parentItem, index) =>
                 parentItem.children ? (
                   <SubMenu
-                  
-                    key={index}
+                    key={index}                
                     label={
                       <Flex alignItems="center">
                         <Box flex="20%" display="grid" placeItems="start">
@@ -148,8 +171,13 @@ function HomeSidebar() {
                     {parentItem.children &&
                       parentItem.children.map((childItem, index) => (
                         <MenuItem
-                       
-                          key={index}                     
+                          active={
+                            location.pathname ==
+                            `/${parentItem.url}/${childItem.url}`
+                              ? true
+                              : false
+                          }
+                          key={index}
                           component={
                             <NavLink
                               to={`${parentItem.url}/${childItem.url}`}
@@ -173,6 +201,12 @@ function HomeSidebar() {
                   </SubMenu>
                 ) : (
                   <MenuItem
+                    active={
+                      location.pathname ==
+                      `/${parentItem.url}`
+                        ? true
+                        : false
+                    }
                     key={index}
                     component={<NavLink to={parentItem.url} />}
                   >
