@@ -1,4 +1,3 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
 import axios from "axios";
 import { setAccessToken, setRefreshToken } from "../../store/Slice/authSlice";
 import axiosBase, { baseURL } from "../../Utils/AxiosInstance";

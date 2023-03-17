@@ -10,6 +10,7 @@ import {
   IconButton,
   Image,
   Text,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import {
@@ -39,6 +40,9 @@ import {
   BsLayoutSidebarInsetReverse,
   BsLayoutSidebarInset,
 } from "react-icons/bs";
+import jwtDecode from "jwt-decode";
+import { Helper } from "../../Utils/Helper";
+import ChakraAlertDialog from "../../components/ChakraAlertDialog";
 function HomeSidebar() {
   const { collapseSidebar, toggleSidebar, collapsed, toggled } =
     useProSidebar();
@@ -47,7 +51,11 @@ function HomeSidebar() {
   const dispatch = useDispatch();
   const cookies = new Cookies();
   const location = useLocation();
-  console.log("path name", location.pathname);
+  const {
+    isOpen: isSignOutAlertOpen,
+    onOpen: onSignOutAlertOpen,
+    onClose: onSignOutAlertClose,
+  } = useDisclosure();
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
@@ -71,7 +79,10 @@ function HomeSidebar() {
     const refreshToken = cookies.get("jwt_authentication");
     useLogoutMutation.mutate({ accessToken, refreshToken });
   };
-
+  const accessTokenJSON = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(accessTokenJSON);
+  var decoded = jwtDecode(accessToken);
+  let userEmail = decoded.email;
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Box>
@@ -92,8 +103,15 @@ function HomeSidebar() {
               <Flex flex="8" alignItems="center" gap="2">
                 <Avatar src={avt_user} />
                 <Box display="flex" flexDirection="column">
-                  <Heading fontSize="large" color="black">
-                    Admin123
+                  <Heading
+                    fontSize="large"
+                    color="black"
+                    overflow="hidden"
+                    width="124px"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {userEmail}
                   </Heading>
                   <Box display="flex" alignItems="center" gap={1}>
                     <Icon as={RiRadioButtonLine} color="green" boxSize={6} />
@@ -141,22 +159,22 @@ function HomeSidebar() {
                       color: active ? "white" : undefined,
                     };
                 },
-                subMenuContent:({ level, active, disabled }) => {
+                subMenuContent: ({ level, active, disabled }) => {
                   // console.log("active", active);
-                  console.log("level", level);
+                  // console.log("level", level);
                   // only apply styles on first level elements of the tree
-                  if (level === 0)
-                    return {
-                      backgroundColor: active ? "#224562" : undefined,
-                      color: active ? "white" : undefined,
-                    };
+                  // if (level === 0)
+                  //   return {
+                  //     backgroundColor: active ? "#224562" : undefined,
+                  //     color: active ? "white" : undefined,
+                  //   };
                 },
               }}
             >
               {SideBarData.map((parentItem, index) =>
                 parentItem.children ? (
                   <SubMenu
-                    key={index}                
+                    key={index}
                     label={
                       <Flex alignItems="center">
                         <Box flex="20%" display="grid" placeItems="start">
@@ -202,10 +220,7 @@ function HomeSidebar() {
                 ) : (
                   <MenuItem
                     active={
-                      location.pathname ==
-                      `/${parentItem.url}`
-                        ? true
-                        : false
+                      location.pathname == `/${parentItem.url}` ? true : false
                     }
                     key={index}
                     component={<NavLink to={parentItem.url} />}
@@ -221,7 +236,7 @@ function HomeSidebar() {
                   </MenuItem>
                 )
               )}
-              <MenuItem onClick={handleLogout} key="sign-out">
+              <MenuItem onClick={onSignOutAlertOpen} key="sign-out">
                 <Flex alignItems="center">
                   <Box flex="20%" display="grid" placeItems="start">
                     <MdLogout fontSize="23px" />
@@ -231,6 +246,14 @@ function HomeSidebar() {
                   </Box>
                 </Flex>
               </MenuItem>
+              <ChakraAlertDialog
+                title="Sign out account"
+                message="Are you sure? This action will sign out your account."
+                isOpen={isSignOutAlertOpen}
+                onClose={onSignOutAlertClose}
+                onAccept={handleLogout}
+                acceptButtonLabel="Accept"
+              />
             </Menu>
           </Menu>
         </Sidebar>

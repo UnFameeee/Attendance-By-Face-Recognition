@@ -12,6 +12,7 @@ export const isTokenExpired = (token) => {
 export const isOdd = (value) => {
   return value % 2 === 0
 }
+
 export const Helper = {
   isTokenExpired,isOdd
  }

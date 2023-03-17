@@ -32,6 +32,7 @@ import { useMutation } from "react-query";
 import Cookies from "universal-cookie";
 import { logout } from "../../services/auth/auth";
 import { setUser } from "../../store/Slice/authSlice";
+import jwtDecode from "jwt-decode";
 function HomeHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,7 +71,10 @@ function HomeHeader() {
     const refreshToken = cookies.get("jwt_authentication");
     useLogoutMutation.mutate({ accessToken, refreshToken });
   };
-
+  const accessTokenJSON = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(accessTokenJSON);
+  var decoded = jwtDecode(accessToken);
+  let userEmail = decoded.email;
   return (
     <>
       <Show breakpoint="(max-width: 1005px)">
@@ -156,7 +160,7 @@ function HomeHeader() {
                 <MenuButton>
                   <Flex _hover={{ cursor: "pointer" }}>
                     <Icon as={HiUserCircle} boxSize={8} />
-                    <Text fontSize="1.2rem">Admin123</Text>
+                    <Text fontSize="1.2rem">{userEmail}</Text>
                     <Icon as={MdKeyboardArrowDown} boxSize={8} />
                   </Flex>
                 </MenuButton>
