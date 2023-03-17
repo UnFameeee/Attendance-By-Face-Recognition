@@ -1,8 +1,8 @@
 import { Box, Button, Center, Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-
 function Header() {
+  
   const location = useLocation();
   return (
     <Box paddingX="5" paddingY="5" height="80px" bg="gray.200" width="100vw">
