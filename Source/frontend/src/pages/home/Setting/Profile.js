@@ -37,7 +37,7 @@ import {
   BsCalendar2Date,
 } from "react-icons/bs";
 import { RiFolderUserLine } from "react-icons/ri";
-import { AiOutlineCloudUpload } from "react-icons/ai";
+import { AiOutlineCloudUpload, AiTwotoneSetting } from "react-icons/ai";
 import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
 import google_logo from "../../../assets/google-ar21-removebg-preview.png";
@@ -52,6 +52,7 @@ import {
 import jwtDecode from "jwt-decode";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
+import { useGetListRoleOfEmployee } from "../../../services/employee/employee";
 function Profile() {
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -63,9 +64,16 @@ function Profile() {
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
   var userDecodeData = jwtDecode(accessToken);
-  const { data, isLoading, isError, error } = useGetProfileDetail(
-    userDecodeData.id
-  );
+  const {
+    data: profileDetailData,
+    isLoading: isLoadingProfileDetail,
+    isError,
+    error,
+  } = useGetProfileDetail(userDecodeData.id);
+  // const {
+  //   data: listRoleOfEmployeeData,
+  //   isLoading: isLoadingListRoleOfEmployee,
+  // } = useGetListRoleOfEmployee();
   const useSaveProfileDetail = useMutation(saveProfileDetail, {
     onSuccess: (data) => {
       const { result } = data;
@@ -88,44 +96,52 @@ function Profile() {
       });
     },
   });
-  const roleArray = [
-    {
-      label: "Project Manager",
-      value: "Project Manager",
-    },
-    { label: "Estimator", value: "Estimator" },
-    { label: "Electrician", value: "Electrician" },
-    {
-      label: "Construction Worker",
-      value: "Construction Worker",
-    },
-    {
-      label: "Construction Manager",
-      value: "Construction Manager",
-    },
-    { label: "Engineer", value: "Engineer" },
-    { label: "Admin", value: "Admin" },
-  ];
+  let roleArray = [];
+  // if(listRoleOfEmployeeData?.result){
+  //   listRoleOfEmployeeData?.result.map((item) =>{
+  //     roleArray.push({label:item.displayName,value:item.roleId})
+  //   })
+  // }
   const initialValues = {
-    fullname: data?.result?.fullname ? data?.result?.fullname : "",
-    email: data?.result?.email ? data?.result?.email : "",
-    gender: data?.result?.gender ? data?.result?.gender : "male",
-    phone: data?.result?.phoneNumber ? data?.result?.phoneNumber : "",
-    dateOfBirth: data?.result?.dateOfBirth
-      ? new Date(data?.result?.dateOfBirth).toISOString().substring(0, 10)
+    fullname: profileDetailData?.result?.fullname
+      ? profileDetailData?.result?.fullname
       : "",
-    address: data?.result?.location?.address
-      ? data?.result?.location?.address
+    email: profileDetailData?.result?.email
+      ? profileDetailData?.result?.email
       : "",
-    city: data?.result?.location?.city ? data?.result?.location?.city : "",
-    country: data?.result?.location?.country
-      ? data?.result?.location?.country
+    gender: profileDetailData?.result?.gender
+      ? profileDetailData?.result?.gender
+      : "male",
+    phone: profileDetailData?.result?.phoneNumber
+      ? profileDetailData?.result?.phoneNumber
       : "",
-    state: data?.result?.location?.state ? data?.result?.location?.state : "",
+    dateOfBirth: profileDetailData?.result?.dateOfBirth
+      ? new Date(profileDetailData?.result?.dateOfBirth)
+          .toISOString()
+          .substring(0, 10)
+      : "",
+    address: profileDetailData?.result?.location?.address
+      ? profileDetailData?.result?.location?.address
+      : "",
+    city: profileDetailData?.result?.location?.city
+      ? profileDetailData?.result?.location?.city
+      : "",
+    country: profileDetailData?.result?.location?.country
+      ? profileDetailData?.result?.location?.country
+      : "",
+    state: profileDetailData?.result?.location?.state
+      ? profileDetailData?.result?.location?.state
+      : "",
 
-    department: data?.result?.department ? data?.result?.department : "",
-    joiningDate: data?.result?.joiningDate ? data?.result?.joiningDate : "",
-    role: data?.result?.role.displayName ? data?.result?.role.displayName : "",
+    department: profileDetailData?.result?.department
+      ? profileDetailData?.result?.department
+      : "",
+    joiningDate: profileDetailData?.result?.joiningDate
+      ? profileDetailData?.result?.joiningDate
+      : "",
+    role: profileDetailData?.result?.role?.displayName
+      ? profileDetailData?.result?.role?.displayName
+      : "",
   };
   const validationSchema = Yup.object().shape({
     phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
@@ -137,7 +153,8 @@ function Profile() {
     state: Yup.string().required("This field is required"),
     dateOfBirth: Yup.date().required("This field is required"),
   });
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoadingProfileDetail)
+    return <LoadingSpinner />;
   return (
     <Stack
       minHeight="100vh"
@@ -174,7 +191,10 @@ function Profile() {
           <Stack as="form" onSubmit={formik.handleSubmit}>
             <Flex justifyContent="space-between">
               <Box>
-                <Heading>General Details</Heading>
+                <HStack>
+                  <Icon boxSize="40px" as={AiTwotoneSetting} />
+                  <Heading>General Details</Heading>
+                </HStack>
                 <Text>Update your photo and personal details here.</Text>
               </Box>
               <HStack>
@@ -282,10 +302,8 @@ function Profile() {
                   <FormTextField
                     name="role"
                     label="Role"
-                    isSelectionField={true}
-                    selectionArray={roleArray}
+                    isReadOnly={true}
                     type="text"
-                    placeholder="Employee"
                     leftIcon={
                       <RiFolderUserLine color="#999" fontSize="1.5rem" />
                     }

@@ -33,6 +33,8 @@ import Cookies from "universal-cookie";
 import { logout } from "../../services/auth/auth";
 import { setUser } from "../../store/Slice/authSlice";
 import jwtDecode from "jwt-decode";
+import avt_user from "../../assets/ta.jpeg";
+
 function HomeHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -82,7 +84,7 @@ function HomeHeader() {
           className="home-header"
           paddingX={2}
           paddingY={3}
-          bgColor="#224562"
+          bgColor="primary2"
           color="white"
           flexDirection="row"
           alignContent="center"
@@ -158,8 +160,8 @@ function HomeHeader() {
             <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
               <Menu>
                 <MenuButton>
-                  <Flex _hover={{ cursor: "pointer" }}>
-                    <Icon as={HiUserCircle} boxSize={8} />
+                  <Flex _hover={{ cursor: "pointer" }} gap='4px'>
+                    {true ? <Avatar size='sm' border="2px solid white" src={avt_user} /> :  <Icon as={HiUserCircle} boxSize={8} />}
                     <Text fontSize="1.2rem">{userEmail}</Text>
                     <Icon as={MdKeyboardArrowDown} boxSize={8} />
                   </Flex>

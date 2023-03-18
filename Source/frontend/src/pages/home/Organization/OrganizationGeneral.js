@@ -108,10 +108,7 @@ function OrganizationGeneral() {
     state: Yup.string().required("This field is required"),
     country: Yup.string().required("This field is required"),
   });
-  if (isLoading)
-    return (
-      <LoadingSpinner />
-    );
+  if (isLoading) return <LoadingSpinner />;
   return (
     <Stack
       minHeight="100vh"
@@ -148,8 +145,11 @@ function OrganizationGeneral() {
           <Stack as="form" onSubmit={formik.handleSubmit}>
             <Flex justifyContent="space-between">
               <Box>
-                <Heading>General Details</Heading>
-                <Text>Update your organization and location details here.</Text>
+                <HStack>
+                  <Icon boxSize="36px" as={SlOrganization} />
+                  <Heading>General Details</Heading>
+                </HStack>
+                <Text >Update your organization and location details here.</Text>
               </Box>
               <HStack>
                 <Button

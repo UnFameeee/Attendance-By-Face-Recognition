@@ -18,20 +18,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.ant-form-item-explain{
-  color:red !important;
-}
 .ps-sidebar-container{
   overflow-y:overlay !important
 }
-.ps-menu-button.active {
-	/* background-color: #224562!important;
-	color: white !important; */
-}
 
 .ps-menu-button:hover {
-	 background-color: #486a85!important;
+	 background-color: #004F94 !important;
 	color: white !important; 
 }
 
@@ -49,5 +41,5 @@ code {
 ::-webkit-scrollbar-thumb {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-	background-color: #68dbaf;
+	background-color: #48A7A0;
 }
