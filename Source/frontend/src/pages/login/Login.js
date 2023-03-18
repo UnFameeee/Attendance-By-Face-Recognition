@@ -88,7 +88,7 @@ export default function Login() {
                 password: values.password,
               };
               useLoginMutation.mutate(credential);
-              actions.resetForm();
+              actions.setFieldValue('password', '');
             }}
           >
             {(formik) => (
