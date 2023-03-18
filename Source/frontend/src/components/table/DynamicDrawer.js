@@ -11,7 +11,7 @@ import {
   Stack,Button,
 } from "@chakra-ui/react";
 import { Formik } from "formik";
-import FormTextField from "./FormTextField";
+import FormTextField from "../field/FormTextField";
 
 function DynamicDrawer(props) {
   const {

@@ -37,10 +37,10 @@ import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { AiFillFilter } from "react-icons/ai";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import debounce from "lodash/debounce";
-import ChakraAlertDialog from "./ChakraAlertDialog";
-import { Helper } from "../Utils/Helper";
-import IndeterminateCheckbox from "./IndeterminateCheckbox";
-import NoDataToDisplay from "./NoDataToDisplay";
+import ChakraAlertDialog from "../ChakraAlertDialog";
+import { Helper } from "../../Utils/Helper";
+import IndeterminateCheckbox from "../IndeterminateCheckbox";
+import NoDataToDisplay from "../NoDataToDisplay";
 const sortType = [{ asc: 0 }, { dsc: 1 }, { def: 2 }];
 const numberType = [
   "Is Greater Than Or Equal To",

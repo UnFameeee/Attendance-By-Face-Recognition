@@ -15,16 +15,14 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  DashBoardDataTop,
-  DashBoardDataBottom,
-} from "../../../Utils/DashBoardData";
+
 import { BsArrowRightCircle } from "react-icons/bs";
 import ReactDOM from "react-dom";
 import { Pie } from "@ant-design/plots";
-import PieChart from "../../../components/PieChart";
-import ColumnChart from "../../../components/ColumnChart";
+import PieChart from "../../../components/chart/PieChart";
+import ColumnChart from "../../../components/chart/ColumnChart";
 import DashboardCardGrid from "../../../components/DashboardCardGrid";
+import { DashBoardDataBottom, DashBoardDataTop } from "../../../data/DashBoardData";
 function Dashboard() {
   return (
     <Stack spacing={5} paddingX={5} paddingY={4}>
