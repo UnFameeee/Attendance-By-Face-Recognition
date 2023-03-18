@@ -84,7 +84,7 @@ function HomeSidebar() {
   var decoded = jwtDecode(accessToken);
   let userEmail = decoded.email;
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div style={{ display: "flex", minHeight: "100vh",background:'rgb(249, 249, 249, 0.7)'}}>
       <Box>
         <Sidebar
           rootStyles={{ overflowY: "overlay" }}
@@ -98,14 +98,14 @@ function HomeSidebar() {
               justifyContent="start"
               gap="2"
               padding="2"
-              bg="#cadeee"
+              bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
                 <Avatar src={avt_user} />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"
-                    color="black"
+                    color="white"
                     overflow="hidden"
                     width="124px"
                     textOverflow="ellipsis"
@@ -115,7 +115,7 @@ function HomeSidebar() {
                   </Heading>
                   <Box display="flex" alignItems="center" gap={1}>
                     <Icon as={RiRadioButtonLine} color="green" boxSize={6} />
-                    <Text>Signed in</Text>
+                    <Text color="white">Signed in</Text>
                   </Box>
                 </Box>
               </Flex>
@@ -124,18 +124,18 @@ function HomeSidebar() {
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
                   fontSize="23px"
-                  color="black"
+                  color="white"
                   as={BsLayoutSidebarInset}
                 />
               </Flex>
             </Flex>
             {collapsed && (
-              <Flex pb="10px" bg="#cadeee" justifyContent="center" w="100%">
+              <Flex pb="10px" bg="primary2" justifyContent="center" w="100%">
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
                   fontSize="23px"
-                  color="black"
+                  color="white"
                   as={BsLayoutSidebarInsetReverse}
                 />
               </Flex>
@@ -150,24 +150,14 @@ function HomeSidebar() {
                   // only apply styles on first level elements of the tree
                   if (level === 0)
                     return {
-                      backgroundColor: active ? "#224562" : undefined,
-                      color: active ? "white" : "undefined",
+                      backgroundColor: active ? "#004F94": undefined,
+                      color: active ? "white" : undefined,
                     };
                   if (level === 1)
                     return {
-                      backgroundColor: active ? "#224562" : undefined,
+                      backgroundColor: active ? "#004F94" : undefined,
                       color: active ? "white" : undefined,
                     };
-                },
-                subMenuContent: ({ level, active, disabled }) => {
-                  // console.log("active", active);
-                  // console.log("level", level);
-                  // only apply styles on first level elements of the tree
-                  // if (level === 0)
-                  //   return {
-                  //     backgroundColor: active ? "#224562" : undefined,
-                  //     color: active ? "white" : undefined,
-                  //   };
                 },
               }}
             >

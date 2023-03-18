@@ -82,7 +82,7 @@ function HomeHeader() {
           className="home-header"
           paddingX={2}
           paddingY={3}
-          bgColor="#224562"
+          bgColor="primary2"
           color="white"
           flexDirection="row"
           alignContent="center"
