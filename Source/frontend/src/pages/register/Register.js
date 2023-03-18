@@ -28,7 +28,7 @@ import {
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Form, Link, useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
-import AuthTextField from "../../components/AuthTextField";
+import AuthTextField from "../../components/field/AuthTextField";
 import { useMutation } from "react-query";
 import { register } from "../../services/auth/auth";
 import { useProSidebar } from "react-pro-sidebar";

@@ -32,7 +32,7 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { GiModernCity } from "react-icons/gi";
 import { SlOrganization } from "react-icons/sl";
 import { TfiWorld } from "react-icons/tfi";
-import FormTextField from "../../../components/FormTextField";
+import FormTextField from "../../../components/field/FormTextField";
 import {
   createOrganizationDetail,
   getOrganizationDetail,

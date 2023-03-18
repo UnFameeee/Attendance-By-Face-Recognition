@@ -16,8 +16,8 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Field, useField } from "formik";
 import { useState } from "react";
-import SearchAndSelectAddressField from "./SearchAndSelectAddressField";
-import RadioGenderField from "./RadioGenderField";
+import SearchAndSelectAddressField from "../field/SearchAndSelectAddressField";
+import RadioGenderField from "../field/RadioGenderField";
 function FormTextField(props) {
   const {
     leftIcon,

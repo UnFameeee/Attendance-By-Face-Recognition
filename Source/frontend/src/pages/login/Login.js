@@ -16,7 +16,7 @@ import { LockIcon, AtSignIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import React, { useEffect } from "react";
-import AuthTextField from "../../components/AuthTextField";
+import AuthTextField from "../../components/field/AuthTextField";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

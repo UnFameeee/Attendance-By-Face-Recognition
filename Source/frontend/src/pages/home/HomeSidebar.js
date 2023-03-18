@@ -21,7 +21,7 @@ import {
   useProSidebar,
   sidebarClasses,
 } from "react-pro-sidebar";
-import { SideBarData } from "../../Utils/SideBarData";
+import { SideBarData } from "../../data/SideBarData";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";

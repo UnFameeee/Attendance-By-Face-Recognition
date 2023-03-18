@@ -41,7 +41,7 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
 import google_logo from "../../../assets/google-ar21-removebg-preview.png";
-import FormTextField from "../../../components/FormTextField";
+import FormTextField from "../../../components/field/FormTextField";
 import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
 import { useMutation, useQuery, useQueryClient } from "react-query";
