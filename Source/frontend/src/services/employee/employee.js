@@ -13,22 +13,33 @@ export const getListEmployee = async ({paging}) => {
 export const useGetListEmployee = () => {
   return useQuery("listEmployee", getListEmployee, {
     refetchOnWindowFocus: false,
-    retry: 3,
+    retry: 1,
   });
 };
 
-export const createOrganizationDetail = async (organizationDetail) => {
-  const response = await axiosBase.post(
-    `${endPoint}/createOrganization`,
-    organizationDetail
-  );
+export const getListRoleOfEmployee = async () => {
+  const response = await axiosBase.get(`${endPoint}/getListRoleOfEmployee`);
   return response.data;
+};
+export const useGetListRoleOfEmployee = () => {
+  return useQuery("listRoleOfEmployee", getListRoleOfEmployee, {
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 };
 
-export const saveOrganizationDetail = async ({ id, organizationDetail }) => {
-  const response = await axiosBase.post(
-    `${endPoint}/updateOrganizationDetail/${id}`,
-    organizationDetail
-  );
-  return response.data;
-};
+// export const createOrganizationDetail = async (organizationDetail) => {
+//   const response = await axiosBase.post(
+//     `${endPoint}/createOrganization`,
+//     organizationDetail
+//   );
+//   return response.data;
+// };
+
+// export const saveOrganizationDetail = async ({ id, organizationDetail }) => {
+//   const response = await axiosBase.post(
+//     `${endPoint}/updateOrganizationDetail/${id}`,
+//     organizationDetail
+//   );
+//   return response.data;
+// };
