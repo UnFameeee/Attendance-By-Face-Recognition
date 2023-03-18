@@ -23,6 +23,7 @@ export class EmployeeService {
         dateOfBirth: true,
         phoneNumber: true,
         joiningDate: true,
+        description: true,
         department: {
           select: {
             departmentName: true,
@@ -72,6 +73,7 @@ export class EmployeeService {
         dateOfBirth: true,
         phoneNumber: true,
         joiningDate: true,
+        description: true,
         department: {
           select: {
             departmentName: true,
@@ -120,6 +122,7 @@ export class EmployeeService {
         dateOfBirth: true,
         phoneNumber: true,
         joiningDate: true,
+        description: true,
         department: {
           select: {
             departmentName: true,
@@ -168,6 +171,7 @@ export class EmployeeService {
         gender: data.gender,
         dateOfBirth: data.dateOfBirth,
         phoneNumber: data.phoneNumber,
+        description: data.description,
         location: {
           upsert: {
             update: {
@@ -193,6 +197,7 @@ export class EmployeeService {
         dateOfBirth: true,
         phoneNumber: true,
         joiningDate: true,
+        description: true,
         department: {
           select: {
             departmentName: true,

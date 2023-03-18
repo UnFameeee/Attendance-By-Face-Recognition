@@ -51,14 +51,6 @@ export const updateEmployeeSchema = z.object({
     .trim()
     .email('Invalid email'),
 
-  password: z
-    .string({
-      required_error: 'Password is required',
-      invalid_type_error: "Password must be string"
-    })
-    .trim()
-    .refine((value) => /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/.test(value), "Password require 1 Uppercase, 1 Lowercase, 1 Special Character, 1 Number and minimum length is 8"),
-
   gender: z
     .string({
       required_error: 'Gender is required',

@@ -9,14 +9,6 @@ export const updateProfileSchema = z.object({
     .trim()
     .min(5, 'Fullname must be 8 characters long'),
 
-  email: z
-    .string({
-      required_error: 'Email is required',
-      invalid_type_error: "Email must be string"
-    })
-    .trim()
-    .email('Invalid email'),
-
   gender: z
     .string({
       required_error: 'Gender is required',
