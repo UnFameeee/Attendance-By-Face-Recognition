@@ -5,6 +5,7 @@ import { OrganizationRoute } from "./routes/organization.route";
 import { DepartmentRoute } from "./routes/department.route";
 import { EmployeeRoute } from './routes/employee.route';
 import { ProfileRoute } from './routes/profile.route';
+import { PublicRoute } from './routes/public.route';
 
 // validateEnv();
 const app = new App([
@@ -14,5 +15,6 @@ const app = new App([
     new EmployeeRoute(),
     new DepartmentRoute(),
     new OrganizationRoute(),
+    new PublicRoute(),
 ]);
 app.listen();

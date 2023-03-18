@@ -8,7 +8,31 @@ export interface EmployeeModel extends
     "gender" |
     "dateOfBirth" |
     "phoneNumber" |
-    "joiningDate"
+    "joiningDate" |
+    "description"
+  > {
+  location: Pick<Location,
+    "address" |
+    "city" |
+    "country" |
+    "state"
+  >,
+  department: Pick<Department,
+    "departmentName"
+  >,
+}
+
+export interface EmployeeWithPasswordModel extends
+  Pick<Employee,
+    "id" |
+    "fullname" |
+    "password" |
+    "email" |
+    "gender" |
+    "dateOfBirth" |
+    "phoneNumber" |
+    "joiningDate" |
+    "description"
   > {
   location: Pick<Location,
     "address" |

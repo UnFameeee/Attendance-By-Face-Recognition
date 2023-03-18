@@ -74,7 +74,6 @@ export class ProfileService {
       },
       data: {
         fullname: data.fullname,
-        email: data.email,
         gender: data.gender,
         dateOfBirth: data.dateOfBirth,
         phoneNumber: data.phoneNumber,
