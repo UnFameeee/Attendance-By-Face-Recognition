@@ -1,4 +1,4 @@
-import { Employee, Location, Department } from '@prisma/client';
+import { Employee, Location, Department, Role } from '@prisma/client';
 
 export interface EmployeeModel extends
   Pick<Employee,
@@ -43,4 +43,12 @@ export interface EmployeeWithPasswordModel extends
   department: Pick<Department,
     "departmentName"
   >,
+}
+
+export interface EmployeeRole extends
+  Pick<Role,
+    "roleId" | 
+    "roleName" | 
+    "displayName"
+    > {
 }

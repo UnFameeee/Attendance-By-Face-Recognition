@@ -101,7 +101,7 @@ function HomeSidebar() {
               bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
-                <Avatar src={avt_user} />
+                <Avatar border='2px solid white' src={avt_user} />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"

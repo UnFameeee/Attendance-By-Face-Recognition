@@ -16,3 +16,19 @@ export const useGetListEmployee = () => {
     retry: 3,
   });
 };
+
+export const createOrganizationDetail = async (organizationDetail) => {
+  const response = await axiosBase.post(
+    `${endPoint}/createOrganization`,
+    organizationDetail
+  );
+  return response.data;
+};
+
+export const saveOrganizationDetail = async ({ id, organizationDetail }) => {
+  const response = await axiosBase.post(
+    `${endPoint}/updateOrganizationDetail/${id}`,
+    organizationDetail
+  );
+  return response.data;
+};

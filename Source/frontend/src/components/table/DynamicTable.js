@@ -573,22 +573,43 @@ function DynamicTable(props) {
                     {row?.cells?.map((cell) => {
                       return (
                         <Td {...cell?.getCellProps()}>
-                          <Box
-                            width={
-                              cell?.column?.cellWidth
-                                ? cell?.column?.cellWidth
-                                : "none"
-                            }
-                            textAlign={
-                              cell?.column?.textAlign
-                                ? cell?.column?.textAlign
-                                : "none"
-                            }
-                            textOverflow="ellipsis"
-                            overflow="hidden"
-                          >
-                            {cell?.render("Cell")}
-                          </Box>
+                          {cell.column.type == "date" ? (
+                            <Box
+                              width={
+                                cell?.column?.cellWidth
+                                  ? cell?.column?.cellWidth
+                                  : "none"
+                              }
+                              textAlign={
+                                cell?.column?.textAlign
+                                  ? cell?.column?.textAlign
+                                  : "none"
+                              }
+                              textOverflow="ellipsis"
+                              overflow="hidden"
+                            >
+                              {new Date(cell?.value)
+                                .toISOString()
+                                .substring(0, 10)}
+                            </Box>
+                          ) : (
+                            <Box
+                              width={
+                                cell?.column?.cellWidth
+                                  ? cell?.column?.cellWidth
+                                  : "none"
+                              }
+                              textAlign={
+                                cell?.column?.textAlign
+                                  ? cell?.column?.textAlign
+                                  : "none"
+                              }
+                              textOverflow="ellipsis"
+                              overflow="hidden"
+                            >
+                              {cell?.render("Cell")}
+                            </Box>
+                          )}
                         </Td>
                       );
                     })}

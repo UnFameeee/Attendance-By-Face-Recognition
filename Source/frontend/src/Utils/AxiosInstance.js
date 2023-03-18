@@ -16,7 +16,7 @@ const axiosBase = axios.create({
 
 export default axiosBase;
 axiosBase.interceptors.request.use((config) => {
-  debugger
+  
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
 
@@ -30,7 +30,7 @@ axiosBase.interceptors.response.use(
   async (error) => {
     const cookies = new Cookies();
     const originalRequest = error.config;
-    debugger
+    
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 

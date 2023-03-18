@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   HStack,
+  Icon,
   Stack,
   useDisclosure,
   useToast,
@@ -13,7 +14,7 @@ import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
 import { IoImageOutline } from "react-icons/io5";
-import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
+import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { RiFolderUserLine } from "react-icons/ri";
 import { BsTelephone } from "react-icons/bs";
@@ -58,9 +59,6 @@ function EmployeesGeneral() {
     onDeleteSingleClose();
   };
   const Edit = (row, action) => {
-    console.log("rowdd", row);
-
-    console.log("row", row["location.city"]);
     onAddEditOpen();
     setEditData(row);
   };
@@ -130,6 +128,25 @@ function EmployeesGeneral() {
         accessor: "phoneNumber",
         haveFilter: {
           filterType: FilterType.Number,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+      },
+      {
+        Header: "Birthday",
+        accessor: "dateOfBirth",
+        haveFilter: {
+          filterType: FilterType.DateTime,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+        type:'date'
+      },
+      {
+        Header: "Description",
+        accessor: "description",
+        haveFilter: {
+          filterType: FilterType.Text,
         },
         haveSort: true,
         cellWidth: "150px",
@@ -226,6 +243,18 @@ function EmployeesGeneral() {
       placeholder: "Enter your number",
       leftIcon: <BsTelephone color="#999" fontSize="1.4rem" />,
     },
+    {
+      name: "dateOfBirth",
+      label: "Birthday",
+      isDateField: true,
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "text",
+      placeholder: "Enter your description",
+      isTextAreaField: true,
+    },
     // {
     //   isSelectionField: true,
     //   selectionArray: roleArray,
@@ -263,7 +292,7 @@ function EmployeesGeneral() {
       isTextAreaField: true,
       name: "address",
       label: "Address",
-      height: "150px",
+      height: "130px",
       placeholder: "Enter your address",
     },
   ];
@@ -271,6 +300,12 @@ function EmployeesGeneral() {
     fullname: `${editData.fullname ? editData.fullname : ""}`,
     email: `${editData.email ? editData.email : ""}`,
     phoneNumber: `${editData.phoneNumber ? editData.phoneNumber : ""}`,
+    dateOfBirth: `${
+      editData?.dateOfBirth
+        ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
+        : ""
+    }`,
+    description: `${editData?.description ? editData?.description : ""}`,
     department: `${editData?.department ? editData?.department : ""}`,
     city: `${editData["location.city"] ? editData["location.city"] : ""}`,
     state: `${editData["location.state"] ? editData["location.state"] : ""}`,
@@ -287,6 +322,8 @@ function EmployeesGeneral() {
     city: Yup.string().required("This field is required"),
     state: Yup.string().required("This field is required"),
     country: Yup.string().required("This field is required"),
+    dateOfBirth: Yup.date().required("This field is required"),
+    description: Yup.string().required("This field is required"),
     department: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
     phoneNumber: Yup.string(),
@@ -294,9 +331,12 @@ function EmployeesGeneral() {
   if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4} padding={screenPadding}>
-      <Heading fontSize="3xl" fontWeight="semibold">
-        Employees Overview
-      </Heading>
+      <HStack>
+        <Icon boxSize="40px" as={FaHouseUser} />
+        <Heading fontSize="3xl" fontWeight="semibold">
+          Employees Overview
+        </Heading>
+      </HStack>
       <Flex
         justifyContent="space-between"
         gap={5}

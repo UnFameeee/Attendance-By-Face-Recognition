@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Page, Paging, paginate } from '../config/paginate.config';
 import { ResponseData } from "../config/responseData.config";
-import { EmployeeModel } from "../model/view-model/employee.model";
+import { EmployeeModel, EmployeeRole } from "../model/view-model/employee.model";
 import { UpdateEmployeeDTO, AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO } from '../model/dtos/employee.dto';
 const prisma = new PrismaClient();
 
@@ -367,6 +367,22 @@ export class EmployeeService {
     })
 
     response.result = "Change Employee Role successfully";
+    return response;
+  }
+
+  public getListRoleOfEmployee = async (): Promise<ResponseData<EmployeeRole[]>> => {
+    const response = new ResponseData<EmployeeRole[]>;
+    const queryData = await prisma.role.findMany({
+      where: {
+        deleted: false
+      },
+      select: {
+        roleId: true,
+        roleName: true,
+        displayName: true,
+      },
+    })
+    response.result = queryData;
     return response;
   }
 }

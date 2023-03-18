@@ -37,7 +37,7 @@ import {
   BsCalendar2Date,
 } from "react-icons/bs";
 import { RiFolderUserLine } from "react-icons/ri";
-import { AiOutlineCloudUpload } from "react-icons/ai";
+import { AiOutlineCloudUpload, AiTwotoneSetting } from "react-icons/ai";
 import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
 import google_logo from "../../../assets/google-ar21-removebg-preview.png";
@@ -174,7 +174,10 @@ function Profile() {
           <Stack as="form" onSubmit={formik.handleSubmit}>
             <Flex justifyContent="space-between">
               <Box>
-                <Heading>General Details</Heading>
+                <HStack>
+                  <Icon boxSize="40px" as={AiTwotoneSetting} />
+                  <Heading>General Details</Heading>
+                </HStack>
                 <Text>Update your photo and personal details here.</Text>
               </Box>
               <HStack>
