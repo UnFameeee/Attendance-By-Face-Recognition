@@ -19,6 +19,8 @@ import {
   HStack,
   Button,
   ButtonGroup,
+  useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
@@ -39,35 +41,133 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
 import google_logo from "../../../assets/google-ar21-removebg-preview.png";
-import FormTextField from "../../../components/FormTextField";
+import FormTextField from "../../../components/field/FormTextField";
 import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
-
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import {
+  saveProfileDetail,
+  useGetProfileDetail,
+} from "../../../services/setting/profile";
+import jwtDecode from "jwt-decode";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 function Profile() {
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const {
+    isOpen: isSaveDetailAlertOpen,
+    onOpen: onSaveDetailAlertOpen,
+    onClose: onSaveDetailAlertClose,
+  } = useDisclosure();
+  const accessTokenJSON = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(accessTokenJSON);
+  var userDecodeData = jwtDecode(accessToken);
+  const { data, isLoading, isError, error } = useGetProfileDetail(
+    userDecodeData.id
+  );
+  const useSaveProfileDetail = useMutation(saveProfileDetail, {
+    onSuccess: (data) => {
+      const { result } = data;
+      queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
+      toast({
+        title: "Save profile detail successfully",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  const roleArray = [
+    {
+      label: "Project Manager",
+      value: "Project Manager",
+    },
+    { label: "Estimator", value: "Estimator" },
+    { label: "Electrician", value: "Electrician" },
+    {
+      label: "Construction Worker",
+      value: "Construction Worker",
+    },
+    {
+      label: "Construction Manager",
+      value: "Construction Manager",
+    },
+    { label: "Engineer", value: "Engineer" },
+    { label: "Admin", value: "Admin" },
+  ];
   const initialValues = {
-    fullName: "",
-    email: "",
-    gender: "male",
-    phone: "",
-    birthDate: undefined,
-    about: "",
-    department: "",
-    workLocation: "",
-    status: "",
-    joiningDate: undefined,
-    role: "",
+    fullname: data?.result?.fullname ? data?.result?.fullname : "",
+    email: data?.result?.email ? data?.result?.email : "",
+    gender: data?.result?.gender ? data?.result?.gender : "male",
+    phone: data?.result?.phoneNumber ? data?.result?.phoneNumber : "",
+    dateOfBirth: data?.result?.dateOfBirth
+      ? new Date(data?.result?.dateOfBirth).toISOString().substring(0, 10)
+      : "",
+    address: data?.result?.location?.address
+      ? data?.result?.location?.address
+      : "",
+    city: data?.result?.location?.city ? data?.result?.location?.city : "",
+    country: data?.result?.location?.country
+      ? data?.result?.location?.country
+      : "",
+    state: data?.result?.location?.state ? data?.result?.location?.state : "",
+
+    department: data?.result?.department ? data?.result?.department : "",
+    joiningDate: data?.result?.joiningDate ? data?.result?.joiningDate : "",
+    role: data?.result?.role.displayName ? data?.result?.role.displayName : "",
   };
   const validationSchema = Yup.object().shape({
     phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
-  })
+    fullname: Yup.string().required("This field is required"),
+    email: Yup.string().required("This field is required"),
+    address: Yup.string().required("This field is required"),
+    city: Yup.string().required("This field is required"),
+    country: Yup.string().required("This field is required"),
+    state: Yup.string().required("This field is required"),
+    dateOfBirth: Yup.date().required("This field is required"),
+  });
+  if (isLoading) return <LoadingSpinner />;
   return (
-    <Stack minHeight="100vh" spacing={3} paddingX={{ base:'5', sm:'5',md:'10' ,lg:'20',xl:'20'}} paddingTop={2}>
+    <Stack
+      minHeight="100vh"
+      spacing={3}
+      paddingX={{ base: "5", sm: "5", md: "10", lg: "20", xl: "20" }}
+      paddingTop={2}
+    >
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values, actions) => {
-          alert(JSON.stringify(values, null, 2));
-          //actions.resetForm();
+          onSaveDetailAlertClose();
+          const profileDetail = {
+            fullname: values.fullname,
+            email: values.email,
+            gender: values.gender,
+            dateOfBirth: new Date(values.dateOfBirth).toISOString(),
+            phoneNumber: 1231231231,
+            location: {
+              address: values.address,
+              city: values.city,
+              country: values.country,
+              state: values.state,
+            },
+          };
+          const profileDetailObj = {
+            id: userDecodeData.id,
+            profileDetail: profileDetail,
+          };
+          useSaveProfileDetail.mutate(profileDetailObj);
         }}
       >
         {(formik) => (
@@ -78,15 +178,34 @@ function Profile() {
                 <Text>Update your photo and personal details here.</Text>
               </Box>
               <HStack>
-                <Button variant="outline" bgColor="white" size="lg">
-                  Cancel
-                </Button>
-                <Button type="submit" size="lg" colorScheme="blue">
+                <Button
+                  onClick={onSaveDetailAlertOpen}
+                  size="lg"
+                  colorScheme="blue"
+                >
                   Save
                 </Button>
+                <ChakraAlertDialog
+                  title="Save profile detail"
+                  message="Are you sure? This action will save your profile details."
+                  isOpen={isSaveDetailAlertOpen}
+                  onClose={onSaveDetailAlertClose}
+                  acceptButtonLabel="Accept"
+                  type="submit"
+                  onAccept={formik.handleSubmit}
+                />
               </HStack>
             </Flex>
-            <Flex gap={8} flexDirection={{ base:'column', sm:'column',md:'column' ,lg:'column',xl:'row'}} >
+            <Flex
+              gap={8}
+              flexDirection={{
+                base: "column",
+                sm: "column",
+                md: "column",
+                lg: "column",
+                xl: "row",
+              }}
+            >
               <Stack
                 bgColor="white"
                 flex="1"
@@ -100,7 +219,7 @@ function Profile() {
                 <Stack spacing={3} p={4} px={8}>
                   <Flex gap={8}>
                     <FormTextField
-                      name="fullName"
+                      name="fullname"
                       label="Full Name"
                       placeholder="Enter your Full Name"
                       leftIcon={
@@ -132,8 +251,8 @@ function Profile() {
                     <FormTextField
                       name="department"
                       label="Department"
-                      type="text"
                       isReadOnly={true}
+                      type="text"
                       placeholder="148Primas"
                       leftIcon={
                         <HiOutlineBuildingOffice2
@@ -143,10 +262,9 @@ function Profile() {
                       }
                     />
                     <FormTextField
-                      name="workLocation"
+                      name="location"
                       label="Work Location"
                       type="text"
-                      isReadOnly={true}
                       placeholder="148Primas"
                       leftIcon={
                         <GiOfficeChair color="#999" fontSize="1.5rem" />
@@ -160,26 +278,18 @@ function Profile() {
                     placeholder="Enter your number"
                     leftIcon={<BsTelephone color="#999" fontSize="1.4rem" />}
                   />
-                  <Flex gap={8}>
-                    <FormTextField
-                      name="status"
-                      label="Status"
-                      type="text"
-                      isReadOnly={true}
-                      placeholder="Idle"
-                      leftIcon={<FaGrinStars color="#999" fontSize="1.5rem" />}
-                    />
-                    <FormTextField
-                      name="role"
-                      label="Role"
-                      type="text"
-                      isReadOnly={true}
-                      placeholder="Employee"
-                      leftIcon={
-                        <RiFolderUserLine color="#999" fontSize="1.5rem" />
-                      }
-                    />
-                  </Flex>
+
+                  <FormTextField
+                    name="role"
+                    label="Role"
+                    isSelectionField={true}
+                    selectionArray={roleArray}
+                    type="text"
+                    placeholder="Employee"
+                    leftIcon={
+                      <RiFolderUserLine color="#999" fontSize="1.5rem" />
+                    }
+                  />
                   <Flex gap={8}>
                     <FormTextField
                       name="joiningDate"
@@ -192,18 +302,39 @@ function Profile() {
                       }
                     />
                     <FormTextField
-                      name="birthDate"
+                      name="dateOfBirth"
                       isDateField={true}
                       label="Birth Date"
                     />
                   </Flex>
-
-                  <FormTextField
-                    name="about"
-                    isTextAreaField={true}
-                    label="About"
-                    placeholder="Describe yourself..."
-                  />
+                  <Flex gap={8}>
+                    <FormTextField
+                      name="address"
+                      isTextAreaField={true}
+                      label="Address"
+                      placeholder="Enter your address"
+                    />
+                    <FormTextField
+                      name="city"
+                      isTextAreaField={true}
+                      label="City"
+                      placeholder="Enter your city"
+                    />
+                  </Flex>
+                  <Flex gap={8}>
+                    <FormTextField
+                      name="country"
+                      isTextAreaField={true}
+                      label="Country"
+                      placeholder="Enter your country"
+                    />
+                    <FormTextField
+                      name="state"
+                      isTextAreaField={true}
+                      label="State"
+                      placeholder="Enter your state"
+                    />
+                  </Flex>
                 </Stack>
               </Stack>
               <Stack

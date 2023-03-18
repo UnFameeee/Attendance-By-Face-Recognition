@@ -10,6 +10,7 @@ import {
   IconButton,
   Image,
   Text,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import {
@@ -18,9 +19,10 @@ import {
   Menu,
   MenuItem,
   useProSidebar,
+  sidebarClasses,
 } from "react-pro-sidebar";
-import { SideBarData } from "../../Utils/SideBarData";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { SideBarData } from "../../data/SideBarData";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";
 import avt_user from "../../assets/ta.jpeg";
@@ -38,6 +40,9 @@ import {
   BsLayoutSidebarInsetReverse,
   BsLayoutSidebarInset,
 } from "react-icons/bs";
+import jwtDecode from "jwt-decode";
+import { Helper } from "../../Utils/Helper";
+import ChakraAlertDialog from "../../components/ChakraAlertDialog";
 function HomeSidebar() {
   const { collapseSidebar, toggleSidebar, collapsed, toggled } =
     useProSidebar();
@@ -45,6 +50,12 @@ function HomeSidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cookies = new Cookies();
+  const location = useLocation();
+  const {
+    isOpen: isSignOutAlertOpen,
+    onOpen: onSignOutAlertOpen,
+    onClose: onSignOutAlertClose,
+  } = useDisclosure();
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
@@ -68,34 +79,39 @@ function HomeSidebar() {
     const refreshToken = cookies.get("jwt_authentication");
     useLogoutMutation.mutate({ accessToken, refreshToken });
   };
-
+  const accessTokenJSON = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(accessTokenJSON);
+  var decoded = jwtDecode(accessToken);
+  let userEmail = decoded.email;
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {true && (
-        <Sidebar customBreakPoint="1005px" collapsedWidth="64px" width="250px">
-          <Menu
-            menuItemStyles={{
-              button: ({ level, active, disabled }) => {
-                // only apply styles on first level elements of the tree
-                if (level === 0)
-                  return {
-                    color: disabled ? "#f5d9ff" : "#d359ff",
-                    backgroundColor: active ? "#eecef9" : undefined,
-                  };
-              },
-            }}
-          >
+      <Box>
+        <Sidebar
+          rootStyles={{ overflowY: "overlay" }}
+          customBreakPoint="1005px"
+          collapsedWidth="64px"
+          width="250px"
+        >
+          <Menu>
             <Flex
               alignItems="center"
               justifyContent="start"
               gap="2"
               padding="2"
+              bg="#cadeee"
             >
-              <Flex flex="1" alignItems="center" gap="2">
+              <Flex flex="8" alignItems="center" gap="2">
                 <Avatar src={avt_user} />
                 <Box display="flex" flexDirection="column">
-                  <Heading fontSize="large" color="black">
-                    Admin123
+                  <Heading
+                    fontSize="large"
+                    color="black"
+                    overflow="hidden"
+                    width="124px"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {userEmail}
                   </Heading>
                   <Box display="flex" alignItems="center" gap={1}>
                     <Icon as={RiRadioButtonLine} color="green" boxSize={6} />
@@ -103,7 +119,7 @@ function HomeSidebar() {
                   </Box>
                 </Box>
               </Flex>
-              <Flex>
+              <Flex flex="2">
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
@@ -114,7 +130,7 @@ function HomeSidebar() {
               </Flex>
             </Flex>
             {collapsed && (
-              <Flex justifyContent="center" w="100%" mb='10px'>
+              <Flex pb="10px" bg="#cadeee" justifyContent="center" w="100%">
                 <Icon
                   onClick={() => collapseSidebar()}
                   cursor="pointer"
@@ -124,8 +140,37 @@ function HomeSidebar() {
                 />
               </Flex>
             )}
-            <Divider />
-            <Menu>
+
+            <Menu
+              menuItemStyles={{
+                button: ({ level, active, disabled }) => {
+                  // console.log("active", active);
+                  // console.log("level", level);
+
+                  // only apply styles on first level elements of the tree
+                  if (level === 0)
+                    return {
+                      backgroundColor: active ? "#224562" : undefined,
+                      color: active ? "white" : "undefined",
+                    };
+                  if (level === 1)
+                    return {
+                      backgroundColor: active ? "#224562" : undefined,
+                      color: active ? "white" : undefined,
+                    };
+                },
+                subMenuContent: ({ level, active, disabled }) => {
+                  // console.log("active", active);
+                  // console.log("level", level);
+                  // only apply styles on first level elements of the tree
+                  // if (level === 0)
+                  //   return {
+                  //     backgroundColor: active ? "#224562" : undefined,
+                  //     color: active ? "white" : undefined,
+                  //   };
+                },
+              }}
+            >
               {SideBarData.map((parentItem, index) =>
                 parentItem.children ? (
                   <SubMenu
@@ -144,6 +189,12 @@ function HomeSidebar() {
                     {parentItem.children &&
                       parentItem.children.map((childItem, index) => (
                         <MenuItem
+                          active={
+                            location.pathname ==
+                            `/${parentItem.url}/${childItem.url}`
+                              ? true
+                              : false
+                          }
                           key={index}
                           component={
                             <NavLink
@@ -168,6 +219,9 @@ function HomeSidebar() {
                   </SubMenu>
                 ) : (
                   <MenuItem
+                    active={
+                      location.pathname == `/${parentItem.url}` ? true : false
+                    }
                     key={index}
                     component={<NavLink to={parentItem.url} />}
                   >
@@ -182,7 +236,7 @@ function HomeSidebar() {
                   </MenuItem>
                 )
               )}
-              <MenuItem onClick={handleLogout} key="sign-out">
+              <MenuItem onClick={onSignOutAlertOpen} key="sign-out">
                 <Flex alignItems="center">
                   <Box flex="20%" display="grid" placeItems="start">
                     <MdLogout fontSize="23px" />
@@ -192,10 +246,18 @@ function HomeSidebar() {
                   </Box>
                 </Flex>
               </MenuItem>
+              <ChakraAlertDialog
+                title="Sign out account"
+                message="Are you sure? This action will sign out your account."
+                isOpen={isSignOutAlertOpen}
+                onClose={onSignOutAlertClose}
+                onAccept={handleLogout}
+                acceptButtonLabel="Accept"
+              />
             </Menu>
           </Menu>
         </Sidebar>
-      )}
+      </Box>
       <Box
         className="Main-content"
         flex="1"

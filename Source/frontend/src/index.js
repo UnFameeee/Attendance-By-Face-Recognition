@@ -6,9 +6,9 @@ import { ProSidebarProvider } from "react-pro-sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, persistQueryClient } from "react-query";
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { createStandaloneToast } from "@chakra-ui/toast";
-
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import NotFound from "./pages/notfound/NotFound";
@@ -21,6 +21,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
 import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
+import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -29,7 +30,13 @@ const theme = extendTheme({
   },
 });
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <QueryClientProvider client={queryClient}>
@@ -50,7 +57,7 @@ root.render(
                   <Route element={<Home />}>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="organization">
-                      <Route path="general-organization" element={<Test />} />
+                      <Route path="general-organization" element={<OrganizationGeneral />} />
                       <Route path="location" element={<Test />} />
                       <Route path="department" element={<Test />} />
                     </Route>
@@ -78,5 +85,6 @@ root.render(
           </ProSidebarProvider>
         </ChakraProvider>
       </Provider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
 );

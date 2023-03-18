@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 function ChakraAlertDialog(props) {
-  const { isOpen, onClose, onAccept, message, title, acceptButtonLabel } =
+  const { isOpen, onClose, onAccept, message, type, title, acceptButtonLabel } =
     props;
   const cancelRef = React.useRef();
 
@@ -34,7 +34,12 @@ function ChakraAlertDialog(props) {
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={onAccept} ml={3}>
+            <Button
+              type={type ?? "none"}
+              colorScheme="red"
+              onClick={onAccept}
+              ml={3}
+            >
               {acceptButtonLabel ?? "Delete"}
             </Button>
           </AlertDialogFooter>

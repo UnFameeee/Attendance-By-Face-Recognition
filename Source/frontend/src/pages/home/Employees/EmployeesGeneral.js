@@ -16,14 +16,14 @@ import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { RiFolderUserLine } from "react-icons/ri";
 import { BsTelephone } from "react-icons/bs";
-import PieChart from "../../../components/PieChart";
-import ColumnChart from "../../../components/ColumnChart";
-import DynamicTable from "../../../components/DynamicTable";
+import PieChart from "../../../components/chart/PieChart";
+import ColumnChart from "../../../components/chart/ColumnChart";
+import DynamicTable from "../../../components/table/DynamicTable";
 import { dumbTableData, roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
-import DynamicDrawer from "../../../components/DynamicDrawer";
-import { FilterType } from "../../../components/DynamicTable";
+import DynamicDrawer from "../../../components/table/DynamicDrawer";
+import { FilterType } from "../../../components/table/DynamicTable";
 function EmployeesGeneral() {
   const screenPadding = "2rem";
   const [editData, setEditData] = useState({});
@@ -79,7 +79,7 @@ function EmployeesGeneral() {
       },
       {
         Header: "Full Name",
-        accessor: "fullName",
+        accessor: "fullname",
         haveFilter: {
           filterType: FilterType.Text,
         },
@@ -150,7 +150,7 @@ function EmployeesGeneral() {
   ];
   const drawerFieldData = [
     {
-      name: "fullName",
+      name: "fullname",
       label: "Full Name",
       placeholder: "Enter your Full Name",
       leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
@@ -178,7 +178,6 @@ function EmployeesGeneral() {
     {
       isSelectionField: true,
       selectionArray: roleArray,
-      isDisabled: true,
       name: "role",
       label: "Role",
       type: "text",
@@ -194,7 +193,7 @@ function EmployeesGeneral() {
     },
   ];
   const initialValues = {
-    fullName: `${editData.fullName ? editData.fullName : ""}`,
+    fullname: `${editData.fullname ? editData.fullname : ""}`,
     email: `${editData.email ? editData.email : ""}`,
     phone: `${editData.phoneNumber ? editData.phoneNumber : ""}`,
     address: `${editData.address ? editData.address : ""}`,
@@ -202,7 +201,7 @@ function EmployeesGeneral() {
     role: `${editData.role ? editData.role : ""}`,
   };
   const validationSchema = Yup.object().shape({
-    fullName: Yup.string().required("This field is required"),
+    fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
     role: Yup.string().required("This field is required"),

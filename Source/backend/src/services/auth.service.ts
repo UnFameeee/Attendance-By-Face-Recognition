@@ -6,9 +6,9 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as argon2 from 'argon2';
 import { ResponseData } from "../config/responseData.config";
-import { ResponseToken } from "../config/responseToken.config";
 import { prisma } from '../database/prisma.singleton';
 import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
+import { ResponseToken } from "../config/responseToken.config";
 require("dotenv").config();
 
 class AuthenticationService {

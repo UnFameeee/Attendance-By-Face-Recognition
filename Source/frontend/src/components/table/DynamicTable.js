@@ -37,10 +37,10 @@ import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { AiFillFilter } from "react-icons/ai";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import debounce from "lodash/debounce";
-import ChakraAlertDialog from "./ChakraAlertDialog";
-import { Helper } from "../Utils/Helper";
-import IndeterminateCheckbox from "./IndeterminateCheckbox";
-import NoDataToDisplay from "./NoDataToDisplay";
+import ChakraAlertDialog from "../ChakraAlertDialog";
+import { Helper } from "../../Utils/Helper";
+import IndeterminateCheckbox from "../IndeterminateCheckbox";
+import NoDataToDisplay from "../NoDataToDisplay";
 const sortType = [{ asc: 0 }, { dsc: 1 }, { def: 2 }];
 const numberType = [
   "Is Greater Than Or Equal To",
@@ -84,7 +84,7 @@ export const FilterType = {
 function DynamicTable(props) {
   const { data, columns, handleDeleteRange, onAddEditOpen, tableRowAction } =
     props;
- 
+
   const {
     isOpen: isDeleteRangeOpen,
     onOpen: onDeleteRangeOpen,
@@ -117,7 +117,7 @@ function DynamicTable(props) {
       initialState: { pageIndex: 0, pageSize: 25 },
       manualSortBy: true,
       disableMultiSort: false,
-      manualPagination: false
+      manualPagination: false,
     },
     (hooks) => {
       hooks.visibleColumns.push((columns) => [
@@ -187,7 +187,7 @@ function DynamicTable(props) {
     paging: {
       pageSize: pageSize,
       pageNumber: pageIndex + 1,
-      totalElements:999,
+      totalElements: 999,
     },
     filterAndSorter: initialData,
   });
@@ -209,7 +209,7 @@ function DynamicTable(props) {
     });
   };
   const debouncedGotoPage = debounce((value) => {
-    const pageNumber = value && Number(value)  && value > 0 ? value -1 : 0
+    const pageNumber = value && Number(value) && value > 0 ? value - 1 : 0;
     gotoPage(pageNumber);
     // setPagingObject((prev) => {
     //   const updatedFilterAndSorter = { ...prev.paging };
@@ -249,11 +249,10 @@ function DynamicTable(props) {
       },
       filterAndSorter: initialData,
     });
-    setPageSize(25)
-    gotoPage(0)
+    setPageSize(25);
+    gotoPage(0);
   };
   useEffect(() => {
-    console.log("paging pageIndex", pageIndex);
     setPagingObject((prev) => {
       let updatedFilterAndSorter = { ...prev.paging };
       updatedFilterAndSorter.pageNumber = pageIndex;
@@ -261,7 +260,6 @@ function DynamicTable(props) {
     });
   }, [pageIndex]);
   useEffect(() => {
-    console.log("paging pageSize", pageSize);
     setPagingObject((prev) => {
       let updatedFilterAndSorter = { ...prev.paging };
       updatedFilterAndSorter.pageSize = pageSize;
@@ -403,8 +401,8 @@ function DynamicTable(props) {
           </HStack>
         </HStack>
       </HStack>
-      <TableContainer rounded="lg">
-        <Table variant="simple" {...getTableProps()}>
+      <TableContainer rounded="lg" transform='rotateX(180deg)'  >
+        <Table transform='rotateX(180deg)' variant="simple" {...getTableProps()}>
           <Thead bgColor="#224562">
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>

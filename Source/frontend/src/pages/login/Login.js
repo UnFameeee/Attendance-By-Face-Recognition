@@ -16,8 +16,8 @@ import { LockIcon, AtSignIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import React, { useEffect } from "react";
-import AuthTextField from "../../components/AuthTextField";
-import { useMutation } from "react-query";
+import AuthTextField from "../../components/field/AuthTextField";
+import { useMutation, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -32,6 +32,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const cookies = new Cookies();
   const useLoginMutation = useMutation(login, {
     onSuccess: (data) => {
@@ -42,14 +43,15 @@ export default function Login() {
       });
       localStorage.setItem("accessToken", JSON.stringify(access));
       navigate("/dashboard");
-      dispatch(setUser(jwtDecode(access)));
+      const decodeData = jwtDecode(access);
+      queryClient.setQueryData(["userDecodeData"], decodeData);
       toast({
         title: "Sign in successfully",
         position: "bottom-right",
         status: "success",
         isClosable: true,
         duration: 5000,
-      })
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -62,8 +64,15 @@ export default function Login() {
       });
     },
   });
+  const initialValues = { email: "", password: "" };
+  const validationSchema = Yup.object().shape({
+    password: Yup.string()
+      .required("Password required")
+      .min(6, "Password is too short"),
+    email: Yup.string().email("Invalid Email").required("Email required"),
+  });
   return (
-    <Center height="100vh" width="100vw" bgColor="gray.200">
+    <Center minHeight="calc(100vh - 160px)" width="100vw" bgColor="gray.200">
       <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">
         <Stack spacing="5">
           <Flex gap="2" flexDirection="column" alignItems="center">
@@ -71,15 +80,8 @@ export default function Login() {
             <Text>Welcome back!</Text>
           </Flex>
           <Formik
-            initialValues={{ email: "", password: "" }}
-            validationSchema={Yup.object({
-              password: Yup.string()
-                .required("Password required")
-                .min(6, "Password is too short"),
-              email: Yup.string()
-                .email("Invalid Email")
-                .required("Email required"),
-            })}
+            initialValues={initialValues}
+            validationSchema={validationSchema}
             onSubmit={(values, actions) => {
               const credential = {
                 email: values.email,
