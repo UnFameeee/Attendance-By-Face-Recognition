@@ -93,15 +93,11 @@ function OrganizationGeneral() {
       ? data?.result?.organizationName
       : "",
     megaAddress: {
-      country: data?.result?.location?.country
-        ? data?.result?.location?.country
-        : "",
-      state: data?.result?.location?.state ? data?.result?.location?.state : "",
-      city: data?.result?.location?.city ? data?.result?.location?.city : "",
+      country: data?.result?.location?.country ?? "",
+      state: data?.result?.location?.state ?? "",
+      city: data?.result?.location?.city ?? "",
     },
-    address: data?.result?.location?.address
-      ? data?.result?.location?.address
-      : "",
+    address: data?.result?.location?.address ?? "",
   };
   const validationSchema = Yup.object().shape({
     organizationName: Yup.string().required("This field is required"),
@@ -123,9 +119,9 @@ function OrganizationGeneral() {
             organizationName: values.organizationName,
             location: {
               address: values.address,
-              city: values.megaAddress.city,
-              country: values.megaAddress.country,
-              state: values.megaAddress.state,
+              city: values.megaAddress?.city ?? "",
+              country: values.megaAddress?.country ?? "",
+              state: values.megaAddress?.state ?? "",
             },
           };
           if (data?.result == null) {

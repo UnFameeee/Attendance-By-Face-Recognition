@@ -103,46 +103,24 @@ function Profile() {
   //   })
   // }
   const initialValues = {
-    fullname: profileDetailData?.result?.fullname
-      ? profileDetailData?.result?.fullname
-      : "",
-    email: profileDetailData?.result?.email
-      ? profileDetailData?.result?.email
-      : "",
-    gender: profileDetailData?.result?.gender
-      ? profileDetailData?.result?.gender
-      : "male",
-    phone: profileDetailData?.result?.phoneNumber
-      ? profileDetailData?.result?.phoneNumber
-      : "",
+    fullname: profileDetailData?.result?.fullname ?? "",
+    email: profileDetailData?.result?.email ?? "",
+    gender: profileDetailData?.result?.gender ?? "male",
+    phone: profileDetailData?.result?.phoneNumber ?? "",
     dateOfBirth: profileDetailData?.result?.dateOfBirth
       ? new Date(profileDetailData?.result?.dateOfBirth)
           .toISOString()
           .substring(0, 10)
       : "",
     megaAddress: {
-      country: profileDetailData?.result?.location?.country
-        ? profileDetailData?.result?.location?.country
-        : "",
-      state: profileDetailData?.result?.location?.state
-        ? profileDetailData?.result?.location?.state
-        : "",
-      city: profileDetailData?.result?.location?.city
-        ? profileDetailData?.result?.location?.city
-        : "",
+      country: profileDetailData?.result?.location?.country ?? "",
+      state: profileDetailData?.result?.location?.state ?? "",
+      city: profileDetailData?.result?.location?.city ?? "",
     },
-    address: profileDetailData?.result?.location?.address
-      ? profileDetailData?.result?.location?.address
-      : "",
-    department: profileDetailData?.result?.department
-      ? profileDetailData?.result?.department
-      : "",
-    joiningDate: profileDetailData?.result?.joiningDate
-      ? profileDetailData?.result?.joiningDate
-      : "",
-    role: profileDetailData?.result?.role?.displayName
-      ? profileDetailData?.result?.role?.displayName
-      : "",
+    address: profileDetailData?.result?.location?.address ?? "",
+    department: profileDetailData?.result?.department ?? "",
+    joiningDate: profileDetailData?.result?.joiningDate ?? "",
+    role: profileDetailData?.result?.role?.displayName ?? "",
   };
   const validationSchema = Yup.object().shape({
     phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
@@ -165,20 +143,20 @@ function Profile() {
         onSubmit={(values, actions) => {
           onSaveDetailAlertClose();
           const profileDetail = {
-            fullname: values.fullname,
-            email: values.email,
-            gender: values.gender,
-            dateOfBirth: new Date(values.dateOfBirth).toISOString(),
+            fullname: values?.fullname,
+            email: values?.email,
+            gender: values?.gender,
+            dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
             phoneNumber: 1231231231,
             location: {
-              address: values.address,
-              city: values.megaAddress.city,
-              country: values.megaAddress.country,
-              state: values.megaAddress.state,
+              address: values?.address,
+              city: values?.megaAddress?.city ?? "",
+              country: values?.megaAddress?.country ?? "",
+              state: values?.megaAddress?.state ?? "",
             },
           };
           const profileDetailObj = {
-            id: userDecodeData.id,
+            id: userDecodeData?.id,
             profileDetail: profileDetail,
           };
           useSaveProfileDetail.mutate(profileDetailObj);

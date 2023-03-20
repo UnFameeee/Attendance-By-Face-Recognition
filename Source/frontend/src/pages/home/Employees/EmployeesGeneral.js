@@ -306,26 +306,22 @@ function EmployeesGeneral() {
     },
   ];
   const initialValues = {
-    fullname: `${editData.fullname ? editData.fullname : ""}`,
-    email: `${editData.email ? editData.email : ""}`,
-    phoneNumber: `${editData.phoneNumber ? editData.phoneNumber : ""}`,
+    fullname: `${editData?.fullname ?? ""}`,
+    email: `${editData?.email ?? ""}`,
+    phoneNumber: `${editData?.phoneNumber ?? ""}`,
     dateOfBirth: `${
       editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
     }`,
-    description: `${editData?.description ? editData?.description : ""}`,
-    department: `${editData?.department ? editData?.department : ""}`,
+    description: `${editData?.description ?? ""}`,
+    department: `${editData?.department ?? ""}`,
     megaAddress: {
-      country: `${
-        editData["location.country"] ? editData["location.country"] : ""
-      }`,
-      state: `${editData["location.state"] ? editData["location.state"] : ""}`,
-      city: `${editData["location.city"] ? editData["location.city"] : ""}`,
+      country: `${editData["location.country"] ?? ""}`,
+      state: `${editData["location.state"] ?? ""}`,
+      city: `${editData["location.city"] ?? ""}`,
     },
-    address: `${
-      editData["location.address"] ? editData["location.address"] : ""
-    }`,
+    address: `${editData["location.address"] ?? ""}`,
   };
   const validationSchema = Yup.object().shape({
     fullname: Yup.string().required("This field is required"),

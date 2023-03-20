@@ -19,9 +19,9 @@ function AddressSelection({ formik, ...props }) {
       : [{ isoCode: "", name: "---" }]
   );
   const [megaAddress, setMegaAddress] = useState({
-    country: props?.value?.country ? props?.value?.country : "",
-    state: props?.value?.state ? props?.value?.state : "",
-    city: props?.value?.city ? props?.value?.city : "",
+    country: props?.value?.country ?? "",
+    state: props?.value?.state ?? "",
+    city: props?.value?.city ?? "",
   });
   const handleOnchangeMegaAddress = (e) => {
     setMegaAddress((prev) => {
