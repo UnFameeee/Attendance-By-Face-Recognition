@@ -19,6 +19,7 @@ import { Field, useField } from "formik";
 import { useState } from "react";
 import SearchAndSelectAddressField from "../field/SearchAndSelectAddressField";
 import RadioGenderField from "../field/RadioGenderField";
+import AddressSelection from "./AddressSelection";
 function FormTextField(props) {
   const {
     leftIcon,
@@ -117,7 +118,6 @@ function FormTextField(props) {
               ))}
           </Select>
         )}
-
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
@@ -132,12 +132,8 @@ function FormTextField(props) {
         <FormLabel>{label}</FormLabel>
         <Field
           {...field}
-          onChange={(e) => {
-            formik.setFieldValue("address", e);
-          }}
-          placeholder={placeholder ?? ""}
-          onBlur={formik.handleBlur}
-          as={SearchAndSelectAddressField}
+          formik={formik}
+          as={AddressSelection}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>

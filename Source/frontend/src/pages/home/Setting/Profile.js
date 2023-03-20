@@ -120,19 +120,20 @@ function Profile() {
           .toISOString()
           .substring(0, 10)
       : "",
+    megaAddress: {
+      country: profileDetailData?.result?.location?.country
+        ? profileDetailData?.result?.location?.country
+        : "",
+      state: profileDetailData?.result?.location?.state
+        ? profileDetailData?.result?.location?.state
+        : "",
+      city: profileDetailData?.result?.location?.city
+        ? profileDetailData?.result?.location?.city
+        : "",
+    },
     address: profileDetailData?.result?.location?.address
       ? profileDetailData?.result?.location?.address
       : "",
-    city: profileDetailData?.result?.location?.city
-      ? profileDetailData?.result?.location?.city
-      : "",
-    country: profileDetailData?.result?.location?.country
-      ? profileDetailData?.result?.location?.country
-      : "",
-    state: profileDetailData?.result?.location?.state
-      ? profileDetailData?.result?.location?.state
-      : "",
-
     department: profileDetailData?.result?.department
       ? profileDetailData?.result?.department
       : "",
@@ -148,13 +149,9 @@ function Profile() {
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
-    city: Yup.string().required("This field is required"),
-    country: Yup.string().required("This field is required"),
-    state: Yup.string().required("This field is required"),
     dateOfBirth: Yup.date().required("This field is required"),
   });
-  if (isLoadingProfileDetail)
-    return <LoadingSpinner />;
+  if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
     <Stack
       minHeight="100vh"
@@ -175,9 +172,9 @@ function Profile() {
             phoneNumber: 1231231231,
             location: {
               address: values.address,
-              city: values.city,
-              country: values.country,
-              state: values.state,
+              city: values.megaAddress.city,
+              country: values.megaAddress.country,
+              state: values.megaAddress.state,
             },
           };
           const profileDetailObj = {
@@ -325,34 +322,17 @@ function Profile() {
                       label="Birth Date"
                     />
                   </Flex>
-                  <Flex gap={8}>
-                    <FormTextField
-                      name="address"
-                      isTextAreaField={true}
-                      label="Address"
-                      placeholder="Enter your address"
-                    />
-                    <FormTextField
-                      name="city"
-                      isTextAreaField={true}
-                      label="City"
-                      placeholder="Enter your city"
-                    />
-                  </Flex>
-                  <Flex gap={8}>
-                    <FormTextField
-                      name="country"
-                      isTextAreaField={true}
-                      label="Country"
-                      placeholder="Enter your country"
-                    />
-                    <FormTextField
-                      name="state"
-                      isTextAreaField={true}
-                      label="State"
-                      placeholder="Enter your state"
-                    />
-                  </Flex>
+                  <FormTextField
+                    name="megaAddress"
+                    isAddress={true}
+                    formik={formik}
+                  />
+                  <FormTextField
+                    name="address"
+                    isTextAreaField={true}
+                    label="Address"
+                    placeholder="Enter your address"
+                  />
                 </Stack>
               </Stack>
               <Stack
