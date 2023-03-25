@@ -18,18 +18,15 @@ function AddressSelection({ formik, ...props }) {
       ? [...City.getCitiesOfState(props?.value?.country, props?.value?.state)]
       : [{ isoCode: "", name: "---" }]
   );
-  const [megaAddress, setMegaAddress] = useState({
-    country: props?.value?.country ?? "",
-    state: props?.value?.state ?? "",
-    city: props?.value?.city ?? "",
-  });
+  const [megaAddress, setMegaAddress] = useState(
+    props?.value ? { ...props.value } : { country: "", city: "", state: "" }
+  );
   const handleOnchangeMegaAddress = (e) => {
     setMegaAddress((prev) => {
       let country = prev["country"];
       let state = prev["state"];
       let city = prev["city"];
-
-      let updateKey = { ...prev[e.target.name] };
+      let updateKey = prev[e.target.name];
       if (e.target.name == "country") {
         city = "";
         state = "";
@@ -40,7 +37,7 @@ function AddressSelection({ formik, ...props }) {
         city = "";
         updateKey = State.getStateByCodeAndCountry(
           e.target.value,
-          currentCountry
+          country
         )?.isoCode;
       } else {
         updateKey = e.target.value;
@@ -87,7 +84,7 @@ function AddressSelection({ formik, ...props }) {
             handleOnchangeMegaAddress(e);
             setListCity(() => [
               { isoCode: "", name: "---" },
-              ...City.getCitiesOfState(currentCountry, e.target.value),
+              ...City.getCitiesOfState(megaAddress.country, e.target.value),
             ]);
           }}
         >
