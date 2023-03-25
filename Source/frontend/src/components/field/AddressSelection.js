@@ -26,7 +26,6 @@ function AddressSelection({ formik, ...props }) {
       let country = prev["country"];
       let state = prev["state"];
       let city = prev["city"];
-      debugger;
       let updateKey = prev[e.target.name];
       if (e.target.name == "country") {
         city = "";
