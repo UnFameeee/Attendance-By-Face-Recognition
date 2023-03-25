@@ -92,21 +92,16 @@ function OrganizationGeneral() {
     organizationName: data?.result?.organizationName
       ? data?.result?.organizationName
       : "",
-    address: data?.result?.location?.address
-      ? data?.result?.location?.address
-      : "",
-    city: data?.result?.location?.city ? data?.result?.location?.city : "",
-    state: data?.result?.location?.state ? data?.result?.location?.state : "",
-    country: data?.result?.location?.country
-      ? data?.result?.location?.country
-      : "",
+    megaAddress: {
+      country: data?.result?.location?.country ?? "",
+      state: data?.result?.location?.state ?? "",
+      city: data?.result?.location?.city ?? "",
+    },
+    address: data?.result?.location?.address ?? "",
   };
   const validationSchema = Yup.object().shape({
     organizationName: Yup.string().required("This field is required"),
-    address: Yup.string().required("This field is required"),
-    city: Yup.string().required("This field is required"),
-    state: Yup.string().required("This field is required"),
-    country: Yup.string().required("This field is required"),
+    // address: Yup.string().required("This field is required"),
   });
   if (isLoading) return <LoadingSpinner />;
   return (
@@ -124,9 +119,9 @@ function OrganizationGeneral() {
             organizationName: values.organizationName,
             location: {
               address: values.address,
-              city: values.city,
-              country: values.country,
-              state: values.state,
+              city: values.megaAddress?.city ?? "",
+              country: values.megaAddress?.country ?? "",
+              state: values.megaAddress?.state ?? "",
             },
           };
           if (data?.result == null) {
@@ -149,7 +144,7 @@ function OrganizationGeneral() {
                   <Icon boxSize="36px" as={SlOrganization} />
                   <Heading>General Details</Heading>
                 </HStack>
-                <Text >Update your organization and location details here.</Text>
+                <Text>Update your organization and location details here.</Text>
               </Box>
               <HStack>
                 <Button
@@ -193,26 +188,9 @@ function OrganizationGeneral() {
                       }
                     />
                     <FormTextField
-                      name="city"
-                      label="City"
-                      placeholder="Enter your City"
-                      leftIcon={<GiModernCity color="#999" fontSize="1.5rem" />}
-                    />
-                    <FormTextField
-                      name="state"
-                      label="State"
-                      type="text"
-                      placeholder="Enter your State"
-                      leftIcon={
-                        <BsFillMapFill color="#999" fontSize="1.5rem" />
-                      }
-                    />
-                    <FormTextField
-                      name="country"
-                      label="Country"
-                      type="text"
-                      placeholder="Enter your Country"
-                      leftIcon={<TfiWorld color="#999" fontSize="1.5rem" />}
+                      name="megaAddress"
+                      isAddress={true}
+                      formik={formik}
                     />
                     <FormTextField
                       name="address"

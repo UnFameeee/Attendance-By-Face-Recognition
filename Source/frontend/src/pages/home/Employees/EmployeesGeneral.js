@@ -29,6 +29,8 @@ import { FilterType } from "../../../components/table/DynamicTable";
 import { useQueryClient } from "react-query";
 import { useGetListEmployee } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Country, State, City } from "country-state-city";
+
 function EmployeesGeneral() {
   const screenPadding = "2rem";
   const toast = useToast();
@@ -140,7 +142,7 @@ function EmployeesGeneral() {
         },
         haveSort: true,
         cellWidth: "150px",
-        type:'date'
+        type: "date",
       },
       {
         Header: "Description",
@@ -172,6 +174,18 @@ function EmployeesGeneral() {
       {
         Header: "State",
         accessor: "location.state",
+        Cell: ({ row, value }) => {
+          return (
+            <span>
+              {
+                State?.getStateByCodeAndCountry(
+                  row.values["location.state"],
+                  row.values["location.country"]
+                )?.name
+              }
+            </span>
+          );
+        },
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -181,6 +195,13 @@ function EmployeesGeneral() {
       {
         Header: "Country",
         accessor: "location.country",
+        Cell: ({ row, value }) => {
+          return (
+            <span>
+              {Country?.getCountryByCode(row.values["location.country"])?.name}
+            </span>
+          );
+        },
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -270,24 +291,12 @@ function EmployeesGeneral() {
       height: "150px",
       placeholder: "Enter your department",
     },
+
     {
-      name: "city",
-      label: "City",
-      height: "150px",
-      placeholder: "Enter your city",
+      name: "megaAddress",
+      isAddress: true,
     },
-    {
-      name: "state",
-      label: "State",
-      height: "150px",
-      placeholder: "Enter your state",
-    },
-    {
-      name: "country",
-      label: "Country",
-      height: "150px",
-      placeholder: "Enter your country",
-    },
+
     {
       isTextAreaField: true,
       name: "address",
@@ -297,35 +306,29 @@ function EmployeesGeneral() {
     },
   ];
   const initialValues = {
-    fullname: `${editData.fullname ? editData.fullname : ""}`,
-    email: `${editData.email ? editData.email : ""}`,
-    phoneNumber: `${editData.phoneNumber ? editData.phoneNumber : ""}`,
+    fullname: `${editData?.fullname ?? ""}`,
+    email: `${editData?.email ?? ""}`,
+    phoneNumber: `${editData?.phoneNumber ?? ""}`,
     dateOfBirth: `${
       editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
     }`,
-    description: `${editData?.description ? editData?.description : ""}`,
-    department: `${editData?.department ? editData?.department : ""}`,
-    city: `${editData["location.city"] ? editData["location.city"] : ""}`,
-    state: `${editData["location.state"] ? editData["location.state"] : ""}`,
-    country: `${
-      editData["location.country"] ? editData["location.country"] : ""
-    }`,
-    address: `${
-      editData["location.address"] ? editData["location.address"] : ""
-    }`,
+    description: `${editData?.description ?? ""}`,
+    department: `${editData?.department ?? ""}`,
+    megaAddress: {
+      country: `${editData["location.country"] ?? ""}`,
+      state: `${editData["location.state"] ?? ""}`,
+      city: `${editData["location.city"] ?? ""}`,
+    },
+    address: `${editData["location.address"] ?? ""}`,
   };
   const validationSchema = Yup.object().shape({
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
-    city: Yup.string().required("This field is required"),
-    state: Yup.string().required("This field is required"),
-    country: Yup.string().required("This field is required"),
     dateOfBirth: Yup.date().required("This field is required"),
     description: Yup.string().required("This field is required"),
     department: Yup.string().required("This field is required"),
-    address: Yup.string().required("This field is required"),
     phoneNumber: Yup.string(),
   });
   if (isLoading) return <LoadingSpinner />;

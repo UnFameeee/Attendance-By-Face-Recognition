@@ -79,7 +79,7 @@ function DynamicDrawer(props) {
                 <Box flex="1">
                   {drawerFieldData &&
                     drawerFieldData.map((item) => (
-                      <FormTextField key={item.name} {...item} />
+                      <FormTextField formik={formik} key={item.name} {...item} />
                     ))}
                 </Box>
               </Stack>

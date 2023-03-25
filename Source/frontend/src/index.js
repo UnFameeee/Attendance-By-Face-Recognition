@@ -22,6 +22,7 @@ import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
 import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
+import Department from "./pages/home/Organization/Department";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -63,7 +64,7 @@ root.render(
                     <Route path="organization">
                       <Route path="general-organization" element={<OrganizationGeneral />} />
                       <Route path="location" element={<Test />} />
-                      <Route path="department" element={<Test />} />
+                      <Route path="department" element={<Department />} />
                     </Route>
                     <Route path="employees">
                       <Route path="general-employees" element={<EmployeesGeneral />} />
