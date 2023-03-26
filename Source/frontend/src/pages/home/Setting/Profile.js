@@ -25,9 +25,6 @@ import {
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
 import React, { useState, useEffect } from "react";
-import AsyncSelect from "react-select/async";
-import Select from "react-select";
-import axios from "axios";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
@@ -37,12 +34,7 @@ import {
   BsCalendar2Date,
 } from "react-icons/bs";
 import { RiFolderUserLine } from "react-icons/ri";
-import {
-  AiOutlineCloudUpload,
-  AiTwotoneSetting,
-  AiFillCloseCircle,
-  AiOutlineWarning,
-} from "react-icons/ai";
+import { AiTwotoneSetting } from "react-icons/ai";
 import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
 import google_logo from "../../../assets/google-ar21-removebg-preview.png";
@@ -58,7 +50,7 @@ import jwtDecode from "jwt-decode";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import { useGetListRoleOfEmployee } from "../../../services/employee/employee";
-import ImageUploading from "react-images-uploading";
+import ImagesUploading from "../../../components/ImagesUploading";
 function Profile() {
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -332,194 +324,30 @@ function Profile() {
                   </Box>
                   <Divider />
                   <Flex flexDirection="column" p={4} px={8} gap={10}>
-                    <ImageUploading
-                      multiple
-                      value={images}
-                      onChange={onChange}
-                      maxNumber={maxNumber}
-                      dataURLKey="data_url"
+                    <Flex
+                      alignItems="center"
+                      flex={1}
+                      gap={3}
+                      py={2}
+                      flexDirection="column"
                     >
-                      {({
-                        imageList,
-                        onImageUpload,
-                        onImageRemoveAll,
-                        onImageUpdate,
-                        onImageRemove,
-                        isDragging,
-                        dragProps,
-                        errors,
-                      }) => (
-                        <Flex
-                          alignItems="center"
-                          flex={1}
-                          gap={3}
-                          py={2}
+                      <Flex gap={4} flexDirection="row" alignItems="center">
+                        <Avatar src={ta_test_avt} boxSize="80px" />
+                        <Box
+                          display="flex"
                           flexDirection="column"
+                          gap={3}
+                          fontSize="large"
                         >
-                          <Flex gap={4} flexDirection="row" alignItems="center">
-                            <Avatar src={ta_test_avt} boxSize="80px" />
-                            <Box
-                              display="flex"
-                              flexDirection="column"
-                              gap={3}
-                              fontSize="large"
-                            >
-                              <Text fontWeight="bold">Edit your photo</Text>
-                              <Flex gap={2}>
-                                <Text
-                                  onClick={onImageUpload}
-                                  cursor="pointer"
-                                  color="#4374e3"
-                                >
-                                  Upload
-                                </Text>
-                              </Flex>
-                            </Box>
-                          </Flex>
-                          {errors && (
-                            <div>
-                              {errors.maxNumber && (
-                                <Flex alignItems="center" gap="5px">
-                                  <Icon
-                                    color="secondary1"
-                                    boxSize="25px"
-                                    as={AiOutlineWarning}
-                                  />
-                                  <Text
-                                    fontSize="1.3rem"
-                                    fontWeight="medium"
-                                    color="secondary1"
-                                  >
-                                    The maximum number of selected images is 2
-                                  </Text>
-                                </Flex>
-                              )}
-                              {errors.acceptType && (
-                                <Flex alignItems="center" gap="5px">
-                                  <Icon
-                                    color="secondary1"
-                                    boxSize="25px"
-                                    as={AiOutlineWarning}
-                                  />
-                                  <Text
-                                    fontSize="1.3rem"
-                                    fontWeight="medium"
-                                    color="secondary1"
-                                  >
-                                    Your selected file type is not allow
-                                  </Text>
-                                </Flex>
-                              )}
-                              {errors.maxFileSize && (
-                                <Flex alignItems="center" gap="5px">
-                                  <Icon
-                                    color="secondary1"
-                                    boxSize="25px"
-                                    as={AiOutlineWarning}
-                                  />
-                                  <Text
-                                    fontSize="1.3rem"
-                                    fontWeight="medium"
-                                    color="secondary1"
-                                  >
-                                    Selected file size exceed maxFileSize
-                                  </Text>
-                                </Flex>
-                              )}
-                              {errors.resolution && (
-                                <Flex alignItems="center" gap="5px">
-                                  <Icon
-                                    color="secondary1"
-                                    boxSize="25px"
-                                    as={AiOutlineWarning}
-                                  />
-                                  <Text
-                                    fontSize="1.3rem"
-                                    fontWeight="medium"
-                                    color="secondary1"
-                                  >
-                                    Selected file is not match your desired
-                                    resolution
-                                  </Text>
-                                </Flex>
-                              )}
-                            </div>
-                          )}
-                          <Center
-                            width="100%"
-                            cursor="pointer"
-                            boxSizing="border-box"
-                            rounded="lg"
-                            border={
-                              imageList.length > 0 ? "none" : "2px dashed #999"
-                            }
-                            height="400px"
-                            position="relative"
-                            onClick={onImageUpload}
-                            {...dragProps}
-                          >
-                            <Box
-                              position="absolute"
-                              inset="0"
-                              display={imageList.length > 0 ? "none" : "flex"}
-                              flexDirection='column'
-                              alignItems='center'
-                              justifyContent='center'
-                            >
-                              <Center>
-                                <Icon
-                                  _hover={{ color: "primary1" }}
-                                  boxSize={20}
-                                  color="#999"
-                                  as={AiOutlineCloudUpload}
-                                />
-                              </Center>
-                              <Center>
-                                <Text color="#4374e3" mr={1}>
-                                  Click to upload
-                                </Text>
-                                <Text>or drag and drop</Text>
-                              </Center>
-                              <Center display="flex" flexDirection="column">
-                                <Text>SVG, PNG, JPEG or GIF</Text>
-                              </Center>
-                            </Box>
-                            <Box display="flex" w="100%" h="100%" gap="5px">
-                              {imageList.map((image, index) => (
-                                <Box
-                                  border="1px solid gray"
-                                  rounded="lg"
-                                  pos="relative"
-                                  flex="1"
-                                  backgroundImage={image["data_url"]}
-                                  backgroundSize="contain"
-                                  backgroundRepeat="no-repeat"
-                                  backgroundPosition="center"
-                                  key={index}
-                                  className="image-item"
-                                >
-                                  <Box
-                                    pos="absolute"
-                                    className="image-item__btn-wrapper"
-                                    right="0"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onImageRemove(index);
-                                    }}
-                                  >
-                                    <Icon
-                                      color="secondary1"
-                                      boxSize="40px"
-                                      as={AiFillCloseCircle}
-                                    />
-                                  </Box>
-                                </Box>
-                              ))}
-                            </Box>
-                          </Center>
-                        </Flex>
-                      )}
-                    </ImageUploading>
+                          <Text fontWeight="bold">Edit your photo</Text>
+                        </Box>
+                      </Flex>
+                      <ImagesUploading
+                        images={images}
+                        onChange={onChange}
+                        maxNumber={maxNumber}
+                      />
+                    </Flex>
                     <Box flex={1}>
                       <Flex alignItems="center" justifyContent="space-between">
                         <Image src={google_logo} width="150px" />
