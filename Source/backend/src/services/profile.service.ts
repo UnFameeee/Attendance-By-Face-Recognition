@@ -1,3 +1,4 @@
+import { env } from '../config/env.config';
 import { ResponseData } from '../config/responseData.config';
 import { prisma } from '../database/prisma.singleton';
 import { UpdateProfileDTO, UpdateProfilePasswordDTO } from '../model/dtos/profile.dto';
@@ -32,7 +33,7 @@ export class ProfileService {
         role: {
           select: {
             displayName: true,
-            roleId:true,
+            roleId: true,
           }
         },
         department: {
@@ -67,7 +68,7 @@ export class ProfileService {
       return response;
     }
 
-    console.log(data) 
+    console.log(data)
 
     const queryData = await prisma.employee.update({
       where: {
@@ -166,5 +167,88 @@ export class ProfileService {
 
     response.result = `Change password successfully`;
     return response;
+  }
+
+  public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }, index: number) => {
+    const response = new ResponseData<string>;
+
+    console.log(files);
+    console.log(`${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`)
+
+    var isUpdateValidate: any;
+
+    if (index != null) {
+      isUpdateValidate = await prisma.employeeImage.findMany({
+        where: {
+          employeeId: employeeId,
+          index: index
+        }
+      })
+    } else {
+      isUpdateValidate = await prisma.employeeImage.findMany({
+        where: {
+          employeeId: employeeId,
+        }
+      })
+    }
+
+    console.log(isUpdateValidate.length != 0);
+
+    //If we have found exist image in the database
+    if (isUpdateValidate.length != 0) {
+      //Update a specific image
+      if (index != null) {
+        const queryData = await prisma.employeeImage.update({
+          where: {
+            imageId: isUpdateValidate[0].imageId
+          },
+          data: {
+            link: `${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`,
+          },
+        })
+
+        response.result = `Update image successfully`;
+      }
+      //Update all images
+      else {
+        for (const singleQueryData of isUpdateValidate) {
+          const queryData = await prisma.employeeImage.update({
+            where: {
+              imageId: singleQueryData.imageId,
+            },
+            data: {
+              link: `${env.SERVER_URL}${(files.images[singleQueryData.index-1].destination).split("src")[1]}/${files.images[singleQueryData.index-1].filename}`,
+            },
+          })
+        }
+        
+        response.result = `Update images successfully`;
+      }
+    }
+    //If there isn't any image in the database 
+    else {
+      const queryData = await prisma.employeeImage.createMany({
+        data: [
+          {
+            employeeId: employeeId,
+            link: `${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`,
+            index: 1,
+            isPrimary: true
+          },
+          {
+            employeeId: employeeId,
+            link: `${env.SERVER_URL}${(files.images[1].destination).split("src")[1]}/${files.images[1].filename}`,
+            index: 2,
+            isPrimary: false
+          },
+        ]
+      })
+      response.result = `Upload images successfully`;
+    }
+    return response;
+  }
+
+  public changePrimaryImage = async () => {
+
   }
 }

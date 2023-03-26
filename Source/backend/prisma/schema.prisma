@@ -57,8 +57,9 @@ model EmployeeImage {
   link      String
   index     Int
   isPrimary Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  // deletedAt DateTime?
 }
 
 model Role {
