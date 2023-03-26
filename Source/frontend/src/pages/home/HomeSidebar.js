@@ -74,10 +74,7 @@ function HomeSidebar() {
     },
   });
   const handleLogout = () => {
-    const accessTokenJSON = localStorage.getItem("accessToken");
-    const accessToken = JSON.parse(accessTokenJSON);
-    const refreshToken = cookies.get("jwt_authentication");
-    useLogoutMutation.mutate({ accessToken, refreshToken });
+    useLogoutMutation.mutate();
   };
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
