@@ -4,16 +4,16 @@ import helmet from 'helmet';
 import { logger } from './utils/logger';
 import errorMiddleware from './middlewares/error.middleware';
 import { Routes } from './interfaces/routes.interface';
-require("dotenv").config();
 import { initializeRolePermission } from './database/initialize.permission';
+import { env } from './config/env.config';
 
-class App {
+export default class App {
   public app: express.Application;
   public port: string | number;
 
   constructor(routes: Routes[]) {
     this.app = express();
-    this.port = process.env.PORT || 3000;
+    this.port = env.PORT || 3000;
     this.initializeData();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
@@ -53,5 +53,3 @@ class App {
     this.app.use(errorMiddleware);
   }
 }
-
-export default App;

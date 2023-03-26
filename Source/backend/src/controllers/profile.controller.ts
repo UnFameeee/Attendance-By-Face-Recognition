@@ -1,7 +1,6 @@
 import { NextFunction, Response } from "express";
-import { RequestWithProfile } from "../interfaces/auth.interface";
+import { RequestWithProfile, MulterRequest } from '../interfaces/request.interface';
 import { ProfileService } from "../services/profile.service";
-import { HttpException } from "../config/httpException";
 import { UpdateProfileDTO, UpdateProfilePasswordDTO } from '../model/dtos/profile.dto';
 
 export class ProfileController {
@@ -34,6 +33,24 @@ export class ProfileController {
       const employeeId: string = req.params.employeeId;
       const response = await this.profileService.updateProfilePassword(employeeId, data);
       res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public uploadImages = async (req: MulterRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+
+      const data: UpdateProfilePasswordDTO = req.body;
+      const employeeId: string = req.params.employeeId;
+      const response = await this.profileService.updateProfilePassword(employeeId, data);
+      
+      // console.log(req.files);
+      const file = req.files;
+      if (!file) {
+        res.status(400).send({ message: "No file uploaded" });
+      }
+      res.status(200).json(file);
     } catch (err) {
       next(err);
     }

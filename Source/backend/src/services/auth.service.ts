@@ -9,12 +9,12 @@ import { ResponseData } from "../config/responseData.config";
 import { prisma } from '../database/prisma.singleton';
 import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
 import { ResponseToken } from "../config/responseToken.config";
-require("dotenv").config();
+import { env } from "../config/env.config";
 
 class AuthenticationService {
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {
-    const expiresIn: number = Number.parseInt(process.env.SECRET_EXPRIED);
-    const secret = process.env.SECRET_KEY;
+    const expiresIn: number = Number.parseInt(env.SECRET_EXPRIED);
+    const secret = env.SECRET_KEY;
     const dataStoredInToken: DataStoredInAccessToken = {
       id: employeeData.id,
       email: employeeData.email,
@@ -26,8 +26,8 @@ class AuthenticationService {
   }
 
   public async createRefreshToken(employeeData: Employee): Promise<TokenData> {
-    const expiresIn: number = Number.parseInt(process.env.REFRESH_EXPIRED);
-    const secret = process.env.REFRESH_KEY;
+    const expiresIn: number = Number.parseInt(env.REFRESH_EXPIRED);
+    const secret = env.REFRESH_KEY;
     const dataStoredInToken: DataStoredInRefreshToken = {
       id: employeeData.id,
     }

@@ -109,6 +109,18 @@ export const SideBarData = [
     title: "Attendance",
     url: "attendance",
     icon: <MdAvTimer fontSize={iconSize} />,
+    children: [
+      {
+        title: "Face Attendance",
+        url: "face-attendance",
+        icon: <ImProfile fontSize={iconSize} />,
+      },
+      {
+        title: "Upload Face",
+        url: "upload-face",
+        icon: <ImProfile fontSize={iconSize} />,
+      },
+    ],
   },
   {
     title: "Setting",

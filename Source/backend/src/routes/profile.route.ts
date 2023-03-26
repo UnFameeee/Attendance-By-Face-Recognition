@@ -6,6 +6,7 @@ import { updateProfilePasswordSchema, updateProfileSchema } from '../model/dtos/
 import { authorizeRoute } from "../middlewares/authorization.middleware";
 import { PERMISSION, RESOURCE } from '../constant/database.constant';
 import { ProfileController } from "../controllers/profile.controller";
+import { employeeImageUpload } from "../multer/employee.storage";
 
 export class ProfileRoute implements Routes {
   public path = "/profile";
@@ -38,6 +39,15 @@ export class ProfileRoute implements Routes {
       zodValidate(updateProfilePasswordSchema),
       await authorizeRoute(PERMISSION.UPDATE, RESOURCE.PROFILE_MANAGEMENT),
       this.profileController.updateProfilePassword
+    );
+
+    //api/profile/updateProfileImages
+    this.router.post(`${this.path}/uploadImages/:employeeId`,
+      authMiddleware,
+      // zodValidate(updateProfilePasswordSchema),
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.PROFILE_MANAGEMENT),
+      employeeImageUpload,
+      this.profileController.uploadImages
     );
   }
 }

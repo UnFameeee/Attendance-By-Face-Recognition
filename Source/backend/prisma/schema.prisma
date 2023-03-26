@@ -44,6 +44,21 @@ model Employee {
   leaveRequestApproveds LeaveRequest[]      @relation("LeaveRequestApproveds")
   payrolls              Payroll[]
   departmentManager     DepartmentManager[]
+  employeeImages        EmployeeImage[]
+}
+
+model EmployeeImage {
+  imageId String @id @default(uuid())
+
+  // roleId 
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  link      String
+  index     Int
+  isPrimary Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Role {
@@ -154,7 +169,7 @@ model DepartmentManager {
 
   // departmentId
   department   Department @relation(fields: [departmentId], references: [departmentId])
-  departmentId String 
+  departmentId String
 
   deleted   Boolean   @default(false)
   createdAt DateTime  @default(now())

@@ -90,21 +90,23 @@ export const initializeRolePermission = async () => {
   }
 
   //initalize ADMIN ACCOUNT
-  const role = await prisma.role.findUnique({ where: { roleName: application_admin_account.roleName } });
-  const queryData = await prisma.employee.findUnique({
-    where: {
-      email: application_admin_account.email
-    }
-  })
-  if (!queryData) {
-    const hashedPassword = await bcrypt.hash(application_admin_account.password, 10);
-    const admin = await prisma.employee.create({
-      data: {
-        fullname: application_admin_account.fullname,
-        email: application_admin_account.email,
-        password: hashedPassword,
-        roleId: role.roleId
+  for (const account of application_admin_account) {
+    const role = await prisma.role.findUnique({ where: { roleName: account.roleName } });
+    const queryData = await prisma.employee.findUnique({
+      where: {
+        email: account.email
       }
     })
+    if (!queryData) {
+      const hashedPassword = await bcrypt.hash(account.password, 10);
+      const admin = await prisma.employee.create({
+        data: {
+          fullname: account.fullname,
+          email: account.email,
+          password: hashedPassword,
+          roleId: role.roleId
+        }
+      })
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import AuthenticationService from '../services/auth.service';
 import { LoginDTO } from '../model/dtos/login.dto';
-import { RequestWithProfile } from '../interfaces/auth.interface';
+import { RequestWithProfile } from '../interfaces/request.interface';
 import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
 import { HttpException } from '../config/httpException';
 

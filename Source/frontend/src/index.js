@@ -22,16 +22,18 @@ import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
 import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
+import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
+import UploadFace from "./pages/home/Attendance/UploadFace";
 import Department from "./pages/home/Organization/Department";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
     link: "#4374e3",
-    mainBg:'#d7e2e978',
-    primary1:'#3182CE',
-    primary2:'#002664',
-    secondary1:'#DCA11D',
-    secondary2:'#E6F4F1',
+    mainBg: '#d7e2e978',
+    primary1: '#3182CE',
+    primary2: '#002664',
+    secondary1: '#DCA11D',
+    secondary2: '#E6F4F1',
   },
 });
 // Create a client
@@ -44,52 +46,55 @@ const queryClient = new QueryClient({
 });
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <ChakraProvider theme={theme}>
-          <ProSidebarProvider>
-            <BrowserRouter>
-              <ScrollToTop />
-              <ToastContainer />
-              <GlobalHistory />
-              <Routes>
-                <Route element={<Auth />}>
-                  <Route path="/" element={<Login />} />
-                  <Route path="sign-in" element={<Login />} />
-                  <Route path="sign-up" element={<Register />} />
-                </Route>
-                <Route element={<PrivateRoutes />}>
-                  <Route element={<Home />}>
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="organization">
-                      <Route path="general-organization" element={<OrganizationGeneral />} />
-                      <Route path="location" element={<Test />} />
-                      <Route path="department" element={<Department />} />
-                    </Route>
-                    <Route path="employees">
-                      <Route path="general-employees" element={<EmployeesGeneral />} />
-                      <Route path="work-experience" element={<Test />} />
-                    </Route>
-                    <Route path="payroll">
-                      <Route path="gross-net" element={<Test />} />
-                      <Route path="payslip" element={<Test />} />
-                    </Route>
-                    <Route path="work-shift" element={<Test />} />
-                    <Route path="notification" element={<Test />} />
-                    <Route path="report" element={<Test />} />
-                    <Route path="leave-request" element={<Test />} />
-                    <Route path="attendance" element={<Test />} />
-                    <Route path="setting">
-                      <Route path="profile" element={<Profile />} />
-                    </Route>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <ChakraProvider theme={theme}>
+        <ProSidebarProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <ToastContainer />
+            <GlobalHistory />
+            <Routes>
+              <Route element={<Auth />}>
+                <Route path="/" element={<Login />} />
+                <Route path="sign-in" element={<Login />} />
+                <Route path="sign-up" element={<Register />} />
+              </Route>
+              <Route element={<PrivateRoutes />}>
+                <Route element={<Home />}>
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="organization">
+                    <Route path="general-organization" element={<OrganizationGeneral />} />
+                    <Route path="location" element={<Test />} />
+                    <Route path="department" element={<Department />} />
+                  </Route>
+                  <Route path="employees">
+                    <Route path="general-employees" element={<EmployeesGeneral />} />
+                    <Route path="work-experience" element={<Test />} />
+                  </Route>
+                  <Route path="payroll">
+                    <Route path="gross-net" element={<Test />} />
+                    <Route path="payslip" element={<Test />} />
+                  </Route>
+                  <Route path="work-shift" element={<Test />} />
+                  <Route path="notification" element={<Test />} />
+                  <Route path="report" element={<Test />} />
+                  <Route path="leave-request" element={<Test />} />
+                  <Route path="attendance">
+                    <Route path="face-attendance" element={<FaceAttendance />} />
+                    <Route path="upload-face" element={<UploadFace />} />
+                  </Route>
+                  <Route path="setting">
+                    <Route path="profile" element={<Profile />} />
                   </Route>
                 </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </ProSidebarProvider>
-        </ChakraProvider>
-      </Provider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ProSidebarProvider>
+      </ChakraProvider>
+    </Provider>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );

@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  # mysql:
+  #   image: unfame/database-mysql:1.0
+  #   container_name: KLTN_database
+  #   restart: always
+  #   env_file: ./.env
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+  #     - MYSQL_DATABASE=$MYSQLDB_DATABASE
+  #   ports:
+  #     - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+  #   volumes:
+  #     - db:/var/lib/mysql
+
+  express:
+    image: unfame/backend-express:latest
+    container_name: KLTN_backend-express
+    restart: always
+    networks:
+      - KLTN-network
+    ports:
+      - 8081:8081
+    volumes:
+      # - /etc/letsencrypt/live/unfame.tech/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      # - /etc/letsencrypt/live/unfame.tech/privkey.pem:/etc/nginx/ssl/privkey.pem
+
+  react:
+    image: unfame/frontend-react:latest
+    container_name: KLTN_frontend-react
+    restart: always
+    networks:
+      - KLTN-network
+    ports:
+      - "3000:80"
+    depends_on:
+      - express
+    volumes:
+      - ./volumes/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/live/unfame.tech/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/live/unfame.tech/privkey.pem:/etc/nginx/ssl/privkey.pem
+
+networks:
+  KLTN-network:
+    external: true
