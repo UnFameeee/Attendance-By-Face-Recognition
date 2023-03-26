@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
-import { RequestWithProfile } from '../interfaces/auth.interface';
-import { HttpException } from "../config/httpException";
+import { RequestWithProfile } from '../interfaces/request.interface';
+
 import { OrganizationService } from "../services/organization.service";
 import { CreateOrganizationDTO, UpdateOrganizationDTO } from '../model/dtos/organization.dto';
 

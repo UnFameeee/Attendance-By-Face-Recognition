@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { EmployeeService } from "../services/employee.service";
-import { HttpException } from "../config/httpException";
-import { RequestWithProfile } from '../interfaces/auth.interface';
+
+import { RequestWithProfile } from '../interfaces/request.interface';
 import { Page } from "../config/paginate.config";
 import { AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO, UpdateEmployeeDTO } from '../model/dtos/employee.dto';
 

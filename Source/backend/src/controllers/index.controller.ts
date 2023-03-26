@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpException } from "../config/httpException";
+
 // import {PythonShell} from 'python-shell';
 
 class IndexController {
@@ -20,7 +20,7 @@ class IndexController {
         args: [req.query.firstname, req.query.lastname]
       };
       PythonShell.run('./process.py', options, function (err: any, data: any) {
-        console.log(data);
+        // console.log(data);
         res.send(data);
       });
     } catch (err) {

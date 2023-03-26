@@ -12,7 +12,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run build-production
 
 FROM node:14.20.0
 
@@ -23,5 +23,6 @@ COPY package.json .
 COPY --from=build /backend/dist ./dist
 COPY --from=build /backend/node_modules ./node_modules
 COPY --from=build /backend/prisma ./prisma
+COPY src/public ./dist/public
 
 CMD ["npm", "run", "production"]

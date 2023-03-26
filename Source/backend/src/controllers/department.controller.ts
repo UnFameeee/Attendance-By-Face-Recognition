@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { DepartmentService } from '../services/department.service';
 import { CreateDepartmentDTO, UpdateDepartmentDTO } from '../model/dtos/department.dto';
 import { HttpException } from '../config/httpException';
-import { RequestWithProfile } from '../interfaces/auth.interface';
+import { RequestWithProfile } from '../interfaces/request.interface';
 import { Page } from '../config/paginate.config';
 
 export class DepartmentController {

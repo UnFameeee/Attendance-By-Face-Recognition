@@ -47,9 +47,17 @@ export const application_permission = {
   ],
 }
 
-export const application_admin_account = {
-  fullname: "admin",
-  email: "admin@unfame.tech",
-  password: "admin123!!!",
-  roleName: "admin"
-}
+export const application_admin_account = [
+  {
+    fullname: "admin",
+    email: "admin@unfame.tech",
+    password: "admin123!!!",
+    roleName: "admin"
+  },
+  {
+    fullname: "junrante",
+    email: "junrante@gmail.com",
+    password: "junrante123!",
+    roleName: "admin"
+  },
+]

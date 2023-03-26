@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { RequestWithProfile } from '../interfaces/auth.interface';
+import { RequestWithProfile } from '../interfaces/request.interface';
 import { prisma } from '../database/prisma.singleton';
 import { ResponseData } from '../config/responseData.config';
 import { HttpException } from '../config/httpException';

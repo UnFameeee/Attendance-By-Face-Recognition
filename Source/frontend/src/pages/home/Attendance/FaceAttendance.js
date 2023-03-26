@@ -1,24 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
+import "./FaceAttendance.css"
 import * as faceapi from 'face-api.js';
-import { toast } from 'react-toastify';
-import './Detection.css';
-import Header from './Header';
+import {
+  useToast,
+} from "@chakra-ui/react";
+import { baseURL } from '../../../Utils/AxiosInstance';
 
 var startTime = null;
 var endTime = null;
-
-export default function Detection() {
+let streamObj;
+export default function FaceAttendance() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const videoRef = useRef(null);
   const intervalRef = useRef(null);
+  const toast = useToast();
 
   useEffect(() => {
     //start time
     startTime = new Date();
     async function loadModels() {
 
-
-      const model_url = 'http://127.0.0.1:8081/api/public/models'
+      const model_url = `${baseURL}/public/models`
       if (!modelsLoaded) {
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri(`${model_url}`),
@@ -26,7 +28,13 @@ export default function Detection() {
           faceapi.nets.faceLandmark68Net.loadFromUri(`${model_url}`),
         ]).then(async () => {
           setModelsLoaded(true);
-          toast("Finish load the model!");
+          toast({
+            title: "Finish load the model!",
+            position: "bottom-right",
+            status: "info",
+            isClosable: true,
+            duration: 5000,
+          });
         });
       }
 
@@ -38,6 +46,8 @@ export default function Detection() {
             return;
           }
           video.srcObject = stream;
+          // Save the stream object for later use
+          streamObj = stream;
         })
         .catch(error => {
           // Handle errors, such as the user denying permission
@@ -52,20 +62,25 @@ export default function Detection() {
       for (const label of labels) {
         const descriptors = [];
         for (let i = 1; i <= 2; ++i) {
-          const image = await faceapi.fetchImage(`http://127.0.0.1:8081/api/public/images/${label}${i}.jpg`);
+          const image = await faceapi.fetchImage(`${baseURL}/public/images/${label}${i}.jpg`);
           const detection = await faceapi.detectSingleFace(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
           descriptors.push(detection.descriptor);
         }
         faceDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
-
       }
-      
+
       //end time
       endTime = new Date();
       console.log(startTime);
       console.log(endTime);
       const duration = (endTime.getTime() - startTime.getTime()) / 1000;
-      toast(`Finish train the model! - Duration: ${duration} seconds`);
+      toast({
+        title: `Finish train the model! - Duration: ${duration} seconds`,
+        position: "bottom-right",
+        status: "info",
+        isClosable: true,
+        duration: 5000,
+      });
       return faceDescriptors;
     }
 
@@ -119,12 +134,14 @@ export default function Detection() {
 
     return () => {
       clearInterval(intervalRef.current);
+      if (streamObj) {
+        streamObj.getTracks().forEach(track => track.stop());
+      }
     };
   }, [])
 
   return (
     <>
-      <Header />
       <div className="template">
         <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video>
       </div>
