@@ -79,6 +79,15 @@ class EmployeeController {
       next(err);
     }
   }
+  public getListRoleOfEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // const data: ChangeRoleDTO = req.body;
+      const response = await this.employeeService.getListRoleOfEmployee();
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default EmployeeController;

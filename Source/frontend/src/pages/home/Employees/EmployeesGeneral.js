@@ -5,14 +5,16 @@ import {
   Flex,
   Heading,
   HStack,
+  Icon,
   Stack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
 import { IoImageOutline } from "react-icons/io5";
-import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
+import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { RiFolderUserLine } from "react-icons/ri";
 import { BsTelephone } from "react-icons/bs";
@@ -24,8 +26,16 @@ import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
 import { FilterType } from "../../../components/table/DynamicTable";
+import { useQueryClient } from "react-query";
+import { useGetListEmployee } from "../../../services/employee/employee";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Country, State, City } from "country-state-city";
+
 function EmployeesGeneral() {
   const screenPadding = "2rem";
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const { data, isLoading, isError, error } = useGetListEmployee();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
   const {
@@ -73,11 +83,6 @@ function EmployeesGeneral() {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Picture",
-        accessor: "picture",
-        Cell: ({ value }) => <Avatar src={value} />,
-      },
-      {
         Header: "Full Name",
         accessor: "fullname",
         haveFilter: {
@@ -95,21 +100,31 @@ function EmployeesGeneral() {
         haveSort: true,
       },
       {
-        Header: "Role",
-        accessor: "role",
-        Cell: ({ value }) => (
-          <Badge
-            colorScheme={Object.values(matchingItem(value))[0]}
-            fontSize="lg"
-          >
-            {value}
-          </Badge>
-        ),
+        Header: "Gender",
+        accessor: "gender",
         haveFilter: {
           filterType: FilterType.Default,
         },
         haveSort: true,
+        cellWidth: "150px",
+        textAlign: "center",
       },
+      // {
+      //   Header: "Role",
+      //   accessor: "role",
+      //   Cell: ({ value }) => (
+      //     <Badge
+      //       colorScheme={Object.values(matchingItem(value))[0]}
+      //       fontSize="lg"
+      //     >
+      //       {value}
+      //     </Badge>
+      //   ),
+      //   haveFilter: {
+      //     filterType: FilterType.Default,
+      //   },
+      //   haveSort: true,
+      // },
       {
         Header: "Phone",
         accessor: "phoneNumber",
@@ -120,11 +135,85 @@ function EmployeesGeneral() {
         cellWidth: "150px",
       },
       {
-        Header: "Address",
-        accessor: "address",
-        cellWidth: "200px",
+        Header: "Birthday",
+        accessor: "dateOfBirth",
         haveFilter: {
           filterType: FilterType.DateTime,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+        type: "date",
+      },
+      {
+        Header: "Description",
+        accessor: "description",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+      },
+      {
+        Header: "Department",
+        accessor: "department",
+        cellWidth: "200px",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+      },
+      {
+        Header: "City",
+        accessor: "location.city",
+        cellWidth: "200px",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+      },
+      {
+        Header: "State",
+        accessor: "location.state",
+        Cell: ({ row, value }) => {
+          return (
+            <span>
+              {
+                State?.getStateByCodeAndCountry(
+                  row.values["location.state"],
+                  row.values["location.country"]
+                )?.name
+              }
+            </span>
+          );
+        },
+        cellWidth: "200px",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+      },
+      {
+        Header: "Country",
+        accessor: "location.country",
+        Cell: ({ row, value }) => {
+          return (
+            <span>
+              {Country?.getCountryByCode(row.values["location.country"])?.name}
+            </span>
+          );
+        },
+        cellWidth: "200px",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+      },
+      {
+        Header: "Address",
+        accessor: "location.address",
+        cellWidth: "200px",
+        haveFilter: {
+          filterType: FilterType.Text,
         },
         haveSort: true,
       },
@@ -155,12 +244,12 @@ function EmployeesGeneral() {
       placeholder: "Enter your Full Name",
       leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
     },
-    {
-      name: "picture",
-      label: "Picture",
-      placeholder: "imageUrl.com",
-      leftIcon: <IoImageOutline color="#999" fontSize="1.5rem" />,
-    },
+    // {
+    //   name: "picture",
+    //   label: "Picture",
+    //   placeholder: "imageUrl.com",
+    //   leftIcon: <IoImageOutline color="#999" fontSize="1.5rem" />,
+    // },
     {
       name: "email",
       label: "Email",
@@ -169,50 +258,88 @@ function EmployeesGeneral() {
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
-      name: "phone",
-      label: "Phone number",
+      name: "phoneNumber",
+      label: "Phone",
       type: "text",
       placeholder: "Enter your number",
       leftIcon: <BsTelephone color="#999" fontSize="1.4rem" />,
     },
     {
-      isSelectionField: true,
-      selectionArray: roleArray,
-      name: "role",
-      label: "Role",
-      type: "text",
-      placeholder: "Chose your role",
-      leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
+      name: "dateOfBirth",
+      label: "Birthday",
+      isDateField: true,
     },
+    {
+      name: "description",
+      label: "Description",
+      type: "text",
+      placeholder: "Enter your description",
+      isTextAreaField: true,
+    },
+    // {
+    //   isSelectionField: true,
+    //   selectionArray: roleArray,
+    //   name: "role",
+    //   label: "Role",
+    //   type: "text",
+    //   placeholder: "Chose your role",
+    //   leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
+    // },
+    {
+      name: "department",
+      label: "Department",
+      height: "150px",
+      placeholder: "Enter your department",
+    },
+
+    {
+      name: "megaAddress",
+      isAddress: true,
+    },
+
     {
       isTextAreaField: true,
       name: "address",
       label: "Address",
-      height: "150px",
+      height: "130px",
       placeholder: "Enter your address",
     },
   ];
   const initialValues = {
-    fullname: `${editData.fullname ? editData.fullname : ""}`,
-    email: `${editData.email ? editData.email : ""}`,
-    phone: `${editData.phoneNumber ? editData.phoneNumber : ""}`,
-    address: `${editData.address ? editData.address : ""}`,
-    picture: `${editData.picture ? editData.picture : ""}`,
-    role: `${editData.role ? editData.role : ""}`,
+    fullname: `${editData?.fullname ?? ""}`,
+    email: `${editData?.email ?? ""}`,
+    phoneNumber: `${editData?.phoneNumber ?? ""}`,
+    dateOfBirth: `${
+      editData?.dateOfBirth
+        ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
+        : ""
+    }`,
+    description: `${editData?.description ?? ""}`,
+    department: `${editData?.department ?? ""}`,
+    megaAddress: {
+      country: `${editData["location.country"] ?? ""}`,
+      state: `${editData["location.state"] ?? ""}`,
+      city: `${editData["location.city"] ?? ""}`,
+    },
+    address: `${editData["location.address"] ?? ""}`,
   };
   const validationSchema = Yup.object().shape({
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
-    address: Yup.string().required("This field is required"),
-    role: Yup.string().required("This field is required"),
-    picture: Yup.string().required("This field is required"),
-    phone: Yup.string(),
+    dateOfBirth: Yup.date().required("This field is required"),
+    description: Yup.string().required("This field is required"),
+    department: Yup.string().required("This field is required"),
+    phoneNumber: Yup.string(),
   });
+  if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4} padding={screenPadding}>
-      <Heading fontSize="3xl" fontWeight="semibold">
-        Employees Overview
-      </Heading>
+      <HStack>
+        <Icon boxSize="40px" as={FaHouseUser} />
+        <Heading fontSize="3xl" fontWeight="semibold">
+          Employees Overview
+        </Heading>
+      </HStack>
       <Flex
         justifyContent="space-between"
         gap={5}
@@ -235,14 +362,14 @@ function EmployeesGeneral() {
           <ColumnChart />
         </Box>
       </Flex>
-      {tableData.length > 0 ? (
+      {data?.result?.data.length > 0 ? (
         <Box marginTop="10px">
           <DynamicTable
             onAddEditOpen={onAddEditOpen}
             handleDeleteRange={DeleteRange}
             tableRowAction={tableRowAction}
             columns={columns}
-            data={tableData}
+            data={data?.result?.data}
           />
           <DynamicDrawer
             isAddEditOpen={isAddEditOpen}

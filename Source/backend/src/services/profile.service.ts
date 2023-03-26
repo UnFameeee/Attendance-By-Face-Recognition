@@ -32,6 +32,7 @@ export class ProfileService {
         role: {
           select: {
             displayName: true,
+            roleId:true,
           }
         },
         department: {

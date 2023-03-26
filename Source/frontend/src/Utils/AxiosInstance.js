@@ -5,8 +5,9 @@ import { createStandaloneToast } from "@chakra-ui/toast";
 import { globalNavigate } from "./GlobalHistory";
 import jwtDecode from "jwt-decode";
 
-export const baseURL ="http://localhost:8081/api"
+export const baseURL = "http://localhost:8081/api";
 // export const baseURL ="http://unfame.tech:8081/api"
+
 const { toast } = createStandaloneToast();
 const axiosBase = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL || baseURL,
@@ -30,6 +31,7 @@ axiosBase.interceptors.response.use(
   async (error) => {
     const cookies = new Cookies();
     const originalRequest = error.config;
+
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -40,16 +42,30 @@ axiosBase.interceptors.response.use(
           "Content-Type": "application/json",
           Authorization: `Bearer ${refreshToken}`,
         };
-        const { data } = await axiosBase.post("auth/refreshToken", undefined, {
+        const { data } = await axios.post("auth/refreshToken", undefined, {
           headers,
         });
+
         const { refresh, access } = data;
-        const decoded = jwtDecode(refresh);
-        localStorage.setItem("accessToken", JSON.stringify(access));
-        cookies.set("jwt_authentication", refresh, {
-          expires: new Date(decoded.exp * 1000),
-        });
-        return axiosBase(originalRequest);
+        if (refresh && access) {
+          const decoded = jwtDecode(refresh);
+          localStorage.setItem("accessToken", JSON.stringify(access));
+          cookies.set("jwt_authentication", refresh, {
+            expires: new Date(decoded.exp * 1000),
+          });
+          return axiosBase(originalRequest);
+        } else {
+          cookies.remove("jwt_authentication");
+          localStorage.removeItem("accessToken");
+          toast({
+            title: "Your Credentials Are Incorrect or Have Expired",
+            position: "bottom-right",
+            status: "warning",
+            isClosable: true,
+            duration: 5000,
+          });
+          globalNavigate("/sign-in");
+        }
       } else {
         cookies.remove("jwt_authentication");
         localStorage.removeItem("accessToken");

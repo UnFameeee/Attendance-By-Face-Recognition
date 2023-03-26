@@ -147,9 +147,10 @@ function DynamicTable(props) {
                       return (
                         <MenuItem
                           key={item.actionName}
-                          onClick={() =>
-                            item.func(row?.values, item.actionName)
-                          }
+                          onClick={() => {
+                            item.func(row?.values, item.actionName);
+                            // console.log("row", row);
+                          }}
                         >
                           {item.actionName}
                         </MenuItem>
@@ -401,12 +402,16 @@ function DynamicTable(props) {
           </HStack>
         </HStack>
       </HStack>
-      <TableContainer rounded="lg" transform='rotateX(180deg)'  >
-        <Table transform='rotateX(180deg)' variant="simple" {...getTableProps()}>
-          <Thead bgColor="#224562">
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, index) => {
+      <TableContainer rounded="lg" transform="rotateX(180deg)">
+        <Table
+          transform="rotateX(180deg)"
+          variant="simple"
+          {...getTableProps()}
+        >
+          <Thead bgColor="primary2">
+            {headerGroups?.map((headerGroup) => (
+              <Tr {...headerGroup?.getHeaderGroupProps()}>
+                {headerGroup?.headers?.map((column, index) => {
                   // console.log("column", column);
                   if (index !== 0) {
                     return (
@@ -414,7 +419,7 @@ function DynamicTable(props) {
                         textTransform="capitalize"
                         fontSize="lg"
                         color="white"
-                        {...column.getHeaderProps()}
+                        {...column?.getHeaderProps()}
                       >
                         <Flex alignItems="center" gap="5px">
                           {column?.haveFilter && (
@@ -432,15 +437,16 @@ function DynamicTable(props) {
                                     <MenuItem
                                       key={index}
                                       background={
-                                        pagingObject.filterAndSorter[column.id]
-                                          .filterType == selectValue
+                                        pagingObject?.filterAndSorter[
+                                          column?.id
+                                        ].filterType == selectValue
                                           ? "antiquewhite"
                                           : "none"
                                       }
                                       onClick={() =>
                                         handleFilter(
                                           selectValue,
-                                          column.id,
+                                          column?.id,
                                           null
                                         )
                                       }
@@ -469,7 +475,7 @@ function DynamicTable(props) {
                                     e.target.value
                                   );
                                 }}
-                                placeholder={column.render("Header")}
+                                placeholder={column?.render("Header")}
                               />
                             ) : (
                               <Input
@@ -485,7 +491,7 @@ function DynamicTable(props) {
                                     e.target.value
                                   );
                                 }}
-                                placeholder={column.render("Header")}
+                                placeholder={column?.render("Header")}
                               />
                             )
                           ) : (
@@ -494,7 +500,7 @@ function DynamicTable(props) {
                               fontWeight="normal"
                               fontSize="1.2rem"
                             >
-                              {column.Header}
+                              {column?.Header}
                             </Text>
                           )}
 
@@ -504,11 +510,11 @@ function DynamicTable(props) {
                               cursor="pointer"
                               flexDirection="column"
                             >
-                              {column.isSorted ? (
-                                column.isSortedDesc ? (
+                              {column?.isSorted ? (
+                                column?.isSortedDesc ? (
                                   <Icon
                                     onClick={(e) => {
-                                      column.getSortByToggleProps();
+                                      column?.getSortByToggleProps();
 
                                       handleSort(column, "");
                                     }}
@@ -518,7 +524,7 @@ function DynamicTable(props) {
                                 ) : (
                                   <Icon
                                     onClick={(e) => {
-                                      column.getSortByToggleProps();
+                                      column?.getSortByToggleProps();
                                       handleSort(column, "des");
                                     }}
                                     boxSize="20px"
@@ -528,7 +534,7 @@ function DynamicTable(props) {
                               ) : (
                                 <Icon
                                   onClick={(e) => {
-                                    column.getSortByToggleProps();
+                                    column?.getSortByToggleProps();
                                     handleSort(column, "asc");
                                   }}
                                   boxSize="20px"
@@ -546,9 +552,9 @@ function DynamicTable(props) {
                       textTransform="capitalize"
                       fontSize="lg"
                       color="white"
-                      {...column.getHeaderProps()}
+                      {...column?.getHeaderProps()}
                     >
-                      {column.render("Header")}
+                      {column?.render("Header")}
                     </Th>
                   );
                 })}
@@ -562,22 +568,48 @@ function DynamicTable(props) {
                 return (
                   <Tr
                     bg={!Helper.isOdd(index) ? "#e1e8ef" : "none"}
-                    {...row.getRowProps()}
+                    {...row?.getRowProps()}
                   >
-                    {row.cells.map((cell) => {
+                    {row?.cells?.map((cell) => {
                       return (
-                        <Td {...cell.getCellProps()}>
-                          <Box
-                            width={
-                              cell.column.cellWidth
-                                ? cell.column.cellWidth
-                                : "none"
-                            }
-                            textOverflow="ellipsis"
-                            overflow="hidden"
-                          >
-                            {cell.render("Cell")}
-                          </Box>
+                        <Td {...cell?.getCellProps()}>
+                          {cell.column.type == "date" ? (
+                            <Box
+                              width={
+                                cell?.column?.cellWidth
+                                  ? cell?.column?.cellWidth
+                                  : "none"
+                              }
+                              textAlign={
+                                cell?.column?.textAlign
+                                  ? cell?.column?.textAlign
+                                  : "none"
+                              }
+                              textOverflow="ellipsis"
+                              overflow="hidden"
+                            >
+                              {new Date(cell?.value)
+                                .toISOString()
+                                .substring(0, 10)}
+                            </Box>
+                          ) : (
+                            <Box
+                              width={
+                                cell?.column?.cellWidth
+                                  ? cell?.column?.cellWidth
+                                  : "none"
+                              }
+                              textAlign={
+                                cell?.column?.textAlign
+                                  ? cell?.column?.textAlign
+                                  : "none"
+                              }
+                              textOverflow="ellipsis"
+                              overflow="hidden"
+                            >
+                              {cell?.render("Cell")}
+                            </Box>
+                          )}
                         </Td>
                       );
                     })}

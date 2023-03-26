@@ -11,6 +11,7 @@ import {
   Stack,
   Radio,
   Select,
+  Spinner,
 } from "@chakra-ui/react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -18,6 +19,7 @@ import { Field, useField } from "formik";
 import { useState } from "react";
 import SearchAndSelectAddressField from "../field/SearchAndSelectAddressField";
 import RadioGenderField from "../field/RadioGenderField";
+import AddressSelection from "./AddressSelection";
 function FormTextField(props) {
   const {
     leftIcon,
@@ -38,7 +40,9 @@ function FormTextField(props) {
     isReadOnly,
     height,
     isDisabled,
+    isLoading,
   } = props;
+  // console.log("selectionArray",selectionArray)
   const [field, meta] = useField(props);
   if (isDateField) {
     return (
@@ -102,14 +106,18 @@ function FormTextField(props) {
         isInvalid={meta.error && meta.touched}
       >
         <FormLabel>{label}</FormLabel>
-        <Select {...field} placeholder={placeholder ?? ""}>
-          {selectionArray &&
-            selectionArray.map((item, index) => (
-              <option key={index} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-        </Select>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Select {...field} placeholder={placeholder ?? ""}>
+            {selectionArray &&
+              selectionArray.map((item, index) => (
+                <option key={index} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+          </Select>
+        )}
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
@@ -124,12 +132,8 @@ function FormTextField(props) {
         <FormLabel>{label}</FormLabel>
         <Field
           {...field}
-          onChange={(e) => {
-            formik.setFieldValue("address", e);
-          }}
-          placeholder={placeholder ?? ""}
-          onBlur={formik.handleBlur}
-          as={SearchAndSelectAddressField}
+          formik={formik}
+          as={AddressSelection}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>

@@ -8,7 +8,10 @@ import {
   DrawerCloseButton,
   Flex,
   Box,
-  Stack,Button,
+  Stack,
+  Button,
+  HStack,
+  Heading,
 } from "@chakra-ui/react";
 import { Formik } from "formik";
 import FormTextField from "../field/FormTextField";
@@ -40,17 +43,12 @@ function DynamicDrawer(props) {
     >
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader>
-          {Object.keys(editData).length > 0 ? "Edit" : "Add"}
-        </DrawerHeader>
-
         <DrawerBody>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              console.log("actions", actions);
+              // console.log("actions", actions);
               alert(JSON.stringify(values, null, 2));
               actions.resetForm();
               setEditData({});
@@ -59,27 +57,31 @@ function DynamicDrawer(props) {
           >
             {(formik) => (
               <Stack
+               
                 display="flex"
-                height="100%"
                 as="form"
                 onSubmit={formik.handleSubmit}
               >
+                <HStack >
+                  <Heading flex="1" fontSize="2xl">
+                    {" "}
+                    {Object.keys(editData).length > 0 ? "Edit" : "Add"}
+                  </Heading>
+                  <Flex justifyContent="flex-end">
+                    <Button variant="outline" mr={3} onClick={onAddEditClose}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" colorScheme="blue">
+                      Save
+                    </Button>
+                  </Flex>
+                </HStack>
                 <Box flex="1">
                   {drawerFieldData &&
                     drawerFieldData.map((item) => (
-                      <FormTextField key={item.name}
-                        {...item}
-                      />
+                      <FormTextField formik={formik} key={item.name} {...item} />
                     ))}
                 </Box>
-                <Flex justifyContent="flex-end" marginTop="auto">
-                  <Button variant="outline" mr={3} onClick={onAddEditClose}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" colorScheme="blue">
-                    Save
-                  </Button>
-                </Flex>
               </Stack>
             )}
           </Formik>

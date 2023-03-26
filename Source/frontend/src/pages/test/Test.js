@@ -1,10 +1,16 @@
-import { Box } from '@chakra-ui/layout'
-import React from 'react'
+import { Box } from "@chakra-ui/layout";
+import React, { useState } from "react";
+import { Country, State, City } from "country-state-city";
+import { Select } from "@chakra-ui/react";
 
 function Test() {
+ 
+
   return (
-    <Box minHeight='100vh'>Test</Box>
-  )
+    <Box minHeight="100vh">
+     Test
+    </Box>
+  );
 }
 
-export default Test
+export default Test;

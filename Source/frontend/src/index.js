@@ -24,11 +24,16 @@ import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
 import UploadFace from "./pages/home/Attendance/UploadFace";
+import Department from "./pages/home/Organization/Department";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
     link: "#4374e3",
-    mainBg: '#d7e2e978'
+    mainBg: '#d7e2e978',
+    primary1: '#3182CE',
+    primary2: '#002664',
+    secondary1: '#DCA11D',
+    secondary2: '#E6F4F1',
   },
 });
 // Create a client
@@ -61,7 +66,7 @@ root.render(
                   <Route path="organization">
                     <Route path="general-organization" element={<OrganizationGeneral />} />
                     <Route path="location" element={<Test />} />
-                    <Route path="department" element={<Test />} />
+                    <Route path="department" element={<Department />} />
                   </Route>
                   <Route path="employees">
                     <Route path="general-employees" element={<EmployeesGeneral />} />
