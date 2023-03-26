@@ -68,7 +68,7 @@ function DynamicDrawer(props) {
                     {Object.keys(editData).length > 0 ? "Edit" : "Add"}
                   </Heading>
                   <Flex justifyContent="flex-end">
-                    <Button variant="outline" mr={3} onClick={onAddEditClose}>
+                    <Button variant="outline" mr={3} onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button type="submit" colorScheme="blue">
