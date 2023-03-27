@@ -51,7 +51,12 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import { useGetListRoleOfEmployee } from "../../../services/employee/employee";
 import ImagesUploading from "../../../components/ImagesUploading";
+import { permissionProfile } from "../../../screen-permissions/permission";
+import { getPermission } from "../../../services/permission/permission";
+import { useGetPermission } from "../../../hook/useGetPermission";
 function Profile() {
+  const resultPermission = useGetPermission(permissionProfile,"profile-management")
+  console.log("resultPermission",resultPermission)
   const toast = useToast();
   const queryClient = useQueryClient();
   const {
@@ -72,6 +77,7 @@ function Profile() {
   //   data: listRoleOfEmployeeData,
   //   isLoading: isLoadingListRoleOfEmployee,
   // } = useGetListRoleOfEmployee();
+
   const useSaveProfileDetail = useMutation(saveProfileDetail, {
     onSuccess: (data) => {
       const { result } = data;
@@ -142,246 +148,266 @@ function Profile() {
       paddingX={{ base: "5", sm: "5", md: "10", lg: "20", xl: "20" }}
       paddingTop={2}
     >
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={(values, actions) => {
-          onSaveDetailAlertClose();
-          const profileDetail = {
-            fullname: values?.fullname,
-            email: values?.email,
-            gender: values?.gender,
-            dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
-            phoneNumber: 1231231231,
-            location: {
-              address: values?.address,
-              city: values?.megaAddress?.city ?? "",
-              country: values?.megaAddress?.country ?? "",
-              state: values?.megaAddress?.state ?? "",
-            },
-          };
-          const profileDetailObj = {
-            id: userDecodeData?.id,
-            profileDetail: profileDetail,
-          };
-          useSaveProfileDetail.mutate(profileDetailObj);
-        }}
-      >
-        {(formik) => (
-          <>
-            <Stack as="form" onSubmit={formik.handleSubmit}>
-              <Flex justifyContent="space-between">
-                <Box>
-                  <HStack>
-                    <Icon boxSize="40px" as={AiTwotoneSetting} />
-                    <Heading>General Details</Heading>
-                  </HStack>
-                  <Text>Update your photo and personal details here.</Text>
-                </Box>
-                <HStack>
-                  <Button
-                    onClick={onSaveDetailAlertOpen}
-                    size="lg"
-                    colorScheme="blue"
-                  >
-                    Save
-                  </Button>
-                </HStack>
-              </Flex>
-              <Flex
-                gap={8}
-                flexDirection={{
-                  base: "column",
-                  sm: "column",
-                  md: "column",
-                  lg: "column",
-                  xl: "row",
-                }}
-              >
-                <Stack
-                  bgColor="white"
-                  flex="1"
-                  border="0.5px solid #cfd3df"
-                  rounded="lg"
-                >
-                  <Box p={4} px={8}>
-                    <Heading fontSize="xl">Personal Information</Heading>
+      {resultPermission?.read && (
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={(values, actions) => {
+            onSaveDetailAlertClose();
+            const profileDetail = {
+              fullname: values?.fullname,
+              email: values?.email,
+              gender: values?.gender,
+              dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
+              phoneNumber: 1231231231,
+              location: {
+                address: values?.address,
+                city: values?.megaAddress?.city ?? "",
+                country: values?.megaAddress?.country ?? "",
+                state: values?.megaAddress?.state ?? "",
+              },
+            };
+            const profileDetailObj = {
+              id: userDecodeData?.id,
+              profileDetail: profileDetail,
+            };
+            useSaveProfileDetail.mutate(profileDetailObj);
+          }}
+        >
+          {(formik) => (
+            <>
+              <Stack as="form" onSubmit={formik.handleSubmit}>
+                <Flex justifyContent="space-between">
+                  <Box>
+                    <HStack>
+                      <Icon boxSize="40px" as={AiTwotoneSetting} />
+                      <Heading>General Details</Heading>
+                    </HStack>
+                    <Text>Update your photo and personal details here.</Text>
                   </Box>
-                  <Divider />
-                  <Stack spacing={3} p={4} px={8}>
-                    <Flex gap={8}>
-                      <FormTextField
-                        name="fullname"
-                        label="Full Name"
-                        placeholder="Enter your Full Name"
-                        leftIcon={
-                          <FaRegUserCircle color="#999" fontSize="1.5rem" />
-                        }
-                      />
-                    </Flex>
-                    <FormTextField
-                      name="email"
-                      label="Email"
-                      type="email"
-                      isReadOnly={true}
-                      placeholder="abc@gmail.com"
-                      leftIcon={
-                        <MdOutlineAlternateEmail
-                          color="#999"
-                          fontSize="1.5rem"
+                  <HStack>
+                    <Button
+                      onClick={onSaveDetailAlertOpen}
+                      size="lg"
+                      colorScheme="blue"
+                      isDisabled={!resultPermission?.update}
+                    >
+                      Save
+                    </Button>
+                  </HStack>
+                </Flex>
+                <Flex
+                  gap={8}
+                  flexDirection={{
+                    base: "column",
+                    sm: "column",
+                    md: "column",
+                    lg: "column",
+                    xl: "row",
+                  }}
+                >
+                  <Stack
+                    bgColor="white"
+                    flex="1"
+                    border="0.5px solid #cfd3df"
+                    rounded="lg"
+                  >
+                    <Box p={4} px={8}>
+                      <Heading fontSize="xl">Personal Information</Heading>
+                    </Box>
+                    <Divider />
+                    <Stack spacing={3} p={4} px={8}>
+                      <Flex gap={8}>
+                        <FormTextField
+                          name="fullname"
+                          label="Full Name"
+                          placeholder="Enter your Full Name"
+                          leftIcon={
+                            <FaRegUserCircle color="#999" fontSize="1.5rem" />
+                          }
+                          isDisabled={!resultPermission?.update}
                         />
-                      }
-                    />
-                    <FormTextField
-                      name="gender"
-                      isGender={true}
-                      label="Gender"
-                      arrayGender={[
-                        { label: "Male", value: "male" },
-                        { label: "Female", value: "female" },
-                      ]}
-                      formik={formik}
-                    />
-                    <Flex gap={8}>
+                      </Flex>
                       <FormTextField
-                        name="department"
-                        label="Department"
+                        name="email"
+                        label="Email"
+                        type="email"
                         isReadOnly={true}
-                        type="text"
-                        placeholder="148Primas"
+                        placeholder="abc@gmail.com"
                         leftIcon={
-                          <HiOutlineBuildingOffice2
+                          <MdOutlineAlternateEmail
                             color="#999"
                             fontSize="1.5rem"
                           />
                         }
+                        isDisabled={!resultPermission?.update}
                       />
                       <FormTextField
-                        name="location"
-                        label="Work Location"
-                        type="text"
-                        placeholder="148Primas"
-                        leftIcon={
-                          <GiOfficeChair color="#999" fontSize="1.5rem" />
-                        }
+                        name="gender"
+                        isGender={true}
+                        label="Gender"
+                        arrayGender={[
+                          { label: "Male", value: "male" },
+                          { label: "Female", value: "female" },
+                        ]}
+                        formik={formik}
+                        isDisabled={!resultPermission?.update}
                       />
-                    </Flex>
-                    <FormTextField
-                      name="phone"
-                      label="Phone number"
-                      type="number"
-                      placeholder="Enter your number"
-                      leftIcon={<BsTelephone color="#999" fontSize="1.4rem" />}
-                    />
-
-                    <FormTextField
-                      name="role"
-                      label="Role"
-                      isReadOnly={true}
-                      type="text"
-                      leftIcon={
-                        <RiFolderUserLine color="#999" fontSize="1.5rem" />
-                      }
-                    />
-                    <Flex gap={8}>
-                      <FormTextField
-                        name="joiningDate"
-                        label="Joining Date"
-                        type="text"
-                        isReadOnly={true}
-                        placeholder="2/23/2023"
-                        leftIcon={
-                          <BsCalendar2Date color="#999" fontSize="1.5rem" />
-                        }
-                      />
-                      <FormTextField
-                        name="dateOfBirth"
-                        isDateField={true}
-                        label="Birth Date"
-                      />
-                    </Flex>
-                    <FormTextField
-                      name="megaAddress"
-                      isAddress={true}
-                      formik={formik}
-                    />
-                    <FormTextField
-                      name="address"
-                      isTextAreaField={true}
-                      label="Address"
-                      placeholder="Enter your address"
-                    />
-                  </Stack>
-                </Stack>
-                <Stack
-                  bgColor="white"
-                  flex="1"
-                  border="0.5px solid #cfd3df"
-                  rounded="lg"
-                >
-                  <Box p={4} px={8}>
-                    <Heading fontSize="xl">Your Photo</Heading>
-                  </Box>
-                  <Divider />
-                  <Flex flexDirection="column" p={4} px={8} gap={10}>
-                    <Flex
-                      alignItems="center"
-                      flex={1}
-                      gap={3}
-                      py={2}
-                      flexDirection="column"
-                    >
-                      <Flex gap={4} flexDirection="row" alignItems="center">
-                        <Avatar src={ta_test_avt} boxSize="80px" />
-                        <Box
-                          display="flex"
-                          flexDirection="column"
-                          gap={3}
-                          fontSize="large"
-                        >
-                          <Text fontWeight="bold">Edit your photo</Text>
-                        </Box>
+                      <Flex gap={8}>
+                        <FormTextField
+                          name="department"
+                          label="Department"
+                          isReadOnly={true}
+                          type="text"
+                          placeholder="148Primas"
+                          leftIcon={
+                            <HiOutlineBuildingOffice2
+                              color="#999"
+                              fontSize="1.5rem"
+                            />
+                          }
+                          isDisabled={!resultPermission?.update}
+                        />
+                        <FormTextField
+                          name="location"
+                          label="Work Location"
+                          type="text"
+                          placeholder="148Primas"
+                          leftIcon={
+                            <GiOfficeChair color="#999" fontSize="1.5rem" />
+                          }
+                          isDisabled={!resultPermission?.update}
+                        />
                       </Flex>
-                      <ImagesUploading
-                        images={images}
-                        onChange={onChange}
-                        maxNumber={maxNumber}
+                      <FormTextField
+                        name="phone"
+                        label="Phone number"
+                        type="number"
+                        placeholder="Enter your number"
+                        leftIcon={
+                          <BsTelephone color="#999" fontSize="1.4rem" />
+                        }
+                        isDisabled={!resultPermission?.update}
                       />
-                    </Flex>
-                    <Box flex={1}>
-                      <Flex alignItems="center" justifyContent="space-between">
-                        <Image src={google_logo} width="150px" />
-                        <Box p={2} rounded="md" bgColor="#d8ffee">
-                          <Text fontWeight="bold" color="#54c793">
-                            Connected
+
+                      <FormTextField
+                        name="role"
+                        label="Role"
+                        isReadOnly={true}
+                        type="text"
+                        leftIcon={
+                          <RiFolderUserLine color="#999" fontSize="1.5rem" />
+                        }
+                        isDisabled={!resultPermission?.update}
+                      />
+                      <Flex gap={8}>
+                        <FormTextField
+                          name="joiningDate"
+                          label="Joining Date"
+                          type="text"
+                          isReadOnly={true}
+                          placeholder="2/23/2023"
+                          leftIcon={
+                            <BsCalendar2Date color="#999" fontSize="1.5rem" />
+                          }
+                          isDisabled={!resultPermission?.update}
+                        />
+                        <FormTextField
+                          name="dateOfBirth"
+                          isDateField={true}
+                          label="Birth Date"
+                          isDisabled={!resultPermission?.update}
+                        />
+                      </Flex>
+                      <FormTextField
+                        name="megaAddress"
+                        isAddress={true}
+                        formik={formik}
+                        isDisabled={!resultPermission?.update}
+                      />
+                      <FormTextField
+                        name="address"
+                        isTextAreaField={true}
+                        label="Address"
+                        placeholder="Enter your address"
+                        isDisabled={!resultPermission?.update}
+                      />
+                    </Stack>
+                  </Stack>
+                  <Stack
+                    bgColor="white"
+                    flex="1"
+                    border="0.5px solid #cfd3df"
+                    rounded="lg"
+                  >
+                    <Box p={4} px={8}>
+                      <Heading fontSize="xl">Your Photo</Heading>
+                    </Box>
+                    <Divider />
+                    <Flex flexDirection="column" p={4} px={8} gap={10}>
+                      <Flex
+                        alignItems="center"
+                        flex={1}
+                        gap={3}
+                        py={2}
+                        flexDirection="column"
+                      >
+                        <Flex gap={4} flexDirection="row" alignItems="center">
+                          <Avatar src={ta_test_avt} boxSize="80px" />
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            gap={3}
+                            fontSize="large"
+                          >
+                            <Text fontWeight="bold">Edit your photo</Text>
+                          </Box>
+                        </Flex>
+                        <ImagesUploading
+                          images={images}
+                          onChange={onChange}
+                          maxNumber={maxNumber}
+                          isDisabled={!resultPermission.update}
+                        />
+                      </Flex>
+                      {/* <Box flex={1}>
+                        <Flex
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
+                          <Image src={google_logo} width="150px" />
+                          <Box p={2} rounded="md" bgColor="#d8ffee">
+                            <Text fontWeight="bold" color="#54c793">
+                              Connected
+                            </Text>
+                          </Box>
+                        </Flex>
+                        <Box pl={2} fontSize="1.3rem">
+                          <Text fontWeight="bold">Google</Text>
+                          <Text>Use Google to sign in your account.</Text>
+                          <Text color="#4374e3" cursor="pointer">
+                            Click here to learn more.
                           </Text>
                         </Box>
-                      </Flex>
-                      <Box pl={2} fontSize="1.3rem">
-                        <Text fontWeight="bold">Google</Text>
-                        <Text>Use Google to sign in your account.</Text>
-                        <Text color="#4374e3" cursor="pointer">
-                          Click here to learn more.
-                        </Text>
-                      </Box>
-                    </Box>
-                  </Flex>
-                </Stack>
-              </Flex>
-            </Stack>
-            <ChakraAlertDialog
-              title="Save profile detail"
-              message="Are you sure? This action will save your profile details."
-              isOpen={isSaveDetailAlertOpen}
-              onClose={onSaveDetailAlertClose}
-              acceptButtonLabel="Accept"
-              type="submit"
-              onAccept={formik.handleSubmit}
-              acceptButtonColor="blue"
-            />
-          </>
-        )}
-      </Formik>
+                      </Box> */}
+                    </Flex>
+                  </Stack>
+                </Flex>
+              </Stack>
+              <ChakraAlertDialog
+                title="Save profile detail"
+                message="Are you sure? This action will save your profile details."
+                isOpen={isSaveDetailAlertOpen}
+                onClose={onSaveDetailAlertClose}
+                acceptButtonLabel="Accept"
+                type="submit"
+                onAccept={formik.handleSubmit}
+                acceptButtonColor="blue"
+              />
+            </>
+          )}
+        </Formik>
+      )}
     </Stack>
   );
 }

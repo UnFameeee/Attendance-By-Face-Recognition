@@ -24,6 +24,8 @@ export const logout = async () => {
   const response = await axiosBase.delete(`auth/logout`);
   const cookies = new Cookies();
   cookies.remove("jwt_authentication");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("userPermission")
   return response.data;
 };
 

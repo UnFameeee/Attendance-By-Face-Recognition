@@ -228,9 +228,7 @@ function Department() {
           />
         </Box>
       ) : (
-        <Box h="70vh" w="100%">
-          <NoDataToDisplay />
-        </Box>
+        <NoDataToDisplay h="500px" />
       )}
     </Stack>
   );

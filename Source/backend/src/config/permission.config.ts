@@ -57,7 +57,7 @@ export const application_admin_account = [
   {
     fullname: "junrante",
     email: "junrante@gmail.com",
-    password: "junrante123!",
+    password: "741123963",
     roleName: "admin"
   },
 ]

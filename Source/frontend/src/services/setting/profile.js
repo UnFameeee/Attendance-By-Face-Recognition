@@ -8,7 +8,7 @@ export const getProfileDetail = async (id) => {
 export const useGetProfileDetail = (id) => {
   return useQuery(["profileDetail", id], () => getProfileDetail(id), {
     refetchOnWindowFocus: false,
-    retry: 3,
+    retry: 1,
   });
 };
 export const saveProfileDetail = async ({ id, profileDetail }) => {
