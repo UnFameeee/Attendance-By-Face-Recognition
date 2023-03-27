@@ -27,13 +27,18 @@ import jwtDecode from "jwt-decode";
 import { useRowSelect } from "react-table";
 import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
 import { useProSidebar } from "react-pro-sidebar";
-
+import { getPermission } from "../../services/permission/permission";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
   const cookies = new Cookies();
+  const getUserPermission = useMutation(getPermission, {
+    onSuccess: (data) => {
+      localStorage.setItem("userPermission", JSON.stringify(data.result));
+    },
+  });
   const useLoginMutation = useMutation(login, {
     onSuccess: (data) => {
       const { refresh, access } = data;
@@ -52,6 +57,7 @@ export default function Login() {
         isClosable: true,
         duration: 5000,
       });
+      getUserPermission.mutate();
     },
     onError: (error) => {
       console.log(error);
@@ -64,6 +70,7 @@ export default function Login() {
       });
     },
   });
+
   const initialValues = { email: "", password: "" };
   const validationSchema = Yup.object().shape({
     password: Yup.string()
@@ -90,7 +97,6 @@ export default function Login() {
               useLoginMutation.mutate(credential);
               actions.resetForm();
             }}
-            
           >
             {(formik) => (
               <Stack spacing="5" as="form" onSubmit={formik.handleSubmit}>

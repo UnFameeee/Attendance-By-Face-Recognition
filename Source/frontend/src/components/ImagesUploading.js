@@ -1,9 +1,27 @@
-import { Box, Center, Icon, Button, Text, Flex } from "@chakra-ui/react";
-import {AiOutlineWarning, AiFillCloseCircle, AiOutlineCloudUpload} from 'react-icons/ai'
+import {
+  Box,
+  Center,
+  Icon,
+  Button,
+  Text,
+  Flex,
+  Heading,
+} from "@chakra-ui/react";
+import {
+  AiOutlineWarning,
+  AiFillCloseCircle,
+  AiOutlineCloudUpload,
+} from "react-icons/ai";
 import React from "react";
 import ImageUploading from "react-images-uploading";
 
-function ImagesUploading({images, onChange, maxNumber,...props}) {
+function ImagesUploading({
+  images,
+  onChange,
+  maxNumber,
+  isDisabled,
+  ...props
+}) {
   return (
     <ImageUploading
       multiple
@@ -91,85 +109,100 @@ function ImagesUploading({images, onChange, maxNumber,...props}) {
               )}
             </div>
           )}
-          <Center
-            width="100%"
-            cursor="pointer"
-            boxSizing="border-box"
-            rounded="lg"
-            border={imageList.length > 0 ? "none" : "2px dashed #999"}
-            height="400px"
-            position="relative"
-            onClick={onImageUpload}
-            {...dragProps}
-          >
-            <Button
-              colorScheme="blue"
-              zIndex="10"
-              pos="absolute"
-              top="0"
-              left="0"
+          {isDisabled ? (
+            <Center
+              width="100%"
+              cursor="not-allowed"
+              boxSizing="border-box"
+              rounded="lg"
+              border={"2px dashed #999"}
+              height="400px"
             >
-              Upload
-            </Button>
-            <Box
-              position="absolute"
-              inset="0"
-              display={imageList.length > 0 ? "none" : "flex"}
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
+              <Heading fontWeight="medium">
+                You don't have permission to upload
+              </Heading>
+            </Center>
+          ) : (
+            <Center
+              width="100%"
+              cursor="pointer"
+              boxSizing="border-box"
+              rounded="lg"
+              border={imageList.length > 0 ? "none" : "2px dashed #999"}
+              height="400px"
+              position="relative"
+              onClick={onImageUpload}
+              {...dragProps}
             >
-              <Center>
-                <Icon
-                  _hover={{ color: "primary1" }}
-                  boxSize={20}
-                  color="#999"
-                  as={AiOutlineCloudUpload}
-                />
-              </Center>
-              <Center>
-                <Text color="#4374e3" mr={1}>
-                  Click to upload
-                </Text>
-                <Text>or drag and drop</Text>
-              </Center>
-              <Center display="flex" flexDirection="column">
-                <Text>SVG, PNG, JPEG or GIF</Text>
-              </Center>
-            </Box>
-            <Box display="flex" w="100%" h="100%" gap="5px">
-              {imageList.map((image, index) => (
-                <Box
-                  border="1px solid gray"
-                  rounded="lg"
-                  pos="relative"
-                  flex="1"
-                  backgroundImage={image["data_url"]}
-                  backgroundSize="contain"
-                  backgroundRepeat="no-repeat"
-                  backgroundPosition="center"
-                  key={index}
-                  className="image-item"
-                >
+              <Button
+                colorScheme="blue"
+                zIndex="10"
+                pos="absolute"
+                top="0"
+                left="0"
+              >
+                Upload
+              </Button>
+              <Box
+                position="absolute"
+                inset="0"
+                display={imageList.length > 0 ? "none" : "flex"}
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Center>
+                  <Icon
+                    _hover={{ color: "primary1" }}
+                    boxSize={20}
+                    color="#999"
+                    as={AiOutlineCloudUpload}
+                  />
+                </Center>
+                <Center>
+                  <Text color="#4374e3" mr={1}>
+                    Click to upload
+                  </Text>
+                  <Text>or drag and drop</Text>
+                </Center>
+                <Center display="flex" flexDirection="column">
+                  <Text>SVG, PNG, JPEG or GIF</Text>
+                </Center>
+              </Box>
+              <Box display="flex" w="100%" h="100%" gap="5px">
+                {imageList.map((image, index) => (
                   <Box
-                    pos="absolute"
-                    className="image-item__btn-wrapper"
-                    right="0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onImageRemove(index);
-                    }}
+                    border="1px solid gray"
+                    rounded="lg"
+                    pos="relative"
+                    flex="1"
+                    backgroundImage={image["data_url"]}
+                    backgroundSize="contain"
+                    backgroundRepeat="no-repeat"
+                    backgroundPosition="center"
+                    key={index}
+                    className="image-item"
                   >
-                    <Icon
-                      color="secondary1"
-                      boxSize="40px"
-                      as={AiFillCloseCircle}
-                    />
+                    <Box
+                      pos="absolute"
+                      className="image-item__btn-wrapper"
+                      right="0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onImageRemove(index);
+                      }}
+                    >
+                      <Icon
+                        color="secondary1"
+                        boxSize="40px"
+                        as={AiFillCloseCircle}
+                      />
+                    </Box>
                   </Box>
-                </Box>
-              ))}
-            </Box>
-          </Center>
+                ))}
+              </Box>
+            </Center>
+          )}
         </>
       )}
     </ImageUploading>

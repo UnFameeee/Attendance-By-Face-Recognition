@@ -30,8 +30,10 @@ import { useQueryClient } from "react-query";
 import { useGetListEmployee } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Country, State, City } from "country-state-city";
-
+import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
+import { useGetPermission } from "../../../hook/useGetPermission";
 function EmployeesGeneral() {
+  const resultPermission = useGetPermission(permissionEmployeeGeneral,"employee-management")
   const screenPadding = "2rem";
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -73,10 +75,12 @@ function EmployeesGeneral() {
     {
       actionName: "Edit",
       func: Edit,
+      isDisabled:resultPermission?.update ,
     },
     {
       actionName: "Delete",
       func: Delete,
+      isDisabled:resultPermission?.delete ,
     },
   ];
   const tableData = React.useMemo(() => dumbTableData);
@@ -370,6 +374,7 @@ function EmployeesGeneral() {
             tableRowAction={tableRowAction}
             columns={columns}
             data={data?.result?.data}
+            permission={resultPermission}
           />
           <DynamicDrawer
             isAddEditOpen={isAddEditOpen}

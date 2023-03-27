@@ -5,7 +5,6 @@ import { refreshToken } from "../services/auth/auth";
 import Cookies from "universal-cookie";
 
 const PrivateRoutes = () => {
-  debugger;
   const cookies = new Cookies();
   const jwt_accessTokenJSON = localStorage.getItem("accessToken");
   const jwt_accessToken = JSON.parse(jwt_accessTokenJSON);
