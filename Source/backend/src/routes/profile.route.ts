@@ -41,13 +41,21 @@ export class ProfileRoute implements Routes {
       this.profileController.updateProfilePassword
     );
 
-    //api/profile/updateProfileImages
-    this.router.post(`${this.path}/uploadImages/:employeeId`,
+    //api/profile/uploadImages
+    this.router.post(`${this.path}/uploadImages`,
       authMiddleware,
       // zodValidate(updateProfilePasswordSchema),
       await authorizeRoute(PERMISSION.UPDATE, RESOURCE.PROFILE_MANAGEMENT),
       employeeImageUpload,
       this.profileController.uploadImages
+    );
+
+    //api/profile/getProfileImages
+    this.router.get(`${this.path}/getProfileImages`,
+      authMiddleware,
+      // zodValidate(updateProfilePasswordSchema),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.PROFILE_MANAGEMENT),
+      this.profileController.getProfileImages
     );
   }
 }
