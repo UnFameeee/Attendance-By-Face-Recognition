@@ -242,7 +242,7 @@ export class ProfileService {
         ]
       })
     }
-    response.result = await this.getProfileImages(employeeId);
+    response.result = (await this.getProfileImages(employeeId)).result;
     return response;
   }
 
