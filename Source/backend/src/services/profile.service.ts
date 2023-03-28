@@ -170,7 +170,7 @@ export class ProfileService {
   }
 
   public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }, index: number) => {
-    const response = new ResponseData<string>;
+    const response = new ResponseData<any>;
 
     console.log(files);
     console.log(`${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`)
@@ -192,8 +192,6 @@ export class ProfileService {
       })
     }
 
-    console.log(isUpdateValidate.length != 0);
-
     //If we have found exist image in the database
     if (isUpdateValidate.length != 0) {
       //Update a specific image
@@ -207,7 +205,7 @@ export class ProfileService {
           },
         })
 
-        response.result = `Update image successfully`;
+        // response.result = `Update image successfully`;
       }
       //Update all images
       else {
@@ -222,7 +220,7 @@ export class ProfileService {
           })
         }
         
-        response.result = `Update images successfully`;
+        // response.result = `Update images successfully`;
       }
     }
     //If there isn't any image in the database 
@@ -243,12 +241,26 @@ export class ProfileService {
           },
         ]
       })
-      response.result = `Upload images successfully`;
     }
+    response.result = await this.getProfileImages(employeeId);
     return response;
   }
 
-  public changePrimaryImage = async () => {
-
+  public getProfileImages = async (employeeId: string) => {
+    const response = new ResponseData<any>;
+    const queryData = await prisma.employeeImage.findMany({
+      where: {
+        employeeId: employeeId,
+      },
+      select: {
+        link: true,
+        employeeId: true,
+        index: true,
+        isPrimary: true,
+      },
+      
+    })
+    response.result = queryData;
+    return response;
   }
 }

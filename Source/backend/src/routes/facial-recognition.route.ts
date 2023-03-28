@@ -3,11 +3,12 @@ import { Routes } from "../interfaces/routes.interface";
 import { authMiddleware } from '../middlewares/authentication.middleware';
 import { authorizeRoute } from '../middlewares/authorization.middleware';
 import { PERMISSION, RESOURCE } from '../constant/database.constant';
+import { FacialRecognitionController } from "../controllers/facial-recognition.controller";
 
 export class FacialRecognitionRoute implements Routes {
   public path = "/facialRecognition";
   public router = Router();
-  // public facialRecognitionController = new FacialRecognitionController();
+  public facialRecognitionController = new FacialRecognitionController();
 
   constructor() {
     this.initializeRoutes();
@@ -22,10 +23,10 @@ export class FacialRecognitionRoute implements Routes {
 
   private async initializeRoutes() {
     // api/facialRecognition/trainingImages
-    this.router.post(`${this.path}/trainingImages`,
-      authMiddleware,
+    this.router.post(`${this.path}/trainModel`,
+      // authMiddleware,
       // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
-      
+      this.facialRecognitionController.trainModel
     )
 
   }

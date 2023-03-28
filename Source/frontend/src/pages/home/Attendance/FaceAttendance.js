@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "./FaceAttendance.css"
-import * as faceapi from 'face-api.js';
+// import '@tensorflow/tfjs-node';
+import * as faceapi from '@vladmandic/face-api';
+
 import {
   useToast,
 } from "@chakra-ui/react";
-import { baseURL } from '../../../Utils/AxiosInstance';
+import axiosBase, { baseURL } from '../../../Utils/AxiosInstance';
 
-var startTime = null;
-var endTime = null;
 let streamObj;
 export default function FaceAttendance() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
@@ -16,14 +16,12 @@ export default function FaceAttendance() {
   const toast = useToast();
 
   useEffect(() => {
-    //start time
-    startTime = new Date();
     async function loadModels() {
 
       const model_url = `${baseURL}/public/models`
       if (!modelsLoaded) {
         await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(`${model_url}`),
+          faceapi.nets.ssdMobilenetv1.loadFromUri(`${model_url}`),
           faceapi.nets.faceRecognitionNet.loadFromUri(`${model_url}`),
           faceapi.nets.faceLandmark68Net.loadFromUri(`${model_url}`),
         ]).then(async () => {
@@ -48,41 +46,39 @@ export default function FaceAttendance() {
           video.srcObject = stream;
           // Save the stream object for later use
           streamObj = stream;
+          // video.style.transform = 'scaleX(-1)';
         })
         .catch(error => {
           // Handle errors, such as the user denying permission
           console.error('Error accessing camera:', error);
         });
+      
     }
 
-    async function trainModel() {
-      //Training model
-      const labels = ["QuocThang", "AnhMinh"]
-      const faceDescriptors = []
-      for (const label of labels) {
-        const descriptors = [];
-        for (let i = 1; i <= 2; ++i) {
-          const image = await faceapi.fetchImage(`${baseURL}/public/images/${label}${i}.jpg`);
-          const detection = await faceapi.detectSingleFace(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-          descriptors.push(detection.descriptor);
-        }
-        faceDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
-      }
+    // async function trainModel() {
+    //   //Training model
+    //   const labels = ["acb72415-a002-47ae-97d6-401c2cba87b9"]
+    //   const faceDescriptors = []
+    //   for (const label of labels) {
+    //     const descriptors = [];
+    //     for (let i = 1; i <= 2; ++i) {
+    //       const image = await faceapi.fetchImage(`${baseURL}/public/images/employee/${label}/${label}_${i}.jpg`);
+    //       const detection = await faceapi.detectSingleFace(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+    //       descriptors.push(detection.descriptor);
+    //     }
+    //     faceDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
+    //   }
 
-      //end time
-      endTime = new Date();
-      console.log(startTime);
-      console.log(endTime);
-      const duration = (endTime.getTime() - startTime.getTime()) / 1000;
-      toast({
-        title: `Finish train the model! - Duration: ${duration} seconds`,
-        position: "bottom-right",
-        status: "info",
-        isClosable: true,
-        duration: 5000,
-      });
-      return faceDescriptors;
-    }
+    //   const duration = (endTime.getTime() - startTime.getTime()) / 1000;
+    //   toast({
+    //     title: `Finish train the model! - Duration: ${duration} seconds`,
+    //     position: "bottom-right",
+    //     status: "info",
+    //     isClosable: true,
+    //     duration: 5000,
+    //   });
+    //   return faceDescriptors;
+    // }
 
     async function addEvent() {
       const canvas = faceapi.createCanvas(videoRef.current);
@@ -98,12 +94,15 @@ export default function FaceAttendance() {
       faceapi.matchDimensions(canvas, displaySize);
 
       //load the model
-      const trainData = await trainModel();
-      const faceMatcher = new faceapi.FaceMatcher(trainData, 0.6)
+      const trainedFaceMatcherJson = await axiosBase.get(`/public/train-model/trainedFaceMatcher.json`);
+      const faceMatcher = faceapi.FaceMatcher.fromJSON(trainedFaceMatcherJson.data);
+      
+      // const trainData = await trainModel();
+      // const faceMatcher = new faceapi.FaceMatcher(trainData, 0.46);
 
       intervalRef.current = setInterval(async () => {
         const detections = await faceapi
-          .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+          .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.2, maxResults: 1 }))
           .withFaceLandmarks()
           .withFaceDescriptors()
 
@@ -125,7 +124,7 @@ export default function FaceAttendance() {
         // faceapi.draw.drawDetections(canvas, resizedDetections);
         // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
         // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-      }, 100)
+      }, 1000)
     }
 
     loadModels().then(async () => {

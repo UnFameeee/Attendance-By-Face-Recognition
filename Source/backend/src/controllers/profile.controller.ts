@@ -2,9 +2,11 @@ import { NextFunction, Response } from "express";
 import { RequestWithProfile, MulterRequest } from '../interfaces/request.interface';
 import { ProfileService } from "../services/profile.service";
 import { UpdateProfileDTO, UpdateProfilePasswordDTO } from '../model/dtos/profile.dto';
+import { FacialRecognitionService } from "../services/facial-recognition.service";
 
 export class ProfileController {
   public profileService = new ProfileService();
+  public facialRecognitionService = new FacialRecognitionService();
 
   public getProfileDetail = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -45,17 +47,25 @@ export class ProfileController {
       const employeeId: string = req.profile.id;
 
       var index: number;
-      if(Object.keys(req.query).length !== 0){
+      if (Object.keys(req.query).length !== 0) {
         index = parseInt((req.query.index).toString());
       } else {
         index = null;
       }
       const response = await this.profileService.uploadImages(employeeId, files, index);
+      if (response.message == null) {
+        await this.facialRecognitionService.trainModel();
+      }
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 
-      // const file = req.files;
-      // if (!file) {
-      //   res.status(400).send({ message: "No file uploaded" });
-      // }
+  public getProfileImages = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId: string = req.profile.id;
+      const response = await this.profileService.getProfileImages(employeeId);
       res.status(200).json(response);
     } catch (err) {
       next(err);
