@@ -2,8 +2,9 @@ import {
   MdOutlineMonitor,
   MdPayments,
   MdWork,
+  MdTouchApp
 } from "react-icons/md";
-import { TbReportMoney } from "react-icons/tb";
+import { TbReportMoney,TbFaceId } from "react-icons/tb";
 import { AiTwotoneSetting } from "react-icons/ai";
 import {
   FaHouseUser,
@@ -113,7 +114,12 @@ export const SideBarData = [
       {
         title: "Face Attendance",
         url: "face-attendance",
-        icon: <ImProfile fontSize={iconSize} />,
+        icon: <TbFaceId fontSize={iconSize} />,
+      },
+      {
+        title: "Attendance",
+        url: "attendance-management",
+        icon: <MdTouchApp fontSize={iconSize} />,
       },
       {
         title: "Upload Face",
