@@ -45,7 +45,7 @@ function HomeHeader() {
 
   const handleCollapseSidebar = () => {
     collapseSidebar();
-    console.log("collapsed", collapsed, " toggled", toggled);
+    // console.log("collapsed", collapsed, " toggled", toggled);
     if (!toggled) {
       toggleSidebar();
     }
@@ -53,7 +53,6 @@ function HomeHeader() {
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
-      localStorage.removeItem("accessToken");
       navigate("/sign-in");
       toast({
         title: "Sign out successfully",
@@ -160,8 +159,16 @@ function HomeHeader() {
             <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
               <Menu>
                 <MenuButton>
-                  <Flex _hover={{ cursor: "pointer" }} gap='4px'>
-                    {true ? <Avatar size='sm' border="2px solid white" src={avt_user} /> :  <Icon as={HiUserCircle} boxSize={8} />}
+                  <Flex _hover={{ cursor: "pointer" }} gap="4px">
+                    {true ? (
+                      <Avatar
+                        size="sm"
+                        border="2px solid white"
+                        src={avt_user}
+                      />
+                    ) : (
+                      <Icon as={HiUserCircle} boxSize={8} />
+                    )}
                     <Text fontSize="1.2rem">{userEmail}</Text>
                     <Icon as={MdKeyboardArrowDown} boxSize={8} />
                   </Flex>

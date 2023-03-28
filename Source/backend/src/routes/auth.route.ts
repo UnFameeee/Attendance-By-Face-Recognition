@@ -39,5 +39,10 @@ export class AuthenticationRoute implements Routes {
       refreshMiddleware,
       this.authController.refreshToken
     );
+
+    this.router.get(`${this.path}/getPerms`,
+      authMiddleware,
+      this.authController.getPerms
+    );
   }
 }

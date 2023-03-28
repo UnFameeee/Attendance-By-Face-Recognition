@@ -20,12 +20,12 @@ export const register = async ({ username, email, password }) => {
   });
   return response.data;
 };
-export const logout = async ({ accessToken, refreshToken }) => {
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${refreshToken}`,
-  };
-  const response = await axiosBase.delete(`auth/logout`, { headers });
+export const logout = async () => {
+  const response = await axiosBase.delete(`auth/logout`);
+  const cookies = new Cookies();
+  cookies.remove("jwt_authentication");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("userPermission")
   return response.data;
 };
 

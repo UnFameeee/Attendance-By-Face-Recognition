@@ -10,6 +10,7 @@ import { prisma } from '../database/prisma.singleton';
 import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
 import { ResponseToken } from "../config/responseToken.config";
 import { env } from "../config/env.config";
+import { application_permission } from "../config/permission.config";
 
 class AuthenticationService {
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {
@@ -130,6 +131,52 @@ class AuthenticationService {
 
     const tokens: ResponseToken = await this.generateToken(findEmployee);
     return tokens;
+  }
+
+  public async getPerms(employeeId: string): Promise<ResponseData<any>> {
+    const response = new ResponseData<any>;
+
+    const employee = await prisma.employee.findUnique({
+      where: {
+        id: employeeId
+      },
+    })
+
+    const queryData = await prisma.rolePermission.findMany({
+      where: {
+        roleId: employee.roleId,
+      },
+      select: {
+        role: {
+          select: {
+            roleName: true,
+          }
+        },
+        permission: {
+          select: {
+            permissionName: true,
+          }
+        },
+        resource: {
+          select: {
+            resourceName: true,
+          }
+        },
+      }
+    })
+
+    var result: Array<any> = [];
+    for (const rolePerm of queryData) {
+      const tempObj = {
+        role: rolePerm.role.roleName,
+        permission: rolePerm.permission.permissionName,
+        resource: rolePerm.resource.resourceName,
+      }
+      result.push(tempObj);
+    }
+
+    response.result = result;
+    return response;
   }
 }
 

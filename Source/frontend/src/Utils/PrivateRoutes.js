@@ -10,15 +10,21 @@ const PrivateRoutes = () => {
   const jwt_accessToken = JSON.parse(jwt_accessTokenJSON);
   const jtw_refreshToken = cookies.get("jwt_authentication");
   console.log("is access expired", Helper.isTokenExpired(jwt_accessToken));
-  if (Helper.isTokenExpired(jwt_accessToken)) {
-    if (jtw_refreshToken && !Helper.isTokenExpired(jtw_refreshToken)) {
-      refreshToken({ refreshToken: jtw_refreshToken });
-      return <Outlet />;
-    } else {
-      return <Navigate to="/sign-in" />;
+  if (jwt_accessToken) {
+    if (Helper.isTokenExpired(jwt_accessToken)) {
+      if (jtw_refreshToken && !Helper.isTokenExpired(jtw_refreshToken)) {
+        refreshToken({ refreshToken: jtw_refreshToken });
+        return <Outlet />;
+      } else {
+        return <Navigate to="/sign-in" />;
+      }
     }
+    else{
+      return <Outlet />
+    }
+  } else {
+    return <Navigate to="/sign-in" />;
   }
-  return <Outlet />;
 };
 
 export default PrivateRoutes;

@@ -41,7 +41,10 @@ import {
 } from "../../../services/organization/organization";
 import { useMutation, useQueryClient } from "react-query";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { permissionOrganizationGeneral } from "../../../screen-permissions/permission";
+import { useGetPermission } from "../../../hook/useGetPermission";
 function OrganizationGeneral() {
+  const resultPermission = useGetPermission(permissionOrganizationGeneral,"organization-management")
   const toast = useToast();
   const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useGetOrganizationDetail();
@@ -111,101 +114,109 @@ function OrganizationGeneral() {
       paddingX={{ base: "5", sm: "5", md: "10", lg: "20", xl: "20" }}
       paddingTop={2}
     >
-      <Formik
-        initialValues={initialValuesExisted}
-        validationSchema={validationSchema}
-        onSubmit={(values, actions) => {
-          const organizationDetail = {
-            organizationName: values.organizationName,
-            location: {
-              address: values.address,
-              city: values.megaAddress?.city ?? "",
-              country: values.megaAddress?.country ?? "",
-              state: values.megaAddress?.state ?? "",
-            },
-          };
-          if (data?.result == null) {
-            useCreateOrganizationDetail.mutate(organizationDetail);
-          } else {
-            const saveOrganizationDetailObj = {
-              organizationDetail: organizationDetail,
-              id: data?.result?.organizationId,
+      {resultPermission?.read && (
+        <Formik
+          initialValues={initialValuesExisted}
+          validationSchema={validationSchema}
+          onSubmit={(values, actions) => {
+            const organizationDetail = {
+              organizationName: values.organizationName,
+              location: {
+                address: values.address,
+                city: values.megaAddress?.city ?? "",
+                country: values.megaAddress?.country ?? "",
+                state: values.megaAddress?.state ?? "",
+              },
             };
-            useSaveOrganizationDetail.mutate(saveOrganizationDetailObj);
-          }
-          //actions.resetForm();
-        }}
-      >
-        {(formik) => (
-          <Stack as="form" onSubmit={formik.handleSubmit}>
-            <Flex justifyContent="space-between">
-              <Box>
+            if (data?.result == null) {
+              useCreateOrganizationDetail.mutate(organizationDetail);
+            } else {
+              const saveOrganizationDetailObj = {
+                organizationDetail: organizationDetail,
+                id: data?.result?.organizationId,
+              };
+              useSaveOrganizationDetail.mutate(saveOrganizationDetailObj);
+            }
+            //actions.resetForm();
+          }}
+        >
+          {(formik) => (
+            <Stack as="form" onSubmit={formik.handleSubmit}>
+              <Flex justifyContent="space-between">
+                <Box>
+                  <HStack>
+                    <Icon boxSize="36px" as={SlOrganization} />
+                    <Heading>General Details</Heading>
+                  </HStack>
+                  <Text>
+                    Update your organization and location details here.
+                  </Text>
+                </Box>
                 <HStack>
-                  <Icon boxSize="36px" as={SlOrganization} />
-                  <Heading>General Details</Heading>
+                  <Button
+                    isLoading={isLoading}
+                    type="submit"
+                    size="lg"
+                    colorScheme="blue"
+                    isDisabled={!resultPermission?.update}
+                  >
+                    Save
+                  </Button>
                 </HStack>
-                <Text>Update your organization and location details here.</Text>
-              </Box>
-              <HStack>
-                <Button
-                  isLoading={isLoading}
-                  type="submit"
-                  size="lg"
-                  colorScheme="blue"
-                >
-                  Save
-                </Button>
-              </HStack>
-            </Flex>
-            <Flex
-              gap={8}
-              flexDirection={{
-                base: "column",
-                sm: "column",
-                md: "column",
-                lg: "column",
-                xl: "row",
-              }}
-            >
-              <Stack
-                bgColor="white"
-                flex="1"
-                border="0.5px solid #cfd3df"
-                rounded="lg"
+              </Flex>
+              <Flex
+                gap={8}
+                flexDirection={{
+                  base: "column",
+                  sm: "column",
+                  md: "column",
+                  lg: "column",
+                  xl: "row",
+                }}
               >
-                <>
-                  <Box p={4} px={8}>
-                    <Heading fontSize="xl">Organization Information</Heading>
-                  </Box>
-                  <Divider />
-                  <Stack spacing={3} p={4} px={8}>
-                    <FormTextField
-                      name="organizationName"
-                      label="Organization Name"
-                      placeholder="Enter your Organization Name"
-                      leftIcon={
-                        <SlOrganization color="#999" fontSize="1.5rem" />
-                      }
-                    />
-                    <FormTextField
-                      name="megaAddress"
-                      isAddress={true}
-                      formik={formik}
-                    />
-                    <FormTextField
-                      name="address"
-                      label="Address"
-                      isTextAreaField={true}
-                      type="text"
-                      placeholder="Enter your Address"
-                    />
-                  </Stack>
-                </>
-              </Stack>
-            </Flex>
-          </Stack>
-        )}
-      </Formik>
+                <Stack
+                  bgColor="white"
+                  flex="1"
+                  border="0.5px solid #cfd3df"
+                  rounded="lg"
+                >
+                  <>
+                    <Box p={4} px={8}>
+                      <Heading fontSize="xl">Organization Information</Heading>
+                    </Box>
+                    <Divider />
+                    <Stack spacing={3} p={4} px={8}>
+                      <FormTextField
+                        name="organizationName"
+                        label="Organization Name"
+                        placeholder="Enter your Organization Name"
+                        leftIcon={
+                          <SlOrganization color="#999" fontSize="1.5rem" />
+                        }
+                        isDisabled={!resultPermission?.update}
+                      />
+                      <FormTextField
+                        name="megaAddress"
+                        isAddress={true}
+                        formik={formik}
+                        isDisabled={!resultPermission?.update}
+                      />
+                      <FormTextField
+                        name="address"
+                        label="Address"
+                        isTextAreaField={true}
+                        type="text"
+                        placeholder="Enter your Address"
+                        isDisabled={!resultPermission?.update}
+                      />
+                    </Stack>
+                  </>
+                </Stack>
+              </Flex>
+            </Stack>
+          )}
+        </Formik>
+      )}
     </Stack>
   );
 }

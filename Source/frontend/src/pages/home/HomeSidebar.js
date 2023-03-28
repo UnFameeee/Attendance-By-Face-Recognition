@@ -59,7 +59,6 @@ function HomeSidebar() {
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
-      localStorage.removeItem("accessToken");
       navigate("/sign-in");
       toast({
         title: "Sign out successfully",
@@ -74,17 +73,20 @@ function HomeSidebar() {
     },
   });
   const handleLogout = () => {
-    const accessTokenJSON = localStorage.getItem("accessToken");
-    const accessToken = JSON.parse(accessTokenJSON);
-    const refreshToken = cookies.get("jwt_authentication");
-    useLogoutMutation.mutate({ accessToken, refreshToken });
+    useLogoutMutation.mutate();
   };
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
   var decoded = jwtDecode(accessToken);
   let userEmail = decoded.email;
   return (
-    <div style={{ display: "flex", minHeight: "100vh",background:'rgb(249, 249, 249, 0.7)'}}>
+    <div
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        background: "rgb(249, 249, 249, 0.7)",
+      }}
+    >
       <Box>
         <Sidebar
           rootStyles={{ overflowY: "overlay" }}
@@ -101,7 +103,7 @@ function HomeSidebar() {
               bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
-                <Avatar border='2px solid white' src={avt_user} />
+                <Avatar border="2px solid white" src={avt_user} />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"
@@ -150,7 +152,7 @@ function HomeSidebar() {
                   // only apply styles on first level elements of the tree
                   if (level === 0)
                     return {
-                      backgroundColor: active ? "#004F94": undefined,
+                      backgroundColor: active ? "#004F94" : undefined,
                       color: active ? "white" : undefined,
                     };
                   if (level === 1)

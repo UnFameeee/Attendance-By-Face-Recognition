@@ -6,8 +6,12 @@ import { ProSidebarProvider } from "react-pro-sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
-import { QueryClient, QueryClientProvider, persistQueryClient } from "react-query";
-import { ReactQueryDevtools } from 'react-query/devtools'
+import {
+  QueryClient,
+  QueryClientProvider,
+  persistQueryClient,
+} from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { createStandaloneToast } from "@chakra-ui/toast";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
@@ -25,15 +29,16 @@ import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
 import UploadFace from "./pages/home/Attendance/UploadFace";
 import Department from "./pages/home/Organization/Department";
+import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
     link: "#4374e3",
-    mainBg: '#d7e2e978',
-    primary1: '#3182CE',
-    primary2: '#002664',
-    secondary1: '#DCA11D',
-    secondary2: '#E6F4F1',
+    mainBg: "#d7e2e978",
+    primary1: "#3182CE",
+    primary2: "#002664",
+    secondary1: "#DCA11D",
+    secondary2: "#E6F4F1",
   },
 });
 // Create a client
@@ -64,12 +69,18 @@ root.render(
                 <Route element={<Home />}>
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="organization">
-                    <Route path="general-organization" element={<OrganizationGeneral />} />
+                    <Route
+                      path="general-organization"
+                      element={<OrganizationGeneral />}
+                    />
                     <Route path="location" element={<Test />} />
                     <Route path="department" element={<Department />} />
                   </Route>
                   <Route path="employees">
-                    <Route path="general-employees" element={<EmployeesGeneral />} />
+                    <Route
+                      path="general-employees"
+                      element={<EmployeesGeneral />}
+                    />
                     <Route path="work-experience" element={<Test />} />
                   </Route>
                   <Route path="payroll">
@@ -81,7 +92,15 @@ root.render(
                   <Route path="report" element={<Test />} />
                   <Route path="leave-request" element={<Test />} />
                   <Route path="attendance">
-                    <Route path="face-attendance" element={<FaceAttendance />} />
+                    <Route
+                      path="face-attendance"
+                      element={<FaceAttendance />}
+                    />
+                    <Route
+                      path="attendance-management"
+                      element={<AttendanceManagement />}
+                    />
+
                     <Route path="upload-face" element={<UploadFace />} />
                   </Route>
                   <Route path="setting">

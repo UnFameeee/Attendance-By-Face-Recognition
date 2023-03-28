@@ -48,6 +48,16 @@ class AuthenticationController {
       next(err);
     }
   }
+
+  public getPerms = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId = req.profile.id;
+      const response = await this.authService.getPerms(employeeId);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default AuthenticationController;
