@@ -18,3 +18,13 @@ export const saveProfileDetail = async ({ id, profileDetail }) => {
   );
   return response.data;
 };
+
+export const uploadProfileImages = async (uploadImages) => {
+  const headers = {
+    "Content-Type": "multipart/form-data",
+  };
+  const response = await axiosBase.post(`${endPoint}/uploadImages`,uploadImages, {
+    headers,
+  });
+  return response.data
+};

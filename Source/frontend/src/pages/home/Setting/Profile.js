@@ -44,6 +44,7 @@ import _ from "lodash";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   saveProfileDetail,
+  uploadProfileImages,
   useGetProfileDetail,
 } from "../../../services/setting/profile";
 import jwtDecode from "jwt-decode";
@@ -55,8 +56,10 @@ import { permissionProfile } from "../../../screen-permissions/permission";
 import { getPermission } from "../../../services/permission/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 function Profile() {
-  const resultPermission = useGetPermission(permissionProfile,"profile-management")
-  console.log("resultPermission",resultPermission)
+  const resultPermission = useGetPermission(
+    permissionProfile,
+    "profile-management"
+  );
   const toast = useToast();
   const queryClient = useQueryClient();
   const {
@@ -100,6 +103,26 @@ function Profile() {
       });
     },
   });
+  const useUploadImages = useMutation(uploadProfileImages, {
+    onSuccess: (data) => {
+      toast({
+        title: "Save upload photos successfully",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   let roleArray = [];
   const [images, setImages] = React.useState([]);
   const maxNumber = 2;
@@ -107,6 +130,13 @@ function Profile() {
     // data for submit
     console.log(imageList, addUpdateIndex);
     setImages(imageList);
+  };
+  const handleSaveUploadImages = () => {
+    const formData = new FormData();
+    images.map((item) => {
+      formData.append("images", item.file);
+    });
+    useUploadImages.mutate(formData);
   };
   // if(listRoleOfEmployeeData?.result){
   //   listRoleOfEmployeeData?.result.map((item) =>{
@@ -149,72 +179,79 @@ function Profile() {
       paddingTop={2}
     >
       {resultPermission?.read && (
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={(values, actions) => {
-            onSaveDetailAlertClose();
-            const profileDetail = {
-              fullname: values?.fullname,
-              email: values?.email,
-              gender: values?.gender,
-              dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
-              phoneNumber: 1231231231,
-              location: {
-                address: values?.address,
-                city: values?.megaAddress?.city ?? "",
-                country: values?.megaAddress?.country ?? "",
-                state: values?.megaAddress?.state ?? "",
-              },
-            };
-            const profileDetailObj = {
-              id: userDecodeData?.id,
-              profileDetail: profileDetail,
-            };
-            useSaveProfileDetail.mutate(profileDetailObj);
-          }}
-        >
-          {(formik) => (
-            <>
-              <Stack as="form" onSubmit={formik.handleSubmit}>
-                <Flex justifyContent="space-between">
-                  <Box>
-                    <HStack>
-                      <Icon boxSize="40px" as={AiTwotoneSetting} />
-                      <Heading>General Details</Heading>
-                    </HStack>
-                    <Text>Update your photo and personal details here.</Text>
-                  </Box>
-                  <HStack>
-                    <Button
-                      onClick={onSaveDetailAlertOpen}
-                      size="lg"
-                      colorScheme="blue"
-                      isDisabled={!resultPermission?.update}
-                    >
-                      Save
-                    </Button>
-                  </HStack>
-                </Flex>
-                <Flex
-                  gap={8}
-                  flexDirection={{
-                    base: "column",
-                    sm: "column",
-                    md: "column",
-                    lg: "column",
-                    xl: "row",
-                  }}
-                >
+        <Stack>
+          <Flex justifyContent="space-between">
+            <Box>
+              <HStack>
+                <Icon boxSize="40px" as={AiTwotoneSetting} />
+                <Heading>General Details</Heading>
+              </HStack>
+              <Text>Update your photo and personal details here.</Text>
+            </Box>
+          </Flex>
+          <Flex
+            gap={8}
+            flexDirection={{
+              base: "column",
+              sm: "column",
+              md: "column",
+              lg: "column",
+              xl: "row",
+            }}
+          >
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={(values, actions) => {
+                onSaveDetailAlertClose();
+                const profileDetail = {
+                  fullname: values?.fullname,
+                  email: values?.email,
+                  gender: values?.gender,
+                  dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
+                  phoneNumber: 1231231231,
+                  location: {
+                    address: values?.address,
+                    city: values?.megaAddress?.city ?? "",
+                    country: values?.megaAddress?.country ?? "",
+                    state: values?.megaAddress?.state ?? "",
+                  },
+                };
+                const profileDetailObj = {
+                  id: userDecodeData?.id,
+                  profileDetail: profileDetail,
+                };
+                useSaveProfileDetail.mutate(profileDetailObj);
+              }}
+            >
+              {(formik) => (
+                <>
                   <Stack
                     bgColor="white"
                     flex="1"
                     border="0.5px solid #cfd3df"
                     rounded="lg"
+                    as="form"
+                    onSubmit={formik.handleSubmit}
                   >
-                    <Box p={4} px={8}>
-                      <Heading fontSize="xl">Personal Information</Heading>
-                    </Box>
+                    <Flex p={4} px={8} pos="relative">
+                      <Heading flex="1" fontSize="xl">
+                        Personal Information
+                      </Heading>
+                      <Button
+                        pos="absolute"
+                        right="2rem"
+                        top="8px"
+                        onClick={onSaveDetailAlertOpen}
+                        size="lg"
+                        colorScheme="blue"
+                        isDisabled={
+                          !resultPermission?.update || !formik.isValid
+                        }
+                      >
+                        Save
+                      </Button>
+                    </Flex>
                     <Divider />
                     <Stack spacing={3} p={4} px={8}>
                       <Flex gap={8}>
@@ -334,43 +371,63 @@ function Profile() {
                       />
                     </Stack>
                   </Stack>
-                  <Stack
-                    bgColor="white"
-                    flex="1"
-                    border="0.5px solid #cfd3df"
-                    rounded="lg"
-                  >
-                    <Box p={4} px={8}>
-                      <Heading fontSize="xl">Your Photo</Heading>
-                    </Box>
-                    <Divider />
-                    <Flex flexDirection="column" p={4} px={8} gap={10}>
-                      <Flex
-                        alignItems="center"
-                        flex={1}
-                        gap={3}
-                        py={2}
-                        flexDirection="column"
+                  <ChakraAlertDialog
+                    title="Save profile detail"
+                    message="Are you sure? This action will save your profile details."
+                    isOpen={isSaveDetailAlertOpen}
+                    onClose={onSaveDetailAlertClose}
+                    acceptButtonLabel="Accept"
+                    type="submit"
+                    onAccept={formik.handleSubmit}
+                    acceptButtonColor="blue"
+                  />
+                </>
+              )}
+            </Formik>
+            <Stack
+              bgColor="white"
+              flex="1"
+              border="0.5px solid #cfd3df"
+              rounded="lg"
+            >
+              <Box p={4} px={8}>
+                <Heading fontSize="xl">Your Photo</Heading>
+              </Box>
+              <Divider />
+              <Flex flexDirection="column" p={4} px={8} gap={10}>
+                <Flex
+                  alignItems="center"
+                  flex={1}
+                  gap={3}
+                  py={2}
+                  flexDirection="column"
+                >
+                  <Flex gap={4} flexDirection="row" alignItems="center">
+                    <Avatar src={ta_test_avt} boxSize="80px" />
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      gap={1}
+                      fontSize="large"
+                    >
+                      <Text fontWeight="bold">Edit your photo</Text>
+                      <Button
+                        colorScheme="blue"
+                        isDisabled={images?.length == 0}
+                        onClick={handleSaveUploadImages}
                       >
-                        <Flex gap={4} flexDirection="row" alignItems="center">
-                          <Avatar src={ta_test_avt} boxSize="80px" />
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            gap={3}
-                            fontSize="large"
-                          >
-                            <Text fontWeight="bold">Edit your photo</Text>
-                          </Box>
-                        </Flex>
-                        <ImagesUploading
-                          images={images}
-                          onChange={onChange}
-                          maxNumber={maxNumber}
-                          isDisabled={!resultPermission.update}
-                        />
-                      </Flex>
-                      {/* <Box flex={1}>
+                        Save these photos
+                      </Button>
+                    </Box>
+                  </Flex>
+                  <ImagesUploading
+                    images={images}
+                    onChange={onChange}
+                    maxNumber={maxNumber}
+                    isDisabled={!resultPermission.update}
+                  />
+                </Flex>
+                {/* <Box flex={1}>
                         <Flex
                           alignItems="center"
                           justifyContent="space-between"
@@ -390,23 +447,10 @@ function Profile() {
                           </Text>
                         </Box>
                       </Box> */}
-                    </Flex>
-                  </Stack>
-                </Flex>
-              </Stack>
-              <ChakraAlertDialog
-                title="Save profile detail"
-                message="Are you sure? This action will save your profile details."
-                isOpen={isSaveDetailAlertOpen}
-                onClose={onSaveDetailAlertClose}
-                acceptButtonLabel="Accept"
-                type="submit"
-                onAccept={formik.handleSubmit}
-                acceptButtonColor="blue"
-              />
-            </>
-          )}
-        </Formik>
+              </Flex>
+            </Stack>
+          </Flex>
+        </Stack>
       )}
     </Stack>
   );
