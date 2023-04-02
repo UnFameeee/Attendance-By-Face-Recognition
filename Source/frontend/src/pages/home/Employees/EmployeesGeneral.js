@@ -337,7 +337,7 @@ function EmployeesGeneral() {
   });
   if (isLoading) return <LoadingSpinner />;
   return (
-    <Stack minHeight="100vh" spacing={4} padding={screenPadding}>
+    <Stack minHeight="100vh" spacing={4}>
       <HStack>
         <Icon boxSize="40px" as={FaHouseUser} />
         <Heading fontSize="3xl" fontWeight="semibold">

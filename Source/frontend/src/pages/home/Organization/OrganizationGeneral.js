@@ -44,7 +44,10 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { permissionOrganizationGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 function OrganizationGeneral() {
-  const resultPermission = useGetPermission(permissionOrganizationGeneral,"organization-management")
+  const resultPermission = useGetPermission(
+    permissionOrganizationGeneral,
+    "organization-management"
+  );
   const toast = useToast();
   const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useGetOrganizationDetail();
@@ -108,12 +111,7 @@ function OrganizationGeneral() {
   });
   if (isLoading) return <LoadingSpinner />;
   return (
-    <Stack
-      minHeight="100vh"
-      spacing={3}
-      paddingX={{ base: "5", sm: "5", md: "10", lg: "20", xl: "20" }}
-      paddingTop={2}
-    >
+    <Stack minHeight="100vh" spacing={3}>
       {resultPermission?.read && (
         <Formik
           initialValues={initialValuesExisted}
@@ -142,12 +140,18 @@ function OrganizationGeneral() {
         >
           {(formik) => (
             <Stack as="form" onSubmit={formik.handleSubmit}>
-              <Flex justifyContent="space-between">
+              <Flex
+                justifyContent="space-between"
+                flexDirection={{
+                  base: "column",
+                  sm: "row",
+                }}
+              >
                 <Box>
-                  <HStack>
-                    <Icon boxSize="36px" as={SlOrganization} />
-                    <Heading>General Details</Heading>
-                  </HStack>
+                  <Flex gap="10px">
+                    <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                    <Heading fontSize="3xl">General Details</Heading>
+                  </Flex>
                   <Text>
                     Update your organization and location details here.
                   </Text>

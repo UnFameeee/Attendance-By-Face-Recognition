@@ -172,20 +172,15 @@ function Profile() {
   });
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
-    <Stack
-      minHeight="100vh"
-      spacing={3}
-      paddingX={{ base: "5", sm: "5", md: "10", lg: "20", xl: "20" }}
-      paddingTop={2}
-    >
+    <Stack minHeight="100vh" spacing={3}>
       {resultPermission?.read && (
         <Stack>
           <Flex justifyContent="space-between">
             <Box>
-              <HStack>
-                <Icon boxSize="40px" as={AiTwotoneSetting} />
-                <Heading>General Details</Heading>
-              </HStack>
+              <Flex gap="10px">
+                <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                <Heading fontSize="3xl">Profile Details</Heading>
+              </Flex>
               <Text>Update your photo and personal details here.</Text>
             </Box>
           </Flex>

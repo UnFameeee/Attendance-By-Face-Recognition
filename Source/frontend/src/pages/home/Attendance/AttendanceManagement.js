@@ -25,7 +25,7 @@ import { BsFillPersonLinesFill } from "react-icons/bs";
 import test_img from "../../../assets/ta.jpeg";
 function AttendanceManagement() {
   return (
-    <Stack spacing={5} paddingX={5} paddingY={4}>
+    <Stack spacing={5}>
       <VStack
         paddingX={5}
         paddingY={4}
@@ -46,17 +46,11 @@ function AttendanceManagement() {
           spacing="30px"
           gap={{
             base: "5px",
-            sm: "5px",
             md: "30px",
-            lg: "30px",
-            xl: "30px",
           }}
           flexDirection={{
             base: "column",
-            sm: "column",
             md: "row",
-            lg: "row",
-            xl: "row",
           }}
         >
           <Avatar boxSize="120px" src={test_img} />
@@ -65,10 +59,7 @@ function AttendanceManagement() {
             w="100%"
             alignItems={{
               base: "center",
-              sm: "center",
               md: "start",
-              lg: "start",
-              xl: "start",
             }}
           >
             <Heading fontSize="1.7rem">User Name</Heading>
@@ -77,26 +68,17 @@ function AttendanceManagement() {
               spacing="3rem"
               flexDirection={{
                 base: "column",
-                sm: "column",
                 md: "row",
-                lg: "row",
-                xl: "row",
               }}
               gap={{
                 base: "5px",
-                sm: "5px",
                 md: "30px",
-                lg: "30px",
-                xl: "30px",
               }}
             >
               <Flex
                 alignItems={{
                   base: "center",
-                  sm: "center",
                   md: "start",
-                  lg: "start",
-                  xl: "start",
                 }}
                 flexDirection="column"
               >
@@ -108,10 +90,7 @@ function AttendanceManagement() {
               <Flex
                 alignItems={{
                   base: "center",
-                  sm: "center",
                   md: "start",
-                  lg: "start",
-                  xl: "start",
                 }}
                 flexDirection="column"
                 ml="0 !important"
@@ -124,10 +103,7 @@ function AttendanceManagement() {
               <Flex
                 alignItems={{
                   base: "center",
-                  sm: "center",
                   md: "start",
-                  lg: "start",
-                  xl: "start",
                 }}
                 flexDirection="column"
                 ml="0 !important"
@@ -205,10 +181,7 @@ function AttendanceManagement() {
           justifyContent="center"
           flexDirection={{
             base: "column",
-            sm: "column",
             md: "row",
-            lg: "row",
-            xl: "row",
           }}
           gap="10px"
         >
@@ -308,7 +281,7 @@ function AttendanceManagement() {
                     </Badge>
                   )}
                 </HStack>
-                <HStack w='100%' spacing='50px'>
+                <HStack w="100%" spacing="50px">
                   <VStack alignItems="start">
                     <Text fontSize="xl">Check in</Text>
                     <Text fontSize="2xl" fontWeight="bold">

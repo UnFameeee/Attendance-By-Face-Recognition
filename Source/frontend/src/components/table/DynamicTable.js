@@ -288,9 +288,6 @@ function DynamicTable(props) {
             className="tool-bar"
             flexDirection={{
               base: "column",
-              sm: "column",
-              md: "column",
-              lg: "column",
               xl: "row",
             }}
             gap="10px"
@@ -335,17 +332,11 @@ function DynamicTable(props) {
               alignItems="flex-start"
               flexDirection={{
                 base: "column",
-                sm: "column",
                 md: "row",
-                lg: "row",
-                xl: "row",
               }}
               justifyContent={{
                 base: "flex-start",
-                sm: "flex-start",
                 md: "flex-end",
-                lg: "flex-end",
-                xl: "flex-end",
               }}
             >
               <HStack>

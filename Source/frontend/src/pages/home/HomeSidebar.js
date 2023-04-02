@@ -256,6 +256,7 @@ function HomeSidebar() {
         minWidth="0"
         minHeight="100vh"
         bgColor="mainBg"
+        padding='2rem'
       >
         <Outlet />
       </Box>
