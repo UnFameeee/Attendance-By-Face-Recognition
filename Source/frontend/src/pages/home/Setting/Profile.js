@@ -168,24 +168,19 @@ function Profile() {
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
-    dateOfBirth: Yup.date().required("This field is required"),
+    dateOfBirth: Yup.date().max(new Date(),"Your birth date is invalid").required("This field is required"),
   });
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
-    <Stack
-      minHeight="100vh"
-      spacing={3}
-      paddingX={{ base: "5", sm: "5", md: "10", lg: "20", xl: "20" }}
-      paddingTop={2}
-    >
+    <Stack minHeight="100vh" spacing={3}>
       {resultPermission?.read && (
         <Stack>
           <Flex justifyContent="space-between">
             <Box>
-              <HStack>
-                <Icon boxSize="40px" as={AiTwotoneSetting} />
-                <Heading>General Details</Heading>
-              </HStack>
+              <Flex gap="10px">
+                <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                <Heading fontSize="3xl">Profile Details</Heading>
+              </Flex>
               <Text>Update your photo and personal details here.</Text>
             </Box>
           </Flex>
@@ -193,9 +188,6 @@ function Profile() {
             gap={8}
             flexDirection={{
               base: "column",
-              sm: "column",
-              md: "column",
-              lg: "column",
               xl: "row",
             }}
           >
@@ -234,16 +226,12 @@ function Profile() {
                     as="form"
                     onSubmit={formik.handleSubmit}
                   >
-                    <Flex p={4} px={8} pos="relative">
+                    <Flex p={4} px={8} pos="relative" alignItems='center'>
                       <Heading flex="1" fontSize="xl">
                         Personal Information
                       </Heading>
                       <Button
-                        pos="absolute"
-                        right="2rem"
-                        top="8px"
                         onClick={onSaveDetailAlertOpen}
-                        size="lg"
                         colorScheme="blue"
                         isDisabled={
                           !resultPermission?.update || !formik.isValid
@@ -390,7 +378,7 @@ function Profile() {
               border="0.5px solid #cfd3df"
               rounded="lg"
             >
-              <Box p={4} px={8}>
+              <Box p={6} px={8}>
                 <Heading fontSize="xl">Your Photo</Heading>
               </Box>
               <Divider />

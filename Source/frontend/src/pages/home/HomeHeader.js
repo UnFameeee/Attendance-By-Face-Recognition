@@ -16,6 +16,9 @@ import {
   MenuList,
   useToast,
   Show,
+  Tooltip,
+  Wrap,
+  Hide,
 } from "@chakra-ui/react";
 import { useProSidebar } from "react-pro-sidebar";
 import { Link, useNavigate } from "react-router-dom";
@@ -98,13 +101,15 @@ function HomeHeader() {
             width="241.2px"
           >
             <Flex flex={1} justifyContent="center">
-              <Heading
-                cursor="pointer"
-                onClick={() => navigate("/dashboard")}
-                fontSize="2xl"
-              >
-                Home
-              </Heading>
+              <Tooltip placement="bottom" hasArrow label="Go to dashboard page">
+                <Heading
+                  cursor="pointer"
+                  onClick={() => navigate("/dashboard")}
+                  fontSize="2xl"
+                >
+                  Dashboard
+                </Heading>
+              </Tooltip>
             </Flex>
           </Flex>
           <div
@@ -113,53 +118,68 @@ function HomeHeader() {
               alignItems: "center",
               justifyContent: "flex-end",
               flex: "1",
-              gap: "5px",
+              gap: "10px",
             }}
           >
-            <Icon
-              onClick={() => {
-                handleCollapseSidebar();
-              }}
-              as={BsLayoutSidebarInsetReverse}
-              boxSize={8}
-              _hover={{
-                cursor: "pointer",
-              }}
-            />
-            <Link to="/notification">
-              <Box
-                display="flex"
-                alignItems="center"
-                position="relative"
-                ml="8px"
-              >
+            <Tooltip placement="bottom" hasArrow label="Showing the side bar">
+              <Wrap>
                 <Icon
-                  as={IoNotifications}
+                  onClick={() => {
+                    handleCollapseSidebar();
+                  }}
+                  as={BsLayoutSidebarInsetReverse}
                   boxSize={8}
-                  _hover={{ cursor: "pointer" }}
+                  _hover={{
+                    cursor: "pointer",
+                  }}
                 />
+              </Wrap>
+            </Tooltip>
+            <Tooltip
+              placement="bottom"
+              hasArrow
+              label="Go to Notification page"
+            >
+              <Link to="/notification">
                 <Box
-                  position="absolute"
-                  right="18px"
-                  bottom="12px"
                   display="flex"
                   alignItems="center"
-                  justifyContent="center"
-                  className="notify-count"
-                  bgColor="#eb8e2c"
-                  boxSize={6}
-                  rounded="full"
+                  position="relative"
+                  ml="8px"
                 >
-                  <Text color="black" fontWeight="bold">
-                    5
-                  </Text>
+                  <Icon
+                    as={IoNotifications}
+                    boxSize={8}
+                    _hover={{ cursor: "pointer" }}
+                  />
+
+                  <Box
+                    position="absolute"
+                    right="18px"
+                    bottom="12px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    className="notify-count"
+                    bgColor="#eb8e2c"
+                    boxSize={6}
+                    rounded="full"
+                  >
+                    <Text color="black" fontWeight="bold">
+                      5
+                    </Text>
+                  </Box>
                 </Box>
-              </Box>
-            </Link>
+              </Link>
+            </Tooltip>
             <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
               <Menu>
                 <MenuButton>
-                  <Flex _hover={{ cursor: "pointer" }} gap="4px">
+                  <Flex
+                    _hover={{ cursor: "pointer" }}
+                    alignItems="center"
+                    gap="4px"
+                  >
                     {true ? (
                       <Avatar
                         size="sm"
@@ -169,7 +189,9 @@ function HomeHeader() {
                     ) : (
                       <Icon as={HiUserCircle} boxSize={8} />
                     )}
-                    <Text fontSize="1.2rem">{userEmail}</Text>
+                    <Hide below="sm">
+                      <Text fontSize="1.2rem">{userEmail}</Text>
+                    </Hide>
                     <Icon as={MdKeyboardArrowDown} boxSize={8} />
                   </Flex>
                 </MenuButton>

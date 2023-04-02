@@ -30,6 +30,7 @@ import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
 import UploadFace from "./pages/home/Attendance/UploadFace";
 import Department from "./pages/home/Organization/Department";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
+import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -90,7 +91,7 @@ root.render(
                   <Route path="work-shift" element={<Test />} />
                   <Route path="notification" element={<Test />} />
                   <Route path="report" element={<Test />} />
-                  <Route path="leave-request" element={<Test />} />
+                  <Route path="leave-request" element={<LeaveRequest />} />
                   <Route path="attendance">
                     <Route
                       path="face-attendance"

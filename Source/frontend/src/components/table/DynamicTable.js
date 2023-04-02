@@ -31,6 +31,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Tooltip,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
@@ -145,9 +146,19 @@ function DynamicTable(props) {
               />
               <Box>
                 <Menu>
-                  <MenuButton colorScheme="blue" variant="outline" as={Button}>
-                    <Icon as={FiMoreVertical} />
-                  </MenuButton>
+                  <Tooltip
+                    placement="right"
+                    label="Record Bulk Action"
+                    hasArrow
+                  >
+                    <MenuButton
+                      colorScheme="blue"
+                      variant="outline"
+                      as={Button}
+                    >
+                      <Icon as={FiMoreVertical} />
+                    </MenuButton>
+                  </Tooltip>
                   <MenuList>
                     {tableRowAction.map((item) => {
                       return (
@@ -288,35 +299,43 @@ function DynamicTable(props) {
             className="tool-bar"
             flexDirection={{
               base: "column",
-              sm: "column",
-              md: "column",
-              lg: "column",
               xl: "row",
             }}
             gap="10px"
             alignItems="flex-start"
           >
             <HStack flex="1">
-              <Button
-                isDisabled={!permission?.create}
-                colorScheme="blue"
-                onClick={onAddEditOpen}
+              <Tooltip
+                placement="top"
+                hasArrow
+                label="Add new record for table"
               >
-                Add New
-              </Button>
-              <Button colorScheme="blue" onClick={handleReset}>
-                Reset
-              </Button>
-              <Button
-                onClick={onDeleteRangeOpen}
-                isDisabled={
-                  selectedFlatRows.length < 2 ||
-                  !permission.delete
-                }
-                colorScheme="blue"
+                <Button
+                  isDisabled={!permission?.create}
+                  colorScheme="blue"
+                  onClick={onAddEditOpen}
+                >
+                  Add New
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" hasArrow label="Reset table">
+                <Button colorScheme="blue" onClick={handleReset}>
+                  Reset
+                </Button>
+              </Tooltip>
+              <Tooltip
+                placement="top"
+                hasArrow
+                label="Delete a collection of record"
               >
-                Delete Range
-              </Button>
+                <Button
+                  onClick={onDeleteRangeOpen}
+                  isDisabled={selectedFlatRows.length < 2 || !permission.delete}
+                  colorScheme="blue"
+                >
+                  Delete Range
+                </Button>
+              </Tooltip>
               <ChakraAlertDialog
                 isOpen={isDeleteRangeOpen}
                 onClose={onDeleteRangeClose}
@@ -335,17 +354,11 @@ function DynamicTable(props) {
               alignItems="flex-start"
               flexDirection={{
                 base: "column",
-                sm: "column",
                 md: "row",
-                lg: "row",
-                xl: "row",
               }}
               justifyContent={{
                 base: "flex-start",
-                sm: "flex-start",
                 md: "flex-end",
-                lg: "flex-end",
-                xl: "flex-end",
               }}
             >
               <HStack>
@@ -387,35 +400,47 @@ function DynamicTable(props) {
                 </Flex>
                 <Flex alignItems="center" gap="5px">
                   <Text fontWeight="semibold">Go to</Text>
-                  <Input
-                    type="number"
-                    flex="1"
-                    background="white"
-                    width="70px"
-                    onChange={(e) => {
-                      debouncedGotoPage(e.target.value);
-                    }}
-                    defaultValue={pageIndex + 1}
-                    min={1}
-                  />
+                  <Tooltip
+                    placement="top"
+                    hasArrow
+                    label="Jump to specific page"
+                  >
+                    <Input
+                      type="number"
+                      flex="1"
+                      background="white"
+                      width="70px"
+                      onChange={(e) => {
+                        debouncedGotoPage(e.target.value);
+                      }}
+                      defaultValue={pageIndex + 1}
+                      min={1}
+                    />
+                  </Tooltip>
                 </Flex>
-                <Select
-                  width="150px"
-                  value={pageSize}
-                  background="white"
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                  }}
+                <Tooltip
+                  placement="top"
+                  hasArrow
+                  label="Number of showing items"
                 >
-                  {[25, 50, 100].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
-                      Show {pageSize}
+                  <Select
+                    width="150px"
+                    value={pageSize}
+                    background="white"
+                    onChange={(e) => {
+                      setPageSize(Number(e.target.value));
+                    }}
+                  >
+                    {[25, 50, 100].map((pageSize) => (
+                      <option key={pageSize} value={pageSize}>
+                        Show {pageSize}
+                      </option>
+                    ))}
+                    <option key={data.length} value={data.length}>
+                      Show All
                     </option>
-                  ))}
-                  <option key={data.length} value={data.length}>
-                    Show All
-                  </option>
-                </Select>
+                  </Select>
+                </Tooltip>
               </HStack>
             </HStack>
           </HStack>

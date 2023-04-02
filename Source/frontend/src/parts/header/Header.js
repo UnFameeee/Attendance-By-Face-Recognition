@@ -1,15 +1,24 @@
-import { Box, Button, Center, Flex, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Heading,
+  Show,
+  Hide,
+} from "@chakra-ui/react";
 import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 function Header() {
-  
   const location = useLocation();
   return (
     <Box paddingX="5" paddingY="5" height="80px" bg="gray.200" width="100vw">
       <Flex alignItems="center">
-        <Box>
-          <Heading fontSize="lg">Attendance By Face Recognition</Heading>
-        </Box>
+        <Hide below="sm">
+          <Box>
+            <Heading fontSize="lg">Attendance By Face Recognition</Heading>
+          </Box>
+        </Hide>
         <Box flex="1">
           <nav>
             <Center justifyContent="flex-end" flexDirection="row" gap="2">
@@ -32,7 +41,6 @@ function Header() {
                   Sign in
                 </Box>
               </NavLink>
-
               <NavLink
                 to="sign-up"
                 className="auth-header-nav"
