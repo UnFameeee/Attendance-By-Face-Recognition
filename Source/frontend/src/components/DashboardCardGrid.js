@@ -20,7 +20,7 @@ function DashboardCardGrid({dashboardData}) {
   return (
     <SimpleGrid
       spacing={4}
-      gridTemplateColumns="repeat(auto-fit, minmax(350px,1fr))"
+      gridTemplateColumns="repeat(auto-fit, minmax(325px,1fr))"
     >
       {dashboardData &&
         dashboardData.map((item, index) => (

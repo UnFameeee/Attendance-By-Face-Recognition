@@ -15,6 +15,8 @@ import {
   Spinner,
   Center,
   useToast,
+  Tooltip,
+  Hide,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { Field, Formik } from "formik";
@@ -142,6 +144,7 @@ function OrganizationGeneral() {
             <Stack as="form" onSubmit={formik.handleSubmit}>
               <Flex
                 justifyContent="space-between"
+                gap='10px'
                 flexDirection={{
                   base: "column",
                   sm: "row",
@@ -150,22 +153,30 @@ function OrganizationGeneral() {
                 <Box>
                   <Flex gap="10px">
                     <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                    <Heading fontSize="3xl">General Details</Heading>
+                    <Heading fontSize="3xl">Organization Details</Heading>
                   </Flex>
-                  <Text>
-                    Update your organization and location details here.
-                  </Text>
+                  <Hide below="sm">
+                    <Text>
+                      Update your organization and location details here.
+                    </Text>
+                  </Hide>
                 </Box>
                 <HStack>
-                  <Button
-                    isLoading={isLoading}
-                    type="submit"
-                    size="lg"
-                    colorScheme="blue"
-                    isDisabled={!resultPermission?.update}
+                  <Tooltip
+                    placement="left"
+                    hasArrow
+                    label="Save Your Organization Information"
                   >
-                    Save
-                  </Button>
+                    <Button
+                      isLoading={isLoading}
+                      type="submit"
+                      size="lg"
+                      colorScheme="blue"
+                      isDisabled={!resultPermission?.update}
+                    >
+                      Save
+                    </Button>
+                  </Tooltip>
                 </HStack>
               </Flex>
               <Flex

@@ -10,6 +10,7 @@ import {
   HStack,
   Button,
   VStack,
+  Tooltip,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -52,8 +53,12 @@ function LeaveRequest() {
   const validationSchema = Yup.object().shape({
     leaveType: Yup.string().required("This field is required"),
     reason: Yup.string().required("This field is required"),
-    startDate: Yup.date().required("This field is required"),
-    endDate: Yup.date().required("This field is required"),
+    startDate: Yup.date()
+      .min(new Date(), "Start date must be in the future")
+      .required("This field is required"),
+    endDate: Yup.date()
+      .min(Yup.ref("startDate"), "End date must be after start date")
+      .required("This field is required"),
   });
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
@@ -95,15 +100,21 @@ function LeaveRequest() {
                   <Text>Create your leave request</Text>
                 </Box>
                 <HStack>
-                  <Button
-                    // isLoading={isLoading}
-                    type="submit"
-                    size="lg"
-                    colorScheme="blue"
-                    // isDisabled={!resultPermission?.update}
+                  <Tooltip
+                    placement="left"
+                    hasArrow
+                    label="Create Your Leave Request"
                   >
-                    Create
-                  </Button>
+                    <Button
+                      // isLoading={isLoading}
+                      type="submit"
+                      size="lg"
+                      colorScheme="blue"
+                      // isDisabled={!resultPermission?.update}
+                    >
+                      Create
+                    </Button>
+                  </Tooltip>
                 </HStack>
               </Flex>
               <Flex

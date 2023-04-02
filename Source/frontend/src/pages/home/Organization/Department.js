@@ -198,9 +198,7 @@ function Department() {
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-        <Heading fontSize="3xl" fontWeight="semibold">
-          Department Management
-        </Heading>
+        <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
       {data?.result?.data.length > 0 ? (
         <Box marginTop="10px">
