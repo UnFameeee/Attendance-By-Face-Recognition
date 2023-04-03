@@ -171,9 +171,8 @@ export class ProfileService {
 
   public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }, index: number) => {
     const response = new ResponseData<any>;
-
-    console.log(files);
-    console.log(`${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`)
+    // console.log(files);
+    // console.log(`${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`)
 
     var isUpdateValidate: any;
 

@@ -52,6 +52,8 @@ export class OrganizationService {
     const queryData = await prisma.organization.create({
       data: {
         organizationName: data.organizationName,
+        officialWorkingHours: data.officialWorkingHours,
+        officialBreakingHours: data.officialBreakingHours,
         location: {
           create: {
             address: data.location.address,
@@ -87,6 +89,8 @@ export class OrganizationService {
       },
       data: {
         organizationName: data.organizationName,
+        officialWorkingHours: data.officialWorkingHours,
+        officialBreakingHours: data.officialBreakingHours,
         location: {
           update: {
             address: data.location.address,
@@ -99,6 +103,8 @@ export class OrganizationService {
       select: {
         organizationId: true,
         organizationName: true,
+        officialWorkingHours: true,
+        officialBreakingHours: true,
         location: {
           select: {
             address: true,

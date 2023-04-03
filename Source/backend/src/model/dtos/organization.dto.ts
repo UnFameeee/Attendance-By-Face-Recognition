@@ -8,6 +8,20 @@ export const createOrganizationSchema = z.object({
     })
     .trim()
     .min(1, 'Organization Name cannot be empty'),
+  officialWorkingHours: z
+    .string({
+      required_error: 'Working Hours is required',
+      invalid_type_error: "Working Hours must be string"
+    })
+    .trim()
+    .min(1, 'Working Hours cannot be empty'),
+  officialBreakingHours: z
+    .string({
+      required_error: 'Breaking Hours is required',
+      invalid_type_error: "Breaking Hours must be string"
+    })
+    .trim()
+    .min(1, 'Breaking Hours cannot be empty'),
   location: z.object({
     address: z
       .string({
@@ -45,6 +59,20 @@ export const updateOrganizationSchema = z.object({
     })
     .trim()
     .min(1, 'Organization Name cannot be empty'),
+  officialWorkingHours: z
+    .string({
+      required_error: 'Working Hours is required',
+      invalid_type_error: "Working Hours must be string"
+    })
+    .trim()
+    .min(1, 'Working Hours cannot be empty'),
+  officialBreakingHours: z
+    .string({
+      required_error: 'Breaking Hours is required',
+      invalid_type_error: "Breaking Hours must be string"
+    })
+    .trim()
+    .min(1, 'Breaking Hours cannot be empty'),
   location: z.object({
     address: z
       .string({

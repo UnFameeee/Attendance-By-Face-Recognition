@@ -10,31 +10,27 @@ import axiosBase, { baseURL } from '../../../Utils/AxiosInstance';
 
 let streamObj;
 export default function FaceAttendance() {
-  const [modelsLoaded, setModelsLoaded] = useState(false);
+  // const [modelsLoaded, setModelsLoaded] = useState(false);
   const videoRef = useRef(null);
   const intervalRef = useRef(null);
   const toast = useToast();
 
   useEffect(() => {
     async function loadModels() {
-
       const model_url = `${baseURL}/public/models`
-      if (!modelsLoaded) {
-        await Promise.all([
-          faceapi.nets.ssdMobilenetv1.loadFromUri(`${model_url}`),
-          faceapi.nets.faceRecognitionNet.loadFromUri(`${model_url}`),
-          faceapi.nets.faceLandmark68Net.loadFromUri(`${model_url}`),
-        ]).then(async () => {
-          setModelsLoaded(true);
-          toast({
-            title: "Finish load the model!",
-            position: "bottom-right",
-            status: "info",
-            isClosable: true,
-            duration: 5000,
-          });
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri(`${model_url}`),
+        faceapi.nets.faceRecognitionNet.loadFromUri(`${model_url}`),
+        faceapi.nets.faceLandmark68Net.loadFromUri(`${model_url}`),
+      ]).then(async () => {
+        toast({
+          title: "Finish load the model!",
+          position: "bottom-right",
+          status: "info",
+          isClosable: true,
+          duration: 5000,
         });
-      }
+      });
 
       navigator.mediaDevices
         .getUserMedia({ video: true })
@@ -52,7 +48,7 @@ export default function FaceAttendance() {
           // Handle errors, such as the user denying permission
           console.error('Error accessing camera:', error);
         });
-      
+
     }
 
     // async function trainModel() {
@@ -96,13 +92,13 @@ export default function FaceAttendance() {
       //load the model
       const trainedFaceMatcherJson = await axiosBase.get(`/public/train-model/trainedFaceMatcher.json`);
       const faceMatcher = faceapi.FaceMatcher.fromJSON(trainedFaceMatcherJson.data);
-      
+
       // const trainData = await trainModel();
       // const faceMatcher = new faceapi.FaceMatcher(trainData, 0.46);
 
       intervalRef.current = setInterval(async () => {
         const detections = await faceapi
-          .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.2, maxResults: 1 }))
+          .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
           .withFaceLandmarks()
           .withFaceDescriptors()
 
