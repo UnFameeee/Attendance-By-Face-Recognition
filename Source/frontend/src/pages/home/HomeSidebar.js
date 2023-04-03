@@ -12,6 +12,7 @@ import {
   Text,
   useDisclosure,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import {
   Sidebar,
@@ -121,26 +122,30 @@ function HomeSidebar() {
                   </Box>
                 </Box>
               </Flex>
-              <Flex flex="2">
-                <Icon
-                  onClick={() => collapseSidebar()}
-                  cursor="pointer"
-                  fontSize="23px"
-                  color="white"
-                  as={BsLayoutSidebarInset}
-                />
-              </Flex>
+              <Tooltip placement="right" hasArrow label="Minimize the side bar">
+                <Flex flex="2">
+                  <Icon
+                    onClick={() => collapseSidebar()}
+                    cursor="pointer"
+                    fontSize="23px"
+                    color="white"
+                    as={BsLayoutSidebarInset}
+                  />
+                </Flex>
+              </Tooltip>
             </Flex>
             {collapsed && (
-              <Flex pb="10px" bg="primary2" justifyContent="center" w="100%">
-                <Icon
-                  onClick={() => collapseSidebar()}
-                  cursor="pointer"
-                  fontSize="23px"
-                  color="white"
-                  as={BsLayoutSidebarInsetReverse}
-                />
-              </Flex>
+              <Tooltip placement="right" hasArrow label="Expand the side bar">
+                <Flex pb="10px" bg="primary2" justifyContent="center" w="100%">
+                  <Icon
+                    onClick={() => collapseSidebar()}
+                    cursor="pointer"
+                    fontSize="23px"
+                    color="white"
+                    as={BsLayoutSidebarInsetReverse}
+                  />
+                </Flex>
+              </Tooltip>
             )}
 
             <Menu
@@ -256,6 +261,7 @@ function HomeSidebar() {
         minWidth="0"
         minHeight="100vh"
         bgColor="mainBg"
+        padding="2rem"
       >
         <Outlet />
       </Box>
