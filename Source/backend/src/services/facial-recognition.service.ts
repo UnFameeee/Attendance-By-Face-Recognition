@@ -46,9 +46,11 @@ export class FacialRecognitionService {
       for (let i = 0, imageListLength = imageList.length; i < imageListLength; ++i) {
         // Load the image
 
-        console.log(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+        // console.log(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+        // const image = await canvas.loadImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
 
-        const image = await canvas.loadImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+        console.log(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
+        const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
         console.log(image)
 
         // Resize the image
