@@ -30,7 +30,7 @@ class AuthenticationService {
     const dataStoredInToken: DataStoredInAccessToken = {
       id: employeeData.id,
       email: employeeData.email,
-      link: queryData.link,
+      link: queryData ? queryData.link : null,
     }
     return {
       expiresIn,

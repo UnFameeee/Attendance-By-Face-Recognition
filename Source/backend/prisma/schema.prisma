@@ -46,6 +46,8 @@ model Employee {
   payrolls              Payroll[]
   departmentManager     DepartmentManager[]
   employeeImages        EmployeeImage[]
+
+  @@map("employee")
 }
 
 model EmployeeImage {
@@ -61,6 +63,8 @@ model EmployeeImage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // deletedAt DateTime?
+
+  @@map("employeeimage")
 }
 
 model Role {
@@ -73,6 +77,8 @@ model Role {
   deletedAt      DateTime?
   employee       Employee[]
   rolePermission RolePermission[]
+
+  @@map("role")
 }
 
 model Permission {
@@ -83,6 +89,8 @@ model Permission {
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?
   rolePermission RolePermission[]
+
+  @@map("permission")
 }
 
 model Resource {
@@ -93,6 +101,8 @@ model Resource {
   updatedAt      DateTime         @updatedAt
   deletedAt      DateTime?
   rolePermission RolePermission[]
+
+  @@map("resource")
 }
 
 model RolePermission {
@@ -114,6 +124,7 @@ model RolePermission {
   deletedAt DateTime?
 
   @@id([roleId, permissionId, resourceId])
+  @@map("rolepermission")
 }
 
 model Location {
@@ -129,6 +140,8 @@ model Location {
   organization Organization?
   department   Department?
   employee     Employee?
+
+  @@map("location")
 }
 
 model Organization {
@@ -148,6 +161,8 @@ model Organization {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
   departments Department[]
+
+  @@map("organization")
 }
 
 model Department {
@@ -167,6 +182,8 @@ model Department {
   deletedAt         DateTime?
   departmentManager DepartmentManager[]
   employee          Employee[]
+
+  @@map("department")
 }
 
 model DepartmentManager {
@@ -184,6 +201,7 @@ model DepartmentManager {
   deletedAt DateTime?
 
   @@id([managerId, departmentId])
+  @@map("departmentmanager")
 }
 
 model Attendance {
@@ -205,6 +223,8 @@ model Attendance {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
+
+  @@map("attendance")
 }
 
 model Workshift {
@@ -223,6 +243,8 @@ model Workshift {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  @@map("workshift")
 }
 
 model ShiftType {
@@ -235,6 +257,8 @@ model ShiftType {
   updatedAt   DateTime    @updatedAt
   deletedAt   DateTime?
   workshifts  Workshift[]
+
+  @@map("shifttype")
 }
 
 model Contract {
@@ -256,6 +280,8 @@ model Contract {
   updatedAt     DateTime       @updatedAt
   deletedAt     DateTime?
   salaryReviews SalaryReview[]
+
+  @@map("contract")
 }
 
 model SalaryReview {
@@ -273,6 +299,8 @@ model SalaryReview {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
+
+  @@map("salaryreview")
 }
 
 model LeaveRequest {
@@ -299,6 +327,8 @@ model LeaveRequest {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
+
+  @@map("leaverequest")
 }
 
 model LeaveType {
@@ -309,6 +339,8 @@ model LeaveType {
   updatedAt     DateTime       @updatedAt
   deletedAt     DateTime?
   leaveRequests LeaveRequest[]
+
+  @@map("leavetype")
 }
 
 model Payroll {
@@ -329,4 +361,6 @@ model Payroll {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
+
+  @@map("payroll")
 }

@@ -23,6 +23,8 @@ export class FacialRecognitionService {
     const pathToImage = "/../public/images/employee";
     const pathToModel: string = path.join(__dirname, "/../public/models");
 
+    console.log(pathToModel);
+
     await Promise.all([
       faceapi.nets.ssdMobilenetv1.loadFromDisk(pathToModel),
       faceapi.nets.faceRecognitionNet.loadFromDisk(pathToModel),
@@ -43,6 +45,9 @@ export class FacialRecognitionService {
       const descriptors: any[] = [];
       for (let i = 0, imageListLength = imageList.length; i < imageListLength; ++i) {
         // Load the image
+
+        console.log(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+
         const image = await canvas.loadImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
         console.log(image)
 

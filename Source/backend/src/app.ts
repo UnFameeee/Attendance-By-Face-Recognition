@@ -25,12 +25,14 @@ export default class App {
   };
 
   public listen() {
-    if (fs.existsSync('path.join(__dirname + "../../cert/cert.pem') &&
-      fs.existsSync('path.join(__dirname + "../../cert/privkey.pem')) {
+    // console.log(path.join(__dirname + "/cert/cert.pem"))
+    // console.log(path.join(__dirname + "/cert/privkey.pem"))
+    if (fs.existsSync(path.join(__dirname + "/cert/fullchain.pem")) &&
+      fs.existsSync(path.join(__dirname + "/cert/privkey.pem"))) {
       // Create the HTTPS server options
       const httpsOptions = {
-        key: fs.readFileSync(path.join(__dirname + "../../cert/privkey.pem")),
-        cert: fs.readFileSync(path.join(__dirname + "../../cert/cert.pem")),
+        key: fs.readFileSync(path.join(__dirname + "/cert/privkey.pem"), "ascii"),
+        cert: fs.readFileSync(path.join(__dirname + "/cert/fullchain.pem"), "ascii"),
       };
 
       // Create the HTTPS server
@@ -47,7 +49,7 @@ export default class App {
       this.app.listen(this.port, () => {
         logger.info(`======================================`);
         logger.info(`🚀 App listening HTTP on the port ${this.port}`);
-        logger.info(`=====================================`);
+        logger.info(`====================================+=`);
       });
     }
   }
@@ -58,7 +60,7 @@ export default class App {
 
   private initializeData() {
     initializeRolePermission();
-    initializeShiftTypeData(true);
+    // initializeShiftTypeData(true);
   }
 
   private initializeMiddlewares() {

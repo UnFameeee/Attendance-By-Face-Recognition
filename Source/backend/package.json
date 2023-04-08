@@ -10,8 +10,7 @@
     "dev": "npx prisma migrate deploy && nodemon src/server.ts",
     "debug": "ts-node src/server.ts",
     "build": "npx tsc",
-    "start": "npx prisma migrate deploy && npm run build && cp -R src/static dist/static && node dist/server.js",
-    "build-production": "npx tsc",
+    "start": "npm run build && npm run production",
     "production": "npx prisma migrate deploy && node dist/server.js"
   },
   "dependencies": {

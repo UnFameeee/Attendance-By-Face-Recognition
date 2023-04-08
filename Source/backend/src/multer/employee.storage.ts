@@ -3,7 +3,8 @@ import path from "path";
 import { RequestWithProfile } from '../interfaces/request.interface';
 import fs from 'fs';
 
-const directory = "src/public/images/employee";
+const directory = path.join(__dirname, "../public/images/employee");
+
 const imageStorage = multer.diskStorage({
   // Destination to store image     
   destination: async (req: RequestWithProfile, file, cb) => {
@@ -11,6 +12,7 @@ const imageStorage = multer.diskStorage({
     if (!fs.existsSync(`${directory}/${req.profile.id}`)) {
       fs.mkdirSync(`${directory}/${req.profile.id}`)
     }
+    console.log("MulterStorage: ", `${directory}/${req.profile.id}`)
     cb(null, `${directory}/${req.profile.id}`)
   },
   filename: async (req: RequestWithProfile, file, cb) => {

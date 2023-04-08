@@ -10,20 +10,22 @@ services:
     build: ../backend
     ports:
       - 8081:8081
-
-  react:
-    image: frontend-react
-    container_name: KLTN_frontend-react
-    restart: always
-    networks:
-      - KLTN-network
-    build: ../frontend
-    ports:
-      - "3000:80"
     volumes:
-      - ./volumes/nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - express
+      - ./volumes/backend/public:/backend/dist/public
+
+  # react:
+  #   image: frontend-react
+  #   container_name: KLTN_frontend-react
+  #   restart: always
+  #   networks:
+  #     - KLTN-network
+  #   build: ../frontend
+  #   ports:
+  #     - "3000:80"
+  #   volumes:
+  #     - ./volumes/frontend/nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - express
 
 networks:
   KLTN-network:
