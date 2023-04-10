@@ -18,7 +18,7 @@ function WorkShift() {
   return (
       <React.Fragment>
         {showEventModal && <EventModal />}
-        <div className="h-screen flex flex-col p-[10px] bg-white rounded-md">
+        <div className=" min-h-screen flex flex-col p-[10px] bg-white rounded-md">
           <CalendarHeader />
           <div className="flex flex-1">
             <Sidebar />

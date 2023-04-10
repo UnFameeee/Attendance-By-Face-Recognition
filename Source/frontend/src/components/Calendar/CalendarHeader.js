@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import logo from "../../assets/calendar/logo.png";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
 import { GrPrevious, GrNext } from "react-icons/gr";
+import {ImCalendar} from 'react-icons/im'
 import { Icon } from "@chakra-ui/react";
 export default function CalendarHeader() {
   const { monthIndex, setMonthIndex } = useContext(GlobalContext);
@@ -21,7 +22,7 @@ export default function CalendarHeader() {
   }
   return (
     <header className="px-4 py-2 flex items-center">
-      <img src={logo} alt="calendar" className="mr-2 w-12 h-12" />
+      <Icon as={ImCalendar} fontSize='1.8rem' />
       <h1 className="mr-10 text-xl text-gray-500 fond-bold">Calendar</h1>
       <button onClick={handleReset} className="border rounded py-2 px-4 mr-5">
         Today

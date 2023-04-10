@@ -5,7 +5,21 @@ import { BsCheckLg } from "react-icons/bs";
 import { GrFormSchedule } from "react-icons/gr";
 import { MdSegment } from "react-icons/md";
 import { Flex, Icon, Input, Box } from "@chakra-ui/react";
-const labelsClasses = ["indigo", "gray", "green", "blue", "red", "purple"];
+const labelsClasses = [
+  "calCo1",
+  "calCo2",
+  "calCo3",
+  "calCo4",
+  "calCo5",
+  "calCo6",
+  "calCo7",
+  "calCo8",
+  "calCo9",
+  "calCo10",
+  "calCo11",
+  "calCo12",
+  "calCo13",
+];
 
 export default function EventModal() {
   const { setShowEventModal, daySelected, dispatchCalEvent, selectedEvent } =
@@ -114,7 +128,7 @@ export default function EventModal() {
                 <span
                   key={i}
                   onClick={() => setSelectedLabel(lblClass)}
-                  className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
+                  className={`bg-${lblClass} w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
                 >
                   {selectedLabel === lblClass && (
                     <span className=" text-white text-sm">
