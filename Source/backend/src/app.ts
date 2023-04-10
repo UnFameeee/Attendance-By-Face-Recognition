@@ -49,7 +49,7 @@ export default class App {
       this.app.listen(this.port, () => {
         logger.info(`======================================`);
         logger.info(`🚀 App listening HTTP on the port ${this.port}`);
-        logger.info(`====================================+=`);
+        logger.info(`======================================`);
       });
     }
   }
@@ -60,7 +60,7 @@ export default class App {
 
   private initializeData() {
     initializeRolePermission();
-    // initializeShiftTypeData(true);
+    initializeShiftTypeData(true);
   }
 
   private initializeMiddlewares() {

@@ -41,7 +41,7 @@ export class ShifttypeRoute {
     );
 
     //api/shifttype/deleteShiftType
-    this.router.delete(`${this.path}/deleteShiftType/shiftTypeId`,
+    this.router.delete(`${this.path}/deleteShiftType/:shiftTypeId`,
       authMiddleware,
       await authorizeRoute(PERMISSION.DELETE, RESOURCE.SHIFTTYPE_MANAGEMENT),
       this.shifttypeController.deleteShiftType

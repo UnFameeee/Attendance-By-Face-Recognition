@@ -1,27 +1,27 @@
 import { NextFunction, Response } from 'express';
 import { RequestWithProfile } from '../interfaces/request.interface';
 import { WorkshiftService } from '../services/workshift.service';
-import { Page } from '../config/paginate.config';
-import { AutoCreateWorkshiftDTO } from '../model/dtos/workshift.dto';
+import { AutoCreateWorkshiftDTO, DateTimeDTO, ModifyWorkshiftDTO } from '../model/dtos/workshift.dto';
 
 export class WorkshiftController {
   public workshiftService = new WorkshiftService();
 
-  public getWorkshiftOfDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const data: any = req.body;
-      // const response = await this.workshiftService.getWorkshiftOfDepartment(data);
-      // res.status(200).json(response);
-    } catch (err) {
-      next(err);
-    }
-  }
+  // public getWorkshiftOfDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  //   try {
+  //     const data: any = req.body;
+  //     // const response = await this.workshiftService.getWorkshiftOfDepartment(data);
+  //     // res.status(200).json(response);
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // }
 
   public getWorkshiftOfEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data: any = req.body;
-      // const response = await this.workshiftService.getWorkshiftOfEmployee(data);
-      // res.status(200).json(response);
+      const data: DateTimeDTO = req.body;
+      const employeeId = req.params.employeeId;
+      const response = await this.workshiftService.getWorkshiftOfEmployee(employeeId, data);
+      res.status(200).json(response);
     } catch (err) {
       next(err);
     }
@@ -39,8 +39,18 @@ export class WorkshiftController {
 
   public modifyWorkshift = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data: any = req.body;
+      const data: ModifyWorkshiftDTO = req.body;
       const response = await this.workshiftService.modifyWorkshift(data);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public deleteWorkshift = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const shiftId: string = req.params.shiftId;
+      const response = await this.workshiftService.deleteWorkshift(shiftId);
       res.status(200).json(response);
     } catch (err) {
       next(err);

@@ -212,10 +212,10 @@ model Attendance {
   employeeId String
 
   attendanceDate DateTime
-  checkIn        DateTime
-  checkOut       DateTime
-  earlyDeparture DateTime
-  lateArrival    DateTime
+  checkIn        DateTime?
+  checkOut       DateTime?
+  lateArrival    DateTime?
+  earlyDeparture DateTime?
   totalHours     Float
   absent         Boolean
   note           String
@@ -238,7 +238,7 @@ model Workshift {
   shiftType   ShiftType @relation(fields: [shiftTypeId], references: [shiftTypeId])
   shiftTypeId String
 
-  shiftDate DateTime  @unique
+  shiftDate DateTime  
   deleted   Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

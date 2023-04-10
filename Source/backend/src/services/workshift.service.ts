@@ -1,10 +1,49 @@
 import moment from "moment";
 import { ResponseData } from "../config/responseData.config";
 import { prisma } from "../database/prisma.singleton";
-import { AutoCreateWorkshiftDTO, ModifyWorkshiftDTO } from "../model/dtos/workshift.dto";
+import { AutoCreateWorkshiftDTO, DateTimeDTO, ModifyWorkshiftDTO } from "../model/dtos/workshift.dto";
+import { Helper } from "../utils/helper";
+import { WorkshiftModel } from "../model/view-model/workshift.model";
 
 export class WorkshiftService {
-  //auto create workshift base on
+  public getWorkshiftOfEmployee = async (employeeId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
+    const response = new ResponseData<WorkshiftModel[]>;
+    const daysInmonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInmonth}`)
+
+    const queryData = await prisma.workshift.findMany({
+      where: {
+        deleted: false,
+        employeeId: employeeId,
+        shiftDate: {
+          gte: startDate,
+          lte: endDate,
+        }
+      },
+      select: {
+        shiftId: true,
+        employeeId: true,
+        shiftTypeId: true,
+        shiftDate: true,
+        shiftType: {
+          select: {
+            shiftName: true,
+            startTime: true,
+            endTime: true,
+          }
+        }
+      },
+      orderBy: {
+        shiftDate: "asc"
+      },
+    })
+
+    response.result = queryData;
+    return response;
+  }
+
+  //auto create workshift base on Date from and to
   public autoCreateWorkshift = async (data: AutoCreateWorkshiftDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
 
@@ -15,7 +54,7 @@ export class WorkshiftService {
       //looping through days in the specify month
       for (let i = data.fromDate; i <= data.toDate; ++i) {
         // Get the date in ISO 8601 format (e.g. "2023-04-01")
-        const date = moment(`${data.year}-${data.month}-${i}`).format('YYYY-MM-DD');
+        const date = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${i}`)
 
         const queryData = await prisma.workshift.findFirst({
           where: {
@@ -27,7 +66,7 @@ export class WorkshiftService {
 
         const shiftType = await prisma.shiftType.findFirst({
           where: {
-            shiftName: data.shiftName,
+            shiftTypeId: data.shiftTypeId,
             deleted: false,
           }
         })
@@ -59,55 +98,78 @@ export class WorkshiftService {
     }
   }
 
-  public modifyWorkshift = async (data: ModifyWorkshiftDTO[]): Promise<ResponseData<String>> => {
+  public modifyWorkshift = async (data: ModifyWorkshiftDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
     var queryModifyData: any;
+    const modifyDate = Helper.ConfigStaticDateTime("00:00", data.shiftDate)
 
-    for (const workshift of data) {
-      const queryData = await prisma.workshift.findFirst({
-        where: {
-          employeeId: workshift.employeeId,
-          shiftDate: workshift.shiftDate,
-          deleted: false,
+    const queryData = await prisma.workshift.findFirst({
+      where: {
+        employeeId: data.employeeId,
+        shiftDate: modifyDate,
+        deleted: false,
+      }
+    })
+
+    //create
+    if (!queryData) {
+      queryModifyData = await prisma.workshift.create({
+        data: {
+          employeeId: data.employeeId,
+          shiftTypeId: data.shiftTypeId,
+          shiftDate: modifyDate,
         }
       })
-
-      // const shiftType = await prisma.shiftType.findFirst({
-      //   where: {
-      //     shiftName: workshift.shiftName,
-      //     deleted: false,
-      //   }
-      // })
-
-      //create
-      if (!queryData) {
-        queryModifyData = await prisma.workshift.create({
-          data: {
-            employeeId: workshift.employeeId,
-            shiftTypeId: workshift.shiftTypeId,
-            shiftDate: workshift.shiftDate,
-          }
-        })
-      }
-      //update
-      else {
-        queryModifyData = await prisma.workshift.update({
-          data: {
-            employeeId: workshift.employeeId,
-            shiftTypeId: workshift.shiftTypeId,
-            shiftDate: workshift.shiftDate,
-          },
-          where: {
-            shiftId: queryData.shiftId
-          }
-        })
-      }
     }
+    //update
+    else {
+      queryModifyData = await prisma.workshift.update({
+        data: {
+          employeeId: data.employeeId,
+          shiftTypeId: data.shiftTypeId,
+          shiftDate: modifyDate,
+        },
+        where: {
+          shiftId: queryData.shiftId
+        }
+      })
+    }
+
     if (queryModifyData) {
       response.result = "Modify workshift successfully";
     } else {
-      response.message = "Modify workshift successfully";
+      response.message = "Modify workshift unsuccessfully";
     }
+    return response;
+  }
+
+  public deleteWorkshift = async (shiftId: string): Promise<ResponseData<String>> => {
+    const response = new ResponseData<String>;
+    var queryModifyData: any;
+
+    const queryData = await prisma.workshift.findFirst({
+      where: {
+        shiftId: shiftId,
+        deleted: false,
+      }
+    })
+    if (queryData) {
+      queryModifyData = await prisma.workshift.update({
+        where: {
+          shiftId: shiftId
+        },
+        data: {
+          deleted: true,
+          deletedAt: new Date(new Date().toISOString()),
+        }
+      })
+      if (queryModifyData) {
+        response.result = "Delete workshift successfully";
+      }
+    } else {
+      response.message = "Shift isn't exist, please try again";
+    }
+
     return response;
   }
 }

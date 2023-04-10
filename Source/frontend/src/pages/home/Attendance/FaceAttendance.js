@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "./FaceAttendance.css"
-// import '@tensorflow/tfjs-node';
 import * as faceapi from '@vladmandic/face-api';
 
 import {

@@ -36,10 +36,10 @@ export const autoCreateWorkshiftSchema = z.object({
       invalid_type_error: "Year must be number"
     }),
 
-  shiftName: z
+  shiftTypeId: z
     .string({
-      required_error: 'ShiftName is required',
-      invalid_type_error: "ShiftName must be string"
+      required_error: 'ShiftTypeId is required',
+      invalid_type_error: "ShiftTypeId must be string"
     })
     .trim(),
 
@@ -60,7 +60,8 @@ export const modifyWorkshiftSchema = z.object({
       required_error: 'ShiftId is required',
       invalid_type_error: "ShiftId must be string"
     })
-    .trim(),
+    .trim()
+    .optional(),
 
   employeeId: z
     .string({
@@ -84,3 +85,30 @@ export const modifyWorkshiftSchema = z.object({
     .trim(),
 });
 export type ModifyWorkshiftDTO = z.infer<typeof modifyWorkshiftSchema>;
+
+export const dateTimeSchema = z.object({
+  date: z
+    .number({
+      required_error: 'Date is required',
+      invalid_type_error: "Date must be number"
+    })
+    .min(1, "Date must be more than or equal to 1")
+    .max(31, "Date must be less than or equal to 31")
+    .optional(),
+
+  month: z
+    .number({
+      required_error: 'Month is required',
+      invalid_type_error: "Month must be number"
+    })
+    .min(1, "Month must be more than or equal to 1")
+    .max(12, "Month must be less than or equal to 12"),
+
+  year: z
+    .number({
+      required_error: 'Year is required',
+      invalid_type_error: "Year must be number"
+    })
+    .min(1, "Year must be positive number")
+});
+export type DateTimeDTO = z.infer<typeof dateTimeSchema>;
