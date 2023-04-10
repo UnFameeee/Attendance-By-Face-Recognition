@@ -1,28 +1,17 @@
 import React, { useContext, useState } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
-import {RiDeleteBin6Fill, RiCloseCircleFill} from 'react-icons/ri'
-import {BsCheckLg} from 'react-icons/bs'
-import { Icon } from "@chakra-ui/react";
-const labelsClasses = [
-  "indigo",
-  "gray",
-  "green",
-  "blue",
-  "red",
-  "purple",
-];
+import { RiDeleteBin6Fill, RiCloseCircleFill } from "react-icons/ri";
+import { BsCheckLg } from "react-icons/bs";
+import { GrFormSchedule } from "react-icons/gr";
+import { MdSegment } from "react-icons/md";
+import { Flex, Icon, Input, Box } from "@chakra-ui/react";
+const labelsClasses = ["indigo", "gray", "green", "blue", "red", "purple"];
 
 export default function EventModal() {
-  const {
-    setShowEventModal,
-    daySelected,
-    dispatchCalEvent,
-    selectedEvent,
-  } = useContext(GlobalContext);
+  const { setShowEventModal, daySelected, dispatchCalEvent, selectedEvent } =
+    useContext(GlobalContext);
 
-  const [title, setTitle] = useState(
-    selectedEvent ? selectedEvent.title : ""
-  );
+  const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
   const [description, setDescription] = useState(
     selectedEvent ? selectedEvent.description : ""
   );
@@ -51,11 +40,9 @@ export default function EventModal() {
   }
   return (
     <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
-      <form className="bg-white rounded-lg shadow-2xl w-1/4 w-[500px]">
+      <form className="bg-white rounded-lg shadow-2xl w-96">
         <header className="bg-gray-100 px-4 py-2 flex justify-between items-center">
-          <span className="material-icons-outlined text-gray-400">
-           
-          </span>
+          <span className=" text-gray-400"></span>
           <div className="flex gap-2 ">
             {selectedEvent && (
               <span
@@ -66,49 +53,62 @@ export default function EventModal() {
                   });
                   setShowEventModal(false);
                 }}
-                className="material-icons-outlined text-gray-400 cursor-pointer"
+                className=" text-gray-400 cursor-pointer"
               >
-                <Icon as={RiDeleteBin6Fill} fontSize='1.2rem' />
+                <Icon as={RiDeleteBin6Fill} fontSize="1.2rem" />
               </span>
             )}
             <button onClick={() => setShowEventModal(false)}>
-              <span className="material-icons-outlined text-gray-400">
-               <Icon as={RiCloseCircleFill} fontSize='1.2rem' />
+              <span className=" text-gray-400">
+                <Icon as={RiCloseCircleFill} fontSize="1.2rem" />
               </span>
             </button>
           </div>
         </header>
         <div className="p-3">
-          <div className="grid grid-cols-1/5 items-end gap-y-7 gap-x-5">
-            <div></div>
-            <input
-              type="text"
-              name="title"
-              placeholder="Add title"
-              value={title ?? "Unknown"}
-              required
-              className="pt-3 border-0 text-gray-600 text-xl font-semibold pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <span className="material-icons-outlined text-gray-400">
-              schedule
-            </span>
-            <p>{daySelected.format("dddd, MMMM DD")}</p>
-            <span className="material-icons-outlined text-gray-400">
-              segment
-            </span>
-            <input
-              type="text"
-              name="description"
-              placeholder="Add a description"
-              value={description}
-              required
-              className="pt-3 border-0 text-gray-600 pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <span className="material-icons-outlined text-gray-400">
-              Label
-            </span>
+          <div className="grid grid-cols-1/6 items-end gap-y-7 gap-x-5">
+            <Flex flexDirection="column" gap="10px">
+              <input
+                type="text"
+                name="title"
+                placeholder="Add title"
+                value={title ?? "Unknown"}
+                required
+                className="pt-3 border-0 text-gray-600 text-xl font-semibold pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <Flex gap="5px">
+                <Box>
+                  <span className=" text-gray-400">Start</span>
+                  <Input type="time" />
+                </Box>
+                <Box>
+                  <span className=" text-gray-400">End</span>
+                  <Input type="time" />
+                </Box>
+              </Flex>
+            </Flex>
+            <Flex alignItems="center">
+              <span className=" text-gray-400">
+                <Icon as={GrFormSchedule} fontSize="1.5rem" />
+              </span>
+              <p>{daySelected.format("dddd, MMMM DD")}</p>
+            </Flex>
+            <Flex alignItems="center">
+              <span className=" text-gray-400">
+                <Icon as={MdSegment} fontSize="1.5rem" />
+              </span>
+              <input
+                type="text"
+                name="description"
+                placeholder="Add a description"
+                value={description}
+                required
+                className="pt-3 border-0 text-gray-600 pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Flex>
+            <span className=" text-gray-400">Label</span>
             <div className="flex gap-x-2">
               {labelsClasses.map((lblClass, i) => (
                 <span
@@ -117,7 +117,7 @@ export default function EventModal() {
                   className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
                 >
                   {selectedLabel === lblClass && (
-                    <span className="material-icons-outlined text-white text-sm">
+                    <span className=" text-white text-sm">
                       <Icon as={BsCheckLg} />
                     </span>
                   )}
