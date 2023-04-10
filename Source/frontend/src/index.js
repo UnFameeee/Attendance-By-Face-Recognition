@@ -31,6 +31,8 @@ import UploadFace from "./pages/home/Attendance/UploadFace";
 import Department from "./pages/home/Organization/Department";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
 import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
+import WorkShift from "./pages/home/WorkShift/WorkShift";
+import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -56,62 +58,64 @@ root.render(
     <Provider store={store}>
       <ChakraProvider theme={theme}>
         <ProSidebarProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <ToastContainer />
-            <GlobalHistory />
-            <Routes>
-              <Route element={<Auth />}>
-                <Route path="/" element={<Login />} />
-                <Route path="sign-in" element={<Login />} />
-                <Route path="sign-up" element={<Register />} />
-              </Route>
-              <Route element={<PrivateRoutes />}>
-                <Route element={<Home />}>
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="organization">
-                    <Route
-                      path="general-organization"
-                      element={<OrganizationGeneral />}
-                    />
-                    <Route path="location" element={<Test />} />
-                    <Route path="department" element={<Department />} />
-                  </Route>
-                  <Route path="employees">
-                    <Route
-                      path="general-employees"
-                      element={<EmployeesGeneral />}
-                    />
-                    <Route path="work-experience" element={<Test />} />
-                  </Route>
-                  <Route path="payroll">
-                    <Route path="gross-net" element={<Test />} />
-                    <Route path="payslip" element={<Test />} />
-                  </Route>
-                  <Route path="work-shift" element={<Test />} />
-                  <Route path="notification" element={<Test />} />
-                  <Route path="report" element={<Test />} />
-                  <Route path="leave-request" element={<LeaveRequest />} />
-                  <Route path="attendance">
-                    <Route
-                      path="face-attendance"
-                      element={<FaceAttendance />}
-                    />
-                    <Route
-                      path="attendance-management"
-                      element={<AttendanceManagement />}
-                    />
+          <ContextWrapper>
+            <BrowserRouter>
+              <ScrollToTop />
+              <ToastContainer />
+              <GlobalHistory />
+              <Routes>
+                <Route element={<Auth />}>
+                  <Route path="/" element={<Login />} />
+                  <Route path="sign-in" element={<Login />} />
+                  <Route path="sign-up" element={<Register />} />
+                </Route>
+                <Route element={<PrivateRoutes />}>
+                  <Route element={<Home />}>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="organization">
+                      <Route
+                        path="general-organization"
+                        element={<OrganizationGeneral />}
+                      />
+                      <Route path="location" element={<Test />} />
+                      <Route path="department" element={<Department />} />
+                    </Route>
+                    <Route path="employees">
+                      <Route
+                        path="general-employees"
+                        element={<EmployeesGeneral />}
+                      />
+                      <Route path="work-experience" element={<Test />} />
+                    </Route>
+                    <Route path="payroll">
+                      <Route path="gross-net" element={<Test />} />
+                      <Route path="payslip" element={<Test />} />
+                    </Route>
+                    <Route path="work-shift" element={<WorkShift />} />
+                    <Route path="notification" element={<Test />} />
+                    <Route path="report" element={<Test />} />
+                    <Route path="leave-request" element={<LeaveRequest />} />
+                    <Route path="attendance">
+                      <Route
+                        path="face-attendance"
+                        element={<FaceAttendance />}
+                      />
+                      <Route
+                        path="attendance-management"
+                        element={<AttendanceManagement />}
+                      />
 
-                    <Route path="upload-face" element={<UploadFace />} />
-                  </Route>
-                  <Route path="setting">
-                    <Route path="profile" element={<Profile />} />
+                      <Route path="upload-face" element={<UploadFace />} />
+                    </Route>
+                    <Route path="setting">
+                      <Route path="profile" element={<Profile />} />
+                    </Route>
                   </Route>
                 </Route>
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ContextWrapper>
         </ProSidebarProvider>
       </ChakraProvider>
     </Provider>
