@@ -23,8 +23,8 @@ services:
     ports:
       - 8081:8081
     volumes:
-      # - /etc/letsencrypt/live/unfame.tech/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      # - /etc/letsencrypt/live/unfame.tech/privkey.pem:/etc/nginx/ssl/privkey.pem
+      - /etc/letsencrypt/live/unfame.tech/cert.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/live/unfame.tech/privkey.pem:/etc/nginx/ssl/privkey.pem
 
   react:
     image: unfame/frontend-react:latest

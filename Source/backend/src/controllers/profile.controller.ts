@@ -53,6 +53,7 @@ export class ProfileController {
         index = null;
       }
       const response = await this.profileService.uploadImages(employeeId, files, index);
+
       if (response.message == null) {
         await this.facialRecognitionService.trainModel();
       }

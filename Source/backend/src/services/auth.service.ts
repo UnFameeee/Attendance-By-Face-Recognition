@@ -16,9 +16,21 @@ class AuthenticationService {
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {
     const expiresIn: number = Number.parseInt(env.SECRET_EXPRIED);
     const secret = env.SECRET_KEY;
+
+    const queryData = await prisma.employeeImage.findFirst({
+      where: {
+        employeeId: employeeData.id,
+        isPrimary: true
+      },
+      select: {
+        link: true,
+      }
+    })
+
     const dataStoredInToken: DataStoredInAccessToken = {
       id: employeeData.id,
       email: employeeData.email,
+      link: queryData ? queryData.link : null,
     }
     return {
       expiresIn,

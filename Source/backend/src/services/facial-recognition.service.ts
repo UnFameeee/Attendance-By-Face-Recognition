@@ -23,28 +23,48 @@ export class FacialRecognitionService {
     const pathToImage = "/../public/images/employee";
     const pathToModel: string = path.join(__dirname, "/../public/models");
 
+    console.log(pathToModel);
+
     await Promise.all([
       faceapi.nets.ssdMobilenetv1.loadFromDisk(pathToModel),
       faceapi.nets.faceRecognitionNet.loadFromDisk(pathToModel),
       faceapi.nets.faceLandmark68Net.loadFromDisk(pathToModel),
+      faceapi.nets.faceExpressionNet.loadFromDisk(pathToModel),
+      faceapi.nets.ageGenderNet.loadFromDisk(pathToModel),
     ])
 
     const folderName = fs.readdirSync(path.join(__dirname, pathToImage));
     const labelsArray = folderName;
 
+    console.log(labelsArray)
+
     const labeledDescriptors = []
     for (const label of labelsArray) {
       const imageList = fs.readdirSync(path.join(__dirname, pathToImage, `/${label}`));
-
+      console.log(label);
       const descriptors: any[] = [];
       for (let i = 0, imageListLength = imageList.length; i < imageListLength; ++i) {
-        // const image = await faceapi.fetchImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
-        const image = await canvas.loadImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+        // Load the image
+
+        // console.log(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+        // const image = await canvas.loadImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
+
+        console.log(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
+        const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
         console.log(image)
 
-        const detection = await faceapi.detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.2, maxResults: 1 }))
-          .withFaceLandmarks()
+        // Resize the image
+        const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
+
+        console.log(resizedImage)
+
+        const detection = await faceapi.detectSingleFace(resizedImage, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+          .withFaceLandmarks(false)
+          .withAgeAndGender()
+          .withFaceExpressions()
           .withFaceDescriptor();
+
+        console.log(detection != null);
 
         descriptors.push(detection.descriptor);
       }
@@ -52,7 +72,8 @@ export class FacialRecognitionService {
     }
 
     // create a FaceMatcher object
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.56);
+    //currently best: 0.55
+    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.45);
 
     const modelJSON = faceMatcher.toJSON();
     const modelName = "trainedFaceMatcher.json";
@@ -62,3 +83,17 @@ export class FacialRecognitionService {
     return response;
   }
 }
+
+  // // Resize the image
+  // const resizeImage = faceapi.resizeResults(image, { width: 512, height: 512 })
+
+  // //detect all faces from the image
+  // const detection = await faceapi.detectAllFaces(resizeImage)
+
+  // // Extract the face from the image
+  // const faceImg = await faceapi.extractFaces(resizeImage, detection);
+
+  // // Convert the image to tensor
+  // const tensor = faceapi.tf.tensor4d(faceImg);
+
+  // const normalizedImage = faceapi.normalize(faceImg)

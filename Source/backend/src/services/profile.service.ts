@@ -4,6 +4,7 @@ import { prisma } from '../database/prisma.singleton';
 import { UpdateProfileDTO, UpdateProfilePasswordDTO } from '../model/dtos/profile.dto';
 import { ProfileModel } from '../model/view-model/profile.model';
 import * as bcrypt from 'bcrypt';
+import { Helper } from '../utils/helper';
 
 export class ProfileService {
   public getProfileDetail = async (employeeId: string) => {
@@ -172,11 +173,7 @@ export class ProfileService {
   public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }, index: number) => {
     const response = new ResponseData<any>;
 
-    console.log(files);
-    console.log(`${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`)
-
-    var isUpdateValidate: any;
-
+    let isUpdateValidate: any;
     if (index != null) {
       isUpdateValidate = await prisma.employeeImage.findMany({
         where: {
@@ -196,46 +193,51 @@ export class ProfileService {
     if (isUpdateValidate.length != 0) {
       //Update a specific image
       if (index != null) {
+        let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
+
         const queryData = await prisma.employeeImage.update({
           where: {
             imageId: isUpdateValidate[0].imageId
           },
           data: {
-            link: `${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`,
+            link: Helper.ConvertDoubleSlashURL(link),
           },
         })
-
         // response.result = `Update image successfully`;
       }
       //Update all images
       else {
         for (const singleQueryData of isUpdateValidate) {
+          let link = `${env.SERVER_URL}/public${(files.images[singleQueryData.index - 1].destination).split("public")[1]}/${files.images[singleQueryData.index - 1].filename}`;
+
           const queryData = await prisma.employeeImage.update({
             where: {
               imageId: singleQueryData.imageId,
             },
             data: {
-              link: `${env.SERVER_URL}${(files.images[singleQueryData.index-1].destination).split("src")[1]}/${files.images[singleQueryData.index-1].filename}`,
+              link: Helper.ConvertDoubleSlashURL(link),
             },
           })
         }
-        
         // response.result = `Update images successfully`;
       }
     }
     //If there isn't any image in the database 
     else {
+      let link_1 = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`;
+      let link_2 = `${env.SERVER_URL}/public${(files.images[1].destination).split("public")[1]}/${files.images[1].filename}`;
+
       const queryData = await prisma.employeeImage.createMany({
         data: [
           {
             employeeId: employeeId,
-            link: `${env.SERVER_URL}${(files.images[0].destination).split("src")[1]}/${files.images[0].filename}`,
+            link: Helper.ConvertDoubleSlashURL(link_1),
             index: 1,
             isPrimary: true
           },
           {
             employeeId: employeeId,
-            link: `${env.SERVER_URL}${(files.images[1].destination).split("src")[1]}/${files.images[1].filename}`,
+            link: Helper.ConvertDoubleSlashURL(link_2),
             index: 2,
             isPrimary: false
           },
@@ -258,7 +260,7 @@ export class ProfileService {
         index: true,
         isPrimary: true,
       },
-      
+
     })
     response.result = queryData;
     return response;

@@ -9,6 +9,7 @@ export interface TokenData {
 export interface DataStoredInAccessToken {
   id: string;
   email: string;
+  link: string;
 }
 
 export interface DataStoredInRefreshToken {

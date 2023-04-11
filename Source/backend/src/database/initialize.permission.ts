@@ -1,6 +1,6 @@
 import { application_permission, application_admin_account } from '../config/permission.config';
 import { ROLE, PERMISSION, RESOURCE } from '../constant/database.constant';
-import { UppercaseFirstLetter } from '../utils/helper';
+import { Helper } from '../utils/helper';
 import { prisma } from "./prisma.singleton";
 import * as bcrypt from 'bcrypt';
 
@@ -16,7 +16,7 @@ export const initializeRolePermission = async () => {
       await prisma.role.create({
         data: {
           roleName: ROLE[role],
-          displayName: UppercaseFirstLetter(ROLE[role]),
+          displayName: Helper.UppercaseFirstLetter(ROLE[role]),
         },
       })
     }
