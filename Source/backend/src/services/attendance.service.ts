@@ -50,30 +50,37 @@ export class AttendanceService {
     if (!checkAttendance) {
       //Get the time from shiftType - HH:mm
       const startTime = workShift.shiftType.startTime;
-      // const time = moment(startTime, "HH:mm").format("HH:mm");
-      // const time = Helper.GetTimeFromDate(startTime);
+      const time = moment(startTime, "HH:mm").format("HH:mm");
 
       //Get the shiftDate from workShift - YYYY-MM-DD
       const shiftDate = workShift.shiftDate;
       const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
 
-      const time = moment(now, "HH:mm").format("HH:mm");
       //Convert both of startTime and shiftDate to Date value
       const startShift: Date = Helper.ConfigStaticDateTime(time, date);
-      console.log(startTime)
-      console.log(now)
-      console.log(time)
-      console.log(date)
+
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
       console.log(startShift.getTime())
+      console.log(moment(new Date(startShift.getTime()), "HH:mm").format("HH:mm"))
+
       console.log(now.getTime())
+      console.log(moment(new Date(now.getTime()), "HH:mm").format("HH:mm"))
+
+      console.log("diff:")
+      const diff = moment(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm"));
+
+      const duration = moment.duration(Math.abs(diff));
+      const formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
+      console.log(formattedTimeDiff);
+
       const timeDiff = startShift.getTime() - now.getTime();
       console.log(timeDiff)
+      console.log(moment(new Date(timeDiff), "HH:mm").format("HH:mm"))
       var lateArrival: Date;
       //if the value is negative -> lateArrival
       if (Math.sign(timeDiff) === -1) {
         let timeDiffAbs = Math.abs(timeDiff);
-        const date = new Date(timeDiffAbs); 
+        const date = moment(new Date(timeDiffAbs), "HH:mm").format("HH:mm");
         console.log(date);
 
         // // converts timeDiffMs to minutes (rounded down)

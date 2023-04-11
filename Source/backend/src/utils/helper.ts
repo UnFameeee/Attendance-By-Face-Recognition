@@ -10,35 +10,35 @@ const ConvertDoubleSlashURL = (url: string): string => {
 }
 
 const ConfigStaticDateTime = (time: string, date?: string): Date => {
+  //time -> "HH:mm"
+  //date -> "YYYY-MM-DD"
   let result: Date;
+  const timeSplitArr = time.split(":");
+
   const formatDate = moment(date, 'YYYY-MM-DD').format("YYYY-MM-DD");
   if (date) {
-    result = new Date(`${formatDate}T${time}:00.000Z`);
+    const temp = new Date(`${formatDate}T00:00:00.000Z`);
+    temp.setHours(parseInt(timeSplitArr[0], 10));
+    temp.setMinutes(parseInt(timeSplitArr[1], 10));
+    result = temp;
   } else {
     //Fix the date to 1970-01-01, we only use the time. The time seperate from the date by T
-    result = new Date(`1970-01-01T${time}:00.000Z`);
+    const temp = new Date(`1970-01-01T00:00:00.000Z`);
+    temp.setHours(parseInt(timeSplitArr[0], 10));
+    temp.setMinutes(parseInt(timeSplitArr[1], 10));
+    result = temp;
   }
   return result
-}
-
-const GetTimeFromDate = (time: Date): string => {
-  let result: string;
-  const stringDate = time.toString();
-  console.log(stringDate);
-  result = (stringDate.split("T")[1]).substring(0, 5); 
-  return result;
 }
 
 interface IHelper {
   UppercaseFirstLetter: Function,
   ConvertDoubleSlashURL: Function,
   ConfigStaticDateTime: Function,
-  GetTimeFromDate: Function,
 }
 
 export const Helper: IHelper = {
   UppercaseFirstLetter,
   ConvertDoubleSlashURL,
   ConfigStaticDateTime,
-  GetTimeFromDate
 }
