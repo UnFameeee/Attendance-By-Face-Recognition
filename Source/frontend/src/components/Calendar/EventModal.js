@@ -123,7 +123,7 @@ export default function EventModal() {
               />
             </Flex>
             <span className=" text-gray-400">Label</span>
-            <div className="flex gap-x-2">
+            <Box display='grid' gridTemplateColumns="repeat( auto-fit, minmax(10px, 1fr))">
               {labelsClasses.map((lblClass, i) => (
                 <span
                   key={i}
@@ -137,7 +137,7 @@ export default function EventModal() {
                   )}
                 </span>
               ))}
-            </div>
+            </Box>
           </div>
         </div>
         <footer className="flex justify-end border-t p-3 mt-5">
