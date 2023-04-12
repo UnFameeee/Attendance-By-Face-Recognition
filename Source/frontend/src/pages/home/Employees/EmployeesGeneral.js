@@ -324,7 +324,7 @@ function EmployeesGeneral() {
     //   leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
     // },
     {
-      name: "megaAddress",
+      name: "location",
       isAddress: true,
     },
 
@@ -349,7 +349,7 @@ function EmployeesGeneral() {
         : ""
     }`,
     description: `${editData?.description ?? ""}`,
-    megaAddress: {
+    location: {
       country: `${editData["location.country"] ?? ""}`,
       state: `${editData["location.state"] ?? ""}`,
       city: `${editData["location.city"] ?? ""}`,
@@ -361,8 +361,6 @@ function EmployeesGeneral() {
     email: Yup.string().required("This field is required"),
     password: Yup.string().required("This field is required"),
     role: Yup.string().required("This field is required"),
-    dateOfBirth: Yup.date().required("This field is required"),
-    description: Yup.string().required("This field is required"),
     phoneNumber: Yup.string(),
   });
   if (isLoading) return <LoadingSpinner />;
