@@ -12,3 +12,9 @@ export const permissionOrganizationGeneral = {
     read: "read-organization-management",
     update: "update-organization-management",
 };
+export const permissionDepartmentGeneral = {
+    create: "create-department-management",
+    read: "read-department-management",
+    update: "update-department-management",
+    delete: "delete-department-management",
+};

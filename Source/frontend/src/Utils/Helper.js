@@ -1,6 +1,6 @@
 import jwtDecode from "jwt-decode";
 import dayjs from "dayjs";
- 
+
 export const isTokenExpired = (token) => {
   if (token) {
     const decodedToken = jwtDecode(token);
@@ -26,9 +26,13 @@ export const getMonth = (month = dayjs().month()) => {
   });
   return daysMatrix;
 };
-
+export const convertTimestampToISO = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toISOString();
+};
 export const Helper = {
   isTokenExpired,
   isOdd,
   getMonth,
+  convertTimestampToISO,
 };

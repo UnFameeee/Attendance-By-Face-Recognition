@@ -31,11 +31,16 @@ import { useQueryClient } from "react-query";
 import { useGetListEmployee } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useGetListDepartment } from "../../../services/organization/department";
+import { useGetPermission } from "../../../hook/useGetPermission";
+import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
 function Department() {
+  const resultPermission = useGetPermission(
+    permissionDepartmentGeneral,
+    "department-management"
+  );
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
   const { data, isLoading, isError, error } = useGetListDepartment();
-
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -75,16 +80,16 @@ function Department() {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Department Name",
+        Header: "Dep.Name",
         accessor: "departmentName",
         haveFilter: {
           filterType: FilterType.Text,
         },
         haveSort: true,
-        cellWidth: "150px",
+        cellWidth: "250px",
       },
       {
-        Header: "Organization Name",
+        Header: "Org.Name",
         accessor: "organization.organizationName",
         haveFilter: {
           filterType: FilterType.Default,
@@ -103,7 +108,7 @@ function Department() {
       {
         Header: "State",
         accessor: "location.state",
-        cellWidth: "200px",
+        cellWidth: "150px",
         haveFilter: {
           filterType: FilterType.Text,
         },
@@ -200,34 +205,33 @@ function Department() {
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
-      {data?.result?.data.length > 0 ? (
-        <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={data?.result?.data}
-          />
-          <DynamicDrawer
-            isAddEditOpen={isAddEditOpen}
-            onAddEditClose={onAddEditClose}
-            editData={editData}
-            setEditData={setEditData}
-            validationSchema={validationSchema}
-            initialValues={initialValues}
-            drawerFieldData={drawerFieldData}
-          />
-          <ChakraAlertDialog
-            title="Delete Single"
-            isOpen={isDeleteSingleOpen}
-            onClose={onDeleteSingleClose}
-            onAccept={handleAcceptDelete}
-          />
-        </Box>
-      ) : (
-        <NoDataToDisplay h="450px" />
-      )}
+
+      <Box marginTop="10px">
+        <DynamicTable
+          onAddEditOpen={onAddEditOpen}
+          handleDeleteRange={DeleteRange}
+          tableRowAction={tableRowAction}
+          columns={columns}
+          data={data?.result?.data}
+          permission={resultPermission}
+        />
+        <DynamicDrawer
+          isAddEditOpen={isAddEditOpen}
+          onAddEditClose={onAddEditClose}
+          editData={editData}
+          setEditData={setEditData}
+          validationSchema={validationSchema}
+          initialValues={initialValues}
+          drawerFieldData={drawerFieldData}
+        />
+        <ChakraAlertDialog
+          title="Delete Single"
+          isOpen={isDeleteSingleOpen}
+          onClose={onDeleteSingleClose}
+          onAccept={handleAcceptDelete}
+        />
+      </Box>
+      {data?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
     </Stack>
   );
 }

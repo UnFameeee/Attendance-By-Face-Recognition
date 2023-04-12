@@ -8,11 +8,15 @@ import EventModal from "../../../components/Calendar/EventModal";
 import { Helper } from "../../../Utils/Helper";
 
 function WorkShift() {
-  const [currenMonth, setCurrentMonth] = useState(Helper.getMonth());
+  const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
   const { monthIndex, showEventModal } = useContext(GlobalContext);
-  // console.log("monthIndex", monthIndex);
+  const createEvent = () =>{
+
+  }
+  const updateEvent = () =>{
+    
+  }
   useEffect(() => {
-    // console.log("monthIndex", monthIndex);
     setCurrentMonth(Helper.getMonth(monthIndex));
   }, [monthIndex]);
   return (
@@ -22,7 +26,7 @@ function WorkShift() {
           <CalendarHeader />
           <div className="flex flex-1">
             <Sidebar />
-            <Month month={currenMonth} />
+            <Month month={currentMonth} />
           </div>
         </div>
       </React.Fragment>

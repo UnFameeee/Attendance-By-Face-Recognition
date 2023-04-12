@@ -33,7 +33,10 @@ import { Country, State, City } from "country-state-city";
 import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 function EmployeesGeneral() {
-  const resultPermission = useGetPermission(permissionEmployeeGeneral,"employee-management")
+  const resultPermission = useGetPermission(
+    permissionEmployeeGeneral,
+    "employee-management"
+  );
   const screenPadding = "2rem";
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -75,12 +78,12 @@ function EmployeesGeneral() {
     {
       actionName: "Edit",
       func: Edit,
-      isDisabled:resultPermission?.update ,
+      isDisabled: resultPermission?.update,
     },
     {
       actionName: "Delete",
       func: Delete,
-      isDisabled:resultPermission?.delete ,
+      isDisabled: resultPermission?.delete,
     },
   ];
   const tableData = React.useMemo(() => dumbTableData);
@@ -190,7 +193,7 @@ function EmployeesGeneral() {
             </span>
           );
         },
-        cellWidth: "200px",
+        cellWidth: "210px",
         haveFilter: {
           filterType: FilterType.Text,
         },
@@ -366,35 +369,32 @@ function EmployeesGeneral() {
           <ColumnChart />
         </Box>
       </Flex>
-      {data?.result?.data.length > 0 ? (
-        <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={data?.result?.data}
-            permission={resultPermission}
-          />
-          <DynamicDrawer
-            isAddEditOpen={isAddEditOpen}
-            onAddEditClose={onAddEditClose}
-            editData={editData}
-            setEditData={setEditData}
-            validationSchema={validationSchema}
-            initialValues={initialValues}
-            drawerFieldData={drawerFieldData}
-          />
-          <ChakraAlertDialog
-            title="Delete Single"
-            isOpen={isDeleteSingleOpen}
-            onClose={onDeleteSingleClose}
-            onAccept={handleAcceptDelete}
-          />
-        </Box>
-      ) : (
-        <NoDataToDisplay />
-      )}
+      <Box marginTop="10px">
+        <DynamicTable
+          onAddEditOpen={onAddEditOpen}
+          handleDeleteRange={DeleteRange}
+          tableRowAction={tableRowAction}
+          columns={columns}
+          data={data?.result?.data}
+          permission={resultPermission}
+        />
+        <DynamicDrawer
+          isAddEditOpen={isAddEditOpen}
+          onAddEditClose={onAddEditClose}
+          editData={editData}
+          setEditData={setEditData}
+          validationSchema={validationSchema}
+          initialValues={initialValues}
+          drawerFieldData={drawerFieldData}
+        />
+        <ChakraAlertDialog
+          title="Delete Single"
+          isOpen={isDeleteSingleOpen}
+          onClose={onDeleteSingleClose}
+          onAccept={handleAcceptDelete}
+        />
+      </Box>
+      {data?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
     </Stack>
   );
 }
