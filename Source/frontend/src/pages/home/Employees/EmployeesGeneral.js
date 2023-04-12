@@ -13,11 +13,14 @@ import {
 import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
-import { IoImageOutline } from "react-icons/io5";
 import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { RiFolderUserLine } from "react-icons/ri";
-import { BsTelephone } from "react-icons/bs";
+import {
+  BsTelephone,
+  BsFillShieldLockFill,
+  BsEyeFill,
+  BsEyeSlashFill,
+} from "react-icons/bs";
 import PieChart from "../../../components/chart/PieChart";
 import ColumnChart from "../../../components/chart/ColumnChart";
 import DynamicTable from "../../../components/table/DynamicTable";
@@ -265,11 +268,39 @@ function EmployeesGeneral() {
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
+      name: "password",
+      label: "Password",
+      placeholder: "Enter your Password",
+      isPassword: "true",
+      leftIcon: <BsFillShieldLockFill color="#999" fontSize="1.5rem" />,
+      rightIcon: <BsEyeFill color="#999" fontSize="1.5rem" />,
+      hideIcon: <BsEyeSlashFill color="#999" fontSize="1.5rem" />,
+    },
+    {
+      name: "role",
+      label: "Role",
+      isSelectionField: true,
+      placeholder:'---',
+      selectionArray: [
+        { label: "Employee", value: "employee" },
+        { label: "Manager", value: "manager" },
+      ],
+    },
+    {
       name: "phoneNumber",
       label: "Phone",
       type: "text",
       placeholder: "Enter your number",
       leftIcon: <BsTelephone color="#999" fontSize="1.4rem" />,
+    },
+    {
+      name: "gender",
+      label: "Gender",
+      isGender: true,
+      arrayGender: [
+        { label: "Male", value: "male" },
+        { label: "Female", value: "female" },
+      ],
     },
     {
       name: "dateOfBirth",
@@ -293,13 +324,6 @@ function EmployeesGeneral() {
     //   leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
     // },
     {
-      name: "department",
-      label: "Department",
-      height: "150px",
-      placeholder: "Enter your department",
-    },
-
-    {
       name: "megaAddress",
       isAddress: true,
     },
@@ -316,13 +340,15 @@ function EmployeesGeneral() {
     fullname: `${editData?.fullname ?? ""}`,
     email: `${editData?.email ?? ""}`,
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
+    password: editData?.password ?? "",
+    role:editData?.role ?? "",
+    gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
     }`,
     description: `${editData?.description ?? ""}`,
-    department: `${editData?.department ?? ""}`,
     megaAddress: {
       country: `${editData["location.country"] ?? ""}`,
       state: `${editData["location.state"] ?? ""}`,
@@ -333,9 +359,10 @@ function EmployeesGeneral() {
   const validationSchema = Yup.object().shape({
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
+    password: Yup.string().required("This field is required"),
+    role: Yup.string().required("This field is required"),
     dateOfBirth: Yup.date().required("This field is required"),
     description: Yup.string().required("This field is required"),
-    department: Yup.string().required("This field is required"),
     phoneNumber: Yup.string(),
   });
   if (isLoading) return <LoadingSpinner />;

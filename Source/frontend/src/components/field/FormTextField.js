@@ -6,6 +6,7 @@ import {
   Textarea,
   InputLeftElement,
   InputRightElement,
+  InputRightAddon,
   Input,
   RadioGroup,
   Stack,
@@ -24,6 +25,7 @@ function FormTextField(props) {
   const {
     leftIcon,
     rightIcon,
+    hideIcon,
     isRequired,
     label,
     type,
@@ -41,9 +43,14 @@ function FormTextField(props) {
     height,
     isDisabled,
     isLoading,
+    isPassword,
   } = props;
   // console.log("selectionArray",selectionArray)
   const [field, meta] = useField(props);
+  const [isShow, setIsShow] = useState(true);
+  const handleShow = () => {
+    setIsShow((prev) => !prev);
+  };
   if (isDateField) {
     return (
       <FormControl
@@ -130,11 +137,37 @@ function FormTextField(props) {
         isInvalid={meta.error && meta.touched}
       >
         <FormLabel>{label}</FormLabel>
-        <Field
-          {...field}
-          formik={formik}
-          as={AddressSelection}
-        />
+        <Field {...field} formik={formik} as={AddressSelection} />
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      </FormControl>
+    );
+  } else if (isPassword) {
+    return (
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
+        <InputGroup>
+          {leftIcon && <InputLeftElement pl={2} children={leftIcon} />}
+          {rightIcon && hideIcon && (
+            <InputRightElement
+              onClick={handleShow}
+              cursor="pointer"
+              children={isShow ? rightIcon : hideIcon}
+            />
+          )}
+          {rightIcon && !hideIcon && (
+            <InputRightElement cursor="pointer" children={rightIcon} />
+          )}
+          <Input
+            {...field}
+            type={!isShow ? "text" : "password"}
+            placeholder={placeholder ?? ""}
+          />
+        </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
