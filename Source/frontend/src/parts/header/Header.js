@@ -21,7 +21,7 @@ function Header() {
         </Hide>
         <Box flex="1">
           <nav>
-            <Center justifyContent="flex-end" flexDirection="row" gap="2">
+            {/* <Center justifyContent="flex-end" flexDirection="row" gap="2">
               <NavLink
                 to="sign-in"
                 className="auth-header-nav"
@@ -55,7 +55,7 @@ function Header() {
                   Sign up
                 </Box>
               </NavLink>
-            </Center>
+            </Center> */}
           </nav>
         </Box>
       </Flex>

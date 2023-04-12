@@ -132,7 +132,7 @@ export default function Login() {
               </Stack>
             )}
           </Formik>
-          <Box display="flex" justifyContent="center">
+          {/* <Box display="flex" justifyContent="center">
             <Text> &mdash; Or Sign in with &mdash;</Text>
           </Box>
           <Button bgColor="white" display="flex" alignItems="center" gap="1">
@@ -144,7 +144,7 @@ export default function Login() {
             <Link to="/sign-up">
               <span style={{ fontWeight: "bold" }}>Sign up now!</span>
             </Link>
-          </Flex>
+          </Flex> */}
         </Stack>
       </Box>
     </Center>
