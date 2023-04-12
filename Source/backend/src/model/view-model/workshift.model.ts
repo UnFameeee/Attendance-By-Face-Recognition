@@ -1,9 +1,8 @@
-import { ShiftType, Workshift } from "@prisma/client";
+import { Employee, ShiftType, Workshift } from "@prisma/client";
 
 export interface WorkshiftModel extends
   Pick<Workshift,
     "shiftId" |
-    "employeeId" |
     "shiftTypeId" |
     "shiftDate"
   > {
@@ -11,5 +10,9 @@ export interface WorkshiftModel extends
     "shiftName" |
     "startTime" |
     "endTime"
+  >,
+  employee: Pick<Employee,
+    "id" |
+    "fullname"
   >,
 }

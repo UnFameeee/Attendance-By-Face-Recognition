@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const createEmployeeSchema = z.object({
   fullname: z
     .string({
-      required_error: 'Deparment Name is required',
+      required_error: 'Fullname is required',
       invalid_type_error: "Fullname must be string"
     })
     .trim()
@@ -31,6 +31,59 @@ export const createEmployeeSchema = z.object({
       invalid_type_error: "Display Role Name must be string"
     })
     .trim(),
+
+  gender: z
+    .string({
+      invalid_type_error: "Gender must be string"
+    })
+    .trim()
+    .optional(),
+
+  dateOfBirth: z
+    .string({
+      invalid_type_error: "Date Of Birth must be string"
+    })
+    .trim()
+    .optional(),
+
+  description: z
+    .string()
+    .trim()
+    .optional(),
+
+  phoneNumber: z
+    .number({
+      invalid_type_error: "Phone Number must be number"
+    })
+    .optional(),
+
+  location: z.object({
+    address: z
+      .string({
+        invalid_type_error: "Address must be string"
+      })
+      .trim()
+      .optional(),
+    city: z
+      .string({
+        invalid_type_error: "City must be string"
+      })
+      .trim()
+      .optional(),
+    country: z
+      .string({
+        invalid_type_error: "Country must be string"
+      })
+      .trim()
+      .optional(),
+      
+    state: z
+      .string({
+        invalid_type_error: "State must be string"
+      })
+      .trim()
+      .optional(),
+  }).optional()
 });
 export type CreateEmployeeDTO = z.infer<typeof createEmployeeSchema>;
 

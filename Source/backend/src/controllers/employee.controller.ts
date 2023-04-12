@@ -3,7 +3,7 @@ import { EmployeeService } from "../services/employee.service";
 
 import { RequestWithProfile } from '../interfaces/request.interface';
 import { Page } from "../config/paginate.config";
-import { AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO, UpdateEmployeeDTO } from '../model/dtos/employee.dto';
+import { AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO, CreateEmployeeDTO, UpdateEmployeeDTO } from '../model/dtos/employee.dto';
 
 class EmployeeController {
   public employeeService = new EmployeeService();
@@ -38,6 +38,17 @@ class EmployeeController {
       next(err);
     }
   }
+
+  public createEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const data: CreateEmployeeDTO = req.body;
+      const response = await this.employeeService.createEmployee(data);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
 
   public updateEmployeeDetail = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {

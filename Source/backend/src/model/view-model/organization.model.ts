@@ -18,5 +18,4 @@ export interface OrganizationListModel extends
     "organizationId" |
     "organizationName"
   > {
-    
 }
