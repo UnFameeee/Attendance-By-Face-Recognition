@@ -23,7 +23,12 @@ export class WorkshiftService {
       },
       select: {
         shiftId: true,
-        employeeId: true,
+        employee: {
+          select: {
+            id: true,
+            fullname: true,
+          }
+        },
         shiftTypeId: true,
         shiftDate: true,
         shiftType: {

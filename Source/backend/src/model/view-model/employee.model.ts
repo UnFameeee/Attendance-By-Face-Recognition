@@ -8,7 +8,6 @@ export interface EmployeeModel extends
     "gender" |
     "dateOfBirth" |
     "phoneNumber" |
-    "joiningDate" |
     "description"
   > {
   location: Pick<Location,
@@ -31,7 +30,6 @@ export interface EmployeeWithPasswordModel extends
     "gender" |
     "dateOfBirth" |
     "phoneNumber" |
-    "joiningDate" |
     "description"
   > {
   location: Pick<Location,

@@ -32,7 +32,6 @@ model Employee {
   description           String?
   worktype              String?
   status                Boolean?
-  joiningDate           DateTime?
   refreshToken          String?
   deleted               Boolean             @default(false)
   createdAt             DateTime            @default(now())
@@ -129,10 +128,10 @@ model RolePermission {
 
 model Location {
   locationId   String        @id @default(uuid())
-  address      String
-  city         String
-  country      String
-  state        String
+  address      String?
+  city         String?
+  country      String?
+  state        String?
   deleted      Boolean       @default(false)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -147,10 +146,6 @@ model Location {
 model Organization {
   organizationId        String @id @default(uuid())
   organizationName      String
-  //Format: HH:mm - HH:mm -> 09:00 - 18:00 
-  officialWorkingHours  String
-  //Format: HH:mm - HH:mm -> 12:00 - 13:00 
-  officialBreakingHours String
 
   // locationId
   location   Location @relation(fields: [locationId], references: [locationId])

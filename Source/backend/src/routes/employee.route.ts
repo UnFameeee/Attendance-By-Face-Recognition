@@ -6,7 +6,7 @@ import { zodValidate } from '../middlewares/zod.validation.middleware';
 import { pageSchema } from '../model/dtos/page.dto';
 import { authorizeRoute } from '../middlewares/authorization.middleware';
 import { PERMISSION, RESOURCE } from '../constant/database.constant';
-import { updateEmployeeSchema, assignEmployeeDepartmentSchema, assignManagerDepartmentSchema, changeEmployeeRoleSchema } from '../model/dtos/employee.dto';
+import { updateEmployeeSchema, assignEmployeeDepartmentSchema, assignManagerDepartmentSchema, changeEmployeeRoleSchema, createEmployeeSchema } from '../model/dtos/employee.dto';
 
 export class EmployeeRoute implements Routes {
   public path = "/employee";
@@ -39,6 +39,14 @@ export class EmployeeRoute implements Routes {
       authMiddleware,
       await authorizeRoute(PERMISSION.READ, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.getEmployeeById
+    );
+
+    // api/employee/createEmployee
+    this.router.post(`${this.path}/createEmployee`,
+      authMiddleware,
+      zodValidate(createEmployeeSchema),
+      await authorizeRoute(PERMISSION.CREATE, RESOURCE.EMPLOYEE_MANAGEMENT),
+      this.employeeController.createEmployee
     );
 
     // api/employee/updateEmployeeDetail/:employeeId
