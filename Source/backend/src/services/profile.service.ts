@@ -22,7 +22,6 @@ export class ProfileService {
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
-        joiningDate: true,
         location: {
           select: {
             address: true,
@@ -104,7 +103,6 @@ export class ProfileService {
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
-        joiningDate: true,
         location: {
           select: {
             address: true,

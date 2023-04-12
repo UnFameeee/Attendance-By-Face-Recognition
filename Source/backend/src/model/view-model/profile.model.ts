@@ -7,8 +7,7 @@ export interface ProfileModel extends
     "email" |
     "gender" |
     "dateOfBirth" |
-    "phoneNumber" |
-    "joiningDate"
+    "phoneNumber"
   > {
   location: Pick<Location,
     "address" |

@@ -2,7 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import { Page, Paging, paginate } from '../config/paginate.config';
 import { ResponseData } from "../config/responseData.config";
 import { EmployeeModel, EmployeeRole } from "../model/view-model/employee.model";
-import { UpdateEmployeeDTO, AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO } from '../model/dtos/employee.dto';
+import { UpdateEmployeeDTO, AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO, CreateEmployeeDTO } from '../model/dtos/employee.dto';
+import * as bcrypt from 'bcrypt';
+import { ROLE } from "../constant/database.constant";
 const prisma = new PrismaClient();
 
 export class EmployeeService {
@@ -22,7 +24,6 @@ export class EmployeeService {
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
-        joiningDate: true,
         description: true,
         department: {
           select: {
@@ -72,7 +73,6 @@ export class EmployeeService {
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
-        joiningDate: true,
         description: true,
         department: {
           select: {
@@ -121,7 +121,6 @@ export class EmployeeService {
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
-        joiningDate: true,
         description: true,
         department: {
           select: {
@@ -142,6 +141,75 @@ export class EmployeeService {
       response.result = queryData;
     } else {
       response.message = "Employee isn't exist";
+    }
+    return response;
+  }
+
+  public createEmployee = async (data: CreateEmployeeDTO): Promise<ResponseData<string>> => {
+    const response = new ResponseData<string>;
+    const findEmployee = await prisma.employee.findUnique({
+      where: {
+        email: data.email
+      }
+    })
+
+    if (findEmployee) {
+      response.message = `This email ${data.email} already exists`;
+      return response;
+    }
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const role = await prisma.role.findUnique({
+      where: {
+        displayName: data.displayName
+      }
+    })
+    const createEmployeeData = await prisma.employee.create({
+      data: {
+        fullname: data.fullname,
+        email: data.email,
+        password: hashedPassword,
+        role: {
+          connect: {
+            roleId: role.roleId,
+          }
+        },
+        gender: data?.gender,
+        dateOfBirth: data?.dateOfBirth,
+        phoneNumber: data?.phoneNumber,
+        description: data?.description,
+        location: {
+          create: {
+            address: data?.location?.address ? data.location.address : null,
+            city: data?.location?.city ? data.location.city : null,
+            country: data.location.country ? data.location.country : null,
+            state: data?.location?.state ? data.location.state : null,
+          }
+        }
+      }
+    });
+
+    // if (data.location) {
+    //   const queryData = await prisma.employee.update({
+    //     where: {
+    //       id: createEmployeeData.id,
+    //     },
+    //     data: {
+    //       location: {
+    //         create: {
+    //           address: data?.location?.address ? data.location.address : null,
+    //           city: data?.location?.city ? data.location.city : null,
+    //           country: data.location.country ? data.location.country : null,
+    //           state: data?.location?.state ? data.location.state : null,
+    //         }
+    //       }
+    //     }
+    //   });
+    // }
+
+    if (createEmployeeData) {
+      response.result = "Create employeee successfully"
+    } else {
+      response.message = "Create employee failed, try again!"
     }
     return response;
   }
@@ -196,7 +264,6 @@ export class EmployeeService {
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
-        joiningDate: true,
         description: true,
         department: {
           select: {
@@ -308,7 +375,7 @@ export class EmployeeService {
         }
       });
     }
-    
+
     await prisma.departmentManager.create({
       data: {
         managerId: data.employeeId,
@@ -374,6 +441,9 @@ export class EmployeeService {
     const response = new ResponseData<EmployeeRole[]>;
     const queryData = await prisma.role.findMany({
       where: {
+        displayName: {
+          not: ROLE.ADMIN
+        },
         deleted: false
       },
       select: {
