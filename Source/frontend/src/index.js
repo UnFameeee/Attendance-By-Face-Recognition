@@ -96,10 +96,10 @@ root.render(
                     <Route path="report" element={<Test />} />
                     <Route path="leave-request" element={<LeaveRequest />} />
                     <Route path="attendance">
-                      <Route
+                      {/* <Route
                         path="face-attendance"
                         element={<FaceAttendance />}
-                      />
+                      /> */}
                       <Route
                         path="attendance-management"
                         element={<AttendanceManagement />}
