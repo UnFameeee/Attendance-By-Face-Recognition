@@ -52,8 +52,8 @@ export const createEmployeeSchema = z.object({
     .optional(),
 
   phoneNumber: z
-    .number({
-      invalid_type_error: "Phone Number must be number"
+    .string({
+      invalid_type_error: "Phone Number must be string"
     })
     .optional(),
 
@@ -124,9 +124,9 @@ export const updateEmployeeSchema = z.object({
     .optional(),
 
   phoneNumber: z
-    .number({
+    .string({
       required_error: 'Phone is required',
-      invalid_type_error: "Phone Number must be number"
+      invalid_type_error: "Phone Number must be string"
     }),
 
   location: z.object({
