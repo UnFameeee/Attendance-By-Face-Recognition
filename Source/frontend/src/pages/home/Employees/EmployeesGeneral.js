@@ -29,12 +29,18 @@ import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
 import { FilterType } from "../../../components/table/DynamicTable";
-import { useQueryClient } from "react-query";
-import { useGetListEmployee } from "../../../services/employee/employee";
+import { useMutation, useQueryClient } from "react-query";
+import {
+  createEmployeeService,
+  useGetListEmployee,
+} from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Country, State, City } from "country-state-city";
 import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
+import { Helper } from "../../../Utils/Helper";
+import { passwordRegex } from "../../../Utils/ValidationRegExp";
+
 function EmployeesGeneral() {
   const resultPermission = useGetPermission(
     permissionEmployeeGeneral,
@@ -59,18 +65,55 @@ function EmployeesGeneral() {
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
-  const Delete = (row, action) => {
+  const useCreateEmployee = useMutation(createEmployeeService, {
+    onSuccess: (data) => {
+      console.log("data", data);
+      const { result } = data;
+      queryClient.invalidateQueries("listEmployee");
+      toast({
+        title: "Create Employee successfully",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  const editEmployee = (row, action) => {
+    onAddEditOpen();
+    setEditData(row);
+  };
+  const handleEditEmployee = (values) => {
+    console.log(values);
+  };
+  const handleCreateEmployee = (values) => {
+    const employeeObj = {
+      ...values,
+      ["dateOfBirth"]: values?.dateOfBirth
+        ? new Date(values?.dateOfBirth).toISOString()
+        : "",
+    };
+    useCreateEmployee.mutate(employeeObj);
+    onAddEditClose();
+  };
+  const deleteEmployee = (row, action) => {
     setDeleteSingleData(row);
     onDeleteSingleOpen();
   };
+
   const handleAcceptDelete = () => {
     console.log(deleteSingleData);
     setDeleteSingleData({});
     onDeleteSingleClose();
-  };
-  const Edit = (row, action) => {
-    onAddEditOpen();
-    setEditData(row);
   };
   const matchingItem = (value) => {
     return roleCodeColor.find(
@@ -80,12 +123,12 @@ function EmployeesGeneral() {
   const tableRowAction = [
     {
       actionName: "Edit",
-      func: Edit,
+      func: editEmployee,
       isDisabled: resultPermission?.update,
     },
     {
       actionName: "Delete",
-      func: Delete,
+      func: deleteEmployee,
       isDisabled: resultPermission?.delete,
     },
   ];
@@ -277,19 +320,19 @@ function EmployeesGeneral() {
       hideIcon: <BsEyeSlashFill color="#999" fontSize="1.5rem" />,
     },
     {
-      name: "role",
+      name: "displayName",
       label: "Role",
       isSelectionField: true,
-      placeholder:'---',
+      placeholder: "---",
       selectionArray: [
-        { label: "Employee", value: "employee" },
-        { label: "Manager", value: "manager" },
+        { label: "Employee", value: "Employee" },
+        { label: "Manager", value: "Manager" },
       ],
     },
     {
       name: "phoneNumber",
       label: "Phone",
-      type: "text",
+      type: "number",
       placeholder: "Enter your number",
       leftIcon: <BsTelephone color="#999" fontSize="1.4rem" />,
     },
@@ -341,7 +384,7 @@ function EmployeesGeneral() {
     email: `${editData?.email ?? ""}`,
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
     password: editData?.password ?? "",
-    role:editData?.role ?? "",
+    displayName: editData?.displayName ?? "",
     gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth
@@ -359,10 +402,22 @@ function EmployeesGeneral() {
   const validationSchema = Yup.object().shape({
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
-    password: Yup.string().required("This field is required"),
-    role: Yup.string().required("This field is required"),
-    phoneNumber: Yup.string(),
+    password:
+      Object.keys(editData).length === 0
+        ? Yup.string()
+            .matches(
+              passwordRegex,
+              "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+            )
+            .required("This field is required")
+        : Yup.string().matches(
+            passwordRegex,
+            "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+          ),
+    displayName: Yup.string().required("This field is required"),
+    phoneNumber: Yup.number(),
   });
+  // console.log("editData", editData, editData.length === 0);
   if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
@@ -404,6 +459,8 @@ function EmployeesGeneral() {
           permission={resultPermission}
         />
         <DynamicDrawer
+          handleEdit={handleEditEmployee}
+          handleCreate={handleCreateEmployee}
           isAddEditOpen={isAddEditOpen}
           onAddEditClose={onAddEditClose}
           editData={editData}

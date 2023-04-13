@@ -29,7 +29,6 @@ function AddressSelection({ formik, ...props }) {
       if (e.target.name == "country") {
         city = "";
         state = "";
-        debugger
         updateKey = Country.getCountryByCode(e.target.value)?.isoCode;
         setListState([{ isoCode: "", name: "---" }]);
         setListCity([{ isoCode: "", name: "---" }]);

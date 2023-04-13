@@ -28,13 +28,13 @@ export const useGetListRoleOfEmployee = () => {
   });
 };
 
-// export const createOrganizationDetail = async (organizationDetail) => {
-//   const response = await axiosBase.post(
-//     `${endPoint}/createOrganization`,
-//     organizationDetail
-//   );
-//   return response.data;
-// };
+export const createEmployeeService = async (employeeObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/createEmployee`,
+    employeeObj
+  );
+  return response.data;
+};
 
 // export const saveOrganizationDetail = async ({ id, organizationDetail }) => {
 //   const response = await axiosBase.post(

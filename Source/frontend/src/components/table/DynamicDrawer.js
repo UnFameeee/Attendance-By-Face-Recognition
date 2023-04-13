@@ -27,6 +27,8 @@ function DynamicDrawer(props) {
     drawerFieldData,
     position,
     size,
+    handleEdit,
+    handleCreate
   } = props;
   const btnRef = React.useRef();
   const handleClose = () => {
@@ -49,10 +51,15 @@ function DynamicDrawer(props) {
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
               // console.log("actions", actions);
-              alert(JSON.stringify(values, null, 2));
+              // alert(JSON.stringify(values, null, 2));
               actions.resetForm();
+              if(Object.keys(editData).length > 0){
+                handleEdit(values)
+              }
+              else{
+                handleCreate(values)
+              }
               setEditData({});
-              onAddEditClose();
             }}
           >
             {(formik) => (
