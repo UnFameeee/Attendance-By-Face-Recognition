@@ -462,6 +462,7 @@ function DynamicTable(props) {
                             fontSize="lg"
                             color="white"
                             {...column?.getHeaderProps()}
+                            display={column?.hidden ? "none" : "undefine"}
                           >
                             <Flex alignItems="center" gap="5px">
                               {column?.haveFilter && (
@@ -614,7 +615,12 @@ function DynamicTable(props) {
                       >
                         {row?.cells?.map((cell) => {
                           return (
-                            <Td {...cell?.getCellProps()}>
+                            <Td
+                              {...cell?.getCellProps()}
+                              display={
+                                cell?.column?.hidden ? "none" : "undefine"
+                              }
+                            >
                               {cell.column.type == "date" ? (
                                 <Box
                                   width={

@@ -32,6 +32,7 @@ import { FilterType } from "../../../components/table/DynamicTable";
 import { useMutation, useQueryClient } from "react-query";
 import {
   createEmployeeService,
+  saveEmployeeService,
   useGetListEmployee,
 } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -67,11 +68,41 @@ function EmployeesGeneral() {
   };
   const useCreateEmployee = useMutation(createEmployeeService, {
     onSuccess: (data) => {
-      console.log("data", data);
-      const { result } = data;
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listEmployee");
+        toast({
+          title: "Create Employee successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  const useSaveEmployee = useMutation(saveEmployeeService, {
+    onSuccess: (data) => {
       queryClient.invalidateQueries("listEmployee");
       toast({
-        title: "Create Employee successfully",
+        title: "Save Employee successfully",
         position: "bottom-right",
         status: "success",
         isClosable: true,
@@ -88,22 +119,30 @@ function EmployeesGeneral() {
       });
     },
   });
-  const editEmployee = (row, action) => {
-    onAddEditOpen();
-    setEditData(row);
-  };
   const handleEditEmployee = (values) => {
-    console.log(values);
+    const id = editData.id;
+    const employeeObj = {
+      ...values,
+      ["dateOfBirth"]: values?.dateOfBirth
+        ? new Date(values?.dateOfBirth).toISOString()
+        : null,
+    };
+    useSaveEmployee.mutate({ id, employeeObj });
+    closeDrawer();
   };
   const handleCreateEmployee = (values) => {
     const employeeObj = {
       ...values,
       ["dateOfBirth"]: values?.dateOfBirth
         ? new Date(values?.dateOfBirth).toISOString()
-        : "",
+        : null,
     };
     useCreateEmployee.mutate(employeeObj);
-    onAddEditClose();
+    closeDrawer();
+  };
+  const editEmployee = (row, action) => {
+    onAddEditOpen();
+    setEditData(row);
   };
   const deleteEmployee = (row, action) => {
     setDeleteSingleData(row);
@@ -114,6 +153,10 @@ function EmployeesGeneral() {
     console.log(deleteSingleData);
     setDeleteSingleData({});
     onDeleteSingleClose();
+  };
+  const closeDrawer = () => {
+    onAddEditClose();
+    setEditData({});
   };
   const matchingItem = (value) => {
     return roleCodeColor.find(
@@ -135,6 +178,16 @@ function EmployeesGeneral() {
   const tableData = React.useMemo(() => dumbTableData);
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Id",
+        accessor: "id",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+        hidden: true,
+      },
       {
         Header: "Full Name",
         accessor: "fullname",
@@ -162,22 +215,23 @@ function EmployeesGeneral() {
         cellWidth: "150px",
         textAlign: "center",
       },
-      // {
-      //   Header: "Role",
-      //   accessor: "role",
-      //   Cell: ({ value }) => (
-      //     <Badge
-      //       colorScheme={Object.values(matchingItem(value))[0]}
-      //       fontSize="lg"
-      //     >
-      //       {value}
-      //     </Badge>
-      //   ),
-      //   haveFilter: {
-      //     filterType: FilterType.Default,
-      //   },
-      //   haveSort: true,
-      // },
+      {
+        Header: "Role",
+        accessor: "role.displayName",
+        Cell: ({ value }) => (
+          <Badge
+            colorScheme={Object.values(matchingItem(value))[0]}
+            fontSize="lg"
+          >
+            {value}
+          </Badge>
+        ),
+        haveFilter: {
+          filterType: FilterType.Default,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+      },
       {
         Header: "Phone",
         accessor: "phoneNumber",
@@ -308,6 +362,7 @@ function EmployeesGeneral() {
       label: "Email",
       type: "email",
       placeholder: "abc@gmail.com",
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
@@ -332,7 +387,7 @@ function EmployeesGeneral() {
     {
       name: "phoneNumber",
       label: "Phone",
-      type: "number",
+      type: "type",
       placeholder: "Enter your number",
       leftIcon: <BsTelephone color="#999" fontSize="1.4rem" />,
     },
@@ -384,7 +439,7 @@ function EmployeesGeneral() {
     email: `${editData?.email ?? ""}`,
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
     password: editData?.password ?? "",
-    displayName: editData?.displayName ?? "",
+    displayName: editData?.["role.displayName"] ?? "",
     gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth
@@ -399,25 +454,27 @@ function EmployeesGeneral() {
     },
     address: `${editData["location.address"] ?? ""}`,
   };
-  const validationSchema = Yup.object().shape({
-    fullname: Yup.string().required("This field is required"),
-    email: Yup.string().required("This field is required"),
-    password:
-      Object.keys(editData).length === 0
-        ? Yup.string()
+  const validationSchema = Yup.object().shape(
+    Object.keys(editData).length === 0
+      ? {
+          fullname: Yup.string().required("This field is required"),
+          email: Yup.string().required("This field is required"),
+          password: Yup.string()
             .matches(
               passwordRegex,
               "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
             )
-            .required("This field is required")
-        : Yup.string().matches(
+            .required("This field is required"),
+        }
+      : {
+          fullname: Yup.string().required("This field is required"),
+          email: Yup.string().required("This field is required"),
+          password: Yup.string().matches(
             passwordRegex,
             "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
           ),
-    displayName: Yup.string().required("This field is required"),
-    phoneNumber: Yup.number(),
-  });
-  // console.log("editData", editData, editData.length === 0);
+        }
+  );
   if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>

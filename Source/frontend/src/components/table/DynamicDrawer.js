@@ -52,14 +52,13 @@ function DynamicDrawer(props) {
             onSubmit={(values, actions) => {
               // console.log("actions", actions);
               // alert(JSON.stringify(values, null, 2));
-              actions.resetForm();
               if(Object.keys(editData).length > 0){
                 handleEdit(values)
               }
               else{
                 handleCreate(values)
               }
-              setEditData({});
+              actions.resetForm();
             }}
           >
             {(formik) => (

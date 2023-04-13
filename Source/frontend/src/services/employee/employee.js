@@ -36,10 +36,18 @@ export const createEmployeeService = async (employeeObj) => {
   return response.data;
 };
 
-// export const saveOrganizationDetail = async ({ id, organizationDetail }) => {
+export const saveEmployeeService = async ({ id, employeeObj }) => {
+  const response = await axiosBase.post(
+    `${endPoint}/updateEmployeeDetail/${id}`,
+    employeeObj
+  );
+  return response.data;
+};
+
+// export const deleteEmployeeService = async (employeeId) => {
 //   const response = await axiosBase.post(
-//     `${endPoint}/updateOrganizationDetail/${id}`,
-//     organizationDetail
+//     `${endPoint}/createEmployee`,
+//     employeeObj
 //   );
 //   return response.data;
 // };

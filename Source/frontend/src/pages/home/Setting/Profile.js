@@ -83,7 +83,7 @@ function Profile() {
 
   const useSaveProfileDetail = useMutation(saveProfileDetail, {
     onSuccess: (data) => {
-      const { result } = data;
+      const { result, message } = data;
       queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
       toast({
         title: "Save profile detail successfully",
@@ -196,13 +196,14 @@ function Profile() {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values, actions) => {
+                debugger;
                 onSaveDetailAlertClose();
                 const profileDetail = {
                   fullname: values?.fullname,
                   email: values?.email,
                   gender: values?.gender,
                   dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
-                  phoneNumber: 1231231231,
+                  phone: values?.phoneNumber,
                   location: {
                     address: values?.address,
                     city: values?.location?.city ?? "",
@@ -316,7 +317,7 @@ function Profile() {
                       <FormTextField
                         name="phone"
                         label="Phone number"
-                        type="number"
+                        type="text"
                         placeholder="Enter your number"
                         leftIcon={
                           <BsTelephone color="#999" fontSize="1.4rem" />
