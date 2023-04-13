@@ -28,7 +28,7 @@ model Employee {
   password              String
   gender                String?
   dateOfBirth           DateTime?
-  phoneNumber           Int?
+  phoneNumber           String?
   description           String?
   worktype              String?
   status                Boolean?
@@ -144,8 +144,8 @@ model Location {
 }
 
 model Organization {
-  organizationId        String @id @default(uuid())
-  organizationName      String
+  organizationId   String @id @default(uuid())
+  organizationName String
 
   // locationId
   location   Location @relation(fields: [locationId], references: [locationId])
@@ -210,7 +210,7 @@ model Attendance {
   checkIn        DateTime?
   checkOut       DateTime?
   lateArrival    DateTime?
-  earlyDeparture DateTime?
+  earlyLeave     DateTime?
   totalHours     Float
   absent         Boolean
   note           String
@@ -233,7 +233,7 @@ model Workshift {
   shiftType   ShiftType @relation(fields: [shiftTypeId], references: [shiftTypeId])
   shiftTypeId String
 
-  shiftDate DateTime  
+  shiftDate DateTime
   deleted   Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
