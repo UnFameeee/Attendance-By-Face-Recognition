@@ -46,77 +46,129 @@ export class AttendanceService {
       }
     })
 
+    //Get the shiftDate from workShift - YYYY-MM-DD
+    const shiftDate = workShift.shiftDate;
+    const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
+
     //If there ISN'T attendance record, it is CHECKIN
     if (!checkAttendance) {
       //Get the time from shiftType - HH:mm
-      const startTime = workShift.shiftType.startTime;
-      const time = moment(startTime, "HH:mm").format("HH:mm");
-
-      //Get the shiftDate from workShift - YYYY-MM-DD
-      const shiftDate = workShift.shiftDate;
-      const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
+      let startTime = workShift.shiftType.startTime;
+      let time = moment(startTime, "HH:mm").format("HH:mm");
 
       //Convert both of startTime and shiftDate to Date value
-      const startShift: Date = Helper.ConfigStaticDateTime(time, date);
+      let startShift: Date = Helper.ConfigStaticDateTime(time, date);
+
+      //create a threshhold, which is the startTime +1 hour
+      let shiftThreshhold = Helper.ConfigStaticDateTime(time, date);
+      shiftThreshhold.setHours(shiftThreshhold.getHours() + 1);
+
+      //the latest punch in is startTime + 1 hour
+      if (moment(new Date(shiftThreshhold.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+        response.message = "You are 1 hour late to checkin, please contact with the manager";
+        return response;
+      }
 
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-      console.log(startShift.getTime())
-      console.log(moment(new Date(startShift.getTime()), "HH:mm").format("HH:mm"))
+      let diff = moment(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm"));
 
-      console.log(now.getTime())
-      console.log(moment(new Date(now.getTime()), "HH:mm").format("HH:mm"))
-
-      console.log("diff:")
-      const diff = moment(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm"));
-
-      const duration = moment.duration(Math.abs(diff));
-      const formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
-      console.log(formattedTimeDiff);
-
-      const timeDiff = startShift.getTime() - now.getTime();
-      console.log(timeDiff)
-      console.log(moment(new Date(timeDiff), "HH:mm").format("HH:mm"))
       var lateArrival: Date;
       //if the value is negative -> lateArrival
-      if (Math.sign(timeDiff) === -1) {
-        let timeDiffAbs = Math.abs(timeDiff);
-        const date = moment(new Date(timeDiffAbs), "HH:mm").format("HH:mm");
-        console.log(date);
-
-        // // converts timeDiffMs to minutes (rounded down)
-        // const timeDiffMinutes = Math.floor(timeDiffAbs / 1000 / 60); 
-        // // converts timeDiffMs to hours (rounded down)
-        // const timeDiffHours = Math.floor(timeDiffAbs / 1000 / 60 / 60);
-
-        // lateArrival = Helper.ConfigStaticDateTime(`${timeDiffHours}:${timeDiffMinutes}`);
+      if (Math.sign(diff) === -1) {
+        let duration = moment.duration(Math.abs(diff));
+        let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
+        console.log(formattedTimeDiff);
+        lateArrival = Helper.ConfigStaticDateTime(formattedTimeDiff);
       }
       //if the value is positive or equal 0 -> right on time
       else {
         lateArrival = null;
       }
 
-      // const queryData = await prisma.attendance.create({
-      //   data: {
-      //     employeeId: employeeId,
-      //     attendanceDate: modifyDate,
-      //     checkIn: new Date(now.toISOString()),
-      //     checkOut: null,
-      //     lateArrival: lateArrival,
-      //     // earlyDeparture: null,
-      //     totalHours: 0,
-      //     absent: false,
-      //     note: "",
-      //   }
-      // })
-      // if (queryData) {
-      //   response.result = "Check in successfully";
-      // } else {
-      //   response.result = "Check in unsuccessfully, Server error";
-      // }
+      let queryData = await prisma.attendance.create({
+        data: {
+          employeeId: employeeId,
+          attendanceDate: modifyDate,
+          checkIn: new Date(now.toISOString()),
+          checkOut: null,
+          lateArrival: lateArrival,
+          // earlyDeparture: null,
+          totalHours: 0,
+          absent: false,
+          note: "",
+        }
+      })
+      if (queryData) {
+        response.result = "Check in successfully";
+      } else {
+        response.result = "Check in unsuccessfully, Server error";
+      }
     }
     //If there IS attendance record, it is CHECKOUT
     else {
+      //Get the time from shiftType - HH:mm
+      let endTime = workShift.shiftType.endTime;
+      let time = moment(endTime, "HH:mm").format("HH:mm");
 
+      //Convert both of startTime and shiftDate to Date value
+      let endShift: Date = Helper.ConfigStaticDateTime(time, date);
+
+      //create a threshhold, which is the startTime +1 hour
+      let shiftThreshhold = Helper.ConfigStaticDateTime(time, date);
+      shiftThreshhold.setHours(shiftThreshhold.getHours() - 1);
+
+      //the earliest punch out is endTime - 1 hour
+      if (moment(new Date(shiftThreshhold.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+        response.message = "You checkout too early, please contact with the manager";
+        return response;
+      }
+
+      //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
+      let diff = moment(new Date(endShift.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm"));
+
+      var earlyLeave: Date;
+      //if the value is positive -> earlyLeave
+      if (Math.sign(diff) === 1) {
+        earlyLeave = null;
+
+      }
+      //if the value is negative or equal 0 -> right on time
+      else {
+        let duration = moment.duration(Math.abs(diff));
+        let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
+        console.log(formattedTimeDiff);
+        earlyLeave = Helper.ConfigStaticDateTime(formattedTimeDiff);
+      }
+
+      const queryShiftData = await prisma.attendance.findFirst({
+        where: {
+          employeeId: employeeId,
+          attendanceDate: Helper.ConfigStaticDateTime("00:00", date),
+          deleted: false,
+        }
+      })
+
+      let queryData = await prisma.attendance.update({
+        where: {
+          attendanceId: queryShiftData.attendanceId,
+        },
+        data: {
+          employeeId: employeeId,
+          attendanceDate: modifyDate,
+          checkIn: new Date(now.toISOString()),
+          checkOut: null,
+          lateArrival: lateArrival,
+          // earlyDeparture: null,
+          totalHours: 0,
+          absent: false,
+          note: "",
+        }
+      })
+      if (queryData) {
+        response.result = "Check in successfully";
+      } else {
+        response.result = "Check in unsuccessfully, Server error";
+      }
     }
   }
 }

@@ -29,9 +29,9 @@ export const updateProfileSchema = z.object({
     .optional(),
 
   phoneNumber: z
-    .number({
+    .string({
       required_error: 'Phone is required',
-      invalid_type_error: "Phone Number must be number"
+      invalid_type_error: "Phone Number must be string"
     }),
 
   location: z.object({
