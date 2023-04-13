@@ -25,6 +25,11 @@ export class EmployeeService {
         dateOfBirth: true,
         phoneNumber: true,
         description: true,
+        role: {
+          select: {
+            displayName: true,
+          }
+        },
         department: {
           select: {
             departmentName: true,
@@ -69,6 +74,11 @@ export class EmployeeService {
       select: {
         id: true,
         fullname: true,
+        role: {
+          select: {
+            displayName: true,
+          }
+        },
         email: true,
         gender: true,
         dateOfBirth: true,
@@ -117,6 +127,11 @@ export class EmployeeService {
       select: {
         id: true,
         fullname: true,
+        role: {
+          select: {
+            displayName: true,
+          }
+        },
         email: true,
         gender: true,
         dateOfBirth: true,
@@ -261,6 +276,11 @@ export class EmployeeService {
         id: true,
         fullname: true,
         email: true,
+        role: {
+          select: {
+            displayName: true,
+          }
+        },
         gender: true,
         dateOfBirth: true,
         phoneNumber: true,
