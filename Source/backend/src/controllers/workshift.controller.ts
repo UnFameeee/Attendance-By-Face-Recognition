@@ -6,15 +6,16 @@ import { AutoCreateWorkshiftDTO, DateTimeDTO, ModifyWorkshiftDTO } from '../mode
 export class WorkshiftController {
   public workshiftService = new WorkshiftService();
 
-  // public getWorkshiftOfDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
-  //   try {
-  //     const data: any = req.body;
-  //     // const response = await this.workshiftService.getWorkshiftOfDepartment(data);
-  //     // res.status(200).json(response);
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // }
+  public getWorkshiftOfDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const departmentId: string = req.params.departmentId;
+      const data: DateTimeDTO = req.body;
+      const response = await this.workshiftService.getWorkshiftOfDepartment(departmentId, data);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 
   public getWorkshiftOfEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {

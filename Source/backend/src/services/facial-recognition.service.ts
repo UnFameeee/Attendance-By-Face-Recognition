@@ -1,4 +1,3 @@
-import { env } from "../config/env.config";
 import { ResponseData } from "../config/responseData.config";
 import fs from 'fs';
 import path from "path";
@@ -36,22 +35,14 @@ export class FacialRecognitionService {
     const folderName = fs.readdirSync(path.join(__dirname, pathToImage));
     const labelsArray = folderName;
 
-    console.log(labelsArray)
-
     const labeledDescriptors = []
     for (const label of labelsArray) {
+      // if(label == )
       const imageList = fs.readdirSync(path.join(__dirname, pathToImage, `/${label}`));
-      console.log(label);
       const descriptors: any[] = [];
       for (let i = 0, imageListLength = imageList.length; i < imageListLength; ++i) {
         // Load the image
-
-        // console.log(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
-        // const image = await canvas.loadImage(`${env.SERVER_URL}/public/images/employee/${label}/${imageList[i]}`);
-
-        console.log(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
         const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
-        console.log(image)
 
         // Resize the image
         const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
@@ -63,9 +54,6 @@ export class FacialRecognitionService {
           .withAgeAndGender()
           .withFaceExpressions()
           .withFaceDescriptor();
-
-        console.log(detection != null);
-
         descriptors.push(detection.descriptor);
       }
       labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
@@ -73,7 +61,7 @@ export class FacialRecognitionService {
 
     // create a FaceMatcher object
     //currently best: 0.55
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.45);
+    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.51);
 
     const modelJSON = faceMatcher.toJSON();
     const modelName = "trainedFaceMatcher.json";

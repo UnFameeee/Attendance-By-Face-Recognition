@@ -25,8 +25,6 @@ export default class App {
   };
 
   public listen() {
-    // console.log(path.join(__dirname + "/cert/cert.pem"))
-    // console.log(path.join(__dirname + "/cert/privkey.pem"))
     if (fs.existsSync(path.join(__dirname + "/cert/fullchain.pem")) &&
       fs.existsSync(path.join(__dirname + "/cert/privkey.pem"))) {
       // Create the HTTPS server options
