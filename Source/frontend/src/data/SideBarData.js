@@ -121,11 +121,6 @@ export const SideBarData = [
         url: "attendance-management",
         icon: <MdTouchApp fontSize={iconSize} />,
       },
-      {
-        title: "Upload Face",
-        url: "upload-face",
-        icon: <ImProfile fontSize={iconSize} />,
-      },
     ],
   },
   {

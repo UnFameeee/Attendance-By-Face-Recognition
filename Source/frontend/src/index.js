@@ -27,7 +27,6 @@ import { GlobalHistory } from "./Utils/GlobalHistory";
 import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
-import UploadFace from "./pages/home/Attendance/UploadFace";
 import Department from "./pages/home/Organization/Department";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
 import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
@@ -104,8 +103,6 @@ root.render(
                         path="attendance-management"
                         element={<AttendanceManagement />}
                       />
-
-                      <Route path="upload-face" element={<UploadFace />} />
                     </Route>
                     <Route path="setting">
                       <Route path="profile" element={<Profile />} />

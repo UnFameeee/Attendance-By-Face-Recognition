@@ -13,14 +13,23 @@ import {
   Radio,
   Select,
   Spinner,
+  Box,
+  Menu,
+  MenuButton,
+  Button,
+  MenuList,
+  MenuItem,
+  Image,
 } from "@chakra-ui/react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Field, useField } from "formik";
 import { useState } from "react";
+import { BsCircleFill } from "react-icons/bs";
 import SearchAndSelectAddressField from "../field/SearchAndSelectAddressField";
 import RadioGenderField from "../field/RadioGenderField";
 import AddressSelection from "./AddressSelection";
+import CustomSelection from "./CustomSelection";
 function FormTextField(props) {
   const {
     leftIcon,
@@ -36,6 +45,7 @@ function FormTextField(props) {
     isTextAreaField,
     isGender,
     isSelectionField,
+    isCustomSelectionField,
     isAddress,
     formik,
     isResize,
@@ -44,8 +54,8 @@ function FormTextField(props) {
     isDisabled,
     isLoading,
     isPassword,
+    isMenu,
   } = props;
-  // console.log("selectionArray",selectionArray)
   const [field, meta] = useField(props);
   const [isShow, setIsShow] = useState(true);
   const handleShow = () => {
@@ -87,6 +97,7 @@ function FormTextField(props) {
   } else if (isGender) {
     return (
       <FormControl
+        my={3}
         isReadOnly={isReadOnly}
         isRequired={isRequired}
         isDisabled={isDisabled}
@@ -125,6 +136,19 @@ function FormTextField(props) {
               ))}
           </Select>
         )}
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      </FormControl>
+    );
+  } else if (isCustomSelectionField) {
+    return (
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
+        <Field {...field} formik={formik} placeholder={placeholder} selectionArray={selectionArray} as={CustomSelection} />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );

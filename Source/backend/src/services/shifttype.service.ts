@@ -42,7 +42,7 @@ export class ShifttypeService {
 
     const queryData = await prisma.shiftType.findMany({
       where: {
-        deleted: true,
+        deleted: false,
       },
       select: {
         shiftTypeId: true,

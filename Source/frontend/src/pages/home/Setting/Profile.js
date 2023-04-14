@@ -196,14 +196,13 @@ function Profile() {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values, actions) => {
-                debugger;
                 onSaveDetailAlertClose();
                 const profileDetail = {
                   fullname: values?.fullname,
                   email: values?.email,
                   gender: values?.gender,
                   dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
-                  phone: values?.phoneNumber,
+                  phoneNumber: values?.phone,
                   location: {
                     address: values?.address,
                     city: values?.location?.city ?? "",
