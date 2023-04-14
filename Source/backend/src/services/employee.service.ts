@@ -203,24 +203,6 @@ export class EmployeeService {
       }
     });
 
-    // if (data.location) {
-    //   const queryData = await prisma.employee.update({
-    //     where: {
-    //       id: createEmployeeData.id,
-    //     },
-    //     data: {
-    //       location: {
-    //         create: {
-    //           address: data?.location?.address ? data.location.address : null,
-    //           city: data?.location?.city ? data.location.city : null,
-    //           country: data.location.country ? data.location.country : null,
-    //           state: data?.location?.state ? data.location.state : null,
-    //         }
-    //       }
-    //     }
-    //   });
-    // }
-
     if (createEmployeeData) {
       response.result = "Create employeee successfully"
     } else {

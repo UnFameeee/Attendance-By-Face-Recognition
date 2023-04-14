@@ -17,15 +17,15 @@ export class WorkshiftRoute implements Routes {
   }
 
   private async initializeRoutes() {
-    // // api/workshift/autoCreateWorkshift
-    // this.router.post(`${this.path}/getWorkshiftOfDepartment/:departmentId`,
-    //   authMiddleware,
-    //   zodValidate(dateTimeSchema),
-    //   await authorizeRoute(PERMISSION.READ, RESOURCE.WORKSHIFT_MANAGEMENT),
-    //   this.workshiftController.getWorkshiftOfDepartment
-    // );
+    // api/workshift/getWorkshiftOfDepartment/:departmentId
+    this.router.post(`${this.path}/getWorkshiftOfDepartment/:departmentId`,
+      authMiddleware,
+      zodValidate(dateTimeSchema),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.WORKSHIFT_MANAGEMENT),
+      this.workshiftController.getWorkshiftOfDepartment
+    );
 
-    // api/workshift/getWorkshiftOfEmployee
+    // api/workshift/getWorkshiftOfEmployee/:employeeId
     this.router.post(`${this.path}/getWorkshiftOfEmployee/:employeeId`,
       authMiddleware,
       zodValidate(dateTimeSchema),

@@ -17,7 +17,6 @@ const imageStorage = multer.diskStorage({
   },
   filename: async (req: RequestWithProfile, file, cb) => {
     const queryParam = req.query;
-
     const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
 
     //Logic for no specify an index image
@@ -50,11 +49,6 @@ export const employeeImageUpload = multer({
       // upload only png - jpg -jpeg format
       return cb(new Error('Only support PNG, JPG, JPEG and file below 10mb'))
     }
-
-    // if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-    //   // upload only png - jpg -jpeg format
-    //   return cb(new Error('Only support PNG, JPG, JPEG and file below 10mb'))
-    // }
   }
 })
   .fields([

@@ -49,7 +49,6 @@ class EmployeeController {
     }
   }
 
-
   public updateEmployeeDetail = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const employeeId: string = req.params.employeeId;

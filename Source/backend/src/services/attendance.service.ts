@@ -59,13 +59,21 @@ export class AttendanceService {
       //Convert both of startTime and shiftDate to Date value
       let startShift: Date = Helper.ConfigStaticDateTime(time, date);
 
-      //create a threshhold, which is the startTime +1 hour
-      let shiftThreshhold = Helper.ConfigStaticDateTime(time, date);
-      shiftThreshhold.setHours(shiftThreshhold.getHours() + 1);
+      //create a threshhold, which is the startTime +1 and -1 hour
+      let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
+      shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
+
+      let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
+      shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
 
       //the latest punch in is startTime + 1 hour
-      if (moment(new Date(shiftThreshhold.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+      if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
         response.message = "You are 1 hour late to checkin, please contact with the manager";
+        return response;
+      }
+
+      if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
+        response.message = "You checkin so soon, comeback 1 hour before the shift start";
         return response;
       }
 
@@ -77,7 +85,6 @@ export class AttendanceService {
       if (Math.sign(diff) === -1) {
         let duration = moment.duration(Math.abs(diff));
         let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
-        console.log(formattedTimeDiff);
         lateArrival = Helper.ConfigStaticDateTime(formattedTimeDiff);
       }
       //if the value is positive or equal 0 -> right on time
@@ -92,7 +99,6 @@ export class AttendanceService {
           checkIn: new Date(now.toISOString()),
           checkOut: null,
           lateArrival: lateArrival,
-          // earlyDeparture: null,
           totalHours: 0,
           absent: false,
           note: "",
@@ -103,40 +109,46 @@ export class AttendanceService {
       } else {
         response.result = "Check in unsuccessfully, Server error";
       }
+      return response;
     }
     //If there IS attendance record, it is CHECKOUT
     else {
       //Get the time from shiftType - HH:mm
       let endTime = workShift.shiftType.endTime;
       let time = moment(endTime, "HH:mm").format("HH:mm");
-
       //Convert both of startTime and shiftDate to Date value
       let endShift: Date = Helper.ConfigStaticDateTime(time, date);
 
-      //create a threshhold, which is the startTime +1 hour
-      let shiftThreshhold = Helper.ConfigStaticDateTime(time, date);
-      shiftThreshhold.setHours(shiftThreshhold.getHours() - 1);
+      //create a threshhold, which is the startTime +1 and -1 hour
+      let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
+      shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
+
+      let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
+      shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
 
       //the earliest punch out is endTime - 1 hour
-      if (moment(new Date(shiftThreshhold.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+      if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
         response.message = "You checkout too early, please contact with the manager";
         return response;
       }
 
+      if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+        response.message = "You checkout too late, please contact with the manager";
+        return response;
+      }
+
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-      let diff = moment(new Date(endShift.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm"));
+      let diff = moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(endShift.getTime()), "HH:mm"));
 
       var earlyLeave: Date;
       //if the value is positive -> earlyLeave
       if (Math.sign(diff) === 1) {
         earlyLeave = null;
-
       }
       //if the value is negative or equal 0 -> right on time
       else {
         let duration = moment.duration(Math.abs(diff));
         let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
-        console.log(formattedTimeDiff);
         earlyLeave = Helper.ConfigStaticDateTime(formattedTimeDiff);
       }
 
@@ -155,20 +167,17 @@ export class AttendanceService {
         data: {
           employeeId: employeeId,
           attendanceDate: modifyDate,
-          checkIn: new Date(now.toISOString()),
-          checkOut: null,
-          lateArrival: lateArrival,
-          // earlyDeparture: null,
+          checkOut: new Date(now.toISOString()),
+          earlyLeave: earlyLeave,
           totalHours: 0,
-          absent: false,
-          note: "",
         }
       })
       if (queryData) {
-        response.result = "Check in successfully";
+        response.result = "Check out successfully";
       } else {
-        response.result = "Check in unsuccessfully, Server error";
+        response.result = "Check out unsuccessfully, Server error";
       }
+      return response;
     }
   }
 }

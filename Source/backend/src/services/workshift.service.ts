@@ -6,6 +6,52 @@ import { Helper } from "../utils/helper";
 import { WorkshiftModel } from "../model/view-model/workshift.model";
 
 export class WorkshiftService {
+  public getWorkshiftOfDepartment = async (departmentId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
+    const response = new ResponseData<WorkshiftModel[]>;
+    const daysInmonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInmonth}`)
+
+    const queryData = await prisma.workshift.findMany({
+      where: {
+        deleted: false,
+        employee: {
+          department: {
+            departmentId: departmentId,
+          }
+        },
+        shiftDate: {
+          gte: startDate,
+          lte: endDate,
+        }
+      },
+      select: {
+        shiftId: true,
+        employee: {
+          select: {
+            id: true,
+            fullname: true,
+          }
+        },
+        shiftTypeId: true,
+        shiftDate: true,
+        shiftType: {
+          select: {
+            shiftName: true,
+            startTime: true,
+            endTime: true,
+          }
+        }
+      },
+      orderBy: {
+        employeeId: "asc",
+      },
+    })
+
+    response.result = queryData;
+    return response;
+  }
+
   public getWorkshiftOfEmployee = async (employeeId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
     const response = new ResponseData<WorkshiftModel[]>;
     const daysInmonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();

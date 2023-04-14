@@ -96,16 +96,8 @@ root.render(
                     <Route path="report" element={<Test />} />
                     <Route path="leave-request" element={<LeaveRequest />} />
                     <Route path="attendance">
-                      {/* <Route
-                        path="face-attendance"
-                        element={<FaceAttendance />}
-                      /> */}
-                      <Route
-                        path="attendance-management"
-                        element={<AttendanceManagement />}
-                      />
-
-                      <Route path="upload-face" element={<UploadFace />} />
+                      <Route path="face-attendance" element={<FaceAttendance />} />
+                      <Route path="attendance-management" element={<AttendanceManagement />} />
                     </Route>
                     <Route path="setting">
                       <Route path="profile" element={<Profile />} />
