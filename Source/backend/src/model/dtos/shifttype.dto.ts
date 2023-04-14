@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { optional, z } from "zod";
 
 export const modifyShifttypeSchema = z.object({
   shiftTypeId: z
@@ -6,7 +6,8 @@ export const modifyShifttypeSchema = z.object({
       required_error: 'ShiftTypeId is required',
       invalid_type_error: "ShiftTypeId must be string"
     })
-    .trim(),
+    .trim()
+    .optional(),
 
   shiftName: z
     .string({
