@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
 import { pagingInstance } from "../../Utils/PagingInstance";
+import { Helper } from "../../Utils/Helper";
 
 const endPoint = baseURL + "/shifttype";
 export const getListShiftType = async () => {
@@ -22,21 +23,26 @@ export const modifyWorkShiftService = async (workShiftObj) => {
   return response.data;
 };
 
-export const getWorkShiftOfEmployee = async (employeeId) => {
+export const getWorkShiftOfEmployee = async (employeeId, monthIndex) => {
   const month = {
-    month: 4,
+    month: monthIndex + 1,
     year: 2023,
   };
   const response = await axiosBase.post(
-    `${baseURL}/workshift/getWorkshiftOfEmployee/1444d65a-2462-4559-9a08-abadc553b028`,
+    `${baseURL}/workshift/getWorkshiftOfEmployee/${employeeId}`,
     month
   );
   return response.data;
 };
 
-export const useGetWorkShiftOfEmployee = () => {
-  return useQuery("listWorkShiftOfEmployee", getWorkShiftOfEmployee, {
-    refetchOnWindowFocus: false,
-    retry: 1,
-  });
+export const useGetWorkShiftEmployee = (monthIndex) => {
+  const userData = Helper.getUseDecodeInfor();
+  return useQuery(
+    "listWorkShiftOfEmployee",
+    () => getWorkShiftOfEmployee(userData.id, monthIndex),
+    {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    }
+  );
 };

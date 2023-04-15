@@ -1,42 +1,76 @@
 import dayjs from "dayjs";
 import React, { useContext, useState, useEffect } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
+import { Helper } from "../../Utils/Helper";
 
-export default function Day({ day, rowIdx }) {
+export default function Day({ day, rowIdx, listWorkShift }) {
   const [dayEvents, setDayEvents] = useState([]);
   const {
     setDaySelected,
     setShowEventModal,
     filteredEvents,
     setSelectedEvent,
+    monthIndex,
+    setMonthIndex,
   } = useContext(GlobalContext);
+  const isShiftDay = () => {
+    listWorkShift.map((item) => {
+      if (day.format("DD-MM-YY") === Helper.convertDateISOToDDMMYYY(item.shiftDate)) {
+        return true;
+      }
+    });
+  };
+  const checkIfDayInSameMonth = () => {
+    let realMonth = Math.floor(monthIndex) + 1;
+    let yearDif = day.format("YYYY") - dayjs().format("YYYY");
+    if (yearDif < 1) {
+      yearDif = 1;
+    }
+    if (realMonth > 12) {
+      realMonth = realMonth - 12 * yearDif;
+    }
+    if (day.format("M") == realMonth) {
+      return true;
+    }
+    return false;
+  };
   useEffect(() => {
     const events = filteredEvents.filter(
       (evt) => dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
     );
     setDayEvents(events);
   }, [filteredEvents, day]);
-  // console.log("is current",day.format("DD-MM-YY"), day.format("DD-MM-YY") === dayjs().format("DD-MM-YY"))
   function getCurrentDayClass() {
     return day.format("DD-MM-YY") === dayjs().format("DD-MM-YY")
       ? "bg-blue-600 text-white rounded-full w-7"
       : "";
   }
   return (
-    <div className="border border-gray-200 flex flex-col">
+    <div
+      className={`border border-gray-200 flex flex-col 
+    ${checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"}`}
+    >
       <header className="flex flex-col items-center">
         {rowIdx === 0 && (
           <p className="text-sm mt-1">{day.format("ddd").toUpperCase()}</p>
         )}
-        <p className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}`}>
+        <p
+          className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}  ${
+            checkIfDayInSameMonth() ? "" : "text-gray-300"
+          }`}
+        >
           {day.format("DD")}
         </p>
       </header>
       <div
-        className="flex-1 cursor-pointer"
+        className={`flex-1 ${
+          checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"
+        } `}
         onClick={() => {
-          setDaySelected(day);
-          setShowEventModal(true);
+          if (checkIfDayInSameMonth()) {
+            setDaySelected(day);
+            setShowEventModal(true);
+          }
         }}
       >
         {dayEvents.map((evt, idx) => (

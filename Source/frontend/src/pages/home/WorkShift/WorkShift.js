@@ -11,20 +11,25 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   modifyWorkShiftService,
   useGetListShiftType,
-  useGetWorkShiftOfEmployee,
+  useGetWorkShiftEmployee,
 } from "../../../services/workshift/workshift";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
+import { useGetProfileDetail } from "../../../services/setting/profile";
 
 function WorkShift() {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
   const { monthIndex, showEventModal } = useContext(GlobalContext);
+  console.log("monthIndex",monthIndex)
   const { data: listEmployee, isLoading: isLoadingListEmployee } =
     useGetListEmployee();
   const { data: listShiftType, isLoading: isLoadingListShiftType } =
     useGetListShiftType();
-  const { data: listWorkShiftOfEmployee, isLoading: isLoadingListWorkShiftOfEmployee } =
-    useGetWorkShiftOfEmployee();
+  const {
+    data: listWorkShiftEmployee,
+    isLoading: isLoadingListWorkShiftEmployee,
+  } = useGetWorkShiftEmployee(monthIndex);
   const useModifyWorkShift = useMutation(modifyWorkShiftService, {
     onSuccess: (data) => {
       const { result, message } = data;
@@ -37,7 +42,7 @@ function WorkShift() {
           duration: 5000,
         });
       } else {
-        // queryClient.invalidateQueries("listEmployee");
+        queryClient.invalidateQueries("listWorkShiftOfEmployee");
         toast({
           title: "Modify WorkShift successfully",
           position: "bottom-right",
@@ -60,11 +65,14 @@ function WorkShift() {
   const modifyWorkShift = (eventObj) => {
     useModifyWorkShift.mutate(eventObj);
   };
-
   useEffect(() => {
     setCurrentMonth(Helper.getMonth(monthIndex));
   }, [monthIndex]);
-  if (isLoadingListEmployee && isLoadingListShiftType && isLoadingListWorkShiftOfEmployee)
+  if (
+    isLoadingListEmployee &&
+    isLoadingListShiftType &&
+    isLoadingListWorkShiftEmployee
+  )
     return <LoadingSpinner />;
   return (
     <React.Fragment>
@@ -79,7 +87,7 @@ function WorkShift() {
         <CalendarHeader />
         <div className="flex flex-1">
           <Sidebar />
-          <Month month={currentMonth} />
+          <Month month={currentMonth} listWorkShift={listWorkShiftEmployee?.result} />
         </div>
       </div>
     </React.Fragment>

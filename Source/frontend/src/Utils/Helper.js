@@ -30,9 +30,24 @@ export const convertTimestampToISO = (timestamp) => {
   const date = new Date(timestamp);
   return date.toISOString();
 };
+export const convertDateISOToDDMMYYY = (dateISO) => {
+  const dateObj = new Date(dateISO);
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const year = dateObj.getFullYear().toString().substring(2);
+  return `${day}-${month}-${year}`;
+};
+export const getUseDecodeInfor = () => {
+  const accessTokenJSON = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(accessTokenJSON);
+  var decoded = jwtDecode(accessToken);
+  return decoded;
+};
 export const Helper = {
   isTokenExpired,
   isOdd,
   getMonth,
   convertTimestampToISO,
+  convertDateISOToDDMMYYY,
+  getUseDecodeInfor,
 };
