@@ -8,9 +8,13 @@ import { WorkshiftModel } from "../model/view-model/workshift.model";
 export class WorkshiftService {
   public getWorkshiftOfDepartment = async (departmentId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
     const response = new ResponseData<WorkshiftModel[]>;
-    const daysInmonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInmonth}`)
+    //Get last 7 days of the previous month and first 7 days of the next month 
+    const daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    const daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
+
 
     const queryData = await prisma.workshift.findMany({
       where: {
@@ -54,9 +58,12 @@ export class WorkshiftService {
 
   public getWorkshiftOfEmployee = async (employeeId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
     const response = new ResponseData<WorkshiftModel[]>;
-    const daysInmonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInmonth}`)
+    //Get last 7 days of the previous month and first 7 days of the next month 
+    const daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    const daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
 
     const queryData = await prisma.workshift.findMany({
       where: {

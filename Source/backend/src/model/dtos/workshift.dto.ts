@@ -96,19 +96,32 @@ export const dateTimeSchema = z.object({
     .max(31, "Date must be less than or equal to 31")
     .optional(),
 
-  month: z
-    .number({
-      required_error: 'Month is required',
-      invalid_type_error: "Month must be number"
-    })
-    .min(1, "Month must be more than or equal to 1")
-    .max(12, "Month must be less than or equal to 12"),
+  month: z.object({
+    previousMonth: z
+      .number({
+        required_error: 'Month is required',
+        invalid_type_error: "Month must be number",
+        description: "Year should be an array"
+      })
+      .min(1, "Month must be more than or equal to 1")
+      .max(12, "Month must be less than or equal to 12"),
+
+    nextMonth: z
+      .number({
+        required_error: 'Month is required',
+        invalid_type_error: "Month must be number",
+        description: "Year should be an array"
+      })
+      .min(1, "Month must be more than or equal to 1")
+      .max(12, "Month must be less than or equal to 12")
+  }),
 
   year: z
     .number({
       required_error: 'Year is required',
-      invalid_type_error: "Year must be number"
+      invalid_type_error: "Year must be number",
     })
     .min(1, "Year must be positive number")
+
 });
 export type DateTimeDTO = z.infer<typeof dateTimeSchema>;
