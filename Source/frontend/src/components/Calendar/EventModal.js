@@ -9,6 +9,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import FormTextField from "../field/FormTextField";
 import { Helper } from "../../Utils/Helper";
+
 const colorCodeList = [
   "bg-calCo1",
   "bg-calCo2",
@@ -40,8 +41,7 @@ const colorCodeList2 = [
   "#FEFEDF",
 ];
 export default function EventModal(props) {
-  const { modifyEventHandler, listEmployee, listShift } =
-    props;
+  const { modifyEventHandler, listEmployee, listShift } = props;
   const { setShowEventModal, daySelected, dispatchCalEvent, selectedEvent } =
     useContext(GlobalContext);
 
@@ -95,7 +95,7 @@ export default function EventModal(props) {
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : Date.now(),
     };
-    
+
     if (selectedEvent) {
       dispatchCalEvent({ type: "update", payload: calendarEvent });
     } else {
@@ -109,20 +109,20 @@ export default function EventModal(props) {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values, actions) => {
+        debugger
         handleSubmit();
+        const currentDate = new Date(
+          Helper.convertTimestampToISO(daySelected.valueOf())
+        );
+        currentDate.setDate(currentDate.getDate() + 1);
         const eventObj = {
-          shiftDate: new Date(
-            Helper.convertTimestampToISO(daySelected.valueOf())
-          )
-            .toISOString()
-            .substring(0, 10),
+          shiftDate: currentDate.toISOString().substring(0, 10),
           title: values.title,
           shiftTypeId: values.shiftTypeId,
           description: values.description,
           employeeId: values.employeeId,
         };
-        modifyEventHandler(eventObj)
-       
+        modifyEventHandler(eventObj);
       }}
     >
       {(formik) => (

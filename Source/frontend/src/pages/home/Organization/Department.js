@@ -33,6 +33,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useGetListDepartment } from "../../../services/organization/department";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
+import { useGetListOrganization } from "../../../services/organization/organization";
 function Department() {
   const resultPermission = useGetPermission(
     permissionDepartmentGeneral,
@@ -40,7 +41,9 @@ function Department() {
   );
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
-  const { data, isLoading, isError, error } = useGetListDepartment();
+  const { data: dataListDepartment, isLoading: isLoadingListDepartment, isError, error } = useGetListDepartment();
+  const { data: dataListOrganization, isLoading:isLoadingListOrganization } = useGetListOrganization();
+
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -198,7 +201,7 @@ function Department() {
     country: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
   });
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoadingListDepartment && isLoadingListOrganization) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -212,7 +215,7 @@ function Department() {
           handleDeleteRange={DeleteRange}
           tableRowAction={tableRowAction}
           columns={columns}
-          data={data?.result?.data}
+          data={dataListDepartment?.result?.data}
           permission={resultPermission}
         />
         <DynamicDrawer
@@ -231,7 +234,7 @@ function Department() {
           onAccept={handleAcceptDelete}
         />
       </Box>
-      {data?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
+      {dataListDepartment?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
     </Stack>
   );
 }

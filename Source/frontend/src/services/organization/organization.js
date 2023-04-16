@@ -12,6 +12,16 @@ export const useGetOrganizationDetail = () => {
     retry: 3,
   });
 };
+export const getListOrganization = async () => {
+  const response = await axiosBase.get(`${endPoint}/list`);
+  return response.data;
+};
+export const useGetListOrganization = () => {
+  return useQuery("listOrganization", getListOrganization, {
+    refetchOnWindowFocus: false,
+    retry: 3,
+  });
+};
 export const createOrganizationDetail = async (organizationDetail) => {
   const response = await axiosBase.post(
     `${endPoint}/createOrganization`,

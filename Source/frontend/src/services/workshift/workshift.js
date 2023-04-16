@@ -25,7 +25,10 @@ export const modifyWorkShiftService = async (workShiftObj) => {
 
 export const getWorkShiftOfEmployee = async (employeeId, monthIndex) => {
   const month = {
-    month: monthIndex + 1,
+    month: {
+      previousMonth: monthIndex,
+      nextMonth: monthIndex + 2,
+    },
     year: 2023,
   };
   const response = await axiosBase.post(

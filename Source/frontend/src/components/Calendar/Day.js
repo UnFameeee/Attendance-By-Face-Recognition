@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import React, { useContext, useState, useEffect } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
 import { Helper } from "../../Utils/Helper";
-
+import moment from "moment";
 export default function Day({ day, rowIdx, listWorkShift }) {
   const [dayEvents, setDayEvents] = useState([]);
   const {
@@ -13,13 +13,24 @@ export default function Day({ day, rowIdx, listWorkShift }) {
     monthIndex,
     setMonthIndex,
   } = useContext(GlobalContext);
-  const isShiftDay = () => {
-    listWorkShift.map((item) => {
-      if (day.format("DD-MM-YY") === Helper.convertDateISOToDDMMYYY(item.shiftDate)) {
-        return true;
-      }
-    });
-  };
+  let isShiftDay;
+  if (listWorkShift) {
+    isShiftDay = listWorkShift.filter(
+      (item) =>
+        day.format("DD-MM-YY") ===
+        Helper.convertDateISOToDDMMYYY(item.shiftDate)
+    );
+    if (isShiftDay.length > 0) {
+      console.log("isShiftDay", isShiftDay);
+      isShiftDay.map((item) => {
+        const formatDate = moment(item?.shiftDate, "YYYY-MM-DD").format(
+          "YYYY-MM-DD"
+        );
+        console.log("item", item?.shiftDate.toString());
+        console.log(formatDate);
+      });
+    }
+  }
   const checkIfDayInSameMonth = () => {
     let realMonth = Math.floor(monthIndex) + 1;
     let yearDif = day.format("YYYY") - dayjs().format("YYYY");
@@ -86,6 +97,15 @@ export default function Day({ day, rowIdx, listWorkShift }) {
             {evt.title ? evt.title : "Unknown"}
           </div>
         ))}
+        {isShiftDay?.length > 0 &&
+          isShiftDay.map((item) => (
+            <div
+              // onClick={() => setSelectedEvent(evt)}
+              className={` p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate `}
+            >
+              {item?.employee?.fullname ?? "Unknown"}
+            </div>
+          ))}
       </div>
     </div>
   );

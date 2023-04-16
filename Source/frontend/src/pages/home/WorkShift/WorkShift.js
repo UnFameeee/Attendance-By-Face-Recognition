@@ -21,7 +21,6 @@ function WorkShift() {
   const queryClient = useQueryClient();
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
   const { monthIndex, showEventModal } = useContext(GlobalContext);
-  console.log("monthIndex",monthIndex)
   const { data: listEmployee, isLoading: isLoadingListEmployee } =
     useGetListEmployee();
   const { data: listShiftType, isLoading: isLoadingListShiftType } =
