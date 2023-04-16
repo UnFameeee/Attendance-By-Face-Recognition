@@ -64,7 +64,7 @@ export class FacialRecognitionService {
     const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.51);
 
     const modelJSON = faceMatcher.toJSON();
-    const modelName = "trainedFaceMatcher.json";
+    const modelName = "FaceMatcher.json";
     fs.writeFileSync(path.join(__dirname, `/../public/train-model/${modelName}`), JSON.stringify(modelJSON));
 
     response.result = true;

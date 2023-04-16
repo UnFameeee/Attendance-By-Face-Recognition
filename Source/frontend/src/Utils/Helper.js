@@ -1,7 +1,7 @@
 import jwtDecode from "jwt-decode";
 import dayjs from "dayjs";
- 
-export const isTokenExpired = (token) => {
+
+const isTokenExpired = (token) => {
   if (token) {
     const decodedToken = jwtDecode(token);
     const currentTime = Date.now() / 1000;
@@ -10,10 +10,12 @@ export const isTokenExpired = (token) => {
   }
   return true;
 };
-export const isOdd = (value) => {
+
+const isOdd = (value) => {
   return value % 2 === 0;
 };
-export const getMonth = (month = dayjs().month()) => {
+
+const getMonth = (month = dayjs().month()) => {
   month = Math.floor(month);
   const year = dayjs().year();
   const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
@@ -27,8 +29,24 @@ export const getMonth = (month = dayjs().month()) => {
   return daysMatrix;
 };
 
+function findMostDuplicatedValue(array) {
+  let counts = {};
+  let maxCount = 0;
+  let mostDuplicatedValue;
+  for (let i = 0, length = array.length; i < length; ++i) {
+    let value = array[i];
+    counts[value] = (counts[value] || 0) + 1;
+    if (counts[value] > maxCount) {
+      maxCount = counts[value];
+      mostDuplicatedValue = value;
+    }
+  }
+  return mostDuplicatedValue;
+}
+
 export const Helper = {
   isTokenExpired,
   isOdd,
   getMonth,
+  findMostDuplicatedValue
 };
