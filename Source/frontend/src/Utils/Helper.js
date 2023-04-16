@@ -27,7 +27,7 @@ export const getMonth = (month = dayjs().month()) => {
   return daysMatrix;
 };
 export const convertTimestampToISO = (timestamp) => {
-  console.log("timeStamp",timestamp)
+  console.log("timeStamp", timestamp)
   const date = new Date(timestamp);
   return date.toISOString();
 };
@@ -44,6 +44,11 @@ export const getUseDecodeInfor = () => {
   var decoded = jwtDecode(accessToken);
   return decoded;
 };
+
+const getUTCTimeInLocaleTimezone = (date) => {
+  return new Date(new Date(date).toLocaleString());
+}
+
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -51,4 +56,5 @@ export const Helper = {
   convertTimestampToISO,
   convertDateISOToDDMMYYY,
   getUseDecodeInfor,
+  getUTCTimeInLocaleTimezone,
 };
