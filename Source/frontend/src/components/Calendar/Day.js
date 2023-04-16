@@ -23,9 +23,8 @@ export default function Day({ day, rowIdx, listWorkShift }) {
     if (isShiftDay.length > 0) {
       console.log("isShiftDay", isShiftDay);
       isShiftDay.map((item) => {
-        const date = Helper.getUTCTimeInLocaleTimezone(item?.shiftDate);
-        const formatDate = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
-        console.log(formatDate);
+        const date = Helper.getMomentDateFormat(item?.shiftDate);
+        console.log(date);
       });
     }
   }
