@@ -41,7 +41,7 @@ function findMostDuplicatedValue(array) {
       mostDuplicatedValue = value;
     }
   }
-  return mostDuplicatedValue;
+  return maxCount > 1 ? mostDuplicatedValue : "unknown";
 }
 
 export const Helper = {

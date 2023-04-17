@@ -55,7 +55,7 @@ export class ProfileController {
       const response = await this.profileService.uploadImages(employeeId, files, index);
 
       if (response.message == null) {
-        await this.facialRecognitionService.trainModel();
+        await this.facialRecognitionService.trainModel(employeeId);
       }
       res.status(200).json(response);
     } catch (err) {

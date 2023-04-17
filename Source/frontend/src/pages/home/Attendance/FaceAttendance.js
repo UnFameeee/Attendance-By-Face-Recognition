@@ -9,36 +9,69 @@ import axiosBase from '../../../Utils/AxiosInstance';
 import { useMutation } from 'react-query';
 import { attendanceService } from '../../../services/attendance/attendance';
 import { Helper } from '../../../Utils/Helper';
+import AttendanceModal from '../../../components/Attendance/AttendanceModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAttendanceModalProps } from '../../../store/Slice/AttendanceSlice/attendanceModalSlice';
+import { setIsScaningPaused, setIsTakeAttendance } from '../../../store/Slice/AttendanceSlice/takeAttendanceSlice';
 
 let streamObj;
 export default function FaceAttendance() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const videoRef = useRef(null);
   const intervalRef = useRef(null);
   const toast = useToast();
+  const dispatch = useDispatch();
+  const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
+  const employeeId = useSelector(state => state.attendanceModal.employeeId);
 
   const useTakeAttendance = useMutation((variable) =>
     attendanceService.takeAttendance(variable.employeeId, variable.attendanceType), {
-
     onSuccess: (data) => {
-      toast({
-        title: 'Checkin',
-        description: data.result,
-        position: "top",
-        status: "success",
-        variant: 'subtle',
-        isClosable: true,
-        duration: 5000,
-      });
 
-      setIsPaused(true);
+      dispatch(setIsTakeAttendance({
+        isTakeAttendance: false,
+      }))
+
+      if (data.message) {
+        toast({
+          title: 'Checkin',
+          description: data.message,
+          position: "top",
+          status: "error",
+          variant: 'subtle',
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: 'Checkin',
+          description: data.result,
+          position: "top",
+          status: "success",
+          variant: 'subtle',
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+
+      dispatch(setIsScaningPaused({
+        isScaningPaused: true,
+      }))
       setTimeout(() => {
-        setIsPaused(false);
+        dispatch(setIsScaningPaused({
+          isScaningPaused: false,
+        }))
       }, 10000);
     },
     onError: (error) => {
       console.log(error);
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
     }
   })
 
@@ -95,8 +128,8 @@ export default function FaceAttendance() {
 
     async function addEvent() {
       //load the model
-      const trainedFaceMatcherJson = await axiosBase.get(`/public/train-model/FaceMatcher.json`);
-      const faceMatcher = faceapi.FaceMatcher.fromJSON(trainedFaceMatcherJson.data);
+      const FaceMatcherJson = await axiosBase.get(`/public/train-model/FaceMatcher.json`);
+      const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
 
       const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
@@ -122,21 +155,25 @@ export default function FaceAttendance() {
               label: faceDetected
             });
 
-            if (!isPaused) {
+            if (!isScaningPaused) {
               faceDetectArray.push(faceDetected.label);
               console.log(faceDetectArray);
               if (faceDetectArray.length >= 3) {
-                const data = {
-                  employeeId: Helper.findMostDuplicatedValue(faceDetectArray),
-                  attendanceType: "FACE",
+                //if the case isn't "unknown"
+                const highestFaceValue = Helper.findMostDuplicatedValue(faceDetectArray);
+                if (highestFaceValue !== "unknown") {
+                  dispatch(setIsScaningPaused({
+                    isScaningPaused: true,
+                  }))
+                  dispatch(setAttendanceModalProps({
+                    isModalOpen: true,
+                    employeeId: highestFaceValue
+                  }))
                 }
-                //Xử lý data
-                useTakeAttendance.mutate(data);
 
                 faceDetectArray.splice(0, faceDetectArray.length);
               }
             }
-
             drawBox.draw(canvas);
           }
         }
@@ -144,18 +181,22 @@ export default function FaceAttendance() {
 
       intervalRef.current = setInterval(realtimeFaceRegconition, 1000);
     }
-
-    // loadingModels().then(async () => {
-    // });
     addEvent();
 
     return () => {
       clearInterval(intervalRef.current);
-      // if (streamObj) {
-      //   streamObj.getTracks().forEach(track => track.stop());
-      // }
     };
-  }, [isPaused])
+  }, [isScaningPaused])
+
+  useEffect(() => {
+    if (isTakeAttendance) {
+      const data = {
+        employeeId: employeeId,
+        attendanceType: "FACE",
+      }
+      useTakeAttendance.mutate(data);
+    }
+  }, [isTakeAttendance]);
 
   useEffect(() => {
     return () => {
@@ -170,6 +211,7 @@ export default function FaceAttendance() {
       <div className="template">
         <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video>
       </div>
+      <AttendanceModal />
     </>
   );
 }
