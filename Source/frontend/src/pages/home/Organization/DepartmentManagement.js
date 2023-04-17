@@ -19,6 +19,7 @@ import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
 import { FilterType } from "../../../components/table/DynamicTable";
 import { useMutation, useQueryClient } from "react-query";
+import { Country, State, City } from "country-state-city";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   createDepartmentService,
@@ -28,7 +29,7 @@ import {
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
 import { useGetListOrganization } from "../../../services/organization/organization";
-function Department() {
+function DepartmentManagement() {
   const resultPermission = useGetPermission(
     permissionDepartmentGeneral,
     "department-management"
@@ -175,13 +176,15 @@ function Department() {
     onAddEditClose();
     setEditData({});
   };
-
   const matchingOrganizationName = (organizationId) => {
     if (listOrganizationArray?.length > 0) {
       let result = listOrganizationArray.find(
         (item) => item.value == organizationId
       );
-      return result.label;
+      if (result) {
+        return result.label;
+      }
+      return "";
     }
   };
   const tableRowAction = [
@@ -216,7 +219,7 @@ function Department() {
         },
         haveSort: true,
 
-        cellWidth: "250px",
+        cellWidth: "200px",
       },
       {
         Header: "Org.Name",
@@ -225,6 +228,7 @@ function Department() {
           filterType: FilterType.Default,
         },
         Cell: ({ value }) => <span>{matchingOrganizationName(value)}</span>,
+        cellWidth: "200px",
         haveSort: true,
       },
       {
@@ -239,6 +243,18 @@ function Department() {
       {
         Header: "State",
         accessor: "location.state",
+        Cell: ({ row, value }) => {
+          return (
+            <span>
+              {
+                State?.getStateByCodeAndCountry(
+                  row.values["location.state"],
+                  row.values["location.country"]
+                )?.name
+              }
+            </span>
+          );
+        },
         cellWidth: "150px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -248,6 +264,13 @@ function Department() {
       {
         Header: "Country",
         accessor: "location.country",
+        Cell: ({ row, value }) => {
+          return (
+            <span>
+              {Country?.getCountryByCode(row.values["location.country"])?.name}
+            </span>
+          );
+        },
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -313,15 +336,13 @@ function Department() {
     organization: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
   });
-  if (isLoadingListDepartment && isLoadingListOrganization)
-    return <LoadingSpinner />;
+  if (isLoadingListDepartment) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
-
       <Box marginTop="10px">
         <DynamicTable
           onAddEditOpen={onAddEditOpen}
@@ -356,4 +377,4 @@ function Department() {
   );
 }
 
-export default Department;
+export default DepartmentManagement;

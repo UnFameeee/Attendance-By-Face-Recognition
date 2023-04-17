@@ -132,7 +132,9 @@ function DynamicTable(props) {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <Flex gap="5px">
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              {permission?.delete && (
+                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              )}
               <Text color="white" fontWeight="normal" fontSize="1.2rem">
                 Action
               </Text>
@@ -140,10 +142,12 @@ function DynamicTable(props) {
           ),
           Cell: ({ row }) => (
             <HStack>
-              <IndeterminateCheckbox
-                {...row.getToggleRowSelectedProps()}
-                type="checkbox"
-              />
+              {permission?.delete && (
+                <IndeterminateCheckbox
+                  {...row.getToggleRowSelectedProps()}
+                  type="checkbox"
+                />
+              )}
               <Box>
                 <Menu>
                   <Tooltip
@@ -286,7 +290,7 @@ function DynamicTable(props) {
     });
   }, [pageSize]);
   useEffect(() => {
-    console.log("paging obj", pagingObject);
+    // console.log("paging obj", pagingObject);
   }, [pagingObject]);
 
   return (

@@ -44,6 +44,20 @@ export const saveEmployeeService = async ({ id, employeeObj }) => {
   return response.data;
 };
 
+export const assignEmployeeToDepartmentService = async (assignObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/assignEmployeeToDepartment`,
+    assignObj
+  );
+  return response.data;
+};
+export const assignManagerToDepartmentService = async (assignObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/assignManagerToDepartment`,
+    assignObj
+  );
+  return response.data;
+};
 // export const deleteEmployeeService = async (employeeId) => {
 //   const response = await axiosBase.post(
 //     `${endPoint}/createEmployee`,

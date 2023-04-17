@@ -11,7 +11,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import * as Yup from "yup";
 import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
@@ -42,7 +41,7 @@ import { useGetPermission } from "../../../hook/useGetPermission";
 import { Helper } from "../../../Utils/Helper";
 import { passwordRegex } from "../../../Utils/ValidationRegExp";
 
-function EmployeesGeneral() {
+function EmployeesManagement() {
   const resultPermission = useGetPermission(
     permissionEmployeeGeneral,
     "employee-management"
@@ -260,7 +259,7 @@ function EmployeesGeneral() {
       },
       {
         Header: "Department",
-        accessor: "department",
+        accessor: "department.departmentName",
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -366,6 +365,12 @@ function EmployeesGeneral() {
       ],
     },
     {
+      name: "department",
+      label: "Department",
+      placeholder: "---",
+      isReadOnly:true,
+    },
+    {
       name: "phoneNumber",
       label: "Phone",
       type: "type",
@@ -421,6 +426,7 @@ function EmployeesGeneral() {
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
     password: editData?.password ?? "",
     displayName: editData?.["role.displayName"] ?? "",
+    department: editData?.["department.departmentName"] ?? "",
     gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth
@@ -520,4 +526,4 @@ function EmployeesGeneral() {
   );
 }
 
-export default EmployeesGeneral;
+export default EmployeesManagement;

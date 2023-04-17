@@ -2,15 +2,14 @@ import {
   MdOutlineMonitor,
   MdPayments,
   MdWork,
-  MdTouchApp
+  MdTouchApp,
+  MdAssignmentInd,
 } from "react-icons/md";
 import { TbReportMoney,TbFaceId } from "react-icons/tb";
 import { AiTwotoneSetting } from "react-icons/ai";
 import {
   FaHouseUser,
-  FaUserAstronaut,
   FaUserClock,
-  FaUserGraduate,
 } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { SiMagento } from "react-icons/si";
@@ -41,14 +40,14 @@ export const SideBarData = [
         icon: <SiMagento fontSize={iconSize} />,
       },
       {
-        title: "Location",
-        url: "location",
-        icon: <SlLocationPin fontSize={iconSize} />,
+        title: "Department",
+        url: "department-management",
+        icon: <HiBuildingOffice2 fontSize={iconSize} />,
       },
       {
-        title: "Department",
-        url: "department",
-        icon: <HiBuildingOffice2 fontSize={iconSize} />,
+        title: "Assigning",
+        url: "assign-department",
+        icon: <MdAssignmentInd fontSize={iconSize} />,
       },
     ],
   },
@@ -59,7 +58,7 @@ export const SideBarData = [
     children: [
       {
         title: "General",
-        url: "general-employees",
+        url: "employees-management",
         icon: <SiMagento fontSize={iconSize} />,
       },
       {

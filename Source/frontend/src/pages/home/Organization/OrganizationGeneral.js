@@ -6,38 +6,18 @@ import {
   Heading,
   Stack,
   Text,
-  Icon,
-  Textarea,
-  Image,
   HStack,
   Button,
-  ButtonGroup,
-  Spinner,
-  Center,
   useToast,
   Tooltip,
   Hide,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
-import { Field, Formik } from "formik";
-import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
-import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
-import { MdOutlineAlternateEmail } from "react-icons/md";
-import {
-  BsCheckCircleFill,
-  BsTelephone,
-  BsCalendar2Date,
-  BsFillMapFill,
-} from "react-icons/bs";
-import { RiFolderUserLine } from "react-icons/ri";
-import { AiOutlineCloudUpload } from "react-icons/ai";
-import { GiModernCity } from "react-icons/gi";
+import { Formik } from "formik";
 import { SlOrganization } from "react-icons/sl";
-import { TfiWorld } from "react-icons/tfi";
 import FormTextField from "../../../components/field/FormTextField";
 import {
   createOrganizationDetail,
-  getOrganizationDetail,
   saveOrganizationDetail,
   useGetOrganizationDetail,
 } from "../../../services/organization/organization";
@@ -144,7 +124,7 @@ function OrganizationGeneral() {
             <Stack as="form" onSubmit={formik.handleSubmit}>
               <Flex
                 justifyContent="space-between"
-                gap='10px'
+                gap="10px"
                 flexDirection={{
                   base: "column",
                   sm: "row",
