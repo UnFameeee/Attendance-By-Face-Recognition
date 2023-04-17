@@ -11,26 +11,20 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
-
 import * as Yup from "yup";
-import { IoImageOutline } from "react-icons/io5";
 import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
-import { MdOutlineAlternateEmail } from "react-icons/md";
-import { RiFolderUserLine } from "react-icons/ri";
-import { BsTelephone } from "react-icons/bs";
-import { HiBuildingOffice2 } from "react-icons/hi2";
-import PieChart from "../../../components/chart/PieChart";
-import ColumnChart from "../../../components/chart/ColumnChart";
 import DynamicTable from "../../../components/table/DynamicTable";
-import { dumbTableData, roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
 import { FilterType } from "../../../components/table/DynamicTable";
-import { useQueryClient } from "react-query";
-import { useGetListEmployee } from "../../../services/employee/employee";
+import { useMutation, useQueryClient } from "react-query";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { useGetListDepartment } from "../../../services/organization/department";
+import {
+  createDepartmentService,
+  saveDepartmentService,
+  useGetListDepartment,
+} from "../../../services/organization/department";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
 import { useGetListOrganization } from "../../../services/organization/organization";
@@ -39,11 +33,94 @@ function Department() {
     permissionDepartmentGeneral,
     "department-management"
   );
+  const toast = useToast();
+  const queryClient = useQueryClient();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
-  const { data: dataListDepartment, isLoading: isLoadingListDepartment, isError, error } = useGetListDepartment();
-  const { data: dataListOrganization, isLoading:isLoadingListOrganization } = useGetListOrganization();
-
+  const {
+    data: dataListDepartment,
+    isLoading: isLoadingListDepartment,
+    isError,
+    error,
+  } = useGetListDepartment();
+  const { data: dataListOrganization, isLoading: isLoadingListOrganization } =
+    useGetListOrganization();
+  let listOrganizationArray = React.useMemo(() => {
+    if (dataListOrganization?.result?.length > 0) {
+      let tempArray = [];
+      dataListOrganization?.result?.map((item) => {
+        tempArray.push({
+          label: item.organizationName,
+          value: item.organizationId,
+        });
+      });
+      return tempArray;
+    }
+  });
+  const useCreateDepartment = useMutation(createDepartmentService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listDepartment");
+        toast({
+          title: "Create Department successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  const useSaveDepartment = useMutation(saveDepartmentService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listDepartment");
+        toast({
+          title: "Save Department successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -70,18 +147,67 @@ function Department() {
     onAddEditOpen();
     setEditData(row);
   };
+  const convertDepartmentObject = (values) => {
+    let departmentLocation = values["location"];
+    let organizationId = values["organization"];
+    departmentLocation["address"] = values["address"];
+    delete values["address"];
+    delete values["location"];
+    const departmentObj = {
+      ...values,
+      ["location"]: { ...departmentLocation },
+      ["organization"]: { organizationId },
+    };
+    return departmentObj;
+  };
+  const handleCreateDepartment = (values) => {
+    const departmentObj = convertDepartmentObject(values);
+    useCreateDepartment.mutate(departmentObj);
+    closeDrawer();
+  };
+  const handleEditDepartment = (values) => {
+    const id = editData.departmentId;
+    const departmentObj = convertDepartmentObject(values);
+    useSaveDepartment.mutate({ id, departmentObj });
+    closeDrawer();
+  };
+  const closeDrawer = () => {
+    onAddEditClose();
+    setEditData({});
+  };
+
+  const matchingOrganizationName = (organizationId) => {
+    if (listOrganizationArray?.length > 0) {
+      let result = listOrganizationArray.find(
+        (item) => item.value == organizationId
+      );
+      return result.label;
+    }
+  };
   const tableRowAction = [
     {
       actionName: "Edit",
       func: Edit,
+      isDisabled: resultPermission?.update,
     },
     {
       actionName: "Delete",
       func: Delete,
+      isDisabled: resultPermission?.delete,
     },
   ];
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Id",
+        accessor: "departmentId",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+        hidden: true,
+      },
       {
         Header: "Dep.Name",
         accessor: "departmentName",
@@ -89,14 +215,16 @@ function Department() {
           filterType: FilterType.Text,
         },
         haveSort: true,
+
         cellWidth: "250px",
       },
       {
         Header: "Org.Name",
-        accessor: "organization.organizationName",
+        accessor: "organization.organizationId",
         haveFilter: {
           filterType: FilterType.Default,
         },
+        Cell: ({ value }) => <span>{matchingOrganizationName(value)}</span>,
         haveSort: true,
       },
       {
@@ -146,28 +274,15 @@ function Department() {
       leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
     },
     {
-      name: "organization.organizationName",
-      label: "Organization Name",
-      placeholder: "Enter your Organization Name",
-      leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
+      name: "organization",
+      label: "Organization",
+      placeholder: "---",
+      isSelectionField: true,
+      selectionArray: listOrganizationArray ? [...listOrganizationArray] : [],
     },
     {
-      name: "city",
-      label: "City",
-      height: "150px",
-      placeholder: "Enter your city",
-    },
-    {
-      name: "state",
-      label: "State",
-      height: "150px",
-      placeholder: "Enter your state",
-    },
-    {
-      name: "country",
-      label: "Country",
-      height: "150px",
-      placeholder: "Enter your country",
+      name: "location",
+      isAddress: true,
     },
     {
       isTextAreaField: true,
@@ -179,29 +294,27 @@ function Department() {
   ];
   const initialValues = {
     departmentName: `${editData.departmentName ? editData.departmentName : ""}`,
-    organizationName: `${
-      editData["organization.organizationName"]
-        ? editData["organization.organizationName"]
+    organization: `${
+      editData["organization.organizationId"]
+        ? editData["organization.organizationId"]
         : ""
     }`,
-    city: `${editData["location.city"] ? editData["location.city"] : ""}`,
-    state: `${editData["location.state"] ? editData["location.state"] : ""}`,
-    country: `${
-      editData["location.country"] ? editData["location.country"] : ""
-    }`,
+    location: {
+      country: `${editData["location.country"] ?? ""}`,
+      state: `${editData["location.state"] ?? ""}`,
+      city: `${editData["location.city"] ?? ""}`,
+    },
     address: `${
       editData["location.address"] ? editData["location.address"] : ""
     }`,
   };
   const validationSchema = Yup.object().shape({
     departmentName: Yup.string().required("This field is required"),
-    organizationName: Yup.string().required("This field is required"),
-    city: Yup.string().required("This field is required"),
-    state: Yup.string().required("This field is required"),
-    country: Yup.string().required("This field is required"),
+    organization: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
   });
-  if (isLoadingListDepartment && isLoadingListOrganization) return <LoadingSpinner />;
+  if (isLoadingListDepartment && isLoadingListOrganization)
+    return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -219,6 +332,8 @@ function Department() {
           permission={resultPermission}
         />
         <DynamicDrawer
+          handleEdit={handleEditDepartment}
+          handleCreate={handleCreateDepartment}
           isAddEditOpen={isAddEditOpen}
           onAddEditClose={onAddEditClose}
           editData={editData}
@@ -234,7 +349,9 @@ function Department() {
           onAccept={handleAcceptDelete}
         />
       </Box>
-      {dataListDepartment?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
+      {dataListDepartment?.result?.data.length == 0 && (
+        <NoDataToDisplay h="450px" />
+      )}
     </Stack>
   );
 }

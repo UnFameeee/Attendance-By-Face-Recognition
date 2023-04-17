@@ -47,7 +47,6 @@ function EmployeesGeneral() {
     permissionEmployeeGeneral,
     "employee-management"
   );
-  const screenPadding = "2rem";
   const toast = useToast();
   const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useGetListEmployee();
@@ -175,7 +174,6 @@ function EmployeesGeneral() {
       isDisabled: resultPermission?.delete,
     },
   ];
-  const tableData = React.useMemo(() => dumbTableData);
   const columns = React.useMemo(
     () => [
       {
@@ -327,23 +325,6 @@ function EmployeesGeneral() {
     ],
     []
   );
-  const roleArray = [
-    {
-      label: "Project Manager",
-      value: "Project Manager",
-    },
-    { label: "Estimator", value: "Estimator" },
-    { label: "Electrician", value: "Electrician" },
-    {
-      label: "Construction Worker",
-      value: "Construction Worker",
-    },
-    {
-      label: "Construction Manager",
-      value: "Construction Manager",
-    },
-    { label: "Engineer", value: "Engineer" },
-  ];
   const drawerFieldData = [
     {
       name: "fullname",
@@ -459,6 +440,7 @@ function EmployeesGeneral() {
       ? {
           fullname: Yup.string().required("This field is required"),
           email: Yup.string().required("This field is required"),
+          displayName:Yup.string().required("This field is required"),
           password: Yup.string()
             .matches(
               passwordRegex,

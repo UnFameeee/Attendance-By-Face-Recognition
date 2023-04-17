@@ -63,15 +63,17 @@ export default function Day({ day, rowIdx, listWorkShift }) {
           <p className="text-sm mt-1">{day.format("ddd").toUpperCase()}</p>
         )}
         <p
-          className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}  ${checkIfDayInSameMonth() ? "" : "text-gray-300"
-            }`}
+          className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}  ${
+            checkIfDayInSameMonth() ? "" : "text-gray-300"
+          }`}
         >
           {day.format("DD")}
         </p>
       </header>
       <div
-        className={`flex-1 ${checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"
-          } `}
+        className={`flex-1 ${
+          checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"
+        } `}
         onClick={() => {
           if (checkIfDayInSameMonth()) {
             setDaySelected(day);
@@ -83,9 +85,11 @@ export default function Day({ day, rowIdx, listWorkShift }) {
           <div
             key={idx}
             onClick={() => setSelectedEvent(evt)}
-            className={`${evt.label
-              } p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate ${idx == dayEvents.length - 1 ? "mb-5" : ""
-              }`}
+            className={`${
+              evt.label
+            } p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate ${
+              idx == dayEvents.length - 1 ? "mb-5" : ""
+            }`}
           >
             {evt.title ? evt.title : "Unknown"}
           </div>
@@ -93,6 +97,7 @@ export default function Day({ day, rowIdx, listWorkShift }) {
         {isShiftDay?.length > 0 &&
           isShiftDay.map((item) => (
             <div
+              key={item?.shiftId}
               // onClick={() => setSelectedEvent(evt)}
               className={` p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate `}
             >
