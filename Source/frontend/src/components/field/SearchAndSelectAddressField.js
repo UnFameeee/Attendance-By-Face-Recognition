@@ -21,7 +21,6 @@ const debouncedSearch = _.debounce((query, callback) => {
 function SearchAndSelectAddressField({ name, onChange, onBlur,...props}) {
 
   const [options, setOptions] = useState([]);
-  console.log(props)
   const handleInputChange = (inputValue) => {
     if (inputValue.length < 3) {
       setOptions([]);

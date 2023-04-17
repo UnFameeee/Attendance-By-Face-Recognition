@@ -132,7 +132,9 @@ function DynamicTable(props) {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <Flex gap="5px">
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              {permission?.delete && (
+                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              )}
               <Text color="white" fontWeight="normal" fontSize="1.2rem">
                 Action
               </Text>
@@ -140,10 +142,12 @@ function DynamicTable(props) {
           ),
           Cell: ({ row }) => (
             <HStack>
-              <IndeterminateCheckbox
-                {...row.getToggleRowSelectedProps()}
-                type="checkbox"
-              />
+              {permission?.delete && (
+                <IndeterminateCheckbox
+                  {...row.getToggleRowSelectedProps()}
+                  type="checkbox"
+                />
+              )}
               <Box>
                 <Menu>
                   <Tooltip
@@ -286,7 +290,7 @@ function DynamicTable(props) {
     });
   }, [pageSize]);
   useEffect(() => {
-    console.log("paging obj", pagingObject);
+    // console.log("paging obj", pagingObject);
   }, [pagingObject]);
 
   return (
@@ -462,6 +466,7 @@ function DynamicTable(props) {
                             fontSize="lg"
                             color="white"
                             {...column?.getHeaderProps()}
+                            display={column?.hidden ? "none" : "undefine"}
                           >
                             <Flex alignItems="center" gap="5px">
                               {column?.haveFilter && (
@@ -614,7 +619,12 @@ function DynamicTable(props) {
                       >
                         {row?.cells?.map((cell) => {
                           return (
-                            <Td {...cell?.getCellProps()}>
+                            <Td
+                              {...cell?.getCellProps()}
+                              display={
+                                cell?.column?.hidden ? "none" : "undefine"
+                              }
+                            >
                               {cell.column.type == "date" ? (
                                 <Box
                                   width={

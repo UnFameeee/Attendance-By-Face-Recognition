@@ -24,15 +24,15 @@ import Profile from "./pages/home/Setting/Profile";
 import ScrollToTop from "./components/ScrollToTop";
 import PrivateRoutes from "./Utils/PrivateRoutes";
 import { GlobalHistory } from "./Utils/GlobalHistory";
-import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
+import EmployeesManagement from "./pages/home/Employees/EmployeesManagement";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
-import UploadFace from "./pages/home/Attendance/UploadFace";
-import Department from "./pages/home/Organization/Department";
+import DepartmentManagement from "./pages/home/Organization/DepartmentManagement";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
 import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
 import WorkShift from "./pages/home/WorkShift/WorkShift";
 import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
+import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -77,13 +77,19 @@ root.render(
                         path="general-organization"
                         element={<OrganizationGeneral />}
                       />
-                      <Route path="location" element={<Test />} />
-                      <Route path="department" element={<Department />} />
+                      <Route
+                        path="department-management"
+                        element={<DepartmentManagement />}
+                      />
+                      <Route
+                        path="assign-department"
+                        element={<AssignDepartmentManagement />}
+                      />
                     </Route>
                     <Route path="employees">
                       <Route
-                        path="general-employees"
-                        element={<EmployeesGeneral />}
+                        path="employees-management"
+                        element={<EmployeesManagement />}
                       />
                       <Route path="work-experience" element={<Test />} />
                     </Route>
@@ -96,8 +102,14 @@ root.render(
                     <Route path="report" element={<Test />} />
                     <Route path="leave-request" element={<LeaveRequest />} />
                     <Route path="attendance">
-                      <Route path="face-attendance" element={<FaceAttendance />} />
-                      <Route path="attendance-management" element={<AttendanceManagement />} />
+                      <Route
+                        path="face-attendance"
+                        element={<FaceAttendance />}
+                      />
+                      <Route
+                        path="attendance-management"
+                        element={<AttendanceManagement />}
+                      />
                     </Route>
                     <Route path="setting">
                       <Route path="profile" element={<Profile />} />

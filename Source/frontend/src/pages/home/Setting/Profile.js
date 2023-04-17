@@ -83,7 +83,7 @@ function Profile() {
 
   const useSaveProfileDetail = useMutation(saveProfileDetail, {
     onSuccess: (data) => {
-      const { result } = data;
+      const { result, message } = data;
       queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
       toast({
         title: "Save profile detail successfully",
@@ -153,14 +153,13 @@ function Profile() {
           .toISOString()
           .substring(0, 10)
       : "",
-    megaAddress: {
+    location: {
       country: profileDetailData?.result?.location?.country ?? "",
       state: profileDetailData?.result?.location?.state ?? "",
       city: profileDetailData?.result?.location?.city ?? "",
     },
     address: profileDetailData?.result?.location?.address ?? "",
     department: profileDetailData?.result?.department ?? "",
-    joiningDate: profileDetailData?.result?.joiningDate ?? "",
     role: profileDetailData?.result?.role?.displayName ?? "",
   };
   const validationSchema = Yup.object().shape({
@@ -168,7 +167,9 @@ function Profile() {
     fullname: Yup.string().required("This field is required"),
     email: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
-    dateOfBirth: Yup.date().max(new Date(),"Your birth date is invalid").required("This field is required"),
+    dateOfBirth: Yup.date()
+      .max(new Date(), "Your birth date is invalid")
+      .required("This field is required"),
   });
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
@@ -201,12 +202,12 @@ function Profile() {
                   email: values?.email,
                   gender: values?.gender,
                   dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
-                  phoneNumber: 1231231231,
+                  phoneNumber: values?.phone,
                   location: {
                     address: values?.address,
-                    city: values?.megaAddress?.city ?? "",
-                    country: values?.megaAddress?.country ?? "",
-                    state: values?.megaAddress?.state ?? "",
+                    city: values?.location?.city ?? "",
+                    country: values?.location?.country ?? "",
+                    state: values?.location?.state ?? "",
                   },
                 };
                 const profileDetailObj = {
@@ -226,7 +227,7 @@ function Profile() {
                     as="form"
                     onSubmit={formik.handleSubmit}
                   >
-                    <Flex p={4} px={8} pos="relative" alignItems='center'>
+                    <Flex p={4} px={8} pos="relative" alignItems="center">
                       <Heading flex="1" fontSize="xl">
                         Personal Information
                       </Heading>
@@ -267,17 +268,25 @@ function Profile() {
                         }
                         isDisabled={!resultPermission?.update}
                       />
-                      <FormTextField
-                        name="gender"
-                        isGender={true}
-                        label="Gender"
-                        arrayGender={[
-                          { label: "Male", value: "male" },
-                          { label: "Female", value: "female" },
-                        ]}
-                        formik={formik}
-                        isDisabled={!resultPermission?.update}
-                      />
+                      <Flex gap={8}>
+                        <FormTextField
+                          name="dateOfBirth"
+                          isDateField={true}
+                          label="Birth Date"
+                          isDisabled={!resultPermission?.update}
+                        />
+                        <FormTextField
+                          name="gender"
+                          isGender={true}
+                          label="Gender"
+                          arrayGender={[
+                            { label: "Male", value: "male" },
+                            { label: "Female", value: "female" },
+                          ]}
+                          formik={formik}
+                          isDisabled={!resultPermission?.update}
+                        />
+                      </Flex>
                       <Flex gap={8}>
                         <FormTextField
                           name="department"
@@ -294,12 +303,12 @@ function Profile() {
                           isDisabled={!resultPermission?.update}
                         />
                         <FormTextField
-                          name="location"
-                          label="Work Location"
+                          name="role"
+                          label="Role"
+                          isReadOnly={true}
                           type="text"
-                          placeholder="148Primas"
                           leftIcon={
-                            <GiOfficeChair color="#999" fontSize="1.5rem" />
+                            <RiFolderUserLine color="#999" fontSize="1.5rem" />
                           }
                           isDisabled={!resultPermission?.update}
                         />
@@ -307,7 +316,7 @@ function Profile() {
                       <FormTextField
                         name="phone"
                         label="Phone number"
-                        type="number"
+                        type="text"
                         placeholder="Enter your number"
                         leftIcon={
                           <BsTelephone color="#999" fontSize="1.4rem" />
@@ -316,36 +325,7 @@ function Profile() {
                       />
 
                       <FormTextField
-                        name="role"
-                        label="Role"
-                        isReadOnly={true}
-                        type="text"
-                        leftIcon={
-                          <RiFolderUserLine color="#999" fontSize="1.5rem" />
-                        }
-                        isDisabled={!resultPermission?.update}
-                      />
-                      <Flex gap={8}>
-                        <FormTextField
-                          name="joiningDate"
-                          label="Joining Date"
-                          type="text"
-                          isReadOnly={true}
-                          placeholder="2/23/2023"
-                          leftIcon={
-                            <BsCalendar2Date color="#999" fontSize="1.5rem" />
-                          }
-                          isDisabled={!resultPermission?.update}
-                        />
-                        <FormTextField
-                          name="dateOfBirth"
-                          isDateField={true}
-                          label="Birth Date"
-                          isDisabled={!resultPermission?.update}
-                        />
-                      </Flex>
-                      <FormTextField
-                        name="megaAddress"
+                        name="location"
                         isAddress={true}
                         formik={formik}
                         isDisabled={!resultPermission?.update}

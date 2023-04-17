@@ -16,3 +16,18 @@ export const useGetListDepartment = () => {
     retry: 1,
   });
 };
+export const createDepartmentService = async (departmentObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/createDepartment`,
+    departmentObj
+  );
+  return response.data;
+};
+
+export const saveDepartmentService = async ({ id, departmentObj }) => {
+  const response = await axiosBase.post(
+    `${endPoint}/updateDepartmentDetail/${id}`,
+    departmentObj
+  );
+  return response.data;
+};

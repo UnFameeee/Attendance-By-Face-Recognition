@@ -11,13 +11,15 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import * as Yup from "yup";
-import { IoImageOutline } from "react-icons/io5";
 import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { RiFolderUserLine } from "react-icons/ri";
-import { BsTelephone } from "react-icons/bs";
+import {
+  BsTelephone,
+  BsFillShieldLockFill,
+  BsEyeFill,
+  BsEyeSlashFill,
+} from "react-icons/bs";
 import PieChart from "../../../components/chart/PieChart";
 import ColumnChart from "../../../components/chart/ColumnChart";
 import DynamicTable from "../../../components/table/DynamicTable";
@@ -26,15 +28,24 @@ import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
 import { FilterType } from "../../../components/table/DynamicTable";
-import { useQueryClient } from "react-query";
-import { useGetListEmployee } from "../../../services/employee/employee";
+import { useMutation, useQueryClient } from "react-query";
+import {
+  createEmployeeService,
+  saveEmployeeService,
+  useGetListEmployee,
+} from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Country, State, City } from "country-state-city";
 import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
-function EmployeesGeneral() {
-  const resultPermission = useGetPermission(permissionEmployeeGeneral,"employee-management")
-  const screenPadding = "2rem";
+import { Helper } from "../../../Utils/Helper";
+import { passwordRegex } from "../../../Utils/ValidationRegExp";
+
+function EmployeesManagement() {
+  const resultPermission = useGetPermission(
+    permissionEmployeeGeneral,
+    "employee-management"
+  );
   const toast = useToast();
   const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useGetListEmployee();
@@ -53,18 +64,97 @@ function EmployeesGeneral() {
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
-  const Delete = (row, action) => {
+  const useCreateEmployee = useMutation(createEmployeeService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listEmployee");
+        toast({
+          title: "Create Employee successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  const useSaveEmployee = useMutation(saveEmployeeService, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("listEmployee");
+      toast({
+        title: "Save Employee successfully",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  const handleEditEmployee = (values) => {
+    const id = editData.id;
+    const employeeObj = {
+      ...values,
+      ["dateOfBirth"]: values?.dateOfBirth
+        ? new Date(values?.dateOfBirth).toISOString()
+        : null,
+    };
+    useSaveEmployee.mutate({ id, employeeObj });
+    closeDrawer();
+  };
+  const handleCreateEmployee = (values) => {
+    const employeeObj = {
+      ...values,
+      ["dateOfBirth"]: values?.dateOfBirth
+        ? new Date(values?.dateOfBirth).toISOString()
+        : null,
+    };
+    useCreateEmployee.mutate(employeeObj);
+    closeDrawer();
+  };
+  const editEmployee = (row, action) => {
+    onAddEditOpen();
+    setEditData(row);
+  };
+  const deleteEmployee = (row, action) => {
     setDeleteSingleData(row);
     onDeleteSingleOpen();
   };
+
   const handleAcceptDelete = () => {
     console.log(deleteSingleData);
     setDeleteSingleData({});
     onDeleteSingleClose();
   };
-  const Edit = (row, action) => {
-    onAddEditOpen();
-    setEditData(row);
+  const closeDrawer = () => {
+    onAddEditClose();
+    setEditData({});
   };
   const matchingItem = (value) => {
     return roleCodeColor.find(
@@ -74,18 +164,27 @@ function EmployeesGeneral() {
   const tableRowAction = [
     {
       actionName: "Edit",
-      func: Edit,
-      isDisabled:resultPermission?.update ,
+      func: editEmployee,
+      isDisabled: resultPermission?.update,
     },
     {
       actionName: "Delete",
-      func: Delete,
-      isDisabled:resultPermission?.delete ,
+      func: deleteEmployee,
+      isDisabled: resultPermission?.delete,
     },
   ];
-  const tableData = React.useMemo(() => dumbTableData);
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Id",
+        accessor: "id",
+        haveFilter: {
+          filterType: FilterType.Text,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+        hidden: true,
+      },
       {
         Header: "Full Name",
         accessor: "fullname",
@@ -113,22 +212,23 @@ function EmployeesGeneral() {
         cellWidth: "150px",
         textAlign: "center",
       },
-      // {
-      //   Header: "Role",
-      //   accessor: "role",
-      //   Cell: ({ value }) => (
-      //     <Badge
-      //       colorScheme={Object.values(matchingItem(value))[0]}
-      //       fontSize="lg"
-      //     >
-      //       {value}
-      //     </Badge>
-      //   ),
-      //   haveFilter: {
-      //     filterType: FilterType.Default,
-      //   },
-      //   haveSort: true,
-      // },
+      {
+        Header: "Role",
+        accessor: "role.displayName",
+        Cell: ({ value }) => (
+          <Badge
+            colorScheme={Object.values(matchingItem(value))[0]}
+            fontSize="lg"
+          >
+            {value}
+          </Badge>
+        ),
+        haveFilter: {
+          filterType: FilterType.Default,
+        },
+        haveSort: true,
+        cellWidth: "150px",
+      },
       {
         Header: "Phone",
         accessor: "phoneNumber",
@@ -159,7 +259,7 @@ function EmployeesGeneral() {
       },
       {
         Header: "Department",
-        accessor: "department",
+        accessor: "department.departmentName",
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -190,7 +290,7 @@ function EmployeesGeneral() {
             </span>
           );
         },
-        cellWidth: "200px",
+        cellWidth: "210px",
         haveFilter: {
           filterType: FilterType.Text,
         },
@@ -224,23 +324,6 @@ function EmployeesGeneral() {
     ],
     []
   );
-  const roleArray = [
-    {
-      label: "Project Manager",
-      value: "Project Manager",
-    },
-    { label: "Estimator", value: "Estimator" },
-    { label: "Electrician", value: "Electrician" },
-    {
-      label: "Construction Worker",
-      value: "Construction Worker",
-    },
-    {
-      label: "Construction Manager",
-      value: "Construction Manager",
-    },
-    { label: "Engineer", value: "Engineer" },
-  ];
   const drawerFieldData = [
     {
       name: "fullname",
@@ -259,14 +342,49 @@ function EmployeesGeneral() {
       label: "Email",
       type: "email",
       placeholder: "abc@gmail.com",
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
+    },
+    {
+      name: "password",
+      label: "Password",
+      placeholder: "Enter your Password",
+      isPassword: "true",
+      leftIcon: <BsFillShieldLockFill color="#999" fontSize="1.5rem" />,
+      rightIcon: <BsEyeFill color="#999" fontSize="1.5rem" />,
+      hideIcon: <BsEyeSlashFill color="#999" fontSize="1.5rem" />,
+    },
+    {
+      name: "displayName",
+      label: "Role",
+      isSelectionField: true,
+      placeholder: "---",
+      selectionArray: [
+        { label: "Employee", value: "Employee" },
+        { label: "Manager", value: "Manager" },
+      ],
+    },
+    {
+      name: "department",
+      label: "Department",
+      placeholder: "---",
+      isReadOnly:true,
     },
     {
       name: "phoneNumber",
       label: "Phone",
-      type: "text",
+      type: "type",
       placeholder: "Enter your number",
       leftIcon: <BsTelephone color="#999" fontSize="1.4rem" />,
+    },
+    {
+      name: "gender",
+      label: "Gender",
+      isGender: true,
+      arrayGender: [
+        { label: "Male", value: "male" },
+        { label: "Female", value: "female" },
+      ],
     },
     {
       name: "dateOfBirth",
@@ -290,14 +408,7 @@ function EmployeesGeneral() {
     //   leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
     // },
     {
-      name: "department",
-      label: "Department",
-      height: "150px",
-      placeholder: "Enter your department",
-    },
-
-    {
-      name: "megaAddress",
+      name: "location",
       isAddress: true,
     },
 
@@ -313,28 +424,45 @@ function EmployeesGeneral() {
     fullname: `${editData?.fullname ?? ""}`,
     email: `${editData?.email ?? ""}`,
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
+    password: editData?.password ?? "",
+    displayName: editData?.["role.displayName"] ?? "",
+    department: editData?.["department.departmentName"] ?? "",
+    gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
     }`,
     description: `${editData?.description ?? ""}`,
-    department: `${editData?.department ?? ""}`,
-    megaAddress: {
+    location: {
       country: `${editData["location.country"] ?? ""}`,
       state: `${editData["location.state"] ?? ""}`,
       city: `${editData["location.city"] ?? ""}`,
     },
     address: `${editData["location.address"] ?? ""}`,
   };
-  const validationSchema = Yup.object().shape({
-    fullname: Yup.string().required("This field is required"),
-    email: Yup.string().required("This field is required"),
-    dateOfBirth: Yup.date().required("This field is required"),
-    description: Yup.string().required("This field is required"),
-    department: Yup.string().required("This field is required"),
-    phoneNumber: Yup.string(),
-  });
+  const validationSchema = Yup.object().shape(
+    Object.keys(editData).length === 0
+      ? {
+          fullname: Yup.string().required("This field is required"),
+          email: Yup.string().required("This field is required"),
+          displayName:Yup.string().required("This field is required"),
+          password: Yup.string()
+            .matches(
+              passwordRegex,
+              "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+            )
+            .required("This field is required"),
+        }
+      : {
+          fullname: Yup.string().required("This field is required"),
+          email: Yup.string().required("This field is required"),
+          password: Yup.string().matches(
+            passwordRegex,
+            "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+          ),
+        }
+  );
   if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
@@ -366,37 +494,36 @@ function EmployeesGeneral() {
           <ColumnChart />
         </Box>
       </Flex>
-      {data?.result?.data.length > 0 ? (
-        <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={data?.result?.data}
-            permission={resultPermission}
-          />
-          <DynamicDrawer
-            isAddEditOpen={isAddEditOpen}
-            onAddEditClose={onAddEditClose}
-            editData={editData}
-            setEditData={setEditData}
-            validationSchema={validationSchema}
-            initialValues={initialValues}
-            drawerFieldData={drawerFieldData}
-          />
-          <ChakraAlertDialog
-            title="Delete Single"
-            isOpen={isDeleteSingleOpen}
-            onClose={onDeleteSingleClose}
-            onAccept={handleAcceptDelete}
-          />
-        </Box>
-      ) : (
-        <NoDataToDisplay />
-      )}
+      <Box marginTop="10px">
+        <DynamicTable
+          onAddEditOpen={onAddEditOpen}
+          handleDeleteRange={DeleteRange}
+          tableRowAction={tableRowAction}
+          columns={columns}
+          data={data?.result?.data}
+          permission={resultPermission}
+        />
+        <DynamicDrawer
+          handleEdit={handleEditEmployee}
+          handleCreate={handleCreateEmployee}
+          isAddEditOpen={isAddEditOpen}
+          onAddEditClose={onAddEditClose}
+          editData={editData}
+          setEditData={setEditData}
+          validationSchema={validationSchema}
+          initialValues={initialValues}
+          drawerFieldData={drawerFieldData}
+        />
+        <ChakraAlertDialog
+          title="Delete Single"
+          isOpen={isDeleteSingleOpen}
+          onClose={onDeleteSingleClose}
+          onAccept={handleAcceptDelete}
+        />
+      </Box>
+      {data?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
     </Stack>
   );
 }
 
-export default EmployeesGeneral;
+export default EmployeesManagement;

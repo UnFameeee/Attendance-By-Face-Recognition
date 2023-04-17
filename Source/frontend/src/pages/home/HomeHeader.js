@@ -37,6 +37,7 @@ import { logout } from "../../services/auth/auth";
 import { setUser } from "../../store/Slice/authSlice";
 import jwtDecode from "jwt-decode";
 import avt_user from "../../assets/ta.jpeg";
+import { Helper } from "../../Utils/Helper";
 
 function HomeHeader() {
   const dispatch = useDispatch();
@@ -75,10 +76,7 @@ function HomeHeader() {
     const refreshToken = cookies.get("jwt_authentication");
     useLogoutMutation.mutate({ accessToken, refreshToken });
   };
-  const accessTokenJSON = localStorage.getItem("accessToken");
-  const accessToken = JSON.parse(accessTokenJSON);
-  var decoded = jwtDecode(accessToken);
-  let userEmail = decoded.email;
+  const userData = Helper.getUseDecodeInfor();
   return (
     <>
       <Show breakpoint="(max-width: 1005px)">
@@ -190,7 +188,7 @@ function HomeHeader() {
                       <Icon as={HiUserCircle} boxSize={8} />
                     )}
                     <Hide below="sm">
-                      <Text fontSize="1.2rem">{userEmail}</Text>
+                      <Text fontSize="1.2rem">{userData.email}</Text>
                     </Hide>
                     <Icon as={MdKeyboardArrowDown} boxSize={8} />
                   </Flex>
