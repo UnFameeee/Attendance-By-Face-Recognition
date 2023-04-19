@@ -9,58 +9,25 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import FormTextField from "../field/FormTextField";
 import { Helper } from "../../Utils/Helper";
-
-const colorCodeList = [
-  "bg-calCo1",
-  "bg-calCo2",
-  "bg-calCo3",
-  "bg-calCo4",
-  "bg-calCo5",
-  "bg-calCo6",
-  "bg-calCo7",
-  "bg-calCo8",
-  "bg-calCo9",
-  "bg-calCo10",
-  "bg-calCo11",
-  "bg-calCo12",
-  "bg-calCo13",
-];
-const colorCodeList2 = [
-  "#845EC2",
-  "#D65DB1",
-  "#FF6F91",
-  "#FF9671",
-  "#FFC75F",
-  "#F9F871",
-  "#008F7A",
-  "#008E9B",
-  "#0081CF",
-  "#C4FCEF",
-  "#FBEAFF",
-  "#F3C5FF",
-  "#FEFEDF",
-];
 export default function EventModal(props) {
-  const { modifyEventHandler, listEmployee, listShift } = props;
-  const { setShowEventModal, daySelected, dispatchCalEvent, selectedEvent } =
-    useContext(GlobalContext);
-
-  const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
-  const [description, setDescription] = useState(
-    selectedEvent ? selectedEvent.description : ""
-  );
-  const [selectedLabel, setSelectedLabel] = useState(
-    selectedEvent
-      ? colorCodeList.find((lbl) => lbl === selectedEvent.label)
-      : colorCodeList[0]
-  );
+  const {
+    modifyEventHandler,
+    listEmployee,
+    listShift,
+  } = props;
+  const {
+    setShowEventModal,
+    daySelected,
+    dispatchCalEvent,
+    selectedEvent,
+    monthIndex,
+  } = useContext(GlobalContext);
   let arrayEmployee = React.useMemo(() => {
     let tempArray = [];
     listEmployee.map((item, index) => {
       tempArray.push({
         label: item.fullname,
         value: item.id,
-        color: colorCodeList2[index % colorCodeList2.length],
       });
     });
     return tempArray;
@@ -76,24 +43,38 @@ export default function EventModal(props) {
     return tempArray;
   });
   const initialValues = {
-    title: "",
-    description: "",
     shiftTypeId: "",
     shiftDate: "",
     employeeId: "",
   };
   const validationSchema = Yup.object().shape({
-    title: Yup.string().required("This field is required"),
     shiftTypeId: Yup.string().required("This field is required"),
     employeeId: Yup.string().required("This field is required"),
   });
-  function handleSubmit() {
+  const matchingEventColor = (data) => {
+    const result = arrayEmployee.find((item) => item.value === data.employeeId);
+    if (result) {
+      return result.color;
+    }
+    return arrayEmployee[0].color;
+  };
+  const matchingEmployeeName = (employeeId) => {
+    const result = arrayEmployee.find((item) => item.value === employeeId);
+    if (result) {
+      return result.label;
+    }
+    return "";
+  };
+  function handleSubmit(eventObj) {
     const calendarEvent = {
-      title,
-      description,
-      label: selectedLabel,
-      day: daySelected.valueOf(),
-      id: selectedEvent ? selectedEvent.id : Date.now(),
+      title: "test",
+      color: matchingEventColor(eventObj),
+      day: eventObj.shiftDate,
+      id: {
+        employeeId: eventObj.employeeId,
+        employeeName: eventObj.employeeName,
+        time: Date.now(),
+      },
     };
 
     if (selectedEvent) {
@@ -109,19 +90,12 @@ export default function EventModal(props) {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values, actions) => {
-        debugger
-        handleSubmit();
-        const currentDate = new Date(
-          Helper.convertTimestampToISO(daySelected.valueOf())
-        );
-        currentDate.setDate(currentDate.getDate() + 1);
         const eventObj = {
-          shiftDate: currentDate.toISOString().substring(0, 10),
-          title: values.title,
+          shiftDate: Helper.getMomentDateFormat(daySelected.valueOf()),
           shiftTypeId: values.shiftTypeId,
-          description: values.description,
           employeeId: values.employeeId,
         };
+        setShowEventModal(false);
         modifyEventHandler(eventObj);
       }}
     >
@@ -160,7 +134,6 @@ export default function EventModal(props) {
               <div className="p-3">
                 <div className="grid grid-cols-1/6 items-end gap-y-7 gap-x-5">
                   <Flex flexDirection="column" gap="10px">
-                    <FormTextField name="title" label="Title" type="text" />
                     <Flex alignItems="center">
                       <Box flex="1" alignItems="center">
                         <span className=" text-gray-400">
@@ -183,14 +156,9 @@ export default function EventModal(props) {
                     name="employeeId"
                     label="Assign To"
                     placeholder="---"
-                    isCustomSelectionField={true}
+                    isSelectionField={true}
                     formik={formik}
                     selectionArray={arrayEmployee}
-                  />
-                  <FormTextField
-                    name="description"
-                    label="Description"
-                    type="text"
                   />
                 </div>
               </div>
@@ -198,7 +166,7 @@ export default function EventModal(props) {
                 <Button
                   type="submit"
                   onClick={formik.handleSubmit}
-                  className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
+                  colorScheme="blue"
                 >
                   Save
                 </Button>

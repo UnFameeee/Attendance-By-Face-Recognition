@@ -24,7 +24,7 @@ function getArrayDateEvents(savedEvents) {
     const formattedDate = `${day}-${month}-${year}`;
     arrayEvent.push(formattedDate);
   });
-  return arrayEvent
+  return arrayEvent;
 }
 function initEvents() {
   const storageEvents = localStorage.getItem("savedEvents");
@@ -44,8 +44,10 @@ export default function ContextWrapper(props) {
     [],
     initEvents
   );
-  const [arrayDateEvents, setArrayDateEvents] = useState(getArrayDateEvents(savedEvents));
-  
+  const [arrayDateEvents, setArrayDateEvents] = useState(
+    getArrayDateEvents(savedEvents)
+  );
+
   const filteredEvents = useMemo(() => {
     return savedEvents.filter((evt) =>
       labels
@@ -57,16 +59,22 @@ export default function ContextWrapper(props) {
 
   useEffect(() => {
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
-    console.log("savedEvent",savedEvents)
-    setArrayDateEvents(getArrayDateEvents(savedEvents))
+    console.log("savedEvent", savedEvents);
+    setArrayDateEvents(getArrayDateEvents(savedEvents));
   }, [savedEvents]);
 
   useEffect(() => {
     setLabels((prevLabels) => {
-      return [...new Set(savedEvents.map((evt) => evt.label))].map((label) => {
-        const currentLabel = prevLabels.find((lbl) => lbl.label === label);
+      return [
+        ...new Set(
+          savedEvents.map((evt) => {
+            return { color: evt.color, title: evt.title, name: evt.id.employeeName, id:evt.id.time };
+          })
+        ),
+      ].map((color) => {
+        const currentLabel = prevLabels.find((lbl) => lbl.color === color);
         return {
-          label,
+          ...color,
           checked: currentLabel ? currentLabel.checked : true,
         };
       });
@@ -86,10 +94,12 @@ export default function ContextWrapper(props) {
   }, [showEventModal]);
 
   function updateLabel(label) {
-    setLabels(labels.map((lbl) => (lbl.label === label.label ? label : lbl)));
+    console.log(labels)
+    console.log(label)
+    setLabels(labels.map((lbl) => (lbl.id === label.id ? label : lbl)));
     // setLabels(labels)
   }
-
+  // console.log("save event",savedEvents)
   return (
     <GlobalContext.Provider
       value={{

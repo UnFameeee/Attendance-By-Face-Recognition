@@ -1,23 +1,7 @@
 
 const defaultTheme = require("tailwindcss/defaultTheme");
 // const labelsClasses = ["indigo", "gray", "green", "blue", "red", "purple"];
-const labelsClasses = [
-  "#845EC2",
-  "#D65DB1",
-  "#FF6F91",
-  "#FF9671",
-  "#FFC75F",
-  "#F9F871",
-  "#008F7A",
-  "#008E9B",
-  "#0081CF",
-  "#C4FCEF",
-  "#FBEAFF",
-  "#F3C5FF",
-  "#FEFEDF",
-];
 module.exports = {
-  important: true,
   // purge: {
   //   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   //   //Because we made a dynamic class with the label we need to add those clases

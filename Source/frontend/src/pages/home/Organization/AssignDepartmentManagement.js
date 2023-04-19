@@ -299,7 +299,7 @@ function AssignDepartmentManagement() {
       : {}
   );
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading && isLoadingListDepartment) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
