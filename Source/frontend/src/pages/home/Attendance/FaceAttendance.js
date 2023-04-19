@@ -123,7 +123,13 @@ export default function FaceAttendance() {
       template.append(canvas);
     }
 
-    const displaySize = { width: 720, height: 560 }
+    // const displaySize = { width: 720, height: 560 }
+    const videoResolution = document.getElementById("video");
+    const resolution = {
+      width: videoResolution.offsetWidth,
+      height: videoResolution.offsetHeight,
+    }
+    const displaySize = resolution;
     faceapi.matchDimensions(canvas, displaySize);
 
     async function addEvent() {
@@ -162,13 +168,13 @@ export default function FaceAttendance() {
                 //if the case isn't "unknown"
                 const highestFaceValue = Helper.findMostDuplicatedValue(faceDetectArray);
                 if (highestFaceValue !== "unknown") {
-                  dispatch(setIsScaningPaused({
-                    isScaningPaused: true,
-                  }))
-                  dispatch(setAttendanceModalProps({
-                    isModalOpen: true,
-                    employeeId: highestFaceValue
-                  }))
+                  // dispatch(setIsScaningPaused({
+                  //   isScaningPaused: true,
+                  // }))
+                  // dispatch(setAttendanceModalProps({
+                  //   isModalOpen: true,
+                  //   employeeId: highestFaceValue
+                  // }))
                 }
 
                 faceDetectArray.splice(0, faceDetectArray.length);

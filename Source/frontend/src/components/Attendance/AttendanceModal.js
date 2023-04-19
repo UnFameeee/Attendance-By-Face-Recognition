@@ -3,17 +3,27 @@ import React, { useEffect, } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsModalOpen } from '../../store/Slice/AttendanceSlice/attendanceModalSlice';
 import { setIsScaningPaused, setIsTakeAttendance } from '../../store/Slice/AttendanceSlice/takeAttendanceSlice';
+import { attendanceService } from '../../services/attendance/attendance';
 
 export default function AttendanceModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isModalOpen, employeeId } = useSelector(state => state.attendanceModal);
   const dispatch = useDispatch();
 
+  const {
+    data,
+    isFetching,
+    onError,
+    error,
+  } = attendanceService.useGetEmployeeDetailById("a7310775-cb79-4391-88a8-3605a8276eb5")
+
   useEffect(() => {
     console.log(employeeId);
     if (isModalOpen) {
-      onOpen();
+      // onOpen();
     }
+    onOpen();
+    console.log(data)
   }, [isModalOpen]);
 
   const closeModal = () => {
@@ -31,6 +41,10 @@ export default function AttendanceModal() {
       isTakeAttendance: true,
     }))
     closeModal();
+  }
+
+  if (isFetching) {
+    return <></>
   }
 
   return (

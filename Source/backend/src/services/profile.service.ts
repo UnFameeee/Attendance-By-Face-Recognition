@@ -18,6 +18,15 @@ export class ProfileService {
       select: {
         id: true,
         fullname: true,
+        employeeImages: {
+          where: {
+            employeeId: employeeId,
+            isPrimary: true,
+          },
+          select: {
+            link: true,
+          }
+        },
         email: true,
         gender: true,
         dateOfBirth: true,

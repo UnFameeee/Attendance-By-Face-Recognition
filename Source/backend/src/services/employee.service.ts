@@ -127,6 +127,15 @@ export class EmployeeService {
       select: {
         id: true,
         fullname: true,
+        employeeImages: {
+          where: {
+            employeeId: employeeId,
+            isPrimary: true,
+          },
+          select: {
+            link: true,
+          }
+        },
         role: {
           select: {
             displayName: true,
