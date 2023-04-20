@@ -5,7 +5,9 @@ import {
   Flex,
   HStack,
   Heading,
+  Highlight,
   Stack,
+  Text,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -15,7 +17,10 @@ import Month from "../../../components/Calendar/Month";
 import GlobalContext from "./context/GlobalContext";
 import EventModal from "../../../components/Calendar/EventModal";
 import { Helper } from "../../../Utils/Helper";
-import { useGetListEmployee } from "../../../services/employee/employee";
+import {
+  getListEmployeeOfDepartment,
+  useGetListEmployee,
+} from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   getWorkShiftOfDepartment,
@@ -24,24 +29,39 @@ import {
   useGetWorkShiftDepartment,
   useGetWorkShiftEmployee,
 } from "../../../services/workshift/workshift";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Field, Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
 import { useGetListDepartment } from "../../../services/organization/department";
 import { unionBy } from "lodash/array";
+import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function WorkShift() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [listWorkShiftDepartment, setListWorkShiftDepartment] = useState([]);
+  const [enableGetListEmployee, setEnableGetListEmployee] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
   const [departmentId, setDepartmentId] = useState();
   const { monthIndex, showEventModal } = useContext(GlobalContext);
-  const { data: listEmployee, isLoading: isLoadingListEmployee } =
-    useGetListEmployee();
+
   const { data: listShiftType, isLoading: isLoadingListShiftType } =
     useGetListShiftType();
   const { data: listDepartmentData, isLoading: isLoadingListDepartment } =
     useGetListDepartment();
+
+  const useGetListEmployee = (departmentId, isEnable = false) => {
+    return useQuery(
+      ["listEmployeeOfDepartment", departmentId],
+      () => getListEmployeeOfDepartment({ departmentId }),
+      {
+        refetchOnWindowFocus: false,
+        retry: 1,
+        enabled: isEnable,
+      }
+    );
+  };
+  const { data: listEmployee, isLoading: isLoadingListEmployee } =
+    useGetListEmployee(departmentId, enableGetListEmployee);
   let listDepartmentArray = React.useMemo(() => {
     if (listDepartmentData?.result?.data?.length > 0) {
       let tempArray = [];
@@ -88,12 +108,23 @@ function WorkShift() {
   });
   const useGetWorkShiftDepartment = useMutation(getWorkShiftOfDepartment, {
     onSuccess: (data) => {
-      setListWorkShiftDepartment((prevList) => {
-        let resultData = [...data?.result];
-        const mergedResult = unionBy(resultData, prevList, "shiftId");
-        queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
-        return mergedResult;
-      });
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        setListWorkShiftDepartment((prevList) => {
+          let resultData = [...data?.result];
+          const mergedResult = unionBy(resultData, prevList, "shiftId");
+          queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
+          return mergedResult;
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -109,16 +140,23 @@ function WorkShift() {
     useModifyWorkShift.mutate(eventObj);
   };
   const refreshListWorkDepartment = () => {
-    useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+    if (departmentId) {
+      useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+    }
   };
   const initialValues = {
     department: "",
   };
   useEffect(() => {
     setCurrentMonth(Helper.getMonth(monthIndex));
-    refreshListWorkDepartment()
+    refreshListWorkDepartment();
   }, [monthIndex]);
-
+  useEffect(() => {
+    setListWorkShiftDepartment([]);
+    if (departmentId) {
+      setEnableGetListEmployee(true);
+    }
+  }, [departmentId]);
   if (
     isLoadingListEmployee &&
     isLoadingListShiftType &&
@@ -127,19 +165,35 @@ function WorkShift() {
     return <LoadingSpinner />;
   return (
     <React.Fragment>
-      <Flex alignItems="center" bg="white" rounded="md" p="5px" mb="10px">
+      <Flex
+        flexDirection={{ base: "column", md: "row" }}
+        alignItems={{ base: "start", md: "center" }}
+        bg="white"
+        rounded="md"
+        p="5px"
+        mb="10px"
+      >
         <Flex flex="1" gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontSize="3xl">Profile Details</Heading>
+          <Heading fontSize="3xl">WorkShift</Heading>
         </Flex>
         <HStack>
-          <Heading fontSize="xl">Department: </Heading>
+          <Heading fontSize="xl">
+            <Highlight
+              query={["Department"]}
+              styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
+            >
+              Department:
+            </Highlight>
+          </Heading>
           <Formik
             initialValues={initialValues}
             onSubmit={(values, actions) => {
               const departmentId = values.department;
               setDepartmentId(departmentId);
-              useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+              if (departmentId) {
+                useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+              }
             }}
           >
             {(formik) => (
@@ -171,15 +225,53 @@ function WorkShift() {
           listEmployee={listEmployee?.result?.data}
           listShift={listShiftType?.result}
           modifyEventHandler={modifyWorkShift}
+          refreshListWorkDepartment={refreshListWorkDepartment}
+          setListWorkShiftDepartment={setListWorkShiftDepartment}
         />
       )}
-      <div className=" min-h-screen flex flex-col p-[10px] bg-white rounded-md">
-        <CalendarHeader />
-        <div className="flex flex-1">
-          {/* <Sidebar /> */}
-          <Month month={currentMonth} listWorkShift={listWorkShiftDepartment} />
+      {departmentId ? (
+        <div className=" min-h-screen flex flex-col p-[10px] bg-white rounded-md">
+          <CalendarHeader />
+          <div className="flex flex-1">
+            {/* <Sidebar /> */}
+            <Month
+              month={currentMonth}
+              listWorkShift={listWorkShiftDepartment}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
+            <Heading
+              fontSize="2xl"
+              fontWeight="medium"
+              textAlign="center"
+              lineHeight="tall"
+            >
+              <Highlight
+                query={["Department"]}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
+              >
+                Please choose a Department
+              </Highlight>
+              <Highlight
+                query={["Submit"]}
+                styles={{
+                  px: "2",
+                  py: "1",
+                  rounded: "full",
+                  bg: "#3182ce",
+                  color: "white",
+                }}
+              >
+                and hit Submit to see the work shift!
+              </Highlight>
+            </Heading>
+          </Box>
+          <NoDataToDisplay />
+        </>
+      )}
     </React.Fragment>
   );
 }

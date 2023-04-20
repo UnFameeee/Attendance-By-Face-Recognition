@@ -108,7 +108,7 @@ export default function Day({ day, rowIdx, listWorkShift }) {
             return (
               <div
                 key={item?.shiftId}
-                // onClick={() => setSelectedEvent(evt)}
+                onClick={() => setSelectedEvent(item)}
                 className={` p-1 mr-3 text-white bg-blue-500 text-sm rounded mb-1 truncate `}
               >
                 {item?.employee?.fullname ?? "Unknown"}

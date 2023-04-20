@@ -16,6 +16,13 @@ export const useGetListEmployee = () => {
     retry: 1,
   });
 };
+export const getListEmployeeOfDepartment = async ({departmentId,paging}) => {
+  var pagingObj;
+  if (paging) pagingObj = paging;
+  else pagingObj = pagingInstance;
+  const response = await axiosBase.post(`${endPoint}/listEmpInDepartment/${departmentId}`, pagingObj);
+  return response.data;
+};
 
 export const getListRoleOfEmployee = async () => {
   const response = await axiosBase.get(`${endPoint}/getListRoleOfEmployee`);

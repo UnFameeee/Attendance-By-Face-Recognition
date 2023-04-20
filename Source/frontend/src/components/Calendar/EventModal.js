@@ -4,16 +4,30 @@ import { RiDeleteBin6Fill, RiCloseCircleFill } from "react-icons/ri";
 import { BsCheckLg } from "react-icons/bs";
 import { GrFormSchedule } from "react-icons/gr";
 import { MdSegment } from "react-icons/md";
-import { Flex, Icon, Input, Box, Button } from "@chakra-ui/react";
+import {
+  Flex,
+  Icon,
+  Input,
+  Box,
+  Button,
+  Text,
+  HStack,
+  useToast,
+} from "@chakra-ui/react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import FormTextField from "../field/FormTextField";
 import { Helper } from "../../Utils/Helper";
+import moment from "moment";
+import { useMutation } from "react-query";
+import { deleteWorkShiftService } from "../../services/workshift/workshift";
 export default function EventModal(props) {
   const {
     modifyEventHandler,
     listEmployee,
     listShift,
+    refreshListWorkDepartment,
+    setListWorkShiftDepartment,
   } = props;
   const {
     setShowEventModal,
@@ -22,9 +36,10 @@ export default function EventModal(props) {
     selectedEvent,
     monthIndex,
   } = useContext(GlobalContext);
+  const toast = useToast();
   let arrayEmployee = React.useMemo(() => {
     let tempArray = [];
-    listEmployee.map((item, index) => {
+    listEmployee?.map((item, index) => {
       tempArray.push({
         label: item.fullname,
         value: item.id,
@@ -34,7 +49,7 @@ export default function EventModal(props) {
   });
   let arrayShift = React.useMemo(() => {
     let tempArray = [];
-    listShift.map((item) => {
+    listShift?.map((item) => {
       tempArray.push({
         label: item.shiftName,
         value: item.shiftTypeId,
@@ -42,49 +57,52 @@ export default function EventModal(props) {
     });
     return tempArray;
   });
+  const useDeleteWorkShift = useMutation(deleteWorkShiftService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        setListWorkShiftDepartment((prevList) =>{
+          const removeSingleArray = prevList.filter((item) => item?.shiftId != selectedEvent?.shiftId)
+          return removeSingleArray
+        })
+        refreshListWorkDepartment();
+        toast({
+          title: "Delete Shift Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
+  console.log("selectedEvent",selectedEvent)
   const initialValues = {
-    shiftTypeId: "",
-    shiftDate: "",
-    employeeId: "",
+    shiftTypeId: selectedEvent?.shiftTypeId ?? "",
+    shiftDate: selectedEvent?.shiftDate ?? "",
+    employeeId: selectedEvent?.employee?.id ?? "",
   };
   const validationSchema = Yup.object().shape({
     shiftTypeId: Yup.string().required("This field is required"),
     employeeId: Yup.string().required("This field is required"),
   });
-  const matchingEventColor = (data) => {
-    const result = arrayEmployee.find((item) => item.value === data.employeeId);
-    if (result) {
-      return result.color;
-    }
-    return arrayEmployee[0].color;
-  };
-  const matchingEmployeeName = (employeeId) => {
-    const result = arrayEmployee.find((item) => item.value === employeeId);
-    if (result) {
-      return result.label;
-    }
-    return "";
-  };
-  function handleSubmit(eventObj) {
-    const calendarEvent = {
-      title: "test",
-      color: matchingEventColor(eventObj),
-      day: eventObj.shiftDate,
-      id: {
-        employeeId: eventObj.employeeId,
-        employeeName: eventObj.employeeName,
-        time: Date.now(),
-      },
-    };
-
-    if (selectedEvent) {
-      dispatchCalEvent({ type: "update", payload: calendarEvent });
-    } else {
-      dispatchCalEvent({ type: "push", payload: calendarEvent });
-    }
-
-    setShowEventModal(false);
-  }
   return (
     <Formik
       initialValues={initialValues}
@@ -95,6 +113,9 @@ export default function EventModal(props) {
           shiftTypeId: values.shiftTypeId,
           employeeId: values.employeeId,
         };
+        if(selectedEvent){
+          eventObj["shiftId"]=selectedEvent?.shiftId
+        }
         setShowEventModal(false);
         modifyEventHandler(eventObj);
       }}
@@ -113,10 +134,8 @@ export default function EventModal(props) {
                   {selectedEvent && (
                     <span
                       onClick={() => {
-                        dispatchCalEvent({
-                          type: "delete",
-                          payload: selectedEvent,
-                        });
+                        const shiftId = selectedEvent?.shiftId
+                        useDeleteWorkShift.mutate(shiftId)
                         setShowEventModal(false);
                       }}
                       className=" text-gray-400 cursor-pointer"
@@ -152,6 +171,32 @@ export default function EventModal(props) {
                       </Box>
                     </Flex>
                   </Flex>
+                  {selectedEvent?.shiftType && (
+                    <HStack>
+                      {selectedEvent?.shiftType?.startTime && (
+                        <Text>
+                          From:{" "}
+                          {selectedEvent?.shiftType?.startTime
+                            ? moment(
+                                selectedEvent?.shiftType?.startTime,
+                                "YYYY-MM-DD"
+                              ).format("hh:mm A")
+                            : ""}
+                        </Text>
+                      )}
+                      {selectedEvent?.shiftType?.endTime && (
+                        <Text>
+                          To:{" "}
+                          {selectedEvent?.shiftType?.endTime
+                            ? moment(
+                                selectedEvent?.shiftType?.endTime,
+                                "YYYY-MM-DD"
+                              ).format("hh:mm A")
+                            : ""}
+                        </Text>
+                      )}
+                    </HStack>
+                  )}
                   <FormTextField
                     name="employeeId"
                     label="Assign To"

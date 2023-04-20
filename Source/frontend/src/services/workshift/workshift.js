@@ -24,38 +24,38 @@ export const modifyWorkShiftService = async (workShiftObj) => {
   return response.data;
 };
 
-export const getWorkShiftOfEmployee = async (employeeId, monthIndex) => {
-  const month = {
-    month: {
-      previousMonth:
-        Math.floor(monthIndex) > 12
-          ? Math.floor(monthIndex) - 12
-          : Math.floor(monthIndex),
-      nextMonth:
-        Math.floor(monthIndex) + 2 > 12
-          ? Math.floor(monthIndex) + 2 - 12
-          : Math.floor(monthIndex) + 2,
-    },
-    year: 2023,
-  };
-  const response = await axiosBase.post(
-    `${baseURL}/workshift/getWorkshiftOfEmployee/${employeeId}`,
-    month
-  );
-  return response.data;
-};
+// export const getWorkShiftOfEmployee = async (employeeId, monthIndex) => {
+//   const month = {
+//     month: {
+//       previousMonth:
+//         Math.floor(monthIndex) > 12
+//           ? Math.floor(monthIndex) - 12
+//           : Math.floor(monthIndex),
+//       nextMonth:
+//         Math.floor(monthIndex) + 2 > 12
+//           ? Math.floor(monthIndex) + 2 - 12
+//           : Math.floor(monthIndex) + 2,
+//     },
+//     year: 2023,
+//   };
+//   const response = await axiosBase.post(
+//     `${baseURL}/workshift/getWorkshiftOfEmployee/${employeeId}`,
+//     month
+//   );
+//   return response.data;
+// };
 
-export const useGetWorkShiftEmployee = (monthIndex) => {
-  const userData = Helper.getUseDecodeInfor();
-  return useQuery(
-    "listWorkShiftOfEmployee",
-    () => getWorkShiftOfEmployee(userData.id, monthIndex),
-    {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    }
-  );
-};
+// export const useGetWorkShiftEmployee = (monthIndex) => {
+//   const userData = Helper.getUseDecodeInfor();
+//   return useQuery(
+//     "listWorkShiftOfEmployee",
+//     () => getWorkShiftOfEmployee(userData.id, monthIndex),
+//     {
+//       refetchOnWindowFocus: false,
+//       retry: 1,
+//     }
+//   );
+// };
 
 export const getWorkShiftOfDepartment = async (data) => {
   const { departmentId, monthIndex } = data;
@@ -91,5 +91,9 @@ export const getWorkShiftOfDepartment = async (data) => {
     `${baseURL}/workshift/getWorkshiftOfDepartment/${departmentId}`,
     month
   );
+  return response.data;
+};
+export const deleteWorkShiftService = async (shiftId) => {
+  const response = await axiosBase.delete(`${baseURL}/workshift/deleteWorkshift/${shiftId}`);
   return response.data;
 };
