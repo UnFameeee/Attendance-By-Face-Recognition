@@ -18,7 +18,7 @@ import { SlOrganization } from "react-icons/sl";
 import { RiUserVoiceFill } from "react-icons/ri";
 import {GoReport} from 'react-icons/go'
 import {IoNotifications} from 'react-icons/io5'
-import {SlLocationPin} from 'react-icons/sl'
+import {BsCalendar3} from 'react-icons/bs'
 import {ImProfile} from 'react-icons/im'
 const iconSize ='23px'
 export const SideBarData = [
@@ -81,7 +81,7 @@ export const SideBarData = [
   {
     title: "Work Shift",
     url: "work-shift",
-    icon: <MdWork fontSize={iconSize} />,
+    icon: <BsCalendar3 fontSize={iconSize} />,
   },
   {
     title: "Notification",

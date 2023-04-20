@@ -13,10 +13,6 @@ import {
   Button,
   Text,
   HStack,
-  IconButton,
-  Checkbox,
-  Avatar,
-  Badge,
   MenuButton,
   MenuList,
   MenuItem,
@@ -26,11 +22,6 @@ import {
   Input,
   Select,
   useDisclosure,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Tooltip,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
@@ -127,7 +118,7 @@ function DynamicTable(props) {
       manualPagination: false,
     },
     (hooks) => {
-      hooks.visibleColumns.push((columns) => [
+      hooks?.visibleColumns?.push((columns) => [
         {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (

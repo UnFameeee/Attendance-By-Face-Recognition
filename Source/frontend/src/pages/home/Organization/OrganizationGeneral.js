@@ -35,7 +35,7 @@ function OrganizationGeneral() {
   const queryClient = useQueryClient();
   // #endregion
   // #region hooks
-  const { data, isLoading } = useGetOrganizationDetail();
+  const { data: organizationDetailData, isLoading, isFetching:isFetchingOrganizationDetail } = useGetOrganizationDetail();
   const useCreateOrganizationDetail = useMutation(createOrganizationDetail, {
     onSuccess: (data) => {
       const { message } = data;
@@ -103,15 +103,15 @@ function OrganizationGeneral() {
   // #endregion
   // #region form
   var initialValuesExisted = {
-    organizationName: data?.result?.organizationName
-      ? data?.result?.organizationName
+    organizationName: organizationDetailData?.result?.organizationName
+      ? organizationDetailData?.result?.organizationName
       : "",
     megaAddress: {
-      country: data?.result?.location?.country ?? "",
-      state: data?.result?.location?.state ?? "",
-      city: data?.result?.location?.city ?? "",
+      country: organizationDetailData?.result?.location?.country ?? "",
+      state: organizationDetailData?.result?.location?.state ?? "",
+      city: organizationDetailData?.result?.location?.city ?? "",
     },
-    address: data?.result?.location?.address ?? "",
+    address: organizationDetailData?.result?.location?.address ?? "",
   };
   const validationSchema = Yup.object().shape({
     organizationName: Yup.string().required("This field is required"),
@@ -119,7 +119,7 @@ function OrganizationGeneral() {
   });
   // #endregion
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isFetchingOrganizationDetail) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={3}>
       {resultPermission?.read && (
@@ -136,12 +136,12 @@ function OrganizationGeneral() {
                 state: values.megaAddress?.state ?? "",
               },
             };
-            if (data?.result == null) {
+            if (organizationDetailData?.result == null) {
               useCreateOrganizationDetail.mutate(organizationDetail);
             } else {
               const saveOrganizationDetailObj = {
                 organizationDetail: organizationDetail,
-                id: data?.result?.organizationId,
+                id: organizationDetailData?.result?.organizationId,
               };
               useSaveOrganizationDetail.mutate(saveOrganizationDetailObj);
             }

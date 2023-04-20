@@ -27,7 +27,10 @@ import { roleCodeColor } from "../../test/dumbTableData";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { getListDepartment, useGetListDepartment } from "../../../services/organization/department";
+import {
+  getListDepartment,
+  useGetListDepartment,
+} from "../../../services/organization/department";
 
 function AssignDepartmentManagement() {
   // #region declare variable
@@ -41,12 +44,11 @@ function AssignDepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const {
-    data: listEmployeeData,
-  } = useGetListEmployee();
+  const { data: listEmployeeData } = useGetListEmployee();
   const {
     data: dataListDepartment,
     isLoading: isLoadingListDepartment,
+    isFetching: isFetchingListDepartment,
   } = useQuery("listDepartment", getListDepartment, {
     refetchOnWindowFocus: false,
     retry: 1,
@@ -316,7 +318,7 @@ function AssignDepartmentManagement() {
       : {}
   );
   // #endregion
-  if (isLoadingListDepartment) return <LoadingSpinner />;
+  if (isFetchingListDepartment) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -324,34 +326,37 @@ function AssignDepartmentManagement() {
         <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        <DynamicTable
-          onAddEditOpen={onAddEditOpen}
-          handleDeleteRange={DeleteRange}
-          tableRowAction={tableRowAction}
-          columns={columns}
-          data={listEmployeeData?.result?.data}
-          permission={resultPermission}
-        />
-        <DynamicDrawer
-          handleEdit={handleAssignDepartment}
-          isAddEditOpen={isAddEditOpen}
-          onAddEditClose={onAddEditClose}
-          editData={editData}
-          setEditData={setEditData}
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          drawerFieldData={drawerFieldData}
-        />
-        <ChakraAlertDialog
-          title="Delete Single"
-          isOpen={isDeleteSingleOpen}
-          onClose={onDeleteSingleClose}
-          onAccept={handleAcceptDelete}
-        />
+        {listEmployeeData?.result?.data.length == 0 ? (
+          <NoDataToDisplay h="450px" />
+        ) : (
+          <>
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={listEmployeeData?.result?.data}
+              permission={resultPermission}
+            />
+            <DynamicDrawer
+              handleEdit={handleAssignDepartment}
+              isAddEditOpen={isAddEditOpen}
+              onAddEditClose={onAddEditClose}
+              editData={editData}
+              setEditData={setEditData}
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              drawerFieldData={drawerFieldData}
+            />
+            <ChakraAlertDialog
+              title="Delete Single"
+              isOpen={isDeleteSingleOpen}
+              onClose={onDeleteSingleClose}
+              onAccept={handleAcceptDelete}
+            />
+          </>
+        )}
       </Box>
-      {listEmployeeData?.result?.data.length == 0 && (
-        <NoDataToDisplay h="450px" />
-      )}
     </Stack>
   );
 }

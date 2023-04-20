@@ -24,10 +24,7 @@ import {
 } from "../../../services/organization/department";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
-import {
-  getListOrganization,
-  useGetListOrganization,
-} from "../../../services/organization/organization";
+import { getListOrganization } from "../../../services/organization/organization";
 function DepartmentManagement() {
   // #region declare variables
   const resultPermission = useGetPermission(
@@ -41,12 +38,16 @@ function DepartmentManagement() {
   // #endregion
   // #region hooks
   const { data: dataListDepartment } = useGetListDepartment();
-  const { data: dataListOrganization, isLoading: isLoadingListOrganization } =
-    useQuery("listOrganization", getListOrganization, {
-      refetchOnWindowFocus: false,
-      retry: 3,
-      enabled: dataListDepartment && Object.keys(dataListDepartment).length > 0,
-    });
+  const {
+    data: dataListOrganization,
+    isLoading: isLoadingListOrganization,
+    isFetching: isFetchingListOrganization,
+    isFetched,
+  } = useQuery("listOrganization", getListOrganization, {
+    refetchOnWindowFocus: false,
+    retry: 3,
+    enabled: dataListDepartment && Object.keys(dataListDepartment).length > 0,
+  });
   let listOrganizationArray = React.useMemo(() => {
     if (dataListOrganization?.result?.length > 0) {
       let tempArray = [];
@@ -344,7 +345,7 @@ function DepartmentManagement() {
     address: Yup.string().required("This field is required"),
   });
   // #endregion
-  if (isLoadingListOrganization) return <LoadingSpinner />;
+  if (isFetchingListOrganization) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -352,35 +353,38 @@ function DepartmentManagement() {
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        <DynamicTable
-          onAddEditOpen={onAddEditOpen}
-          handleDeleteRange={DeleteRange}
-          tableRowAction={tableRowAction}
-          columns={columns}
-          data={dataListDepartment?.result?.data}
-          permission={resultPermission}
-        />
-        <DynamicDrawer
-          handleEdit={handleEditDepartment}
-          handleCreate={handleCreateDepartment}
-          isAddEditOpen={isAddEditOpen}
-          onAddEditClose={onAddEditClose}
-          editData={editData}
-          setEditData={setEditData}
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          drawerFieldData={drawerFieldData}
-        />
-        <ChakraAlertDialog
-          title="Delete Single"
-          isOpen={isDeleteSingleOpen}
-          onClose={onDeleteSingleClose}
-          onAccept={handleAcceptDelete}
-        />
+        {dataListDepartment?.result?.data.length == 0 ? (
+          <NoDataToDisplay h="450px" />
+        ) : (
+          <>
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={dataListDepartment?.result?.data}
+              permission={resultPermission}
+            />
+            <DynamicDrawer
+              handleEdit={handleEditDepartment}
+              handleCreate={handleCreateDepartment}
+              isAddEditOpen={isAddEditOpen}
+              onAddEditClose={onAddEditClose}
+              editData={editData}
+              setEditData={setEditData}
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              drawerFieldData={drawerFieldData}
+            />
+            <ChakraAlertDialog
+              title="Delete Single"
+              isOpen={isDeleteSingleOpen}
+              onClose={onDeleteSingleClose}
+              onAccept={handleAcceptDelete}
+            />
+          </>
+        )}
       </Box>
-      {dataListDepartment?.result?.data.length == 0 && (
-        <NoDataToDisplay h="450px" />
-      )}
     </Stack>
   );
 }

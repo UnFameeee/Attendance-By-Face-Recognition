@@ -13,6 +13,7 @@ import {
   Text,
   HStack,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -21,7 +22,9 @@ import { Helper } from "../../Utils/Helper";
 import moment from "moment";
 import { useMutation } from "react-query";
 import { deleteWorkShiftService } from "../../services/workshift/workshift";
+import ChakraAlertDialog from "../ChakraAlertDialog";
 export default function EventModal(props) {
+  // #region declare variable
   const {
     modifyEventHandler,
     listEmployee,
@@ -29,13 +32,8 @@ export default function EventModal(props) {
     refreshListWorkDepartment,
     setListWorkShiftDepartment,
   } = props;
-  const {
-    setShowEventModal,
-    daySelected,
-    dispatchCalEvent,
-    selectedEvent,
-    monthIndex,
-  } = useContext(GlobalContext);
+  const { setShowEventModal, daySelected, selectedEvent } =
+    useContext(GlobalContext);
   const toast = useToast();
   let arrayEmployee = React.useMemo(() => {
     let tempArray = [];
@@ -57,6 +55,8 @@ export default function EventModal(props) {
     });
     return tempArray;
   });
+  // #endregion
+  // #region hooks
   const useDeleteWorkShift = useMutation(deleteWorkShiftService, {
     onSuccess: (data) => {
       const { message } = data;
@@ -69,10 +69,12 @@ export default function EventModal(props) {
           duration: 5000,
         });
       } else {
-        setListWorkShiftDepartment((prevList) =>{
-          const removeSingleArray = prevList.filter((item) => item?.shiftId != selectedEvent?.shiftId)
-          return removeSingleArray
-        })
+        setListWorkShiftDepartment((prevList) => {
+          const removeSingleArray = prevList.filter(
+            (item) => item?.shiftId != selectedEvent?.shiftId
+          );
+          return removeSingleArray;
+        });
         refreshListWorkDepartment();
         toast({
           title: "Delete Shift Successfully",
@@ -93,7 +95,20 @@ export default function EventModal(props) {
       });
     },
   });
-  console.log("selectedEvent",selectedEvent)
+  const {
+    isOpen: isDeleteSingleOpen,
+    onOpen: onDeleteSingleOpen,
+    onClose: onDeleteSingleClose,
+  } = useDisclosure();
+  // #endregion
+  // #region functions
+  const handleAcceptDelete = () => {
+    const shiftId = selectedEvent?.shiftId;
+    useDeleteWorkShift.mutate(shiftId);
+    setShowEventModal(false);
+  };
+  // #endregion
+  // #region form
   const initialValues = {
     shiftTypeId: selectedEvent?.shiftTypeId ?? "",
     shiftDate: selectedEvent?.shiftDate ?? "",
@@ -103,123 +118,130 @@ export default function EventModal(props) {
     shiftTypeId: Yup.string().required("This field is required"),
     employeeId: Yup.string().required("This field is required"),
   });
+  // #endregion
+
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={(values, actions) => {
-        const eventObj = {
-          shiftDate: Helper.getMomentDateFormat(daySelected.valueOf()),
-          shiftTypeId: values.shiftTypeId,
-          employeeId: values.employeeId,
-        };
-        if(selectedEvent){
-          eventObj["shiftId"]=selectedEvent?.shiftId
-        }
-        setShowEventModal(false);
-        modifyEventHandler(eventObj);
-      }}
-    >
-      {(formik) => (
-        <>
-          <Box
-            as="form"
-            onSubmit={formik.handleSubmit}
-            className="h-screen w-full fixed left-0 top-0 flex justify-center items-center"
-          >
-            <div className="bg-white rounded-lg shadow-2xl w-96">
-              <header className="bg-gray-100 px-4 py-2 flex justify-between items-center">
-                <span className=" text-gray-400"></span>
-                <div className="flex gap-2 ">
-                  {selectedEvent && (
-                    <span
-                      onClick={() => {
-                        const shiftId = selectedEvent?.shiftId
-                        useDeleteWorkShift.mutate(shiftId)
-                        setShowEventModal(false);
-                      }}
-                      className=" text-gray-400 cursor-pointer"
-                    >
-                      <Icon as={RiDeleteBin6Fill} fontSize="1.2rem" />
-                    </span>
-                  )}
-                  <button onClick={() => setShowEventModal(false)}>
-                    <span className=" text-gray-400">
-                      <Icon as={RiCloseCircleFill} fontSize="1.2rem" />
-                    </span>
-                  </button>
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={(values, actions) => {
+          const eventObj = {
+            shiftDate: Helper.getMomentDateFormat(daySelected.valueOf()),
+            shiftTypeId: values.shiftTypeId,
+            employeeId: values.employeeId,
+          };
+          if (selectedEvent) {
+            eventObj["shiftId"] = selectedEvent?.shiftId;
+          }
+          setShowEventModal(false);
+          modifyEventHandler(eventObj);
+        }}
+      >
+        {(formik) => (
+          <>
+            <Box
+              as="form"
+              onSubmit={formik.handleSubmit}
+              className="h-screen w-full fixed left-0 top-0 flex justify-center items-center"
+            >
+              <div className="bg-white rounded-lg shadow-2xl w-96">
+                <header className="bg-[#3182ce] px-4 py-2 flex justify-between items-center">
+                  <span className=" text-white font-bold text-[1.2rem]">
+                    Work Shift Detail
+                  </span>
+                  <div className="flex gap-2 ">
+                    {selectedEvent && (
+                      <span
+                        onClick={() => {
+                          onDeleteSingleOpen();
+                        }}
+                        className=" text-white cursor-pointer"
+                      >
+                        <Icon as={RiDeleteBin6Fill} fontSize="1.2rem" />
+                      </span>
+                    )}
+                    <button onClick={() => setShowEventModal(false)}>
+                      <span className=" text-white">
+                        <Icon as={RiCloseCircleFill} fontSize="1.2rem" />
+                      </span>
+                    </button>
+                  </div>
+                </header>
+                <div className="p-3">
+                  <div className="grid gap-5">
+                    <Box>
+                      <FormTextField
+                        name="shiftTypeId"
+                        label="Shift Type"
+                        isSelectionField={true}
+                        placeholder="---"
+                        selectionArray={arrayShift}
+                      />
+                    </Box>
+                    <Box alignItems="center">
+                      <p className=" text-xl flex items-center">
+                        {" "}
+                        <Icon as={GrFormSchedule} fontSize="1.5rem" />
+                        {daySelected.format("dddd, MMMM DD")}
+                      </p>
+                    </Box>
+                    {selectedEvent?.shiftType && (
+                      <HStack>
+                        {selectedEvent?.shiftType?.startTime && (
+                          <Text fontSize="xl">
+                            From:{" "}
+                            {selectedEvent?.shiftType?.startTime
+                              ? moment(
+                                  selectedEvent?.shiftType?.startTime,
+                                  "YYYY-MM-DD"
+                                ).format("hh:mm A")
+                              : ""}
+                          </Text>
+                        )}
+                        {selectedEvent?.shiftType?.endTime && (
+                          <Text fontSize="xl">
+                            To:{" "}
+                            {selectedEvent?.shiftType?.endTime
+                              ? moment(
+                                  selectedEvent?.shiftType?.endTime,
+                                  "YYYY-MM-DD"
+                                ).format("hh:mm A")
+                              : ""}
+                          </Text>
+                        )}
+                      </HStack>
+                    )}
+                    <FormTextField
+                      name="employeeId"
+                      label="Assign To"
+                      placeholder="---"
+                      isSelectionField={true}
+                      formik={formik}
+                      selectionArray={arrayEmployee}
+                    />
+                  </div>
                 </div>
-              </header>
-              <div className="p-3">
-                <div className="grid grid-cols-1/6 items-end gap-y-7 gap-x-5">
-                  <Flex flexDirection="column" gap="10px">
-                    <Flex alignItems="center">
-                      <Box flex="1" alignItems="center">
-                        <span className=" text-gray-400">
-                          <Icon as={GrFormSchedule} fontSize="1.5rem" />
-                        </span>
-                        <p>{daySelected.format("dddd, MMMM DD")}</p>
-                      </Box>
-                      <Box flex="1">
-                        <FormTextField
-                          name="shiftTypeId"
-                          label="Shift Type"
-                          isSelectionField={true}
-                          placeholder="---"
-                          selectionArray={arrayShift}
-                        />
-                      </Box>
-                    </Flex>
-                  </Flex>
-                  {selectedEvent?.shiftType && (
-                    <HStack>
-                      {selectedEvent?.shiftType?.startTime && (
-                        <Text>
-                          From:{" "}
-                          {selectedEvent?.shiftType?.startTime
-                            ? moment(
-                                selectedEvent?.shiftType?.startTime,
-                                "YYYY-MM-DD"
-                              ).format("hh:mm A")
-                            : ""}
-                        </Text>
-                      )}
-                      {selectedEvent?.shiftType?.endTime && (
-                        <Text>
-                          To:{" "}
-                          {selectedEvent?.shiftType?.endTime
-                            ? moment(
-                                selectedEvent?.shiftType?.endTime,
-                                "YYYY-MM-DD"
-                              ).format("hh:mm A")
-                            : ""}
-                        </Text>
-                      )}
-                    </HStack>
-                  )}
-                  <FormTextField
-                    name="employeeId"
-                    label="Assign To"
-                    placeholder="---"
-                    isSelectionField={true}
-                    formik={formik}
-                    selectionArray={arrayEmployee}
-                  />
-                </div>
+                <footer className="flex justify-end border-t p-3 mt-5">
+                  <Button
+                    type="submit"
+                    onClick={formik.handleSubmit}
+                    colorScheme="blue"
+                  >
+                    Save
+                  </Button>
+                </footer>
               </div>
-              <footer className="flex justify-end border-t p-3 mt-5">
-                <Button
-                  type="submit"
-                  onClick={formik.handleSubmit}
-                  colorScheme="blue"
-                >
-                  Save
-                </Button>
-              </footer>
-            </div>
-          </Box>
-        </>
-      )}
-    </Formik>
+            </Box>
+          </>
+        )}
+      </Formik>
+      <ChakraAlertDialog
+        title="Delete Work Shift"
+        isOpen={isDeleteSingleOpen}
+        onClose={onDeleteSingleClose}
+        onAccept={handleAcceptDelete}
+      />
+    </>
   );
 }

@@ -36,6 +36,7 @@ import { useGetListDepartment } from "../../../services/organization/department"
 import { unionBy } from "lodash/array";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function WorkShift() {
+  // #region declare variable
   const toast = useToast();
   const queryClient = useQueryClient();
   const [listWorkShiftDepartment, setListWorkShiftDepartment] = useState([]);
@@ -43,12 +44,12 @@ function WorkShift() {
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
   const [departmentId, setDepartmentId] = useState();
   const { monthIndex, showEventModal } = useContext(GlobalContext);
-
+  // #endregion
+  // #region hooks
   const { data: listShiftType, isLoading: isLoadingListShiftType } =
     useGetListShiftType();
   const { data: listDepartmentData, isLoading: isLoadingListDepartment } =
     useGetListDepartment();
-
   const useGetListEmployee = (departmentId, isEnable = false) => {
     return useQuery(
       ["listEmployeeOfDepartment", departmentId],
@@ -62,18 +63,6 @@ function WorkShift() {
   };
   const { data: listEmployee, isLoading: isLoadingListEmployee } =
     useGetListEmployee(departmentId, enableGetListEmployee);
-  let listDepartmentArray = React.useMemo(() => {
-    if (listDepartmentData?.result?.data?.length > 0) {
-      let tempArray = [];
-      listDepartmentData?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.departmentName,
-          value: item.departmentId,
-        });
-      });
-      return tempArray;
-    }
-  });
   const useModifyWorkShift = useMutation(modifyWorkShiftService, {
     onSuccess: (data) => {
       const { result, message } = data;
@@ -136,6 +125,20 @@ function WorkShift() {
       });
     },
   });
+  // #endregion
+  // #region functions
+  let listDepartmentArray = React.useMemo(() => {
+    if (listDepartmentData?.result?.data?.length > 0) {
+      let tempArray = [];
+      listDepartmentData?.result?.data.map((item) => {
+        tempArray.push({
+          label: item.departmentName,
+          value: item.departmentId,
+        });
+      });
+      return tempArray;
+    }
+  });
   const modifyWorkShift = (eventObj) => {
     useModifyWorkShift.mutate(eventObj);
   };
@@ -157,6 +160,13 @@ function WorkShift() {
       setEnableGetListEmployee(true);
     }
   }, [departmentId]);
+  // #endregion
+  // #region table
+  // #endregion
+  // #region drawer
+  // #endregion
+  // #region form
+  // #endregion
   if (
     isLoadingListEmployee &&
     isLoadingListShiftType &&
@@ -175,12 +185,12 @@ function WorkShift() {
       >
         <Flex flex="1" gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontSize="3xl">WorkShift</Heading>
+          <Heading fontSize="3xl">Work Shift</Heading>
         </Flex>
         <HStack>
-          <Heading fontSize="xl">
+          <Heading fontSize="xl" fontWeight='medium'>
             <Highlight
-              query={["Department"]}
+              query={["Department:"]}
               styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
             >
               Department:
@@ -211,7 +221,7 @@ function WorkShift() {
                   }
                 />
                 <div className=" mt-[6px]">
-                  <Button colorScheme="blue" type="submit">
+                  <Button colorScheme="blue" type="submit" size='md'>
                     Submit
                   </Button>
                 </div>
@@ -253,16 +263,17 @@ function WorkShift() {
                 query={["Department"]}
                 styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
               >
-                Please choose a Department
+                Please choose your Department
               </Highlight>
               <Highlight
                 query={["Submit"]}
                 styles={{
                   px: "2",
                   py: "1",
-                  rounded: "full",
+                  rounded: "md",
                   bg: "#3182ce",
                   color: "white",
+                  fontSize:'xl'
                 }}
               >
                 and hit Submit to see the work shift!
