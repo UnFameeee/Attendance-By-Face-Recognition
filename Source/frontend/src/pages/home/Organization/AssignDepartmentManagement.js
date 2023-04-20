@@ -259,9 +259,9 @@ function AssignDepartmentManagement() {
       },
       {
         Header: "Department",
-        accessor: "department.departmentId",
+        accessor: "department",
         cellWidth: "200px",
-        Cell: ({ value }) => <span>{matchingDepartmentName(value)}</span>,
+        Cell: ({ value }) => <span>{value?.departmentName}</span>,
         haveFilter: {
           filterType: FilterType.Text,
         },
@@ -306,7 +306,7 @@ function AssignDepartmentManagement() {
     fullname: `${editData?.fullname ?? ""}`,
     email: `${editData?.email ?? ""}`,
     displayName: editData?.["role.displayName"] ?? "",
-    department: editData?.["department.departmentId"] ?? "",
+    department: editData?.department?.departmentId ?? "",
   };
   const validationSchema = Yup.object().shape(
     editData?.["department.departmentId"] != undefined

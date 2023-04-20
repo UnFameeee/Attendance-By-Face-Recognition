@@ -265,7 +265,8 @@ function EmployeesManagement() {
       },
       {
         Header: "Department",
-        accessor: "department.departmentName",
+        accessor: "department",
+        Cell: ({ value }) => <span>{value?.departmentName}</span>,
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -434,7 +435,7 @@ function EmployeesManagement() {
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
     password: editData?.password ?? "",
     displayName: editData?.["role.displayName"] ?? "",
-    department: editData?.["department.departmentName"] ?? "",
+    department: editData?.department?.departmentName ?? "",
     gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth

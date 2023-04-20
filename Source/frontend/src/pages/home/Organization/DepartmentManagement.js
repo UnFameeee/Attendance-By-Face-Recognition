@@ -229,11 +229,11 @@ function DepartmentManagement() {
       },
       {
         Header: "Org.Name",
-        accessor: "organization.organizationId",
+        accessor: "organization",
         haveFilter: {
           filterType: FilterType.Default,
         },
-        Cell: ({ value }) => <span>{matchingOrganizationName(value)}</span>,
+        Cell: ({ value }) => <span>{value?.organizationName}</span>,
         cellWidth: "200px",
         haveSort: true,
       },
@@ -326,8 +326,8 @@ function DepartmentManagement() {
   const initialValues = {
     departmentName: `${editData.departmentName ? editData.departmentName : ""}`,
     organization: `${
-      editData["organization.organizationId"]
-        ? editData["organization.organizationId"]
+      editData?.organization?.organizationId
+        ? editData?.organization?.organizationId
         : ""
     }`,
     location: {
