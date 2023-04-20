@@ -1,25 +1,21 @@
 import {
-  Avatar,
-  Badge,
   Box,
   Flex,
   Heading,
-  HStack,
-  Icon,
   Stack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
-import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import DynamicTable from "../../../components/table/DynamicTable";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
 import { FilterType } from "../../../components/table/DynamicTable";
-import { useMutation, useQueryClient } from "react-query";
-import { Country, State, City } from "country-state-city";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Country, State } from "country-state-city";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   createDepartmentService,
@@ -28,8 +24,12 @@ import {
 } from "../../../services/organization/department";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
-import { useGetListOrganization } from "../../../services/organization/organization";
+import {
+  getListOrganization,
+  useGetListOrganization,
+} from "../../../services/organization/organization";
 function DepartmentManagement() {
+  // #region declare variables
   const resultPermission = useGetPermission(
     permissionDepartmentGeneral,
     "department-management"
@@ -38,14 +38,15 @@ function DepartmentManagement() {
   const queryClient = useQueryClient();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
-  const {
-    data: dataListDepartment,
-    isLoading: isLoadingListDepartment,
-    isError,
-    error,
-  } = useGetListDepartment();
+  // #endregion
+  // #region hooks
+  const { data: dataListDepartment } = useGetListDepartment();
   const { data: dataListOrganization, isLoading: isLoadingListOrganization } =
-    useGetListOrganization();
+    useQuery("listOrganization", getListOrganization, {
+      refetchOnWindowFocus: false,
+      retry: 3,
+      enabled: dataListDepartment && Object.keys(dataListDepartment).length > 0,
+    });
   let listOrganizationArray = React.useMemo(() => {
     if (dataListOrganization?.result?.length > 0) {
       let tempArray = [];
@@ -72,7 +73,7 @@ function DepartmentManagement() {
       } else {
         queryClient.invalidateQueries("listDepartment");
         toast({
-          title: "Create Department successfully",
+          title: "Create Department Successfully",
           position: "bottom-right",
           status: "success",
           isClosable: true,
@@ -104,7 +105,7 @@ function DepartmentManagement() {
       } else {
         queryClient.invalidateQueries("listDepartment");
         toast({
-          title: "Save Department successfully",
+          title: "Save Department Successfully",
           position: "bottom-right",
           status: "success",
           isClosable: true,
@@ -132,6 +133,8 @@ function DepartmentManagement() {
     onOpen: onAddEditOpen,
     onClose: onAddEditClose,
   } = useDisclosure();
+  // #endregion
+  // #region functions
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
@@ -187,6 +190,8 @@ function DepartmentManagement() {
       return "";
     }
   };
+  // #endregion
+  // #region table
   const tableRowAction = [
     {
       actionName: "Edit",
@@ -289,6 +294,8 @@ function DepartmentManagement() {
     ],
     []
   );
+  // #endregion
+  // #region drawer
   const drawerFieldData = [
     {
       name: "departmentName",
@@ -336,7 +343,8 @@ function DepartmentManagement() {
     organization: Yup.string().required("This field is required"),
     address: Yup.string().required("This field is required"),
   });
-  if (isLoadingListDepartment) return <LoadingSpinner />;
+  // #endregion
+  if (isLoadingListOrganization) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">

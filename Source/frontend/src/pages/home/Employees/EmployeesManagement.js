@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Box,
   Flex,
@@ -10,9 +9,9 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, {  useState } from "react";
 import * as Yup from "yup";
-import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
+import { FaRegUserCircle, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import {
   BsTelephone,
@@ -23,7 +22,7 @@ import {
 import PieChart from "../../../components/chart/PieChart";
 import ColumnChart from "../../../components/chart/ColumnChart";
 import DynamicTable from "../../../components/table/DynamicTable";
-import { dumbTableData, roleCodeColor } from "../../test/dumbTableData";
+import { roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
@@ -35,13 +34,13 @@ import {
   useGetListEmployee,
 } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
 import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
-import { Helper } from "../../../Utils/Helper";
 import { passwordRegex } from "../../../Utils/ValidationRegExp";
 
 function EmployeesManagement() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionEmployeeGeneral,
     "employee-management"
@@ -51,6 +50,8 @@ function EmployeesManagement() {
   const { data, isLoading, isError, error } = useGetListEmployee();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
+  // #endregion
+  // #region hook
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -117,6 +118,8 @@ function EmployeesManagement() {
       });
     },
   });
+  // #endregion
+  // #region function
   const handleEditEmployee = (values) => {
     const id = editData.id;
     const employeeObj = {
@@ -161,6 +164,8 @@ function EmployeesManagement() {
       (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
     );
   };
+  // #endregion
+  // #region table
   const tableRowAction = [
     {
       actionName: "Edit",
@@ -324,6 +329,8 @@ function EmployeesManagement() {
     ],
     []
   );
+  // #endregion
+  // #region drawer
   const drawerFieldData = [
     {
       name: "fullname",
@@ -463,6 +470,7 @@ function EmployeesManagement() {
           ),
         }
   );
+  // #endregion
   if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>

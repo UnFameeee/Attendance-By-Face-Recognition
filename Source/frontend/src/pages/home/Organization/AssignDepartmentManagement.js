@@ -10,7 +10,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   assignEmployeeToDepartmentService,
   useGetListEmployee,
@@ -27,18 +27,31 @@ import { roleCodeColor } from "../../test/dumbTableData";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { useGetListDepartment } from "../../../services/organization/department";
+import { getListDepartment, useGetListDepartment } from "../../../services/organization/department";
 
 function AssignDepartmentManagement() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionAssignDepartmentGeneral,
     "assign-department-management"
   );
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { data: listEmployeeData, isLoading } = useGetListEmployee();
-  const { data: dataListDepartment, isLoading: isLoadingListDepartment } =
-    useGetListDepartment();
+  const [editData, setEditData] = useState({});
+  const [deleteSingleData, setDeleteSingleData] = useState({});
+  // #endregion
+  // #region hooks
+  const {
+    data: listEmployeeData,
+  } = useGetListEmployee();
+  const {
+    data: dataListDepartment,
+    isLoading: isLoadingListDepartment,
+  } = useQuery("listDepartment", getListDepartment, {
+    refetchOnWindowFocus: false,
+    retry: 1,
+    enabled: listEmployeeData && Object.keys(listEmployeeData).length > 0,
+  });
   let listDepartmentArray = React.useMemo(() => {
     if (dataListDepartment?.result?.data.length > 0) {
       let tempArray = [];
@@ -51,8 +64,6 @@ function AssignDepartmentManagement() {
       return tempArray;
     }
   });
-  const [editData, setEditData] = useState({});
-  const [deleteSingleData, setDeleteSingleData] = useState({});
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -63,9 +74,6 @@ function AssignDepartmentManagement() {
     onOpen: onAddEditOpen,
     onClose: onAddEditClose,
   } = useDisclosure();
-  const DeleteRange = (data) => {
-    console.log("handleDeleteRange", data);
-  };
   const useAssignEmployeeToDepartment = useMutation(
     assignEmployeeToDepartmentService,
     {
@@ -82,7 +90,7 @@ function AssignDepartmentManagement() {
         } else {
           queryClient.invalidateQueries("listEmployee");
           toast({
-            title: "Assign Employee to Department successfully",
+            title: "Assign Employee To Department Successfully",
             position: "bottom-right",
             status: "success",
             isClosable: true,
@@ -117,7 +125,7 @@ function AssignDepartmentManagement() {
         } else {
           queryClient.invalidateQueries("listEmployee");
           toast({
-            title: "Assign Manager to Department successfully",
+            title: "Assign Manager To Department Successfully",
             position: "bottom-right",
             status: "success",
             isClosable: true,
@@ -136,6 +144,11 @@ function AssignDepartmentManagement() {
       },
     }
   );
+  // #endregion
+  // #region functions
+  const DeleteRange = (data) => {
+    console.log("handleDeleteRange", data);
+  };
   const Delete = (row, action) => {
     setDeleteSingleData(row);
     onDeleteSingleOpen();
@@ -182,6 +195,8 @@ function AssignDepartmentManagement() {
       (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
     );
   };
+  // #endregion
+  // #region table
   const tableRowAction = [
     {
       actionName: "Edit",
@@ -253,6 +268,8 @@ function AssignDepartmentManagement() {
     ],
     []
   );
+  // #endregion
+  // #region drawer
   const drawerFieldData = [
     {
       name: "fullname",
@@ -298,13 +315,13 @@ function AssignDepartmentManagement() {
         }
       : {}
   );
-
-  if (isLoading && isLoadingListDepartment) return <LoadingSpinner />;
+  // #endregion
+  if (isLoadingListDepartment) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-        <Heading fontSize="3xl">Department Management</Heading>
+        <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
         <DynamicTable

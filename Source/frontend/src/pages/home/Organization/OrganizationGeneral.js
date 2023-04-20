@@ -26,23 +26,37 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { permissionOrganizationGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 function OrganizationGeneral() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionOrganizationGeneral,
     "organization-management"
   );
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { data, isLoading, isError, error } = useGetOrganizationDetail();
+  // #endregion
+  // #region hooks
+  const { data, isLoading } = useGetOrganizationDetail();
   const useCreateOrganizationDetail = useMutation(createOrganizationDetail, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries("organizationDetail");
-      toast({
-        title: "Save organization detail successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("organizationDetail");
+        toast({
+          title: "Save Organization Detail Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -56,15 +70,25 @@ function OrganizationGeneral() {
   });
   const useSaveOrganizationDetail = useMutation(saveOrganizationDetail, {
     onSuccess: (data) => {
-      const { result } = data;
-      queryClient.invalidateQueries("organizationDetail");
-      toast({
-        title: "Save organization detail successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("organizationDetail");
+        toast({
+          title: "Save Organization Detail Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -76,6 +100,8 @@ function OrganizationGeneral() {
       });
     },
   });
+  // #endregion
+  // #region form
   var initialValuesExisted = {
     organizationName: data?.result?.organizationName
       ? data?.result?.organizationName
@@ -91,6 +117,8 @@ function OrganizationGeneral() {
     organizationName: Yup.string().required("This field is required"),
     // address: Yup.string().required("This field is required"),
   });
+  // #endregion
+
   if (isLoading) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={3}>

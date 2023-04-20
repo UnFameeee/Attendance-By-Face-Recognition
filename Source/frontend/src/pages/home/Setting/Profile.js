@@ -1,47 +1,28 @@
 import {
   Avatar,
   Box,
-  Center,
   Divider,
   Flex,
-  FormControl,
-  FormLabel,
   Heading,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
   Stack,
   Text,
-  Icon,
-  Textarea,
-  Image,
-  HStack,
   Button,
-  ButtonGroup,
   useToast,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
-import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import {
-  BsCheckCircleFill,
-  BsTelephone,
-  BsCalendar2Date,
-} from "react-icons/bs";
+import { BsTelephone } from "react-icons/bs";
 import { RiFolderUserLine } from "react-icons/ri";
-import { AiTwotoneSetting } from "react-icons/ai";
-import { GiOfficeChair } from "react-icons/gi";
 import ta_test_avt from "../../../assets/ta.jpeg";
-import google_logo from "../../../assets/google-ar21-removebg-preview.png";
 import FormTextField from "../../../components/field/FormTextField";
 import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import {
   saveProfileDetail,
   uploadProfileImages,
@@ -50,26 +31,30 @@ import {
 import jwtDecode from "jwt-decode";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
-import { useGetListRoleOfEmployee } from "../../../services/employee/employee";
 import ImagesUploading from "../../../components/ImagesUploading";
 import { permissionProfile } from "../../../screen-permissions/permission";
-import { getPermission } from "../../../services/permission/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
+import { Helper } from "../../../Utils/Helper";
 function Profile() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionProfile,
     "profile-management"
   );
   const toast = useToast();
   const queryClient = useQueryClient();
+  var userDecodeData = Helper.getUseDecodeInfor();
+  const [images, setImages] = React.useState([]);
+  const maxNumber = 2;
+  let roleArray = [];
+  // #endregion
+  // #region hooks
   const {
     isOpen: isSaveDetailAlertOpen,
     onOpen: onSaveDetailAlertOpen,
     onClose: onSaveDetailAlertClose,
   } = useDisclosure();
-  const accessTokenJSON = localStorage.getItem("accessToken");
-  const accessToken = JSON.parse(accessTokenJSON);
-  var userDecodeData = jwtDecode(accessToken);
+
   const {
     data: profileDetailData,
     isLoading: isLoadingProfileDetail,
@@ -80,18 +65,27 @@ function Profile() {
   //   data: listRoleOfEmployeeData,
   //   isLoading: isLoadingListRoleOfEmployee,
   // } = useGetListRoleOfEmployee();
-
   const useSaveProfileDetail = useMutation(saveProfileDetail, {
     onSuccess: (data) => {
-      const { result, message } = data;
-      queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
-      toast({
-        title: "Save profile detail successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
+          toast({
+            title: "Save Profile Detail Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
     },
     onError: (error) => {
       toast({
@@ -105,13 +99,24 @@ function Profile() {
   });
   const useUploadImages = useMutation(uploadProfileImages, {
     onSuccess: (data) => {
-      toast({
-        title: "Save upload photos successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          toast({
+            title: "Save Upload Photos Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
     },
     onError: (error) => {
       toast({
@@ -123,9 +128,8 @@ function Profile() {
       });
     },
   });
-  let roleArray = [];
-  const [images, setImages] = React.useState([]);
-  const maxNumber = 2;
+  // #endregion
+  // #region functions
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     console.log(imageList, addUpdateIndex);
@@ -138,11 +142,8 @@ function Profile() {
     });
     useUploadImages.mutate(formData);
   };
-  // if(listRoleOfEmployeeData?.result){
-  //   listRoleOfEmployeeData?.result.map((item) =>{
-  //     roleArray.push({label:item.displayName,value:item.roleId})
-  //   })
-  // }
+  // #endregion
+  // #region form
   const initialValues = {
     fullname: profileDetailData?.result?.fullname ?? "",
     email: profileDetailData?.result?.email ?? "",
@@ -171,6 +172,13 @@ function Profile() {
       .max(new Date(), "Your birth date is invalid")
       .required("This field is required"),
   });
+  // #endregion
+  // if(listRoleOfEmployeeData?.result){
+  //   listRoleOfEmployeeData?.result.map((item) =>{
+  //     roleArray.push({label:item.displayName,value:item.roleId})
+  //   })
+  // }
+
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={3}>
@@ -293,7 +301,7 @@ function Profile() {
                           label="Department"
                           isReadOnly={true}
                           type="text"
-                          placeholder="148Primas"
+                          placeholder="---"
                           leftIcon={
                             <HiOutlineBuildingOffice2
                               color="#999"
