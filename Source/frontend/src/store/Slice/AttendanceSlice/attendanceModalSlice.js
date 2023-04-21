@@ -3,18 +3,18 @@ import { createSlice } from "@reduxjs/toolkit";
 const attendanceModalSlice = createSlice({
   name: "attendanceModal",
   initialState: {
-    isModalOpen: false,
-    employeeId: "",
+    isAttendanceModalOpen: false,
+    employeeId: null,
   },
   reducers: {
     setAttendanceModalProps: (state, action) => {
-      const { isModalOpen, employeeId } = action.payload;
-      state.isModalOpen = isModalOpen;
+      const { isAttendanceModalOpen, employeeId } = action.payload;
+      state.isAttendanceModalOpen = isAttendanceModalOpen;
       state.employeeId = employeeId;
     },
-    setIsModalOpen: (state, action) => {
-      const { isModalOpen } = action.payload;
-      state.isModalOpen = isModalOpen;
+    setAttendanceModalOpen: (state, action) => {
+      const { isAttendanceModalOpen } = action.payload;
+      state.isAttendanceModalOpen = isAttendanceModalOpen;
     },
     setEmployeeId: (state, action) => {
       const { employeeId } = action.payload;
@@ -23,6 +23,6 @@ const attendanceModalSlice = createSlice({
   },
 });
 
-export const { setAttendanceModalProps, setIsModalOpen, setEmployeeId } = attendanceModalSlice.actions;
+export const { setAttendanceModalProps, setAttendanceModalOpen, setEmployeeId } = attendanceModalSlice.actions;
 
 export default attendanceModalSlice.reducer;

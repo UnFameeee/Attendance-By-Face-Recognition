@@ -10,6 +10,7 @@ const takeAttendanceSlice = createSlice({
     setIsScaningPaused: (state, action) => {
       const { isScaningPaused } = action.payload;
       state.isScaningPaused = isScaningPaused;
+      console.log(state.isScaningPaused);
     },
     setIsTakeAttendance: (state, action) => {
       const { isTakeAttendance } = action.payload;

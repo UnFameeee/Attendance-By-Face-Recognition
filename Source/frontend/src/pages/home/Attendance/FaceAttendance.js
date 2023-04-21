@@ -13,6 +13,8 @@ import AttendanceModal from '../../../components/Attendance/AttendanceModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAttendanceModalProps } from '../../../store/Slice/AttendanceSlice/attendanceModalSlice';
 import { setIsScaningPaused, setIsTakeAttendance } from '../../../store/Slice/AttendanceSlice/takeAttendanceSlice';
+import { resetFailedCount, setExceptionModalOpen, setFailedCount } from '../../../store/Slice/AttendanceSlice/exceptionModalSlice';
+import ExceptionModel from './../../../components/Attendance/ExceptionModel';
 
 let streamObj;
 export default function FaceAttendance() {
@@ -23,6 +25,7 @@ export default function FaceAttendance() {
   const dispatch = useDispatch();
   const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
   const employeeId = useSelector(state => state.attendanceModal.employeeId);
+  const { isExceptionModalOpen, failedCount } = useSelector(state => state.exceptionModal);
 
   const useTakeAttendance = useMutation((variable) =>
     attendanceService.takeAttendance(variable.employeeId, variable.attendanceType), {
@@ -168,13 +171,13 @@ export default function FaceAttendance() {
                 //if the case isn't "unknown"
                 const highestFaceValue = Helper.findMostDuplicatedValue(faceDetectArray);
                 if (highestFaceValue !== "unknown") {
-                  // dispatch(setIsScaningPaused({
-                  //   isScaningPaused: true,
-                  // }))
-                  // dispatch(setAttendanceModalProps({
-                  //   isModalOpen: true,
-                  //   employeeId: highestFaceValue
-                  // }))
+                  dispatch(setIsScaningPaused({
+                    isScaningPaused: true,
+                  }))
+                  dispatch(setAttendanceModalProps({
+                    isAttendanceModalOpen: true,
+                    employeeId: highestFaceValue
+                  }))
                 }
 
                 faceDetectArray.splice(0, faceDetectArray.length);
@@ -205,6 +208,21 @@ export default function FaceAttendance() {
   }, [isTakeAttendance]);
 
   useEffect(() => {
+    //if the employee fail 3 times attendance, popup the exception handle.
+    if (failedCount == 3) {
+      debugger;
+      dispatch(resetFailedCount());
+      dispatch(setIsScaningPaused({
+        isScaningPaused: true,
+      }))
+      dispatch(setExceptionModalOpen({
+        isExceptionModalOpen: true,
+      }))
+      console.log(isScaningPaused)
+    }
+  }, [failedCount]);
+
+  useEffect(() => {
     return () => {
       if (streamObj) {
         streamObj.getTracks().forEach(track => track.stop());
@@ -217,7 +235,8 @@ export default function FaceAttendance() {
       <div className="template">
         <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video>
       </div>
-      <AttendanceModal />
+      {employeeId && <AttendanceModal />}
+      <ExceptionModel />
     </>
   );
 }

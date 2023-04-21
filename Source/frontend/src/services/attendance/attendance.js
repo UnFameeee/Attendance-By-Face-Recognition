@@ -13,12 +13,20 @@ const takeAttendance = async (employeeId, attendanceType) => {
 }
 
 const getEmployeeDetailById = async (id) => {
-  const response = await axiosBase.get(`${endPoint}/getEmployeeDetailById/${id}`);
-  return response.data;
+  // debugger;
+  if (id) {
+    const response = await axiosBase.get(`${endPoint}/getEmployeeDetailById/${id}`);
+    return response.data;
+  }
 };
 
 const useGetEmployeeDetailById = (id) => {
-  return useQuery(["employeeDetail", id], () => getEmployeeDetailById(id), {
+  return useQuery({
+    queryKey: ["employeeDetail", id],
+    queryFn: async () => {
+      const data = await getEmployeeDetailById(id);
+      return data.result
+    },
     refetchOnWindowFocus: false,
     retry: 3,
   });

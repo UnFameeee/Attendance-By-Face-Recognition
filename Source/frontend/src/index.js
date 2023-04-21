@@ -27,12 +27,13 @@ import { GlobalHistory } from "./Utils/GlobalHistory";
 import EmployeesGeneral from "./pages/home/Employees/EmployeesGeneral";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
-import UploadFace from "./pages/home/Attendance/UploadFace";
 import Department from "./pages/home/Organization/Department";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
 import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
 import WorkShift from "./pages/home/WorkShift/WorkShift";
 import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
+import AttendanceModal from "./components/Attendance/AttendanceModal";
+import ExceptionModel from './components/Attendance/ExceptionModel';
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -96,7 +97,6 @@ root.render(
                     <Route path="report" element={<Test />} />
                     <Route path="leave-request" element={<LeaveRequest />} />
                     <Route path="attendance">
-                      {/* <Route path="face-attendance" element={<FaceAttendance />} /> */}
                       <Route path="attendance-management" element={<AttendanceManagement />} />
                     </Route>
                     <Route path="setting">
@@ -106,6 +106,8 @@ root.render(
                 </Route>
                 <Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
+                  <Route path="test" element={<AttendanceModal />} />
+                  <Route path="test2" element={<ExceptionModel />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>

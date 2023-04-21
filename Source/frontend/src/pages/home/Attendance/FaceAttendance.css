@@ -13,8 +13,6 @@
   display: flex;
   width: 1244px;
   height: 100vh;
-  /* max-height: 425px; */
-  /* border: 1px solid red; */
 }
 
 #canvas {
