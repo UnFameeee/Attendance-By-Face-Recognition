@@ -353,7 +353,7 @@ function DepartmentManagement() {
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        {dataListDepartment?.result?.data.length == 0 ? (
+        {dataListDepartment && dataListDepartment?.result?.data.length == 0 ? (
           <NoDataToDisplay h="450px" />
         ) : (
           <>

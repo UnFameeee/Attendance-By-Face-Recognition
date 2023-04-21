@@ -326,7 +326,7 @@ function AssignDepartmentManagement() {
         <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        {listEmployeeData?.result?.data.length == 0 ? (
+        {listEmployeeData && listEmployeeData?.result?.data.length == 0 ? (
           <NoDataToDisplay h="450px" />
         ) : (
           <>
