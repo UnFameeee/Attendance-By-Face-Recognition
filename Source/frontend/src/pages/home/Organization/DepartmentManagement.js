@@ -37,7 +37,10 @@ function DepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const { data: dataListDepartment } = useGetListDepartment();
+  const { 
+    data: dataListDepartment,
+    isFetching: isFetchingListDepartment,
+   } = useGetListDepartment();
   const {
     data: dataListOrganization,
     isLoading: isLoadingListOrganization,
@@ -345,7 +348,7 @@ function DepartmentManagement() {
     address: Yup.string().required("This field is required"),
   });
   // #endregion
-  if (isFetchingListOrganization) return <LoadingSpinner />;
+  if (isFetchingListOrganization || isFetchingListDepartment) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -353,7 +356,7 @@ function DepartmentManagement() {
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        {dataListDepartment && dataListDepartment?.result?.data.length == 0 ? (
+        {dataListDepartment && dataListDepartment.result.data != undefined && dataListDepartment.result.data.length == 0 ? (
           <NoDataToDisplay h="450px" />
         ) : (
           <>

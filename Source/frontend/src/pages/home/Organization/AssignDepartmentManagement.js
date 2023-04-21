@@ -44,7 +44,10 @@ function AssignDepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const { data: listEmployeeData } = useGetListEmployee();
+  const { 
+    data: listEmployeeData,
+    isFetching: isFetchingListEmployee,
+   } = useGetListEmployee();
   const {
     data: dataListDepartment,
     isLoading: isLoadingListDepartment,
@@ -309,7 +312,7 @@ function AssignDepartmentManagement() {
     department: editData?.department?.departmentId ?? "",
   };
   const validationSchema = Yup.object().shape(
-    editData?.["department.departmentId"] != undefined
+    editData?.department?.departmentId != undefined
       ? {
           department: Yup.string().required(
             "You can not set department to null if it already have one before"
@@ -318,7 +321,7 @@ function AssignDepartmentManagement() {
       : {}
   );
   // #endregion
-  if (isFetchingListDepartment) return <LoadingSpinner />;
+  if (isFetchingListDepartment || isFetchingListEmployee) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -326,7 +329,7 @@ function AssignDepartmentManagement() {
         <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        {listEmployeeData && listEmployeeData?.result?.data.length == 0 ? (
+        {listEmployeeData && listEmployeeData?.result?.data != undefined && listEmployeeData?.result?.data.length == 0 ? (
           <NoDataToDisplay h="450px" />
         ) : (
           <>
