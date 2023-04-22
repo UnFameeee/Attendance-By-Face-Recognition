@@ -9,18 +9,16 @@ import { TbReportMoney,TbFaceId } from "react-icons/tb";
 import { AiTwotoneSetting } from "react-icons/ai";
 import {
   FaHouseUser,
-  FaUserClock,
 } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { SiMagento } from "react-icons/si";
-import { GrUserSettings } from "react-icons/gr";
 import { MdAvTimer } from "react-icons/md";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { SlOrganization } from "react-icons/sl";
 import { RiUserVoiceFill } from "react-icons/ri";
 import {GoReport} from 'react-icons/go'
 import {IoNotifications} from 'react-icons/io5'
-import {SlLocationPin} from 'react-icons/sl'
+import {BsCalendar3} from 'react-icons/bs'
 import {ImProfile} from 'react-icons/im'
 const iconSize ='23px'
 export const SideBarData = [
@@ -61,11 +59,6 @@ export const SideBarData = [
         url: "employees-management",
         icon: <SiMagento fontSize={iconSize} />,
       },
-      {
-        title: "Work Experience",
-        url: "work-experience",
-        icon: <FaUserClock fontSize={iconSize} />,
-      },
     ],
   },
   {
@@ -88,7 +81,7 @@ export const SideBarData = [
   {
     title: "Work Shift",
     url: "work-shift",
-    icon: <MdWork fontSize={iconSize} />,
+    icon: <BsCalendar3 fontSize={iconSize} />,
   },
   {
     title: "Notification",

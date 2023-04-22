@@ -26,23 +26,37 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { permissionOrganizationGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 function OrganizationGeneral() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionOrganizationGeneral,
     "organization-management"
   );
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { data, isLoading, isError, error } = useGetOrganizationDetail();
+  // #endregion
+  // #region hooks
+  const { data: organizationDetailData, isLoading, isFetching:isFetchingOrganizationDetail } = useGetOrganizationDetail();
   const useCreateOrganizationDetail = useMutation(createOrganizationDetail, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries("organizationDetail");
-      toast({
-        title: "Save organization detail successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("organizationDetail");
+        toast({
+          title: "Save Organization Detail Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -56,15 +70,25 @@ function OrganizationGeneral() {
   });
   const useSaveOrganizationDetail = useMutation(saveOrganizationDetail, {
     onSuccess: (data) => {
-      const { result } = data;
-      queryClient.invalidateQueries("organizationDetail");
-      toast({
-        title: "Save organization detail successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("organizationDetail");
+        toast({
+          title: "Save Organization Detail Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -76,22 +100,26 @@ function OrganizationGeneral() {
       });
     },
   });
+  // #endregion
+  // #region form
   var initialValuesExisted = {
-    organizationName: data?.result?.organizationName
-      ? data?.result?.organizationName
+    organizationName: organizationDetailData?.result?.organizationName
+      ? organizationDetailData?.result?.organizationName
       : "",
     megaAddress: {
-      country: data?.result?.location?.country ?? "",
-      state: data?.result?.location?.state ?? "",
-      city: data?.result?.location?.city ?? "",
+      country: organizationDetailData?.result?.location?.country ?? "",
+      state: organizationDetailData?.result?.location?.state ?? "",
+      city: organizationDetailData?.result?.location?.city ?? "",
     },
-    address: data?.result?.location?.address ?? "",
+    address: organizationDetailData?.result?.location?.address ?? "",
   };
   const validationSchema = Yup.object().shape({
     organizationName: Yup.string().required("This field is required"),
     // address: Yup.string().required("This field is required"),
   });
-  if (isLoading) return <LoadingSpinner />;
+  // #endregion
+
+  if (isFetchingOrganizationDetail) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={3}>
       {resultPermission?.read && (
@@ -108,12 +136,12 @@ function OrganizationGeneral() {
                 state: values.megaAddress?.state ?? "",
               },
             };
-            if (data?.result == null) {
+            if (organizationDetailData?.result == null) {
               useCreateOrganizationDetail.mutate(organizationDetail);
             } else {
               const saveOrganizationDetailObj = {
                 organizationDetail: organizationDetail,
-                id: data?.result?.organizationId,
+                id: organizationDetailData?.result?.organizationId,
               };
               useSaveOrganizationDetail.mutate(saveOrganizationDetailObj);
             }

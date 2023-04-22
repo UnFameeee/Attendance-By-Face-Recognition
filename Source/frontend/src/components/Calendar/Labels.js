@@ -1,24 +1,35 @@
 import React, { useContext } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
-import { Box } from "@chakra-ui/react";
+import { Box, Checkbox } from "@chakra-ui/react";
 
 export default function Labels() {
   const { labels, updateLabel } = useContext(GlobalContext);
+  // console.log("labels", labels);
   return (
     <Box>
       <p className="text-gray-500 font-bold mt-10">Assigned Employee</p>
       <Box overflowY="scroll" maxH="370px">
-        {labels.map(({ label: lbl, checked }, idx) => {
-          // lbl = +lbl;
+        {labels.map(({ color, checked, title, name, id }, idx) => {
+          // console.log(labels[idx]);
           return (
             <label key={idx} className="items-center mt-3 block">
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={() => updateLabel({ label: lbl, checked: !checked })}
-                className={`form-checkbox h-5 w-5 ${lbl} rounded focus:ring-0 cursor-pointer`}
-              />
-              <span className="ml-2 text-gray-700 capitalize">{lbl}</span>
+              {/* <Checkbox
+                isChecked={checked}
+                onChange={() =>
+                  updateLabel({
+                    color: color,
+                    title: title,
+                    name: name,
+                    id:id,
+                    checked: !checked,
+                  })
+                }
+              >
+                <Box bg={color} p='5px' rounded='md'>{name}</Box>
+              </Checkbox> */}
+              <Box bg={color} p="5px" rounded="md">
+                {name}
+              </Box>
             </label>
           );
         })}

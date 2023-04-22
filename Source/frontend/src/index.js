@@ -91,7 +91,6 @@ root.render(
                         path="employees-management"
                         element={<EmployeesManagement />}
                       />
-                      <Route path="work-experience" element={<Test />} />
                     </Route>
                     <Route path="payroll">
                       <Route path="gross-net" element={<Test />} />

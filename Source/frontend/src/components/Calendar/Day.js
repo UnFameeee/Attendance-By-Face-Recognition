@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
 import { Helper } from "../../Utils/Helper";
 import moment from "moment";
+import { Badge, Box, Button } from "@chakra-ui/react";
 export default function Day({ day, rowIdx, listWorkShift }) {
   const [dayEvents, setDayEvents] = useState([]);
   const {
@@ -11,6 +12,7 @@ export default function Day({ day, rowIdx, listWorkShift }) {
     filteredEvents,
     setSelectedEvent,
     monthIndex,
+    savedEvents,
     setMonthIndex,
   } = useContext(GlobalContext);
   let isShiftDay;
@@ -21,11 +23,11 @@ export default function Day({ day, rowIdx, listWorkShift }) {
         Helper.convertDateISOToDDMMYYY(item.shiftDate)
     );
     if (isShiftDay.length > 0) {
-      console.log("isShiftDay", isShiftDay);
-      isShiftDay.map((item) => {
-        const date = Helper.getMomentDateFormat(item?.shiftDate);
-        console.log(date);
-      });
+      // console.log("isShiftDay", isShiftDay);
+      // isShiftDay.map((item) => {
+      //   const date = Helper.getMomentDateFormat(item?.shiftDate);
+      //   console.log(date);
+      // });
     }
   }
   const checkIfDayInSameMonth = () => {
@@ -44,9 +46,10 @@ export default function Day({ day, rowIdx, listWorkShift }) {
   };
   useEffect(() => {
     const events = filteredEvents.filter(
-      (evt) => dayjs(evt.day).format("DD-MM-YY") === day.format("DD-MM-YY")
+      (evt) => evt.day === day.format("YYYY-MM-DD")
     );
     setDayEvents(events);
+    // console.log("filteredEvents",filteredEvents)
   }, [filteredEvents, day]);
   function getCurrentDayClass() {
     return day.format("DD-MM-YY") === dayjs().format("DD-MM-YY")
@@ -81,29 +84,42 @@ export default function Day({ day, rowIdx, listWorkShift }) {
           }
         }}
       >
-        {dayEvents.map((evt, idx) => (
-          <div
-            key={idx}
-            onClick={() => setSelectedEvent(evt)}
-            className={`${
-              evt.label
-            } p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate ${
-              idx == dayEvents.length - 1 ? "mb-5" : ""
-            }`}
-          >
-            {evt.title ? evt.title : "Unknown"}
-          </div>
-        ))}
         {isShiftDay?.length > 0 &&
-          isShiftDay.map((item) => (
-            <div
-              key={item?.shiftId}
-              // onClick={() => setSelectedEvent(evt)}
-              className={` p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate `}
-            >
-              {item?.employee?.fullname ?? "Unknown"}
-            </div>
-          ))}
+          isShiftDay.map((item, index) => {
+            // console.log("item", item);
+            return (
+              <div
+                key={item?.shiftId}
+                onClick={() => setSelectedEvent(item)}
+                className={` p-1 mr-3 text-white bg-[#3182ce] text-sm rounded mb-1 truncate flex gap-[5px] flex-col ${
+                  index === isShiftDay?.length - 1 ? "mb-[2rem]" : ""
+                } `}
+              >
+                <span className=" overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[1rem]">
+                  {item?.employee?.fullname ?? "Unknown"}
+                </span>
+                <div>
+                  <Badge>{item?.shiftType?.shiftName ?? ""}</Badge>
+                  <div className="flex gap-[2px]">
+                    <span className=" overflow-hidden text-ellipsis whitespace-nowrap">
+                      {item?.shiftType?.startTime
+                        ? moment(
+                            item?.shiftType?.startTime,
+                            "YYYY-MM-DD"
+                          ).format("hh:mm A")
+                        : ""}{" "}
+                      To{" "}
+                      {item?.shiftType?.endTime
+                        ? moment(item?.shiftType?.endTime, "YYYY-MM-DD").format(
+                            "hh:mm A"
+                          )
+                        : ""}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
       </div>
     </div>
   );

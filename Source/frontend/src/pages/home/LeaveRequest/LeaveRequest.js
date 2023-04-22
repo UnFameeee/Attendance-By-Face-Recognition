@@ -6,39 +6,30 @@ import {
   Heading,
   Stack,
   Text,
-  Icon,
   HStack,
   Button,
-  VStack,
   Tooltip,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { SlOrganization } from "react-icons/sl";
-import { TfiWorld } from "react-icons/tfi";
-import { FaRegUserCircle, FaGrinStars } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import {
-  BsCheckCircleFill,
-  BsTelephone,
-  BsCalendar2Date,
-} from "react-icons/bs";
+import { BsTelephone } from "react-icons/bs";
 import { RiFolderUserLine } from "react-icons/ri";
 import FormTextField from "../../../components/field/FormTextField";
-import jwtDecode from "jwt-decode";
 import { useGetProfileDetail } from "../../../services/setting/profile";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Helper } from "../../../Utils/Helper";
 
 function LeaveRequest() {
-  const accessTokenJSON = localStorage.getItem("accessToken");
-  const accessToken = JSON.parse(accessTokenJSON);
-  var userDecodeData = jwtDecode(accessToken);
-  const {
-    data: profileDetailData,
-    isLoading: isLoadingProfileDetail,
-    isError,
-    error,
-  } = useGetProfileDetail(userDecodeData.id);
+  // #region declare variable
+  var userDecodeData = Helper.getUseDecodeInfor();
+  // #endregion
+  // #region hooks
+  const { data: profileDetailData, isLoading: isLoadingProfileDetail } =
+    useGetProfileDetail(userDecodeData.id);
+  // #endregion
+  // #region form
   var initialValuesExisted = {
     fullname: profileDetailData?.result?.fullname ?? "",
     email: profileDetailData?.result?.email ?? "",
@@ -60,6 +51,7 @@ function LeaveRequest() {
       .min(Yup.ref("startDate"), "End date must be after start date")
       .required("This field is required"),
   });
+  // #endregion
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={3}>
