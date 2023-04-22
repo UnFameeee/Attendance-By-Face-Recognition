@@ -117,8 +117,4 @@ export class ShifttypeService {
     }
     return response;
   }
-
-  // public createShiftType = async() {
-
-  // }
 }

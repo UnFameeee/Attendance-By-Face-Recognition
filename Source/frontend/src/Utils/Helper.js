@@ -48,10 +48,26 @@ const getMomentDateFormat = (dateInput) => {
   return formatDate;
 };
 
+function findMostDuplicatedValue(array) {
+  let counts = {};
+  let maxCount = 0;
+  let mostDuplicatedValue;
+  for (let i = 0, length = array.length; i < length; ++i) {
+    let value = array[i];
+    counts[value] = (counts[value] || 0) + 1;
+    if (counts[value] > maxCount) {
+      maxCount = counts[value];
+      mostDuplicatedValue = value;
+    }
+  }
+  return maxCount > 1 ? mostDuplicatedValue : "unknown";
+}
+
 export const Helper = {
   isTokenExpired,
   isOdd,
   getMonth,
+  findMostDuplicatedValue,
   convertDateISOToDDMMYYY,
   getUseDecodeInfor,
   getMomentDateFormat,

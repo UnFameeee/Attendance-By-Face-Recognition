@@ -22,12 +22,18 @@ export class FacialRecognitionRoute implements Routes {
   // If we have the background job running, we will solve the problem of delete and update the image.
 
   private async initializeRoutes() {
-    // api/facialRecognition/trainingImages
-    this.router.post(`${this.path}/trainModel`,
+    // api/facialRecognition/trainModel/:employeeId
+    this.router.post(`${this.path}/trainModel/:employeeId`,
       // authMiddleware,
       // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
       this.facialRecognitionController.trainModel
     )
 
+    // api/facialRecognition/trainAllModel
+    this.router.post(`${this.path}/trainAllModel`,
+      // authMiddleware,
+      // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
+      this.facialRecognitionController.trainAllModel
+    )
   }
 }

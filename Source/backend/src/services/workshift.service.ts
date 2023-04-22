@@ -120,6 +120,9 @@ export class WorkshiftService {
       },
     })
 
+    console.log(queryData[0].shiftDate.toString())
+    console.log(moment(queryData[0].shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD"));
+
     response.result = queryData;
     return response;
   }

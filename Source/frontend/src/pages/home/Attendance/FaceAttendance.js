@@ -1,12 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "./FaceAttendance.css"
-// import '@tensorflow/tfjs-node';
 import * as faceapi from '@vladmandic/face-api';
 
 import {
   useToast,
 } from "@chakra-ui/react";
-import axiosBase, { baseURL } from '../../../Utils/AxiosInstance';
+import axiosBase from '../../../Utils/AxiosInstance';
+import { useMutation } from 'react-query';
+import { attendanceService } from '../../../services/attendance/attendance';
+import { Helper } from '../../../Utils/Helper';
+import AttendanceModal from '../../../components/Attendance/AttendanceModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAttendanceModalProps } from '../../../store/Slice/AttendanceSlice/attendanceModalSlice';
+import { setIsScaningPaused, setIsTakeAttendance } from '../../../store/Slice/AttendanceSlice/takeAttendanceSlice';
+import { resetFailedCount, setExceptionModalOpen, setFailedCount } from '../../../store/Slice/AttendanceSlice/exceptionModalSlice';
+import ExceptionModel from './../../../components/Attendance/ExceptionModel';
 
 let streamObj;
 export default function FaceAttendance() {
@@ -14,16 +22,69 @@ export default function FaceAttendance() {
   const videoRef = useRef(null);
   const intervalRef = useRef(null);
   const toast = useToast();
+  const dispatch = useDispatch();
+  const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
+  const employeeId = useSelector(state => state.attendanceModal.employeeId);
+  const { isExceptionModalOpen, failedCount } = useSelector(state => state.exceptionModal);
+
+  const useTakeAttendance = useMutation((variable) =>
+    attendanceService.takeAttendance(variable.employeeId, variable.attendanceType), {
+    onSuccess: (data) => {
+
+      dispatch(setIsTakeAttendance({
+        isTakeAttendance: false,
+      }))
+
+      if (data.message) {
+        toast({
+          title: 'Checkin',
+          description: data.message,
+          position: "top",
+          status: "error",
+          variant: 'subtle',
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: 'Checkin',
+          description: data.result,
+          position: "top",
+          status: "success",
+          variant: 'subtle',
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+
+      dispatch(setIsScaningPaused({
+        isScaningPaused: true,
+      }))
+      setTimeout(() => {
+        dispatch(setIsScaningPaused({
+          isScaningPaused: false,
+        }))
+      }, 10000);
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    }
+  })
 
   useEffect(() => {
-    async function loadModels() {
-
-      const model_url = `${baseURL}/public/models`
+    async function loadingModels() {
       if (!modelsLoaded) {
         await Promise.all([
-          faceapi.nets.ssdMobilenetv1.loadFromUri(`${model_url}`),
-          faceapi.nets.faceRecognitionNet.loadFromUri(`${model_url}`),
-          faceapi.nets.faceLandmark68Net.loadFromUri(`${model_url}`),
+          faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
+          faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+          faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
         ]).then(async () => {
           setModelsLoaded(true);
           toast({
@@ -35,115 +96,147 @@ export default function FaceAttendance() {
           });
         });
       }
+    }
+    loadingModels();
 
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-          const video = videoRef.current;
-          if (!video) {
-            return;
-          }
-          video.srcObject = stream;
-          // Save the stream object for later use
-          streamObj = stream;
-          // video.style.transform = 'scaleX(-1)';
-        })
-        .catch(error => {
-          // Handle errors, such as the user denying permission
-          console.error('Error accessing camera:', error);
-        });
-      
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        const video = videoRef.current;
+        if (!video) {
+          return;
+        }
+        video.srcObject = stream;
+        // Save the stream object for later use
+        streamObj = stream;
+        // video.style.transform = 'scaleX(-1)';
+      })
+      .catch(error => {
+        // Handle errors, such as the user denying permission
+        console.error('Error accessing camera:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const canvas = faceapi.createCanvas(videoRef.current);
+    canvas.id = "canvas";
+    const canvasElems = document.querySelectorAll('.template canvas');
+    if (!canvasElems.length) {
+      const template = document.querySelector('.template');
+      template.append(canvas);
     }
 
-    // async function trainModel() {
-    //   //Training model
-    //   const labels = ["acb72415-a002-47ae-97d6-401c2cba87b9"]
-    //   const faceDescriptors = []
-    //   for (const label of labels) {
-    //     const descriptors = [];
-    //     for (let i = 1; i <= 2; ++i) {
-    //       const image = await faceapi.fetchImage(`${baseURL}/public/images/employee/${label}/${label}_${i}.jpg`);
-    //       const detection = await faceapi.detectSingleFace(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-    //       descriptors.push(detection.descriptor);
-    //     }
-    //     faceDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
-    //   }
-
-    //   const duration = (endTime.getTime() - startTime.getTime()) / 1000;
-    //   toast({
-    //     title: `Finish train the model! - Duration: ${duration} seconds`,
-    //     position: "bottom-right",
-    //     status: "info",
-    //     isClosable: true,
-    //     duration: 5000,
-    //   });
-    //   return faceDescriptors;
-    // }
+    // const displaySize = { width: 720, height: 560 }
+    const videoResolution = document.getElementById("video");
+    const resolution = {
+      width: videoResolution.offsetWidth,
+      height: videoResolution.offsetHeight,
+    }
+    const displaySize = resolution;
+    faceapi.matchDimensions(canvas, displaySize);
 
     async function addEvent() {
-      const canvas = faceapi.createCanvas(videoRef.current);
-      console.log("canvas: ", canvas);
-      canvas.id = "canvas";
-      const canvasElems = document.querySelectorAll('.template canvas');
-      if (!canvasElems.length) {
-        const a = document.querySelector('.template');
-        a.append(canvas);
+      //load the model
+      const FaceMatcherJson = await axiosBase.get(`/public/train-model/FaceMatcher.json`);
+      const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
+
+      const faceDetectArray = [];
+      const realtimeFaceRegconition = async () => {
+        if (!useTakeAttendance.isLoading) {
+          const detections = await faceapi
+            .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+            .withFaceLandmarks()
+            .withFaceDescriptors()
+
+          const resizedDetections = faceapi.resizeResults(
+            detections,
+            displaySize
+          );
+
+          canvas
+            .getContext('2d')
+            .clearRect(0, 0, canvas.width, canvas.height);
+
+          for (const detection of resizedDetections) {
+            let faceDetected = faceMatcher.findBestMatch(detection.descriptor);
+            const box = detection.detection.box;
+            const drawBox = new faceapi.draw.DrawBox(box, {
+              label: faceDetected
+            });
+
+            if (!isScaningPaused) {
+              faceDetectArray.push(faceDetected.label);
+              console.log(faceDetectArray);
+              if (faceDetectArray.length >= 3) {
+                //if the case isn't "unknown"
+                const highestFaceValue = Helper.findMostDuplicatedValue(faceDetectArray);
+                if (highestFaceValue !== "unknown") {
+                  dispatch(setIsScaningPaused({
+                    isScaningPaused: true,
+                  }))
+                  dispatch(setAttendanceModalProps({
+                    isAttendanceModalOpen: true,
+                    employeeId: highestFaceValue
+                  }))
+                }
+
+                faceDetectArray.splice(0, faceDetectArray.length);
+              }
+            }
+            drawBox.draw(canvas);
+          }
+        }
       }
 
-      const displaySize = { width: 720, height: 560 }
-      faceapi.matchDimensions(canvas, displaySize);
-
-      //load the model
-      const trainedFaceMatcherJson = await axiosBase.get(`/public/train-model/trainedFaceMatcher.json`);
-      const faceMatcher = faceapi.FaceMatcher.fromJSON(trainedFaceMatcherJson.data);
-      
-      // const trainData = await trainModel();
-      // const faceMatcher = new faceapi.FaceMatcher(trainData, 0.46);
-
-      intervalRef.current = setInterval(async () => {
-        const detections = await faceapi
-          .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.2, maxResults: 1 }))
-          .withFaceLandmarks()
-          .withFaceDescriptors()
-
-        const resizedDetections = faceapi.resizeResults(
-          detections,
-          displaySize
-        );
-        canvas
-          .getContext('2d')
-          .clearRect(0, 0, canvas.width, canvas.height);
-
-        for (const detection of resizedDetections) {
-          const box = detection.detection.box;
-          const drawBox = new faceapi.draw.DrawBox(box, {
-            label: faceMatcher.findBestMatch(detection.descriptor)
-          });
-          drawBox.draw(canvas);
-        }
-        // faceapi.draw.drawDetections(canvas, resizedDetections);
-        // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-        // faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-      }, 1000)
+      intervalRef.current = setInterval(realtimeFaceRegconition, 1000);
     }
-
-    loadModels().then(async () => {
-      await addEvent();
-    });
+    addEvent();
 
     return () => {
       clearInterval(intervalRef.current);
+    };
+  }, [isScaningPaused])
+
+  useEffect(() => {
+    if (isTakeAttendance) {
+      const data = {
+        employeeId: employeeId,
+        attendanceType: "FACE",
+      }
+      useTakeAttendance.mutate(data);
+    }
+  }, [isTakeAttendance]);
+
+  useEffect(() => {
+    //if the employee fail 3 times attendance, popup the exception handle.
+    if (failedCount == 3) {
+      debugger;
+      dispatch(resetFailedCount());
+      dispatch(setIsScaningPaused({
+        isScaningPaused: true,
+      }))
+      dispatch(setExceptionModalOpen({
+        isExceptionModalOpen: true,
+      }))
+      console.log(isScaningPaused)
+    }
+  }, [failedCount]);
+
+  useEffect(() => {
+    return () => {
       if (streamObj) {
         streamObj.getTracks().forEach(track => track.stop());
       }
     };
-  }, [])
+  }, []);
 
   return (
     <>
       <div className="template">
         <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video>
       </div>
+      {employeeId && <AttendanceModal />}
+      <ExceptionModel />
     </>
   );
 }

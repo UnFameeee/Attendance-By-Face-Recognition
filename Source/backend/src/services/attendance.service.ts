@@ -5,6 +5,7 @@ import { AttendanceType } from '../utils/enum';
 import { Helper } from '../utils/helper';
 
 export class AttendanceService {
+
   public takeAttendance = async (employeeId: string, attendanceType: string) => {
     const response = new ResponseData<string>();
     const now = new Date();
@@ -180,4 +181,5 @@ export class AttendanceService {
       return response;
     }
   }
+  
 }
