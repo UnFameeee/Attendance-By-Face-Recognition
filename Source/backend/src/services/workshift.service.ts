@@ -8,13 +8,24 @@ import { WorkshiftModel } from "../model/view-model/workshift.model";
 export class WorkshiftService {
   public getWorkshiftOfDepartment = async (departmentId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
     const response = new ResponseData<WorkshiftModel[]>;
+    var daysInPreviousmonth;
+    var daysInNextmonth;
+
     //Get last 7 days of the previous month and first 7 days of the next month 
-    const daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
-    const daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+
+    //12 1 2
+    if (data.month.previousMonth == 12) {
+      daysInPreviousmonth = moment(`${data.year - 1}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    }
+    //11 12 1
+    if (data.month.nextMonth == 1) {
+      daysInNextmonth = moment(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    }
 
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
     const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
-
 
     const queryData = await prisma.workshift.findMany({
       where: {
@@ -58,10 +69,22 @@ export class WorkshiftService {
 
   public getWorkshiftOfEmployee = async (employeeId: string, data: DateTimeDTO): Promise<ResponseData<WorkshiftModel[]>> => {
     const response = new ResponseData<WorkshiftModel[]>;
-    //Get last 7 days of the previous month and first 7 days of the next month 
-    const daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
-    const daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    var daysInPreviousmonth;
+    var daysInNextmonth;
 
+    //Get last 7 days of the previous month and first 7 days of the next month 
+    daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+
+    //12 1 2
+    if (data.month.previousMonth == 12) {
+      daysInPreviousmonth = moment(`${data.year - 1}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    }
+    //11 12 1
+    if (data.month.nextMonth == 1) {
+      daysInNextmonth = moment(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    }
+    
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
     const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
 

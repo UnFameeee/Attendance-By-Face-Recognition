@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Box,
   Flex,
@@ -10,9 +9,9 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
-import { FaRegUserCircle, FaGrinStars, FaHouseUser } from "react-icons/fa";
+import { FaRegUserCircle, FaHouseUser } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import {
   BsTelephone,
@@ -23,7 +22,7 @@ import {
 import PieChart from "../../../components/chart/PieChart";
 import ColumnChart from "../../../components/chart/ColumnChart";
 import DynamicTable from "../../../components/table/DynamicTable";
-import { dumbTableData, roleCodeColor } from "../../test/dumbTableData";
+import { roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
@@ -35,22 +34,25 @@ import {
   useGetListEmployee,
 } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
 import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
-import { Helper } from "../../../Utils/Helper";
 import { passwordRegex } from "../../../Utils/ValidationRegExp";
 
 function EmployeesManagement() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionEmployeeGeneral,
     "employee-management"
   );
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { data, isLoading, isError, error } = useGetListEmployee();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
+  // #endregion
+  // #region hook
+  const { data: listEmployeeData, isFetching: isFetchingListEmployee } =
+    useGetListEmployee();
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -117,6 +119,8 @@ function EmployeesManagement() {
       });
     },
   });
+  // #endregion
+  // #region function
   const handleEditEmployee = (values) => {
     const id = editData.id;
     const employeeObj = {
@@ -161,6 +165,8 @@ function EmployeesManagement() {
       (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
     );
   };
+  // #endregion
+  // #region table
   const tableRowAction = [
     {
       actionName: "Edit",
@@ -259,7 +265,8 @@ function EmployeesManagement() {
       },
       {
         Header: "Department",
-        accessor: "department.departmentName",
+        accessor: "department",
+        Cell: ({ value }) => <span>{value?.departmentName}</span>,
         cellWidth: "200px",
         haveFilter: {
           filterType: FilterType.Text,
@@ -324,6 +331,8 @@ function EmployeesManagement() {
     ],
     []
   );
+  // #endregion
+  // #region drawer
   const drawerFieldData = [
     {
       name: "fullname",
@@ -368,7 +377,7 @@ function EmployeesManagement() {
       name: "department",
       label: "Department",
       placeholder: "---",
-      isReadOnly:true,
+      isReadOnly: true,
     },
     {
       name: "phoneNumber",
@@ -426,7 +435,7 @@ function EmployeesManagement() {
     phoneNumber: `${editData?.phoneNumber ?? ""}`,
     password: editData?.password ?? "",
     displayName: editData?.["role.displayName"] ?? "",
-    department: editData?.["department.departmentName"] ?? "",
+    department: editData?.department?.departmentName ?? "",
     gender: editData?.gender ?? "male",
     dateOfBirth: `${
       editData?.dateOfBirth
@@ -446,7 +455,7 @@ function EmployeesManagement() {
       ? {
           fullname: Yup.string().required("This field is required"),
           email: Yup.string().required("This field is required"),
-          displayName:Yup.string().required("This field is required"),
+          displayName: Yup.string().required("This field is required"),
           password: Yup.string()
             .matches(
               passwordRegex,
@@ -463,7 +472,8 @@ function EmployeesManagement() {
           ),
         }
   );
-  if (isLoading) return <LoadingSpinner />;
+  // #endregion
+  if (isFetchingListEmployee) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <HStack>
@@ -495,33 +505,39 @@ function EmployeesManagement() {
         </Box>
       </Flex>
       <Box marginTop="10px">
-        <DynamicTable
-          onAddEditOpen={onAddEditOpen}
-          handleDeleteRange={DeleteRange}
-          tableRowAction={tableRowAction}
-          columns={columns}
-          data={data?.result?.data}
-          permission={resultPermission}
-        />
-        <DynamicDrawer
-          handleEdit={handleEditEmployee}
-          handleCreate={handleCreateEmployee}
-          isAddEditOpen={isAddEditOpen}
-          onAddEditClose={onAddEditClose}
-          editData={editData}
-          setEditData={setEditData}
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          drawerFieldData={drawerFieldData}
-        />
-        <ChakraAlertDialog
-          title="Delete Single"
-          isOpen={isDeleteSingleOpen}
-          onClose={onDeleteSingleClose}
-          onAccept={handleAcceptDelete}
-        />
+        {listEmployeeData && listEmployeeData?.result?.data.length == 0 ? (
+          <NoDataToDisplay h="450px" />
+        ) : (
+          <>
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={listEmployeeData?.result?.data}
+              permission={resultPermission}
+              paging={listEmployeeData?.result?.page}
+            />
+            <DynamicDrawer
+              handleEdit={handleEditEmployee}
+              handleCreate={handleCreateEmployee}
+              isAddEditOpen={isAddEditOpen}
+              onAddEditClose={onAddEditClose}
+              editData={editData}
+              setEditData={setEditData}
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              drawerFieldData={drawerFieldData}
+            />
+            <ChakraAlertDialog
+              title="Delete Single"
+              isOpen={isDeleteSingleOpen}
+              onClose={onDeleteSingleClose}
+              onAccept={handleAcceptDelete}
+            />
+          </>
+        )}
       </Box>
-      {data?.result?.data.length == 0 && <NoDataToDisplay h="450px" />}
     </Stack>
   );
 }

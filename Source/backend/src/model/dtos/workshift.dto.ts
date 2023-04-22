@@ -104,7 +104,7 @@ export const dateTimeSchema = z.object({
         description: "Year should be an array"
       })
       .min(1, "Month must be more than or equal to 1")
-      .max(12, "Month must be less than or equal to 12"),
+      .max(13, "Month must be less than or equal to 12"),
 
     nextMonth: z
       .number({
@@ -113,7 +113,7 @@ export const dateTimeSchema = z.object({
         description: "Year should be an array"
       })
       .min(1, "Month must be more than or equal to 1")
-      .max(12, "Month must be less than or equal to 12")
+      .max(13, "Month must be less than or equal to 12")
   }),
 
   year: z

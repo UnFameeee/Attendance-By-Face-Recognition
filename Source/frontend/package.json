@@ -20,6 +20,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^9.0.1",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "postcss": "^8.4.21",
     "postcss-cli": "^8.1.0",

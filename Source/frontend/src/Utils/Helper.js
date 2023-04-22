@@ -27,11 +27,7 @@ const getMonth = (month = dayjs().month()) => {
   });
   return daysMatrix;
 };
-const convertTimestampToISO = (timestamp) => {
-  console.log("timeStamp", timestamp);
-  const date = new Date(timestamp);
-  return date.toISOString();
-};
+
 const convertDateISOToDDMMYYY = (dateISO) => {
   const dateObj = new Date(dateISO);
   const day = dateObj.getDate().toString().padStart(2, "0");
@@ -72,7 +68,6 @@ export const Helper = {
   isOdd,
   getMonth,
   findMostDuplicatedValue,
-  convertTimestampToISO,
   convertDateISOToDDMMYYY,
   getUseDecodeInfor,
   getMomentDateFormat,
