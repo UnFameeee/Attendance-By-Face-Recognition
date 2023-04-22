@@ -28,6 +28,16 @@ export const application_permission = {
     `${ROLE.MANAGER}-${PERMISSION.READ}`,
     `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
   ],
+  "assign-department-management": [
+    `${ROLE.ADMIN}-${PERMISSION.CREATE}`,
+    `${ROLE.ADMIN}-${PERMISSION.READ}`,
+    `${ROLE.ADMIN}-${PERMISSION.UPDATE}`,
+    `${ROLE.ADMIN}-${PERMISSION.DELETE}`,
+    `${ROLE.ADMIN}-${PERMISSION.GRANT_PERMISSION}`,
+    `${ROLE.ADMIN}-${PERMISSION.GRANT_POSITION}`,
+    `${ROLE.MANAGER}-${PERMISSION.READ}`,
+    `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
+  ],
   "organization-management": [
     `${ROLE.ADMIN}-${PERMISSION.CREATE}`,
     `${ROLE.ADMIN}-${PERMISSION.READ}`,

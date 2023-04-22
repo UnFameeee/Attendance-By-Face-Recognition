@@ -1,4 +1,3 @@
-
 //export const dumbTableData =[]
 export const dumbTableData = [
   {
@@ -7,7 +6,8 @@ export const dumbTableData = [
     email: "ageed@liveinternet.ru",
     role: "Project Manager",
     phoneNumber: "943-358-0519",
-    address: "Room 486 lorem55555555555555555555555555555555555555555555555555555555555555555dddddddddddddddddddddddddddddd5",
+    address:
+      "Room 486 lorem55555555555555555555555555555555555555555555555555555555555555555dddddddddddddddddddddddddddddd5",
   },
   {
     picture: "http://dummyimage.com/199x100.png/dddddd/000000",
@@ -260,22 +260,12 @@ export const dumbTableData = [
 ];
 export const roleCodeColor = [
   {
-    "Project Manager": "green",
+    Employee: "green",
   },
   {
-    Estimator: "red",
+    Manager: "purple",
   },
   {
-    Electrician: "purple",
-  },
-  {
-    "Construction Worker": "orange",
-  },
-  {
-    "Construction Manager": "blue",
-  },
-  {
-    Engineer: "pink",
+    Admin: "red",
   },
 ];
-

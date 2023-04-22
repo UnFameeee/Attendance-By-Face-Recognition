@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Country, State, City } from "country-state-city";
 import { Select, VStack, Heading, Text, HStack } from "@chakra-ui/react";
 function AddressSelection({ formik, ...props }) {
-  const [currentCountry, setCurrentCountry] = useState("");
   const [listCountry, setListCountry] = useState([
     { isoCode: "", name: "---" },
     ...Country.getAllCountries(),
@@ -42,14 +41,14 @@ function AddressSelection({ formik, ...props }) {
       } else {
         updateKey = e.target.value;
       }
-      return { city, state, country, [e.target.name]: updateKey };
+      return { city, state, country, [e.target.name]: updateKey ?? "" };
     });
   };
   useEffect(() => {
-    formik?.setFieldValue("megaAddress", megaAddress);
+    formik?.setFieldValue(props?.name, megaAddress);
   }, [megaAddress]);
   return (
-    <VStack name="megaAddress" spacing="10px">
+    <VStack name={props.name} spacing="10px">
       <VStack w="100%" alignItems="start">
         <Text fontSize="md" fontWeight="medium">
           Country
@@ -59,7 +58,6 @@ function AddressSelection({ formik, ...props }) {
           name="country"
           onChange={(e) => {
             handleOnchangeMegaAddress(e);
-            setCurrentCountry(e.target.value);
             setListState(() => [
               { isoCode: "", name: "---" },
               ...State.getStatesOfCountry(e.target.value),

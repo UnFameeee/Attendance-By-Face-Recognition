@@ -28,18 +28,40 @@ export const useGetListRoleOfEmployee = () => {
   });
 };
 
-// export const createOrganizationDetail = async (organizationDetail) => {
-//   const response = await axiosBase.post(
-//     `${endPoint}/createOrganization`,
-//     organizationDetail
-//   );
-//   return response.data;
-// };
+export const createEmployeeService = async (employeeObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/createEmployee`,
+    employeeObj
+  );
+  return response.data;
+};
 
-// export const saveOrganizationDetail = async ({ id, organizationDetail }) => {
+export const saveEmployeeService = async ({ id, employeeObj }) => {
+  const response = await axiosBase.post(
+    `${endPoint}/updateEmployeeDetail/${id}`,
+    employeeObj
+  );
+  return response.data;
+};
+
+export const assignEmployeeToDepartmentService = async (assignObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/assignEmployeeToDepartment`,
+    assignObj
+  );
+  return response.data;
+};
+export const assignManagerToDepartmentService = async (assignObj) => {
+  const response = await axiosBase.post(
+    `${endPoint}/assignManagerToDepartment`,
+    assignObj
+  );
+  return response.data;
+};
+// export const deleteEmployeeService = async (employeeId) => {
 //   const response = await axiosBase.post(
-//     `${endPoint}/updateOrganizationDetail/${id}`,
-//     organizationDetail
+//     `${endPoint}/createEmployee`,
+//     employeeObj
 //   );
 //   return response.data;
 // };

@@ -33,6 +33,7 @@ export class EmployeeService {
         department: {
           select: {
             departmentName: true,
+            departmentId:true,
           }
         },
         location: {
