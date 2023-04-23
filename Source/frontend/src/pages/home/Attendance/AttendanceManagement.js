@@ -253,7 +253,7 @@ function AttendanceManagement() {
           spacing={3}
           gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
         >
-          {Array.from({ length: 21 }, (_, index) => {
+          {Array.from({ length: 24 }, (_, index) => {
             return (
               <VStack
                 color="white"

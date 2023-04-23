@@ -33,7 +33,7 @@ import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
 import WorkShift from "./pages/home/WorkShift/WorkShift";
 import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
 import AttendanceModal from "./components/Attendance/AttendanceModal";
-import ExceptionModel from './components/Attendance/ExceptionModel';
+import ExceptionModel from "./components/Attendance/ExceptionModel";
 import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
@@ -103,7 +103,15 @@ root.render(
                     <Route path="report" element={<Test />} />
                     <Route path="leave-request" element={<LeaveRequest />} />
                     <Route path="attendance">
-                      <Route path="attendance-management" element={<AttendanceManagement />} />
+                      <Route
+                        path="face-attendance"
+                        element={<FaceAttendance />}
+                      />
+
+                      <Route
+                        path="attendance-management"
+                        element={<AttendanceManagement />}
+                      />
                     </Route>
                     <Route path="setting">
                       <Route path="profile" element={<Profile />} />

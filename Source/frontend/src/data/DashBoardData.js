@@ -17,6 +17,7 @@ export const DashBoardDataTop = [
     link: "/employees/employees-management",
     linkTitle: "Manage Employees",
     bgColor: "#38bfee",
+    roleCanAccess:['manager','admin']
   },
   {
     title: "Organization",
@@ -25,6 +26,7 @@ export const DashBoardDataTop = [
     link: "/organization/general-organization",
     linkTitle: "Manage Organization",
     bgColor: "#29a65a",
+    roleCanAccess:['admin']
   },
   {
     title: "Leave Request",

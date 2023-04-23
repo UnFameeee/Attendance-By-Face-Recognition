@@ -44,7 +44,9 @@ import {
 import jwtDecode from "jwt-decode";
 import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
+import { useGetUserRole } from "../../hook/useGetPermission";
 function HomeSidebar() {
+  const [userRole, setUserRole] = useState("");
   const { collapseSidebar, toggleSidebar, collapsed, toggled } =
     useProSidebar();
   const toast = useToast();
@@ -76,10 +78,11 @@ function HomeSidebar() {
   const handleLogout = () => {
     useLogoutMutation.mutate();
   };
-  const accessTokenJSON = localStorage.getItem("accessToken");
-  const accessToken = JSON.parse(accessTokenJSON);
-  var decoded = jwtDecode(accessToken);
+  var decoded = Helper.getUseDecodeInfor();
   let userEmail = decoded.email;
+  useEffect(() => {
+    setUserRole(Helper.getUserRole());
+  }, []);
   return (
     <div
       style={{
@@ -168,71 +171,257 @@ function HomeSidebar() {
                 },
               }}
             >
-              {SideBarData.map((parentItem, index) =>
-                parentItem.children ? (
-                  <SubMenu
-                    key={index}
-                    label={
-                      <Flex alignItems="center">
-                        <Box flex="20%" display="grid" placeItems="start">
-                          {parentItem.icon}
-                        </Box>
-                        <Box flex="80%" fontSize="1.2rem" fontWeight="medium">
-                          {parentItem.title}
-                        </Box>
-                      </Flex>
-                    }
-                  >
-                    {parentItem.children &&
-                      parentItem.children.map((childItem, index) => (
+              {SideBarData.map((parentItem, index) => {
+                if (parentItem.children) {
+                  if (parentItem?.roleCanAccess) {
+                    return (
+                      parentItem?.roleCanAccess?.includes(userRole?.role) && (
+                        <SubMenu
+                          key={index}
+                          label={
+                            <Flex alignItems="center">
+                              <Box flex="20%" display="grid" placeItems="start">
+                                {parentItem.icon}
+                              </Box>
+                              <Box
+                                flex="80%"
+                                fontSize="1.2rem"
+                                fontWeight="medium"
+                              >
+                                {parentItem.title}
+                              </Box>
+                            </Flex>
+                          }
+                        >
+                          {parentItem.children &&
+                            parentItem.children.map((childItem, index) => {
+                              if (childItem?.roleCanAccess) {
+                                return (
+                                  childItem?.roleCanAccess?.includes(
+                                    userRole?.role
+                                  ) && (
+                                    <MenuItem
+                                      active={
+                                        location.pathname ==
+                                        `/${parentItem.url}/${childItem.url}`
+                                          ? true
+                                          : false
+                                      }
+                                      key={index}
+                                      component={
+                                        <NavLink
+                                          to={`${parentItem.url}/${childItem.url}`}
+                                        />
+                                      }
+                                    >
+                                      <Flex alignItems="center">
+                                        <Box
+                                          flex="20%"
+                                          display="grid"
+                                          placeItems="start"
+                                        >
+                                          {childItem.icon}
+                                        </Box>
+                                        <Box
+                                          flex="80%"
+                                          fontSize="1.1rem"
+                                          fontWeight="medium"
+                                        >
+                                          {childItem.title}
+                                        </Box>
+                                      </Flex>
+                                    </MenuItem>
+                                  )
+                                );
+                              } else {
+                                return (
+                                  <MenuItem
+                                    active={
+                                      location.pathname ==
+                                      `/${parentItem.url}/${childItem.url}`
+                                        ? true
+                                        : false
+                                    }
+                                    key={index}
+                                    component={
+                                      <NavLink
+                                        to={`${parentItem.url}/${childItem.url}`}
+                                      />
+                                    }
+                                  >
+                                    <Flex alignItems="center">
+                                      <Box
+                                        flex="20%"
+                                        display="grid"
+                                        placeItems="start"
+                                      >
+                                        {childItem.icon}
+                                      </Box>
+                                      <Box
+                                        flex="80%"
+                                        fontSize="1.1rem"
+                                        fontWeight="medium"
+                                      >
+                                        {childItem.title}
+                                      </Box>
+                                    </Flex>
+                                  </MenuItem>
+                                );
+                              }
+                            })}
+                        </SubMenu>
+                      )
+                    );
+                  } else {
+                    return (
+                      <SubMenu
+                        key={index}
+                        label={
+                          <Flex alignItems="center">
+                            <Box flex="20%" display="grid" placeItems="start">
+                              {parentItem.icon}
+                            </Box>
+                            <Box
+                              flex="80%"
+                              fontSize="1.2rem"
+                              fontWeight="medium"
+                            >
+                              {parentItem.title}
+                            </Box>
+                          </Flex>
+                        }
+                      >
+                        {parentItem.children &&
+                          parentItem.children.map((childItem, index) => {
+                            if (childItem?.roleCanAccess) {
+                              return (
+                                childItem?.roleCanAccess?.includes(
+                                  userRole.role
+                                ) && (
+                                  <MenuItem
+                                    active={
+                                      location.pathname ==
+                                      `/${parentItem.url}/${childItem.url}`
+                                        ? true
+                                        : false
+                                    }
+                                    key={index}
+                                    component={
+                                      <NavLink
+                                        to={`${parentItem.url}/${childItem.url}`}
+                                      />
+                                    }
+                                  >
+                                    <Flex alignItems="center">
+                                      <Box
+                                        flex="20%"
+                                        display="grid"
+                                        placeItems="start"
+                                      >
+                                        {childItem.icon}
+                                      </Box>
+                                      <Box
+                                        flex="80%"
+                                        fontSize="1.1rem"
+                                        fontWeight="medium"
+                                      >
+                                        {childItem.title}
+                                      </Box>
+                                    </Flex>
+                                  </MenuItem>
+                                )
+                              );
+                            } else {
+                              return (
+                                <MenuItem
+                                  active={
+                                    location.pathname ==
+                                    `/${parentItem.url}/${childItem.url}`
+                                      ? true
+                                      : false
+                                  }
+                                  key={index}
+                                  component={
+                                    <NavLink
+                                      to={`${parentItem.url}/${childItem.url}`}
+                                    />
+                                  }
+                                >
+                                  <Flex alignItems="center">
+                                    <Box
+                                      flex="20%"
+                                      display="grid"
+                                      placeItems="start"
+                                    >
+                                      {childItem.icon}
+                                    </Box>
+                                    <Box
+                                      flex="80%"
+                                      fontSize="1.1rem"
+                                      fontWeight="medium"
+                                    >
+                                      {childItem.title}
+                                    </Box>
+                                  </Flex>
+                                </MenuItem>
+                              );
+                            }
+                          })}
+                      </SubMenu>
+                    );
+                  }
+                } else {
+                  if (parentItem?.roleCanAccess) {
+                    return (
+                      parentItem?.roleCanAccess?.includes(userRole?.role) && (
                         <MenuItem
                           active={
-                            location.pathname ==
-                            `/${parentItem.url}/${childItem.url}`
+                            location.pathname == `/${parentItem.url}`
                               ? true
                               : false
                           }
                           key={index}
-                          component={
-                            <NavLink
-                              to={`${parentItem.url}/${childItem.url}`}
-                            />
-                          }
+                          component={<NavLink to={parentItem.url} />}
                         >
                           <Flex alignItems="center">
                             <Box flex="20%" display="grid" placeItems="start">
-                              {childItem.icon}
+                              {parentItem.icon}
                             </Box>
                             <Box
                               flex="80%"
-                              fontSize="1.1rem"
+                              fontSize="1.2rem"
                               fontWeight="medium"
                             >
-                              {childItem.title}
+                              {parentItem.title}
                             </Box>
                           </Flex>
                         </MenuItem>
-                      ))}
-                  </SubMenu>
-                ) : (
-                  <MenuItem
-                    active={
-                      location.pathname == `/${parentItem.url}` ? true : false
-                    }
-                    key={index}
-                    component={<NavLink to={parentItem.url} />}
-                  >
-                    <Flex alignItems="center">
-                      <Box flex="20%" display="grid" placeItems="start">
-                        {parentItem.icon}
-                      </Box>
-                      <Box flex="80%" fontSize="1.2rem" fontWeight="medium">
-                        {parentItem.title}
-                      </Box>
-                    </Flex>
-                  </MenuItem>
-                )
-              )}
+                      )
+                    );
+                  } else {
+                    return (
+                      <MenuItem
+                        active={
+                          location.pathname == `/${parentItem.url}`
+                            ? true
+                            : false
+                        }
+                        key={index}
+                        component={<NavLink to={parentItem.url} />}
+                      >
+                        <Flex alignItems="center">
+                          <Box flex="20%" display="grid" placeItems="start">
+                            {parentItem.icon}
+                          </Box>
+                          <Box flex="80%" fontSize="1.2rem" fontWeight="medium">
+                            {parentItem.title}
+                          </Box>
+                        </Flex>
+                      </MenuItem>
+                    );
+                  }
+                }
+              })}
               <MenuItem onClick={onSignOutAlertOpen} key="sign-out">
                 <Flex alignItems="center">
                   <Box flex="20%" display="grid" placeItems="start">
