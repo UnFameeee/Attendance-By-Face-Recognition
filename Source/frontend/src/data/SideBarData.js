@@ -5,47 +5,50 @@ import {
   MdTouchApp,
   MdAssignmentInd,
 } from "react-icons/md";
-import { TbReportMoney,TbFaceId } from "react-icons/tb";
+import { TbReportMoney, TbFaceId } from "react-icons/tb";
 import { AiTwotoneSetting } from "react-icons/ai";
-import {
-  FaHouseUser,
-} from "react-icons/fa";
+import { FaHouseUser } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { SiMagento } from "react-icons/si";
 import { MdAvTimer } from "react-icons/md";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { SlOrganization } from "react-icons/sl";
 import { RiUserVoiceFill } from "react-icons/ri";
-import {GoReport} from 'react-icons/go'
-import {IoNotifications} from 'react-icons/io5'
-import {BsCalendar3} from 'react-icons/bs'
-import {ImProfile} from 'react-icons/im'
-const iconSize ='23px'
+import { GoReport } from "react-icons/go";
+import { IoNotifications } from "react-icons/io5";
+import { BsCalendar3 } from "react-icons/bs";
+import { ImProfile } from "react-icons/im";
+const iconSize = "23px";
 export const SideBarData = [
   {
     title: "Dashboard",
     url: "dashboard",
     icon: <MdOutlineMonitor fontSize={iconSize} />,
+    // roleCanAccess: ["manager", "admin"],
   },
   {
     title: "Organization ",
     url: "organization",
     icon: <SlOrganization fontSize={iconSize} />,
+    roleCanAccess: ["manager", "admin"],
     children: [
       {
         title: "General",
         url: "general-organization",
         icon: <SiMagento fontSize={iconSize} />,
+        roleCanAccess: ["admin"],
       },
       {
         title: "Department",
         url: "department-management",
         icon: <HiBuildingOffice2 fontSize={iconSize} />,
+        roleCanAccess: ["admin"],
       },
       {
         title: "Assigning",
         url: "assign-department",
         icon: <MdAssignmentInd fontSize={iconSize} />,
+        roleCanAccess: ["manager", "admin"],
       },
     ],
   },
@@ -53,11 +56,13 @@ export const SideBarData = [
     title: "Employees",
     url: "employees",
     icon: <FaHouseUser fontSize={iconSize} />,
+    roleCanAccess: ["manager", "admin"],
     children: [
       {
         title: "General",
         url: "employees-management",
         icon: <SiMagento fontSize={iconSize} />,
+        roleCanAccess: ["manager", "admin"],
       },
     ],
   },

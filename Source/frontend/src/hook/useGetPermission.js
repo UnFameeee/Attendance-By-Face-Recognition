@@ -15,5 +15,10 @@ export const useGetPermission = (screenPermission, resourceName) => {
       result = { ...result, [x.permission]: false };
     }
   });
+  if (userPermission) {
+    result["role"] = userPermission[0].role;
+  } else {
+    result["role"] = "employee";
+  }
   return result;
 };

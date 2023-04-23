@@ -1,6 +1,7 @@
 import jwtDecode from "jwt-decode";
 import dayjs from "dayjs";
 import moment from "moment";
+import { SideBarData } from "../data/SideBarData";
 
 const isTokenExpired = (token) => {
   if (token) {
@@ -47,7 +48,6 @@ const getMomentDateFormat = (dateInput) => {
   const formatDate = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
   return formatDate;
 };
-
 function findMostDuplicatedValue(array) {
   let counts = {};
   let maxCount = 0;
@@ -62,7 +62,52 @@ function findMostDuplicatedValue(array) {
   }
   return maxCount > 1 ? mostDuplicatedValue : "unknown";
 }
-
+const getUserRole = () => {
+  const userPermission_JSON = localStorage.getItem("userPermission");
+  const userPermission = JSON.parse(userPermission_JSON);
+  var result = {};
+  if (userPermission) {
+    result["role"] = userPermission[0].role;
+  } else {
+    result["role"] = "employee";
+  }
+  return result;
+};
+const getScreenAuthorization = (userRole,pathname) =>{
+  let authorizeArray = []
+  SideBarData.map((parentItem) =>{
+    if(parentItem?.children){
+      parentItem?.children.map((childrenItem)=>{
+        if(childrenItem?.roleCanAccess){
+          if(childrenItem?.roleCanAccess.includes(userRole)){
+            authorizeArray.push({path:`/${parentItem.url}/${childrenItem.url}`,auth:true})
+          }
+          else{
+            authorizeArray.push({path:`/${parentItem.url}/${childrenItem.url}`,auth:false})
+          }
+        }
+        else{
+          authorizeArray.push({path:`/${parentItem.url}/${childrenItem.url}`,auth:true})
+        }
+      })
+    }
+    else{
+      if(parentItem?.roleCanAccess){
+        if(parentItem?.roleCanAccess.includes(userRole)){
+          authorizeArray.push({path:`/${parentItem.url}`,auth:true})
+        }
+        else{
+          authorizeArray.push({path:`/${parentItem.url}`,auth:false})
+        }
+      }
+      else{
+        authorizeArray.push({path:`/${parentItem.url}`,auth:true})
+      }
+    }
+  })
+  const result = authorizeArray.find((item) => item.path == pathname)
+  return result
+}
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -71,4 +116,6 @@ export const Helper = {
   convertDateISOToDDMMYYY,
   getUseDecodeInfor,
   getMomentDateFormat,
+  getUserRole,
+  getScreenAuthorization,
 };

@@ -1,24 +1,9 @@
 import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Heading,
-  SimpleGrid,
   Stack,
-  Text,
-  Icon,
-  Center,
   Box,
   Flex,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
-import { BsArrowRightCircle } from "react-icons/bs";
-import ReactDOM from "react-dom";
-import { Pie } from "@ant-design/plots";
 import PieChart from "../../../components/chart/PieChart";
 import ColumnChart from "../../../components/chart/ColumnChart";
 import DashboardCardGrid from "../../../components/DashboardCardGrid";

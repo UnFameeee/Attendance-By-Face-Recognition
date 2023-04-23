@@ -9,25 +9,27 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
-import "./NotFound.css";
+import "./UnAuthorize.css";
 import { useNavigate } from "react-router-dom";
-function NotFound() {
+function UnAuthorize() {
   const navigate = useNavigate();
   return (
     <Center fontFamily="Arvo" minHeight="100vh">
       <Stack>
         <Flex flexDirection="column" alignItems="center">
-          <Heading fontSize="80px">404</Heading>
+          <Heading fontSize="80px">403</Heading>
           <Box
             backgroundRepeat="no-repeat"
             minWidth="100vw"
             className="four_zero_four_bg"
           ></Box>
           <Flex gap="5px" alignItems="center" flexDirection="column">
-            <Heading className="h2">Look like you are lost</Heading>
+            <Heading className="h2">Forbidden</Heading>
+
             <Text fontSize="20px">
-              The page you are looking for is not available!
+              Sorry, you're not allowed to go beyond this point!
             </Text>
+
             <Button
               onClick={() => navigate(-1)}
               textDecoration="none"
@@ -42,4 +44,4 @@ function NotFound() {
   );
 }
 
-export default NotFound;
+export default UnAuthorize;
