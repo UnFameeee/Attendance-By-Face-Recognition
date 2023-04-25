@@ -8,9 +8,9 @@ import * as argon2 from 'argon2';
 import { ResponseData } from "../config/responseData.config";
 import { prisma } from '../database/prisma.singleton';
 import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
-import { ResponseToken } from "../config/responseToken.config";
 import { env } from "../config/env.config";
 import { application_permission } from "../config/permission.config";
+import { ResponseToken } from "../config/ResponseToken.config";
 
 class AuthenticationService {
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {
@@ -20,7 +20,7 @@ class AuthenticationService {
     const queryData = await prisma.employeeImage.findFirst({
       where: {
         employeeId: employeeData.id,
-        isPrimary: true
+        // isPrimary: true
       },
       select: {
         link: true,

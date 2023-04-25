@@ -24,7 +24,7 @@ model Employee {
 
   picture               String?
   fullname              String
-  email                 String              @unique
+  email                 String                @unique
   password              String
   gender                String?
   dateOfBirth           DateTime?
@@ -33,18 +33,20 @@ model Employee {
   worktype              String?
   status                Boolean?
   refreshToken          String?
-  deleted               Boolean             @default(false)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
+  deleted               Boolean               @default(false)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
   attendances           Attendance[]
   contracts             Contract[]
   workshifts            Workshift[]
-  leaveRequests         LeaveRequest[]      @relation("LeaveRequests")
-  leaveRequestApproveds LeaveRequest[]      @relation("LeaveRequestApproveds")
+  leaveRequests         LeaveRequest[]        @relation("LeaveRequests")
+  leaveRequestApproveds LeaveRequest[]        @relation("LeaveRequestApproveds")
   payrolls              Payroll[]
   departmentManager     DepartmentManager[]
   employeeImages        EmployeeImage[]
+  AttendanceException   AttendanceException[]
+  FaceTrainingImage     FaceTrainingImage[]
 
   @@map("employee")
 }
@@ -57,13 +59,28 @@ model EmployeeImage {
   employeeId String
 
   link      String
-  index     Int
-  isPrimary Boolean
+  // index     Int
+  // isPrimary Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // deletedAt DateTime?
 
   @@map("employeeimage")
+}
+
+model FaceTrainingImage {
+  imageId String @id @default(uuid())
+
+  // roleId 
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // deletedAt DateTime?
+
+  @@map("facetrainingimage")
 }
 
 model Role {
@@ -358,4 +375,30 @@ model Payroll {
   deletedAt      DateTime?
 
   @@map("payroll")
+}
+
+model AttendanceException {
+  attendanceExceptionId String @id @default(uuid())
+
+  //employeeId
+  employee   Employee? @relation(fields: [approverId], references: [id])
+  approverId String?
+
+  image          String
+  name           String
+  department     String
+  email          String
+  attendanceType String
+  datetime       DateTime
+  status         String
+
+  @@map("attendanceexception")
+}
+
+model Urlmanagement {
+  URL         String   @id
+  expiredTime DateTime
+  isExpired   Boolean
+
+  @@map("urlmanagement")
 }

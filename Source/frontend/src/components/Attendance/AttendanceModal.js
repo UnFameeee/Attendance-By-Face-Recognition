@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAttendanceModalOpen } from '../../store/Slice/AttendanceSlice/attendanceModalSlice';
 import { setIsScaningPaused, setIsTakeAttendance } from '../../store/Slice/AttendanceSlice/takeAttendanceSlice';
 import { attendanceService } from '../../services/attendance/attendance';
-import { resetFailedCount, setFailedCount } from '../../store/Slice/AttendanceSlice/exceptionModalSlice';
+import { resetFailedCount, setExceptionModalOpen, setFailedCount } from '../../store/Slice/AttendanceSlice/exceptionModalSlice';
 
 const ModalBodyStyle = {
   display: "flex",
@@ -24,6 +24,7 @@ export default function AttendanceModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isAttendanceModalOpen, employeeId } = useSelector(state => state.attendanceModal);
   const dispatch = useDispatch();
+  const { isExceptionModalOpen, failedCount } = useSelector(state => state.exceptionModal);
 
   const {
     data: employeeDetail,
@@ -31,12 +32,6 @@ export default function AttendanceModal() {
     onError: employeeDetailOnError,
     error: employeeDetailError,
   } = attendanceService.useGetEmployeeDetailById(employeeId);
-  // } = attendanceService.useGetEmployeeDetailById("a7310775-cb79-4391-88a8-3605a8276eb5");
-
-  // useEffect(() => {
-  //   console.log("Lmao")
-  //   onOpen();
-  // }, []);
 
   useEffect(() => {
     if (isAttendanceModalOpen) {
@@ -45,15 +40,26 @@ export default function AttendanceModal() {
   }, [isAttendanceModalOpen]);
 
   const closeModal = () => {
-    dispatch(setIsScaningPaused({
-      isScaningPaused: false,
-    }))
+    //failed count everytime the user cancel the attendance
+    dispatch(setFailedCount());
+
     dispatch(setAttendanceModalOpen({
       isAttendanceModalOpen: false,
     }))
 
-    //failed count everytime the user cancel the attendance
-    dispatch(setFailedCount());
+    //if the employee fail 3 (0 -> 1 -> 2) times attendance, popup the exception handle.
+    if (failedCount == 2) {
+      dispatch(resetFailedCount());
+
+      dispatch(setExceptionModalOpen({
+        isExceptionModalOpen: true,
+      }))
+    } 
+    else {
+      dispatch(setIsScaningPaused({
+        isScaningPaused: false,
+      }))
+    }
 
     onClose();
   }
