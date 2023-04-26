@@ -77,8 +77,6 @@ export class ProfileService {
       return response;
     }
 
-    console.log(data)
-
     const queryData = await prisma.employee.update({
       where: {
         id: employeeId,

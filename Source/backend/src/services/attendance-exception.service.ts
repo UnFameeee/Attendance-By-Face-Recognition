@@ -1,7 +1,9 @@
+import { env } from "../config/env.config";
 import { ResponseData } from "../config/responseData.config"
 import { attendance, attendanceExceptionStatus } from "../constant/attendance-exception.constant";
 import { prisma } from "../database/prisma.singleton";
 import { SubmitAttendanceExceptionDTO } from "../model/dtos/attendance-exception.dto";
+import { Helper } from "../utils/helper";
 
 export class AttendanceExceptionService {
   public submitAttendanceException = async (data: SubmitAttendanceExceptionDTO) => {
@@ -44,6 +46,25 @@ export class AttendanceExceptionService {
       return response;
     }
     response.result = "Attendance submits successfully!";
+    return response;
+  }
+
+
+  public saveImage = async (email: string, files: { [fieldname: string]: Express.Multer.File[] }) => {
+    const response = new ResponseData<any>;
+    let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
+
+    const query
+
+    //If there isn't any image in the database 
+    const queryData = await prisma.employeeImage.create({
+      data: {
+        employeeId: employeeId,
+        link: Helper.ConvertDoubleSlashURL(link),
+      },
+    })
+
+    response.result = Helper.ConvertDoubleSlashURL(link);
     return response;
   }
 }
