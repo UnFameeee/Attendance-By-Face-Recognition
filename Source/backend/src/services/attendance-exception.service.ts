@@ -54,12 +54,22 @@ export class AttendanceExceptionService {
     const response = new ResponseData<any>;
     let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
 
-    const query
+    const queryValidateData = await prisma.employee.findFirst({
+      where: {
+        email: email,
+        deleted: false,
+      }
+    })
+
+    if(!queryValidateData){
+      response.message = "The email isn't exist";
+      return response;
+    }
 
     //If there isn't any image in the database 
     const queryData = await prisma.employeeImage.create({
       data: {
-        employeeId: employeeId,
+        employeeId: queryValidateData.id,
         link: Helper.ConvertDoubleSlashURL(link),
       },
     })

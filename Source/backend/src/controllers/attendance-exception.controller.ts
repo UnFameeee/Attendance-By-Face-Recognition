@@ -19,7 +19,8 @@ export class AttendanceExceptionController {
   public saveImage = async (req: MulterRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const files: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
-      const response = await this.attendanceExceptionService.saveImage(files);
+      const email = (req.query.email).toString();
+      const response = await this.attendanceExceptionService.saveImage(email, files);
       res.status(201).json(response);
     } catch (err) {
       next(err);
