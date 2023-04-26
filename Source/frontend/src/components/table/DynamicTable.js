@@ -81,6 +81,8 @@ function DynamicTable(props) {
     onAddEditOpen,
     tableRowAction,
     permission,
+    hideAction,
+    noPaging,
   } = props;
 
   const {
@@ -118,65 +120,67 @@ function DynamicTable(props) {
       manualPagination: false,
     },
     (hooks) => {
-      hooks?.visibleColumns?.push((columns) => [
-        {
-          id: "action",
-          Header: ({ getToggleAllRowsSelectedProps }) => (
-            <Flex gap="5px">
-              {permission?.delete && (
-                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-              )}
-              <Text color="white" fontWeight="normal" fontSize="1.2rem">
-                Action
-              </Text>
-            </Flex>
-          ),
-          Cell: ({ row }) => (
-            <HStack>
-              {permission?.delete && (
-                <IndeterminateCheckbox
-                  {...row.getToggleRowSelectedProps()}
-                  type="checkbox"
-                />
-              )}
-              <Box>
-                <Menu>
-                  <Tooltip
-                    placement="right"
-                    label="Record Bulk Action"
-                    hasArrow
-                  >
-                    <MenuButton
-                      colorScheme="blue"
-                      variant="outline"
-                      as={Button}
+      {
+        hooks?.visibleColumns?.push((columns) => [
+          {
+            id: "action",
+            Header: ({ getToggleAllRowsSelectedProps }) => (
+              <Flex gap="5px">
+                {permission?.delete && (
+                  <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                )}
+                <Text color="white" fontWeight="normal" fontSize="1.2rem">
+                  Action
+                </Text>
+              </Flex>
+            ),
+            Cell: ({ row }) => (
+              <HStack>
+                {permission?.delete && (
+                  <IndeterminateCheckbox
+                    {...row.getToggleRowSelectedProps()}
+                    type="checkbox"
+                  />
+                )}
+                <Box>
+                  <Menu>
+                    <Tooltip
+                      placement="right"
+                      label="Record Bulk Action"
+                      hasArrow
                     >
-                      <Icon as={FiMoreVertical} />
-                    </MenuButton>
-                  </Tooltip>
-                  <MenuList>
-                    {tableRowAction.map((item) => {
-                      return (
-                        <MenuItem
-                          isDisabled={!item?.isDisabled}
-                          key={item.actionName}
-                          onClick={() => {
-                            item.func(row?.values, item.actionName);
-                            // console.log("row", row);
-                          }}
-                        >
-                          {item.actionName}
-                        </MenuItem>
-                      );
-                    })}
-                  </MenuList>
-                </Menu>
-              </Box>
-            </HStack>
-          ),
-        },
-        ...columns,
-      ]);
+                      <MenuButton
+                        colorScheme="blue"
+                        variant="outline"
+                        as={Button}
+                      >
+                        <Icon as={FiMoreVertical} />
+                      </MenuButton>
+                    </Tooltip>
+                    <MenuList>
+                      {tableRowAction.map((item) => {
+                        return (
+                          <MenuItem
+                            isDisabled={!item?.isDisabled}
+                            key={item.actionName}
+                            onClick={() => {
+                              item.func(row?.values, item.actionName);
+                              // console.log("row", row);
+                            }}
+                          >
+                            {item.actionName}
+                          </MenuItem>
+                        );
+                      })}
+                    </MenuList>
+                  </Menu>
+                </Box>
+              </HStack>
+            ),
+          },
+          ...columns,
+        ]);
+      }
     },
     useSortBy,
     usePagination,
@@ -340,104 +344,106 @@ function DynamicTable(props) {
                 } ${selectedFlatRows.length} items`}
               />
             </HStack>
-            <HStack
-              spacing="10px"
-              display="flex"
-              gap="10px"
-              flex="1"
-              marginLeft="0px !important"
-              alignItems="flex-start"
-              flexDirection={{
-                base: "column",
-                md: "row",
-              }}
-              justifyContent={{
-                base: "flex-start",
-                md: "flex-end",
-              }}
-            >
-              <HStack>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => gotoPage(0)}
-                  isDisabled={!canPreviousPage}
-                >
-                  <Icon as={MdSkipPrevious} />
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => previousPage()}
-                  isDisabled={!canPreviousPage}
-                >
-                  Previous
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => nextPage()}
-                  isDisabled={!canNextPage}
-                >
-                  Next
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => gotoPage(pageCount - 1)}
-                  isDisabled={!canNextPage}
-                >
-                  <Icon as={MdSkipNext} />
-                </Button>
-              </HStack>
-              <HStack>
-                <Flex alignItems="center">
-                  <Text fontWeight="semibold">
-                    {pageIndex + 1}/{pageCount}{" "}
-                    {pageCount > 1 ? "pages" : "page"}
-                  </Text>
-                </Flex>
-                <Flex alignItems="center" gap="5px">
-                  <Text fontWeight="semibold">Go to</Text>
+            {!noPaging && (
+              <HStack
+                spacing="10px"
+                display="flex"
+                gap="10px"
+                flex="1"
+                marginLeft="0px !important"
+                alignItems="flex-start"
+                flexDirection={{
+                  base: "column",
+                  md: "row",
+                }}
+                justifyContent={{
+                  base: "flex-start",
+                  md: "flex-end",
+                }}
+              >
+                <HStack>
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => gotoPage(0)}
+                    isDisabled={!canPreviousPage}
+                  >
+                    <Icon as={MdSkipPrevious} />
+                  </Button>
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => previousPage()}
+                    isDisabled={!canPreviousPage}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => nextPage()}
+                    isDisabled={!canNextPage}
+                  >
+                    Next
+                  </Button>
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => gotoPage(pageCount - 1)}
+                    isDisabled={!canNextPage}
+                  >
+                    <Icon as={MdSkipNext} />
+                  </Button>
+                </HStack>
+                <HStack>
+                  <Flex alignItems="center">
+                    <Text fontWeight="semibold">
+                      {pageIndex + 1}/{pageCount}{" "}
+                      {pageCount > 1 ? "pages" : "page"}
+                    </Text>
+                  </Flex>
+                  <Flex alignItems="center" gap="5px">
+                    <Text fontWeight="semibold">Go to</Text>
+                    <Tooltip
+                      placement="top"
+                      hasArrow
+                      label="Jump to specific page"
+                    >
+                      <Input
+                        type="number"
+                        flex="1"
+                        background="white"
+                        width="70px"
+                        onChange={(e) => {
+                          debouncedGotoPage(e.target.value);
+                        }}
+                        defaultValue={pageIndex + 1}
+                        min={1}
+                      />
+                    </Tooltip>
+                  </Flex>
                   <Tooltip
                     placement="top"
                     hasArrow
-                    label="Jump to specific page"
+                    label="Number of showing items"
                   >
-                    <Input
-                      type="number"
-                      flex="1"
+                    <Select
+                      width="150px"
+                      value={pageSize}
                       background="white"
-                      width="70px"
                       onChange={(e) => {
-                        debouncedGotoPage(e.target.value);
+                        setPageSize(Number(e.target.value));
                       }}
-                      defaultValue={pageIndex + 1}
-                      min={1}
-                    />
-                  </Tooltip>
-                </Flex>
-                <Tooltip
-                  placement="top"
-                  hasArrow
-                  label="Number of showing items"
-                >
-                  <Select
-                    width="150px"
-                    value={pageSize}
-                    background="white"
-                    onChange={(e) => {
-                      setPageSize(Number(e.target.value));
-                    }}
-                  >
-                    {[25, 50, 100].map((pageSize) => (
-                      <option key={pageSize} value={pageSize}>
-                        Show {pageSize}
+                    >
+                      {[25, 50, 100].map((pageSize) => (
+                        <option key={pageSize} value={pageSize}>
+                          Show {pageSize}
+                        </option>
+                      ))}
+                      <option key={data.length} value={data.length}>
+                        Show All
                       </option>
-                    ))}
-                    <option key={data.length} value={data.length}>
-                      Show All
-                    </option>
-                  </Select>
-                </Tooltip>
+                    </Select>
+                  </Tooltip>
+                </HStack>
               </HStack>
-            </HStack>
+            )}
           </HStack>
           <TableContainer rounded="lg" transform="rotateX(180deg)">
             <Table

@@ -18,6 +18,7 @@ import { GoReport } from "react-icons/go";
 import { IoNotifications } from "react-icons/io5";
 import { BsCalendar3 } from "react-icons/bs";
 import { ImProfile } from "react-icons/im";
+import {IoCreateSharp} from 'react-icons/io5'
 const iconSize = "23px";
 export const SideBarData = [
   {
@@ -33,7 +34,7 @@ export const SideBarData = [
     roleCanAccess: ["manager", "admin"],
     children: [
       {
-        title: "General",
+        title: "Management",
         url: "general-organization",
         icon: <SiMagento fontSize={iconSize} />,
         roleCanAccess: ["admin"],
@@ -59,7 +60,7 @@ export const SideBarData = [
     roleCanAccess: ["manager", "admin"],
     children: [
       {
-        title: "General",
+        title: "Management",
         url: "employees-management",
         icon: <SiMagento fontSize={iconSize} />,
         roleCanAccess: ["manager", "admin"],
@@ -102,7 +103,21 @@ export const SideBarData = [
     title: "Leave Request",
     url: "leave-request",
     icon: <RiUserVoiceFill fontSize={iconSize} />,
+    children: [
+      {
+        title: "Create & Details",
+        url: "leave-request-personal",
+        icon: <IoCreateSharp fontSize={iconSize} />,
+      },
+      {
+        title: "Management",
+        url: "leave-request-management",
+        icon: <SiMagento fontSize={iconSize} />,
+        roleCanAccess: ["manager", "admin"],
+      },
+    ],
   },
+
   {
     title: "Attendance",
     url: "attendance",

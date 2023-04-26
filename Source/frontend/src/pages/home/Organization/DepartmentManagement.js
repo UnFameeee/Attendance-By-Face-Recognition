@@ -23,12 +23,12 @@ import {
   useGetListDepartment,
 } from "../../../services/organization/department";
 import { useGetPermission } from "../../../hook/useGetPermission";
-import { permissionDepartmentGeneral } from "../../../screen-permissions/permission";
+import { permissionDepartmentManagement } from "../../../screen-permissions/permission";
 import { getListOrganization } from "../../../services/organization/organization";
 function DepartmentManagement() {
   // #region declare variables
   const resultPermission = useGetPermission(
-    permissionDepartmentGeneral,
+    permissionDepartmentManagement,
     "department-management"
   );
   const toast = useToast();

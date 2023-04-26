@@ -23,12 +23,12 @@ import {
 } from "../../../services/organization/organization";
 import { useMutation, useQueryClient } from "react-query";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { permissionOrganizationGeneral } from "../../../screen-permissions/permission";
+import { permissionOrganizationManagement } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 function OrganizationGeneral() {
   // #region declare variable
   const resultPermission = useGetPermission(
-    permissionOrganizationGeneral,
+    permissionOrganizationManagement,
     "organization-management"
   );
   const toast = useToast();

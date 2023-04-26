@@ -26,5 +26,7 @@ export const RESOURCE: stringObject = {
   WORKSHIFT_MANAGEMENT: "workshift-management",
   SHIFTTYPE_MANAGEMENT: "shifttype-management",
   ASSIGN_DEPARTMENT_MANAGEMENT: "assign-department-management",
+  LEAVE_REQUEST_PERSONAL:"leave-request-personal",
+  LEAVE_REQUEST_MANAGEMENT:"leave-request-management",
 
 }

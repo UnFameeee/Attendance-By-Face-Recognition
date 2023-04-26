@@ -1,6 +1,6 @@
 import React from "react";
 import { useGetPermission } from "../../../hook/useGetPermission";
-import { permissionAssignDepartmentGeneral } from "../../../screen-permissions/permission";
+import { permissionAssignDepartmentManagement } from "../../../screen-permissions/permission";
 import {
   Badge,
   Box,
@@ -35,7 +35,7 @@ import {
 function AssignDepartmentManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
-    permissionAssignDepartmentGeneral,
+    permissionAssignDepartmentManagement,
     "assign-department-management"
   );
   const toast = useToast();
