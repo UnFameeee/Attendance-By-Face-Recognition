@@ -4,6 +4,7 @@ import { zodValidate } from "../middlewares/zod.validation.middleware";
 import { submitAttendanceExceptionSchema } from "../model/dtos/attendance-exception.dto";
 import { AttendanceExceptionController } from "../controllers/attendance-exception.controller";
 import { attendanceImageUpload } from "../multer/attendance.storage";
+import { attendanceExceptionImageUpload } from "../multer/attendance-exception.storage";
 
 export class AttendanceExceptionRoute implements Routes {
   public path = "/attendance-exception";
@@ -28,7 +29,7 @@ export class AttendanceExceptionRoute implements Routes {
       // authMiddleware,
       // zodValidate(submitAttendanceExceptionSchema),
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
-      attendanceImageUpload,
+      attendanceExceptionImageUpload,
       this.attendanceExceptionController.saveImage
     )
   }
