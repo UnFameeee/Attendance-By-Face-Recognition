@@ -184,37 +184,37 @@ function EmployeesManagement() {
       {
         Header: "Id",
         accessor: "id",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
         hidden: true,
       },
       {
         Header: "Full Name",
         accessor: "fullname",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
       },
       {
         Header: "Email",
         accessor: "email",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        // haveSort: true,
       },
       {
         Header: "Gender",
         accessor: "gender",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
         textAlign: "center",
       },
@@ -229,38 +229,38 @@ function EmployeesManagement() {
             {value}
           </Badge>
         ),
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
       },
       {
         Header: "Phone",
         accessor: "phoneNumber",
-        haveFilter: {
-          filterType: FilterType.Number,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Number,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
       },
       {
         Header: "Birthday",
         accessor: "dateOfBirth",
-        haveFilter: {
-          filterType: FilterType.DateTime,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.DateTime,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
         type: "date",
       },
       {
         Header: "Description",
         accessor: "description",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
       },
       {
@@ -268,19 +268,19 @@ function EmployeesManagement() {
         accessor: "department",
         Cell: ({ value }) => <span>{value?.departmentName}</span>,
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "City",
         accessor: "location.city",
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "State",
@@ -298,10 +298,10 @@ function EmployeesManagement() {
           );
         },
         cellWidth: "210px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "Country",
@@ -314,19 +314,19 @@ function EmployeesManagement() {
           );
         },
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "Address",
         accessor: "location.address",
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
     ],
     []

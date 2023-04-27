@@ -213,41 +213,41 @@ function DepartmentManagement() {
       {
         Header: "Id",
         accessor: "departmentId",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
         hidden: true,
       },
       {
         Header: "Dep.Name",
         accessor: "departmentName",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
 
         cellWidth: "200px",
       },
       {
         Header: "Org.Name",
         accessor: "organization",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        // haveSort: true,
         Cell: ({ value }) => <span>{value?.organizationName}</span>,
         cellWidth: "200px",
-        haveSort: true,
       },
       {
         Header: "City",
         accessor: "location.city",
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "State",
@@ -265,10 +265,10 @@ function DepartmentManagement() {
           );
         },
         cellWidth: "150px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "Country",
@@ -281,19 +281,19 @@ function DepartmentManagement() {
           );
         },
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
       {
         Header: "Address",
         accessor: "location.address",
         cellWidth: "200px",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
     ],
     []

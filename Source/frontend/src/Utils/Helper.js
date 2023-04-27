@@ -108,6 +108,11 @@ const getScreenAuthorization = (userRole,pathname) =>{
   const result = authorizeArray.find((item) => item.path == pathname)
   return result
 }
+const splitUrlPath = (path) =>{
+  const pathArr = path.split("/");
+  pathArr.shift();
+  return pathArr
+}
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -118,4 +123,5 @@ export const Helper = {
   getMomentDateFormat,
   getUserRole,
   getScreenAuthorization,
+  splitUrlPath
 };

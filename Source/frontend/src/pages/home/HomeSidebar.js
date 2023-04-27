@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
-  Button,
-  Divider,
   Flex,
   Heading,
   Icon,
-  IconButton,
-  Image,
   Text,
   useDisclosure,
   useToast,
   Tooltip,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from "@chakra-ui/react";
 import {
   Sidebar,
@@ -20,7 +19,6 @@ import {
   Menu,
   MenuItem,
   useProSidebar,
-  sidebarClasses,
 } from "react-pro-sidebar";
 import { SideBarData } from "../../data/SideBarData";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -34,19 +32,14 @@ import { setUser } from "../../store/Slice/authSlice";
 import Cookies from "universal-cookie";
 import { MdLogout } from "react-icons/md";
 import {
-  TbLayoutSidebarRightExpand,
-  TbLayoutSidebarLeftExpand,
-} from "react-icons/tb";
-import {
   BsLayoutSidebarInsetReverse,
   BsLayoutSidebarInset,
 } from "react-icons/bs";
-import jwtDecode from "jwt-decode";
 import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
-import { useGetUserRole } from "../../hook/useGetPermission";
 function HomeSidebar() {
   const [userRole, setUserRole] = useState("");
+  const [breadCrumbArray, setBreadCrumbArray] = useState();
   const { collapseSidebar, toggleSidebar, collapsed, toggled } =
     useProSidebar();
   const toast = useToast();
