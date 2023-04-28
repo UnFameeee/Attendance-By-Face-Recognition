@@ -10,6 +10,8 @@ import { FacialRecognitionRoute } from './routes/facial-recognition.route';
 import { WorkshiftRoute } from "./routes/workshift.route";
 import { ShifttypeRoute } from "./routes/shifttype.route";
 import { AttendanceRoute } from "./routes/attendance.route";
+import { URLRoute } from "./routes/url.route";
+import { AttendanceExceptionRoute } from "./routes/attendance-exception.route";
 
 // validateEnv();
 const app = new App([
@@ -24,5 +26,7 @@ const app = new App([
     new WorkshiftRoute(),
     new ShifttypeRoute(),
     new AttendanceRoute(),
+    new URLRoute(),
+    new AttendanceExceptionRoute(),
 ]);
 app.listen();

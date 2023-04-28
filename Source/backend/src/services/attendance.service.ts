@@ -181,5 +181,4 @@ export class AttendanceService {
       return response;
     }
   }
-  
 }

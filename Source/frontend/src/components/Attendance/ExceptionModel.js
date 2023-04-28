@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react'
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import { useDispatch } from 'react-redux';
 import { setIsScaningPaused } from '../../store/Slice/AttendanceSlice/takeAttendanceSlice';
@@ -17,12 +17,7 @@ const ModalBodyStyle = {
 export default function ExceptionModel() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
-  const { isExceptionModalOpen, failedCount } = useSelector(state => state.exceptionModal);
-
-  // useEffect(() => {
-  //   console.log("Lmao")
-  //   onOpen();
-  // }, []);
+  const { isExceptionModalOpen } = useSelector(state => state.exceptionModal);
 
   useEffect(() => {
     if (isExceptionModalOpen) {
@@ -39,6 +34,8 @@ export default function ExceptionModel() {
     }))
     onClose();
   }
+
+  // const 
 
   return (
     <>
@@ -62,6 +59,8 @@ export default function ExceptionModel() {
 
             <Text textAlign={"center"} fontSize={"1rem"} fontWeight={700}>You have failed to take attendance many times. This may be due to errors coming from the attendance machine, do you want to report this to the Administrator?</Text>
 
+            <Text textAlign={"center"} fontSize={"0.85rem"} fontWeight={"bold"} color={"gray"}>We will take an picture of you and send it to your manager if you click the <b style={{color: "red"}}>Report</b> button</Text>
+            
             <Text textAlign={"center"} fontSize={"0.85rem"} fontWeight={"bold"} color={"gray"}>We suggest you try a few more times, before doing this action</Text>
           </ModalBody>
           <ModalFooter gap={5}>

@@ -3,7 +3,38 @@ import path from "path";
 import { RequestWithProfile } from '../interfaces/request.interface';
 import fs from 'fs';
 
-const directory = path.join(__dirname, "../public/images/employee");
+const directory = path.join(__dirname, "../public/images");
+
+// const imageStorage = multer.diskStorage({
+//   // Destination to store image     
+//   destination: async (req: RequestWithProfile, file, cb) => {
+//     // cb(null, `src/public/images/employee/${req.profile.id}`)
+//     if (!fs.existsSync(`${directory}/${req.profile.id}`)) {
+//       fs.mkdirSync(`${directory}/${req.profile.id}`)
+//     }
+//     console.log("MulterStorage: ", `${directory}\\${req.profile.id}`)
+//     cb(null, `${directory}\\${req.profile.id}`)
+//   },
+//   filename: async (req: RequestWithProfile, file, cb) => {
+//     const queryParam = req.query;
+//     const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
+
+//     //Logic for no specify an index image
+//     if (Object.keys(queryParam).length === 0) {
+//       cb(null, `${req.profile.id}_${arrayUpload.images.length}` + path.extname(file.originalname));
+//     }
+//     //If we specify an index image need to be uploaded
+//     else {
+//       const index: number = parseInt((queryParam.index).toString());
+//       //If wrong index (only 1 and 2)
+//       if (index != 1 && index != 2) {
+//         cb(new Error("Wrong index param, please try again!"), null);
+//       } else {
+//         cb(null, `${req.profile.id}_${index}` + path.extname(file.originalname));
+//       }
+//     }
+//   }
+// });
 
 const imageStorage = multer.diskStorage({
   // Destination to store image     
@@ -12,27 +43,13 @@ const imageStorage = multer.diskStorage({
     if (!fs.existsSync(`${directory}/${req.profile.id}`)) {
       fs.mkdirSync(`${directory}/${req.profile.id}`)
     }
-    console.log("MulterStorage: ", `${directory}/${req.profile.id}`)
-    cb(null, `${directory}/${req.profile.id}`)
+    console.log("MulterStorage: ", `${directory}\\${req.profile.id}`)
+    cb(null, `${directory}\\${req.profile.id}`)
   },
   filename: async (req: RequestWithProfile, file, cb) => {
-    const queryParam = req.query;
     const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
 
-    //Logic for no specify an index image
-    if (Object.keys(queryParam).length === 0) {
-      cb(null, `${req.profile.id}_${arrayUpload.images.length}` + path.extname(file.originalname));
-    }
-    //If we specify an index image need to be uploaded
-    else {
-      const index: number = parseInt((queryParam.index).toString());
-      //If wrong index (only 1 and 2)
-      if (index != 1 && index != 2) {
-        cb(new Error("Wrong index param, please try again!"), null);
-      } else {
-        cb(null, `${req.profile.id}_${index}` + path.extname(file.originalname));
-      }
-    }
+    cb(null, `${req.profile.id}_${arrayUpload.images.length}` + path.extname(file.originalname));
   }
 });
 
@@ -52,5 +69,5 @@ export const employeeImageUpload = multer({
   }
 })
   .fields([
-    { name: "images", maxCount: 2 }
+    { name: "images", maxCount: 1 }
   ])

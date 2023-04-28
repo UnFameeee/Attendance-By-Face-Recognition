@@ -187,10 +187,10 @@ export class WorkshiftService {
     var queryModifyData: any;
     const modifyDate = Helper.ConfigStaticDateTime("00:00", data.shiftDate)
 
+
     const queryData = await prisma.workshift.findFirst({
       where: {
-        employeeId: data.employeeId,
-        shiftDate: modifyDate,
+        shiftId: data.shiftId,
         deleted: false,
       }
     })

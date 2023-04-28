@@ -3,6 +3,7 @@ import "./FaceAttendance.css"
 import * as faceapi from '@vladmandic/face-api';
 
 import {
+  Img,
   useToast,
 } from "@chakra-ui/react";
 import axiosBase from '../../../Utils/AxiosInstance';
@@ -13,8 +14,9 @@ import AttendanceModal from '../../../components/Attendance/AttendanceModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAttendanceModalProps } from '../../../store/Slice/AttendanceSlice/attendanceModalSlice';
 import { setIsScaningPaused, setIsTakeAttendance } from '../../../store/Slice/AttendanceSlice/takeAttendanceSlice';
-import { resetFailedCount, setExceptionModalOpen, setFailedCount } from '../../../store/Slice/AttendanceSlice/exceptionModalSlice';
 import ExceptionModel from './../../../components/Attendance/ExceptionModel';
+import Webcam from 'react-webcam'
+// const WebcamComponent = () => <Webcam />
 
 let streamObj;
 export default function FaceAttendance() {
@@ -25,7 +27,6 @@ export default function FaceAttendance() {
   const dispatch = useDispatch();
   const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
   const employeeId = useSelector(state => state.attendanceModal.employeeId);
-  const { isExceptionModalOpen, failedCount } = useSelector(state => state.exceptionModal);
 
   const useTakeAttendance = useMutation((variable) =>
     attendanceService.takeAttendance(variable.employeeId, variable.attendanceType), {
@@ -118,13 +119,13 @@ export default function FaceAttendance() {
   }, []);
 
   useEffect(() => {
-    const canvas = faceapi.createCanvas(videoRef.current);
-    canvas.id = "canvas";
-    const canvasElems = document.querySelectorAll('.template canvas');
-    if (!canvasElems.length) {
-      const template = document.querySelector('.template');
-      template.append(canvas);
-    }
+    // const canvas = faceapi.createCanvas(videoRef.current);
+    // canvas.id = "canvas";
+    // const canvasElems = document.querySelectorAll('.template canvas');
+    // if (!canvasElems.length) {
+    //   const template = document.querySelector('.template');
+    //   template.append(canvas);
+    // }
 
     // const displaySize = { width: 720, height: 560 }
     const videoResolution = document.getElementById("video");
@@ -133,7 +134,7 @@ export default function FaceAttendance() {
       height: videoResolution.offsetHeight,
     }
     const displaySize = resolution;
-    faceapi.matchDimensions(canvas, displaySize);
+    // faceapi.matchDimensions(canvas, displaySize);
 
     async function addEvent() {
       //load the model
@@ -143,8 +144,10 @@ export default function FaceAttendance() {
       const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
         if (!useTakeAttendance.isLoading) {
+          console.log(videoRef.current)
           const detections = await faceapi
-            .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+            // .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+            .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
             .withFaceLandmarks()
             .withFaceDescriptors()
 
@@ -153,17 +156,18 @@ export default function FaceAttendance() {
             displaySize
           );
 
-          canvas
-            .getContext('2d')
-            .clearRect(0, 0, canvas.width, canvas.height);
+          // canvas
+          //   .getContext('2d')
+          //   .clearRect(0, 0, canvas.width, canvas.height);
 
           for (const detection of resizedDetections) {
             let faceDetected = faceMatcher.findBestMatch(detection.descriptor);
-            const box = detection.detection.box;
-            const drawBox = new faceapi.draw.DrawBox(box, {
-              label: faceDetected
-            });
+            // const box = detection.detection.box;
+            // const drawBox = new faceapi.draw.DrawBox(box, {
+            //   label: faceDetected
+            // });
 
+            console.log("?:", isScaningPaused)
             if (!isScaningPaused) {
               faceDetectArray.push(faceDetected.label);
               console.log(faceDetectArray);
@@ -178,16 +182,21 @@ export default function FaceAttendance() {
                     isAttendanceModalOpen: true,
                     employeeId: highestFaceValue
                   }))
+                  const imageSrc = videoRef.current.getScreenshot();
+                  console.log(imageSrc);
+                  const IMG = document.getElementById("captureImage");
+                  IMG.src = imageSrc;
                 }
 
                 faceDetectArray.splice(0, faceDetectArray.length);
               }
             }
-            drawBox.draw(canvas);
+            // drawBox.draw(canvas);
           }
         }
       }
 
+      console.log("re-render")
       intervalRef.current = setInterval(realtimeFaceRegconition, 1000);
     }
     addEvent();
@@ -195,7 +204,7 @@ export default function FaceAttendance() {
     return () => {
       clearInterval(intervalRef.current);
     };
-  }, [isScaningPaused])
+  }, [videoRef, isScaningPaused])
 
   useEffect(() => {
     if (isTakeAttendance) {
@@ -208,21 +217,6 @@ export default function FaceAttendance() {
   }, [isTakeAttendance]);
 
   useEffect(() => {
-    //if the employee fail 3 times attendance, popup the exception handle.
-    if (failedCount == 3) {
-      debugger;
-      dispatch(resetFailedCount());
-      dispatch(setIsScaningPaused({
-        isScaningPaused: true,
-      }))
-      dispatch(setExceptionModalOpen({
-        isExceptionModalOpen: true,
-      }))
-      console.log(isScaningPaused)
-    }
-  }, [failedCount]);
-
-  useEffect(() => {
     return () => {
       if (streamObj) {
         streamObj.getTracks().forEach(track => track.stop());
@@ -233,7 +227,11 @@ export default function FaceAttendance() {
   return (
     <>
       <div className="template">
-        <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video>
+        {/* <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video> */}
+        <Webcam id='video' ref={videoRef} audio={false} screenshotFormat="image/jpeg" ></Webcam>
+      </div>
+      <div>
+        <Img style={{border: "1px solid red"}} id='captureImage' src={null}/>
       </div>
       {employeeId && <AttendanceModal />}
       <ExceptionModel />

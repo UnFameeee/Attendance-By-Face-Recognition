@@ -21,7 +21,7 @@ export class ProfileService {
         employeeImages: {
           where: {
             employeeId: employeeId,
-            isPrimary: true,
+            // isPrimary: true,
           },
           select: {
             link: true,
@@ -76,8 +76,6 @@ export class ProfileService {
       response.message = `Employee isn't exist`;
       return response;
     }
-
-    console.log(data)
 
     const queryData = await prisma.employee.update({
       where: {
@@ -177,78 +175,32 @@ export class ProfileService {
     return response;
   }
 
-  public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }, index: number) => {
+  public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }) => {
     const response = new ResponseData<any>;
-
-    let isUpdateValidate: any;
-    if (index != null) {
-      isUpdateValidate = await prisma.employeeImage.findMany({
-        where: {
-          employeeId: employeeId,
-          index: index
-        }
-      })
-    } else {
-      isUpdateValidate = await prisma.employeeImage.findMany({
-        where: {
-          employeeId: employeeId,
-        }
-      })
-    }
-
+    let isUpdateValidate = await prisma.employeeImage.findFirst({
+      where: {
+        employeeId: employeeId,
+      }
+    })
+    let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
     //If we have found exist image in the database
-    if (isUpdateValidate.length != 0) {
-      //Update a specific image
-      if (index != null) {
-        let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
-
-        const queryData = await prisma.employeeImage.update({
-          where: {
-            imageId: isUpdateValidate[0].imageId
-          },
-          data: {
-            link: Helper.ConvertDoubleSlashURL(link),
-          },
-        })
-        // response.result = `Update image successfully`;
-      }
-      //Update all images
-      else {
-        for (const singleQueryData of isUpdateValidate) {
-          let link = `${env.SERVER_URL}/public${(files.images[singleQueryData.index - 1].destination).split("public")[1]}/${files.images[singleQueryData.index - 1].filename}`;
-
-          const queryData = await prisma.employeeImage.update({
-            where: {
-              imageId: singleQueryData.imageId,
-            },
-            data: {
-              link: Helper.ConvertDoubleSlashURL(link),
-            },
-          })
-        }
-        // response.result = `Update images successfully`;
-      }
+    if (isUpdateValidate) {
+      const queryData = await prisma.employeeImage.update({
+        where: {
+          imageId: isUpdateValidate.imageId
+        },
+        data: {
+          link: Helper.ConvertDoubleSlashURL(link),
+        },
+      })
     }
     //If there isn't any image in the database 
     else {
-      let link_1 = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`;
-      let link_2 = `${env.SERVER_URL}/public${(files.images[1].destination).split("public")[1]}/${files.images[1].filename}`;
-
-      const queryData = await prisma.employeeImage.createMany({
-        data: [
-          {
-            employeeId: employeeId,
-            link: Helper.ConvertDoubleSlashURL(link_1),
-            index: 1,
-            isPrimary: true
-          },
-          {
-            employeeId: employeeId,
-            link: Helper.ConvertDoubleSlashURL(link_2),
-            index: 2,
-            isPrimary: false
-          },
-        ]
+      const queryData = await prisma.employeeImage.create({
+        data: {
+          employeeId: employeeId,
+          link: Helper.ConvertDoubleSlashURL(link),
+        },
       })
     }
     response.result = (await this.getProfileImages(employeeId)).result;
@@ -264,8 +216,8 @@ export class ProfileService {
       select: {
         link: true,
         employeeId: true,
-        index: true,
-        isPrimary: true,
+        // index: true,
+        // isPrimary: true,
       },
 
     })
