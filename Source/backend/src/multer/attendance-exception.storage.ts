@@ -4,6 +4,8 @@ import { RequestWithProfile } from '../interfaces/request.interface';
 import fs from 'fs';
 import { prisma } from "../database/prisma.singleton";
 import { HttpException } from "../config/httpException";
+import { attendance } from '../constant/attendance-exception.constant';
+import moment from "moment";
 
 const directory = path.join(__dirname, "../public/attendance");
 var now: Date;
@@ -21,16 +23,77 @@ const attendanceExceptionImageStorage = multer.diskStorage({
       }
     })
 
-    //Validate checkin - checkout
+    //config the datetime
+    now = new Date();
+    staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
+    const targetDate = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
 
-    if (queryEmployeeData) {
+    //error handler
+    var errorFlag: boolean = false;
+
+    //Validate checkin - checkout
+    if (type.toUpperCase() == attendance.checkin) {
+      const queryAttendanceData = await prisma.attendance.findFirst({
+        where: {
+          employee: {
+            email: email,
+          },
+          attendanceDate: {
+            gte: targetDate.startOf('day').toDate(),
+            lt: targetDate.endOf('day').toDate(),
+          },
+          checkIn: {
+            not: null
+          },
+          checkOut: null,
+          deleted: false,
+        }
+      })
+
+      if (queryAttendanceData) {
+        errorFlag = true;
+        req.error = "You have already checkin, please check again";
+        let error: Error = new Error("You have already checkin, please check again");
+        cb(error, null);
+      }
+    } else if (type.toUpperCase() == attendance.checkout) {
+      const queryAttendanceData = await prisma.attendance.findFirst({
+        where: {
+          employee: {
+            email: email,
+          },
+          attendanceDate: {
+            gte: targetDate.startOf('day').toDate(),
+            lt: targetDate.endOf('day').toDate(),
+          },
+          checkIn: {
+            not: null
+          },
+          checkOut: {
+            not: null
+          },
+          deleted: false,
+        }
+      })
+      if (queryAttendanceData) {
+        errorFlag = true;
+        req.error = "You have already checkout, please check again";
+        let error: Error = new Error("You have already checkout, please check again");
+        cb(error, null);
+      }
+    }
+
+    if (!queryEmployeeData) {
+      req.error = "The email isn't exist";
+      let error: Error = new Error("The email isn't exist");
+      cb(error, null);
+    }
+
+    if (queryEmployeeData && !errorFlag) {
       //Check EmpID folder
       if (!fs.existsSync(`${directory}\\${queryEmployeeData.id}`)) {
         fs.mkdirSync(`${directory}\\${queryEmployeeData.id}`)
       }
-
-      now = new Date();
-      staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
 
       //Check Date folder
       if (!fs.existsSync(`${directory}/${queryEmployeeData.id}/${staticDateFolder}`)) {
@@ -39,11 +102,6 @@ const attendanceExceptionImageStorage = multer.diskStorage({
 
       console.log("MulterStorage: ", `${directory}\\${queryEmployeeData.id}\\${staticDateFolder}`)
       cb(null, `${directory}\\${queryEmployeeData.id}\\${staticDateFolder}`)
-    }
-    else {
-      req.error = "The email isn't exist";
-      let error: Error = new Error("The email isn't exist");
-      cb(error, null);
     }
   },
   filename: async (req: RequestWithProfile, file, cb) => {
@@ -57,14 +115,17 @@ const attendanceExceptionImageStorage = multer.diskStorage({
       }
     })
 
-    //Validate checkin - checkout
-
-    if (queryEmployeeData) {
-      cb(null, `${queryEmployeeData.id}_${type}` + path.extname(file.originalname));
-    } else {
-      req.error = "The email isn't exist";
-      let error: Error = new Error("The email isn't exist");
+    if (req.error) {
+      let error: Error = new Error(req.error);
       cb(error, null);
+    } else {
+      if (queryEmployeeData) {
+        cb(null, `${queryEmployeeData.id}_${type}` + path.extname(file.originalname));
+      } else {
+        req.error = "The email isn't exist";
+        let error: Error = new Error("The email isn't exist");
+        cb(error, null);
+      }
     }
   }
 });
