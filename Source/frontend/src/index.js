@@ -29,12 +29,13 @@ import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
 import DepartmentManagement from "./pages/home/Organization/DepartmentManagement";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
-import LeaveRequest from "./pages/home/LeaveRequest/LeaveRequest";
+import LeaveRequestPersonal from "./pages/home/LeaveRequest/LeaveRequestPersonal";
 import WorkShift from "./pages/home/WorkShift/WorkShift";
 import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
 import AttendanceModal from "./components/Attendance/AttendanceModal";
 import ExceptionModel from "./components/Attendance/ExceptionModel";
 import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
+import LeaveRequestManagement from "./pages/home/LeaveRequest/LeaveRequestManagement";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -101,7 +102,16 @@ root.render(
                     <Route path="work-shift" element={<WorkShift />} />
                     <Route path="notification" element={<Test />} />
                     <Route path="report" element={<Test />} />
-                    <Route path="leave-request" element={<LeaveRequest />} />
+                    <Route path="leave-request">
+                      <Route
+                        path="leave-request-personal"
+                        element={<LeaveRequestPersonal />}
+                      />
+                      <Route
+                        path="leave-request-management"
+                        element={<LeaveRequestManagement />}
+                      />
+                    </Route>
                     <Route path="attendance">
                       <Route
                         path="face-attendance"

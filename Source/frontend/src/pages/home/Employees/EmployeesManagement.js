@@ -35,14 +35,14 @@ import {
 } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Country, State } from "country-state-city";
-import { permissionEmployeeGeneral } from "../../../screen-permissions/permission";
+import { permissionEmployeeManagement } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { passwordRegex } from "../../../Utils/ValidationRegExp";
 
 function EmployeesManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
-    permissionEmployeeGeneral,
+    permissionEmployeeManagement,
     "employee-management"
   );
   const toast = useToast();

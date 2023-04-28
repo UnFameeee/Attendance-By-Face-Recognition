@@ -73,7 +73,24 @@ export const application_permission = {
     `${ROLE.MANAGER}-${PERMISSION.UPDATE}`,
     `${ROLE.MANAGER}-${PERMISSION.DELETE}`,
     `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
-  ]
+  ],
+  "leave-request-personal": [
+    `${ROLE.ADMIN}-${PERMISSION.CREATE}`,
+    `${ROLE.ADMIN}-${PERMISSION.READ}`,
+    `${ROLE.MANAGER}-${PERMISSION.CREATE}`,
+    `${ROLE.MANAGER}-${PERMISSION.READ}`,
+    `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
+    `${ROLE.EMPLOYEE}-${PERMISSION.CREATE}`,
+  ],
+  "leave-request-management": [
+    `${ROLE.ADMIN}-${PERMISSION.READ}`,
+    `${ROLE.ADMIN}-${PERMISSION.UPDATE}`,
+    `${ROLE.ADMIN}-${PERMISSION.DELETE}`,
+    `${ROLE.MANAGER}-${PERMISSION.READ}`,
+    `${ROLE.MANAGER}-${PERMISSION.UPDATE}`,
+    `${ROLE.MANAGER}-${PERMISSION.DELETE}`,
+    `${ROLE.EMPLOYEE}-${PERMISSION.READ}`,
+  ],
 }
 
 export const application_admin_account = [
