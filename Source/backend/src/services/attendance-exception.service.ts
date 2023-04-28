@@ -61,7 +61,7 @@ export class AttendanceExceptionService {
       }
     })
 
-    if(!queryValidateData){
+    if (!queryValidateData) {
       response.message = "The email isn't exist";
       return response;
     }
@@ -76,5 +76,19 @@ export class AttendanceExceptionService {
 
     response.result = Helper.ConvertDoubleSlashURL(link);
     return response;
+  }
+
+  public getListAttendanceException = async () => {
+    //Chia theo checkin / checkout
+    //Chia theo role, nếu role là manager thì coi dc trong phòng ban của mình, admin thì coi được tất cả
+    //Filter theo ngày/tháng/năm trên param
+  }
+
+  public getAttendanceExceptionData = async () => {
+    //Lấy data ở cả 2 bên là system và employee nhập vào
+  }
+
+  public verifyAttendanceException = async () => {
+    //nhận đầu vào là reject hoặc là approve
   }
 }

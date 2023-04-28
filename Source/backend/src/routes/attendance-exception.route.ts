@@ -32,5 +32,29 @@ export class AttendanceExceptionRoute implements Routes {
       attendanceExceptionImageUpload,
       this.attendanceExceptionController.saveImage
     )
+
+    // api/attendance-exception/saveImage
+    this.router.post(`${this.path}/getListAttendanceException`,
+      // authMiddleware,
+      // zodValidate(submitAttendanceExceptionSchema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceExceptionController.saveImage
+    )
+
+    // api/attendance-exception/saveImage
+    this.router.post(`${this.path}/getAttendanceExceptionData/:id`,
+      // authMiddleware,
+      // zodValidate(submitAttendanceExceptionSchema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceExceptionController.saveImage
+    )
+
+    // api/attendance-exception/saveImage
+    this.router.post(`${this.path}/verifyAttendanceException/:id`,
+      // authMiddleware,
+      // zodValidate(submitAttendanceExceptionSchema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceExceptionController.saveImage
+    )
   }
 }
