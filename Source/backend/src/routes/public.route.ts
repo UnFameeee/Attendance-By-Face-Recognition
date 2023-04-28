@@ -15,6 +15,14 @@ export class PublicRoute implements Routes {
       express.static(path.join(__dirname, '/../public/images/')),
     )
 
+    this.router.use(`${this.path}/training/`,
+      express.static(path.join(__dirname, '/../public/training/')),
+    )
+
+    this.router.use(`${this.path}/attendance/`,
+      express.static(path.join(__dirname, '/../public/attendance/')),
+    )
+
     this.router.use(`${this.path}/models/`,
       express.static(path.join(__dirname, '/../public/models/')),
     )

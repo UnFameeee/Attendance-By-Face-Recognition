@@ -10,6 +10,9 @@ import '@tensorflow/tfjs-node';
 import * as canvas from 'canvas';
 import * as faceapi from '@vladmandic/face-api';
 import { LabeledFaceDescriptors, WithFaceDescriptor } from "@vladmandic/face-api";
+import { env } from "../config/env.config";
+import { prisma } from "../database/prisma.singleton";
+import { Helper } from "../utils/helper";
 
 // patch nodejs environment, we need to provide an implementation of
 // HTMLCanvasElement and HTMLImageElement, additionally an implementation
@@ -20,7 +23,7 @@ faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 export class FacialRecognitionService {
   public trainAllModel = async (): Promise<ResponseData<any>> => {
     const response = new ResponseData<any>();
-    const pathToImage = "/../public/images/employee";
+    const pathToImage = "/../public/training";
     const pathToModel: string = path.join(__dirname, "/../public/models");
     const pathToCanvas: string = path.join(__dirname, "/../public/canvas");
 
@@ -84,7 +87,7 @@ export class FacialRecognitionService {
 
   public trainModel = async (employeeId: string): Promise<ResponseData<any>> => {
     const response = new ResponseData<any>();
-    const pathToImage = "/../public/images/employee";
+    const pathToImage = "/../public/training";
     const pathToModel: string = path.join(__dirname, "/../public/models");
     const pathToFaceDescriptors: string = path.join(__dirname, "/../public/train-model");
 
@@ -110,11 +113,12 @@ export class FacialRecognitionService {
       const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
 
       // Resize the image
-      const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
+      // const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
 
-      console.log(resizedImage)
+      // console.log(resizedImage)
+      console.log(image)
 
-      const detection = await faceapi.detectSingleFace(resizedImage, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+      const detection = await faceapi.detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
         .withFaceLandmarks(false)
         .withAgeAndGender()
         .withFaceExpressions()
@@ -137,6 +141,32 @@ export class FacialRecognitionService {
     const modelName = "FaceMatcher.json";
     fs.writeFileSync(path.join(__dirname, `/../public/train-model/${modelName}`), JSON.stringify(modelJSON));
 
+    response.result = true;
+    return response;
+  }
+
+  public uploadingImagesAndTraining = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }): Promise<ResponseData<any>> => {
+    const response = new ResponseData<any>();
+    const dataArray = [];
+
+    for (let i = 0, length = files.images.length; i < length; ++i) {
+      let link = `${env.SERVER_URL}/public${(files.images[i].destination).split("public")[1]}/${files.images[i].filename}`;
+
+      let tempObj = {
+        employeeId: employeeId,
+        link: Helper.ConvertDoubleSlashURL(link),
+      }
+
+      dataArray.push(tempObj);
+    }
+
+    const queryData = await prisma.faceTrainingImage.createMany({
+      data: dataArray
+    })
+
+    if (queryData) {
+      await this.trainModel(employeeId);
+    }
     response.result = true;
     return response;
   }

@@ -4,6 +4,7 @@ import { authMiddleware } from '../middlewares/authentication.middleware';
 import { authorizeRoute } from '../middlewares/authorization.middleware';
 import { PERMISSION, RESOURCE } from '../constant/database.constant';
 import { FacialRecognitionController } from "../controllers/facial-recognition.controller";
+import { trainingImagesUpload } from "../multer/training.storage";
 
 export class FacialRecognitionRoute implements Routes {
   public path = "/facialRecognition";
@@ -34,6 +35,14 @@ export class FacialRecognitionRoute implements Routes {
       // authMiddleware,
       // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
       this.facialRecognitionController.trainAllModel
+    )
+
+    // api/facialRecognition/uploadingImagesAndTraining
+    this.router.post(`${this.path}/uploadingImagesAndTraining`,
+      authMiddleware,
+      // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
+      trainingImagesUpload,
+      this.facialRecognitionController.uploadingImagesAndTraining
     )
   }
 }

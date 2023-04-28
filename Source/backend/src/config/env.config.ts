@@ -6,6 +6,7 @@ require("dotenv").config();
 
 export const env = {
   SERVER_URL: process.env.SERVER_URL,
+  CLIENT_URL: process.env.CLIENT_URL,
   PORT: process.env.PORT,
   DATABASE_URL: process.env.DATABASE_URL,
   SECRET_KEY: process.env.SECRET_KEY,

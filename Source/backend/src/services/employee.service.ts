@@ -15,7 +15,12 @@ export class EmployeeService {
 
     const queryData = await prisma.employee.findMany({
       where: {
-        deleted: false
+        deleted: false,
+        role: {
+          roleName: {
+            not: ROLE.ADMIN
+          }
+        }
       },
       select: {
         id: true,
@@ -33,7 +38,7 @@ export class EmployeeService {
         department: {
           select: {
             departmentName: true,
-            departmentId:true,
+            departmentId: true,
           }
         },
         location: {
@@ -53,7 +58,12 @@ export class EmployeeService {
 
     const totalElement = await prisma.employee.count({
       where: {
-        deleted: false
+        deleted: false,
+        role: {
+          roleName: {
+            not: ROLE.ADMIN
+          }
+        }
       },
     })
     pageResponse.data = queryData;
@@ -131,7 +141,7 @@ export class EmployeeService {
         employeeImages: {
           where: {
             employeeId: employeeId,
-            isPrimary: true,
+            // isPrimary: true,
           },
           select: {
             link: true,
