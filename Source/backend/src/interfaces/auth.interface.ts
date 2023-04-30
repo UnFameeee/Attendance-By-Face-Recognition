@@ -10,6 +10,8 @@ export interface DataStoredInAccessToken {
   id: string;
   email: string;
   link: string;
+  departmentId: string;
+  roleName: string;
 }
 
 export interface DataStoredInRefreshToken {
