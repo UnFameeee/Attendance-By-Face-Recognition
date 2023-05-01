@@ -6,9 +6,6 @@ import {
   HStack,
   Heading,
   Highlight,
-  Stack,
-  Text,
-  VStack,
   useToast,
 } from "@chakra-ui/react";
 import CalendarHeader from "../../../components/Calendar/CalendarHeader";
@@ -23,26 +20,34 @@ import {
 } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
+  getListShiftType,
   getWorkShiftOfDepartment,
+  getWorkShiftOfEmployee,
   modifyWorkShiftService,
   useGetListShiftType,
-  useGetWorkShiftDepartment,
-  useGetWorkShiftEmployee,
 } from "../../../services/workshift/workshift";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Field, Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
-import { useGetListDepartment } from "../../../services/organization/department";
 import { unionBy } from "lodash/array";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
+import {
+  getListDepartment,
+  useGetListDepartment,
+} from "../../../services/organization/department";
 function WorkShift() {
   // #region declare variable
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [userDecodeInfo, setUserDecodeInfo] = useState(
+    Helper.getUseDecodeInfor()
+  );
   const [listWorkShiftDepartment, setListWorkShiftDepartment] = useState([]);
   const [enableGetListEmployee, setEnableGetListEmployee] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
-  const [departmentId, setDepartmentId] = useState();
+  const [departmentId, setDepartmentId] = useState(
+    Helper.getUseDecodeInfor().departmentId ?? ""
+  );
   const { monthIndex, showEventModal } = useContext(GlobalContext);
   // #endregion
   // #region hooks
@@ -50,7 +55,7 @@ function WorkShift() {
     useGetListShiftType();
   const { data: listDepartmentData, isLoading: isLoadingListDepartment } =
     useGetListDepartment();
-  const useGetListEmployee = (departmentId, isEnable = false) => {
+  const useGetListEmployeeOfDepartment = (departmentId, isEnable = false) => {
     return useQuery(
       ["listEmployeeOfDepartment", departmentId],
       () => getListEmployeeOfDepartment({ departmentId }),
@@ -61,8 +66,8 @@ function WorkShift() {
       }
     );
   };
-  const { data: listEmployee, isLoading: isLoadingListEmployee } =
-    useGetListEmployee(departmentId, enableGetListEmployee);
+  const { data: listEmployeeOfDepartment, isLoading: isLoadingListEmployee } =
+    useGetListEmployeeOfDepartment(departmentId, enableGetListEmployee);
   const useModifyWorkShift = useMutation(modifyWorkShiftService, {
     onSuccess: (data) => {
       const { result, message } = data;
@@ -125,6 +130,36 @@ function WorkShift() {
       });
     },
   });
+  const useGetWorkShiftOfEmployee = useMutation(getWorkShiftOfEmployee, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        setListWorkShiftDepartment((prevList) => {
+          let resultData = [...data?.result];
+          const mergedResult = unionBy(resultData, prevList, "shiftId");
+          queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
+          return mergedResult;
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   // #endregion
   // #region functions
   let listDepartmentArray = React.useMemo(() => {
@@ -144,11 +179,16 @@ function WorkShift() {
   };
   const refreshListWorkDepartment = () => {
     if (departmentId) {
-      useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+      if (userDecodeInfo.roleName == "employee") {
+        let employeeId = userDecodeInfo.id;
+        useGetWorkShiftOfEmployee.mutate({ employeeId, monthIndex });
+      } else {
+        useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+      }
     }
   };
   const initialValues = {
-    department: "",
+    department: departmentId,
   };
   useEffect(() => {
     setCurrentMonth(Helper.getMonth(monthIndex));
@@ -167,12 +207,14 @@ function WorkShift() {
   // #endregion
   // #region form
   // #endregion
-  if (
+  if (userDecodeInfo?.roleName == "employee") {
+  } else if (
     isLoadingListEmployee &&
     isLoadingListShiftType &&
     isLoadingListDepartment
-  )
+  ) {
     return <LoadingSpinner />;
+  }
   return (
     <React.Fragment>
       <Flex
@@ -188,7 +230,7 @@ function WorkShift() {
           <Heading fontSize="3xl">Work Shift</Heading>
         </Flex>
         <HStack>
-          <Heading fontSize="xl" fontWeight='medium'>
+          <Heading fontSize="xl" fontWeight="medium">
             <Highlight
               query={["Department:"]}
               styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
@@ -214,17 +256,24 @@ function WorkShift() {
               >
                 <FormTextField
                   name="department"
-                  isSelectionField={true}
                   placeholder="---"
+                  isReadOnly={
+                    userDecodeInfo?.roleName == "employee" ||
+                    userDecodeInfo?.roleName == "manager"
+                  }
+                  isSelectionField={true}
                   selectionArray={
                     listDepartmentArray ? [...listDepartmentArray] : []
                   }
                 />
-                <div className=" mt-[6px]">
-                  <Button colorScheme="blue" type="submit" size='md'>
-                    Submit
-                  </Button>
-                </div>
+                {userDecodeInfo?.roleName != "employee" &&
+                  userDecodeInfo?.roleName != "manager" && (
+                    <div className=" mt-[6px]">
+                      <Button colorScheme="blue" type="submit" size="md">
+                        Submit
+                      </Button>
+                    </div>
+                  )}
               </HStack>
             )}
           </Formik>
@@ -232,11 +281,12 @@ function WorkShift() {
       </Flex>
       {showEventModal && (
         <EventModal
-          listEmployee={listEmployee?.result?.data}
+          listEmployee={listEmployeeOfDepartment?.result?.data}
           listShift={listShiftType?.result}
           modifyEventHandler={modifyWorkShift}
           refreshListWorkDepartment={refreshListWorkDepartment}
           setListWorkShiftDepartment={setListWorkShiftDepartment}
+          isReadOnly={userDecodeInfo?.roleName == "employee"}
         />
       )}
       {departmentId ? (
@@ -273,14 +323,16 @@ function WorkShift() {
                   rounded: "md",
                   bg: "#3182ce",
                   color: "white",
-                  fontSize:'xl'
+                  fontSize: "xl",
                 }}
               >
                 and hit Submit to see the work shift!
               </Highlight>
             </Heading>
           </Box>
-          <NoDataToDisplay />
+          <Box h="80vh">
+            <NoDataToDisplay />
+          </Box>
         </>
       )}
     </React.Fragment>

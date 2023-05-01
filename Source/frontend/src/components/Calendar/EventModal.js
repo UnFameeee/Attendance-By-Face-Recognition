@@ -31,6 +31,7 @@ export default function EventModal(props) {
     listShift,
     refreshListWorkDepartment,
     setListWorkShiftDepartment,
+    isReadOnly,
   } = props;
   const { setShowEventModal, daySelected, selectedEvent } =
     useContext(GlobalContext);
@@ -151,7 +152,7 @@ export default function EventModal(props) {
                     Work Shift Detail
                   </span>
                   <div className="flex gap-2 ">
-                    {selectedEvent && (
+                    {selectedEvent && !isReadOnly && (
                       <span
                         onClick={() => {
                           onDeleteSingleOpen();
@@ -177,6 +178,7 @@ export default function EventModal(props) {
                         isSelectionField={true}
                         placeholder="---"
                         selectionArray={arrayShift}
+                        isReadOnly={isReadOnly}
                       />
                     </Box>
                     <Box alignItems="center">
@@ -219,18 +221,21 @@ export default function EventModal(props) {
                       isSelectionField={true}
                       formik={formik}
                       selectionArray={arrayEmployee}
+                      isReadOnly={isReadOnly}
                     />
                   </div>
                 </div>
-                <footer className="flex justify-end border-t p-3 mt-5">
-                  <Button
-                    type="submit"
-                    onClick={formik.handleSubmit}
-                    colorScheme="blue"
-                  >
-                    Save
-                  </Button>
-                </footer>
+                {!isReadOnly && (
+                  <footer className="flex justify-end border-t p-3 mt-5">
+                    <Button
+                      type="submit"
+                      onClick={formik.handleSubmit}
+                      colorScheme="blue"
+                    >
+                      Save
+                    </Button>
+                  </footer>
+                )}
               </div>
             </Box>
           </>

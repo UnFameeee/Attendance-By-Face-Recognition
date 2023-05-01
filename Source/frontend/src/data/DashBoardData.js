@@ -6,8 +6,7 @@ import { SlOrganization } from "react-icons/sl";
 import { MdWork } from "react-icons/md";
 import { RiUserVoiceFill } from "react-icons/ri";
 import { TbReportMoney } from "react-icons/tb";
-import {GoReport} from 'react-icons/go'
-
+import { GoReport } from "react-icons/go";
 const iconFontSize = "80px";
 export const DashBoardDataTop = [
   {
@@ -17,7 +16,7 @@ export const DashBoardDataTop = [
     link: "/employees/employees-management",
     linkTitle: "Manage Employees",
     bgColor: "#38bfee",
-    roleCanAccess:['manager','admin']
+    roleCanAccess: ["manager", "admin"],
   },
   {
     title: "Organization",
@@ -26,13 +25,13 @@ export const DashBoardDataTop = [
     link: "/organization/general-organization",
     linkTitle: "Manage Organization",
     bgColor: "#29a65a",
-    roleCanAccess:['admin']
+    roleCanAccess: ["admin"],
   },
   {
     title: "Leave Request",
     content: "Request",
     icon: <RiUserVoiceFill style={{ fontSize: iconFontSize }} />,
-    link: "/leave-request",
+    link: "/leave-request/leave-request-personal",
     linkTitle: "Manage Leave Request",
     bgColor: "#da8909",
   },
@@ -54,6 +53,7 @@ export const DashBoardDataBottom = [
     link: "/attendance/attendance-management",
     linkTitle: "Manage Attendance",
     bgColor: "#626ebf",
+    roleCanAccess: ["manager", "admin"],
   },
   {
     title: "Setting",

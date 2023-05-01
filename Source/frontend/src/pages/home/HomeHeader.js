@@ -1,14 +1,11 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
   Avatar,
   Box,
-  Button,
-  Divider,
   Flex,
   Heading,
   Icon,
-  Image,
   Text,
   Menu,
   MenuButton,
@@ -22,21 +19,13 @@ import {
 } from "@chakra-ui/react";
 import { useProSidebar } from "react-pro-sidebar";
 import { Link, useNavigate } from "react-router-dom";
-import { GiHamburgerMenu } from "react-icons/gi";
-import {
-  BsLayoutSidebarInsetReverse,
-  BsLayoutSidebarInset,
-} from "react-icons/bs";
+import { BsLayoutSidebarInsetReverse } from "react-icons/bs";
 import { IoNotifications } from "react-icons/io5";
-import { HiUserCircle } from "react-icons/hi";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
 import { useMutation } from "react-query";
 import Cookies from "universal-cookie";
 import { logout } from "../../services/auth/auth";
 import { setUser } from "../../store/Slice/authSlice";
-import jwtDecode from "jwt-decode";
-import avt_user from "../../assets/ta.jpeg";
 import { Helper } from "../../Utils/Helper";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
@@ -46,8 +35,10 @@ function HomeHeader() {
   const toast = useToast();
   const cookies = new Cookies();
   var decoded = Helper.getUseDecodeInfor();
-  const { data: profileDetailData } = useGetProfileDetail(decoded.id);
-  const { collapseSidebar, toggleSidebar, collapsed, toggled } =
+  const [userAvatar, setUserAvatar] = useState();
+  const { data: profileDetailData, isFetching: isFetchingProfileDetailData } =
+    useGetProfileDetail(decoded.id);
+  const { collapseSidebar, toggleSidebar, toggled } =
     useProSidebar();
 
   const handleCollapseSidebar = () => {
@@ -80,6 +71,13 @@ function HomeHeader() {
     useLogoutMutation.mutate({ accessToken, refreshToken });
   };
   const userData = Helper.getUseDecodeInfor();
+  useEffect(() => {
+    if (profileDetailData?.result?.employeeImages[0]?.link) {
+      setUserAvatar(
+        profileDetailData?.result?.employeeImages[0]?.link + "?" + dayjs()
+      );
+    }
+  }, [isFetchingProfileDetailData]);
   return (
     <>
       <Show breakpoint="(max-width: 1005px)">
@@ -184,11 +182,7 @@ function HomeHeader() {
                     <Avatar
                       size="sm"
                       border="2px solid white"
-                      src={
-                        profileDetailData?.result?.employeeImages[0]?.link +
-                        "?" +
-                        dayjs()
-                      }
+                      src={userAvatar}
                     />
 
                     <Hide below="sm">

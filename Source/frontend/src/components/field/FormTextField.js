@@ -131,7 +131,7 @@ function FormTextField(props) {
         {isLoading ? (
           <Spinner />
         ) : (
-          <Select {...field} placeholder={placeholder ?? ""}>
+          <Select pointerEvents={isReadOnly ? 'none' : ''} {...field} placeholder={placeholder ?? ""}>
             {selectionArray &&
               selectionArray.map((item, index) => (
                 <option key={index} value={item.value}>
