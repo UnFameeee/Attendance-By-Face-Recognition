@@ -37,6 +37,7 @@ import ExceptionModel from "./components/Attendance/ExceptionModel";
 import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
 import LeaveRequestManagement from "./pages/home/LeaveRequest/LeaveRequestManagement";
 import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
+import AlterAttendance from "./pages/home/Attendance/AlterAttendance";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -132,6 +133,7 @@ root.render(
                     </Route>
                   </Route>
                 </Route>
+                <Route path="alter-attendance" element={<AlterAttendance />} />
                 <Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
                   <Route path="test" element={<AttendanceModal />} />

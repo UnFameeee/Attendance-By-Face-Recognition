@@ -22,6 +22,17 @@ import {
   Tab,
   TabPanels,
   TabPanel,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  ModalContent,
+  Center,
+  Icon,
+  Image,
+  Avatar,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import DynamicTable from "../../../components/table/DynamicTable";
@@ -30,16 +41,18 @@ import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import { attendanceDumbData } from "../../test/dumbTableData";
 import { Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
-
+import { BsArrowLeftRight } from "react-icons/bs";
+import test_Img from "../../../assets/ta.jpeg";
 function AttendanceManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
     permissionAttendanceManagement,
     "attendance-management"
   );
-  console.log("resultPermission", resultPermission);
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const finalRef = React.useRef(null);
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
@@ -243,10 +256,10 @@ function AttendanceManagement() {
         </HStack>
       </HStack>
       <Box w="100%">
-        <Tabs isFitted variant="soft-rounded" colorScheme='blue'>
+        <Tabs isFitted variant="soft-rounded" colorScheme="blue">
           <TabList mb="1em">
-            <Tab>Check In</Tab>
-            <Tab>Check Out</Tab>
+            <Tab border="1px solid gray">Check In</Tab>
+            <Tab border="1px solid gray">Check Out</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -280,8 +293,98 @@ function AttendanceManagement() {
           </TabPanels>
         </Tabs>
       </Box>
+      <Modal
+        finalFocusRef={finalRef}
+        isOpen={isAddEditOpen}
+        onClose={onAddEditClose}
+        isCentered
+        size="2xl"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack alignItems="center">
+              <Heading fontSize="2xl">Approval</Heading>
+              <Heading fontSize="xl" fontWeight="medium">
+                <Highlight
+                  query={["Check In", "Check Out"]}
+                  styles={{ px: "2", py: "1", rounded: "md", bg: "red.100" }}
+                >
+                  Check In
+                </Highlight>
+              </Heading>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Formik>
+              {(formik) => (
+                <>
+                  <HStack spacing='10px'>
+                    <VStack flex="1" alignItems="flex-start">
+                      <Heading fontSize="xl" fontWeight="medium">
+                        System Information
+                      </Heading>
+                      <HStack spacing="20px">
+                        <Avatar src={test_Img} boxSize="100px" />
+                        <VStack>
+                          <Text fontSize="lg">Time:</Text>
+                          <Text>20:50 PM</Text>
+                        </VStack>
+                      </HStack>
+                      <FormTextField name="name" label="Name" />
+                      <FormTextField name="department" label="Department" />
+                      <FormTextField name="email" label="Email" />
+                    </VStack>
+                    <Flex alignItems="center">
+                      <Box mt='10rem'>
+                        <Icon
+                          color="blue.500"
+                          as={BsArrowLeftRight}
+                          fontSize="2.5rem"
+                        />
+                      </Box>
+                    </Flex>
+                    <VStack flex="1" alignItems="flex-start">
+                      <Heading fontSize="xl" fontWeight="medium">
+                        Employee Information
+                      </Heading>
+                      <HStack spacing="20px">
+                        <Avatar src={test_Img} boxSize="100px" />
+                        <VStack>
+                          <Text fontSize="lg">Time:</Text>
+                          <Text>20:50 PM</Text>
+                        </VStack>
+                      </HStack>
+                      <FormTextField name="name" label="Name" />
+                      <FormTextField name="department" label="Department" />
+                      <FormTextField name="email" label="Email" />
+                    </VStack>
+                  </HStack>
+                </>
+              )}
+            </Formik>
+          </ModalBody>
 
-      <DynamicDrawer
+          <ModalFooter>
+            <Center>
+              <Button
+                variant="outline"
+                colorScheme="red"
+                mr={3}
+                borderWidth="2px"
+                onClick={onAddEditClose}
+              >
+                <Text fontWeight="bold">Reject</Text>
+              </Button>
+              <Button borderWidth="2px" colorScheme="green" variant="outline">
+                <Text fontWeight="bold">Approve</Text>
+              </Button>
+            </Center>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* <DynamicDrawer
         handleCreate={handleSubmitApproval}
         isAddEditOpen={isAddEditOpen}
         onAddEditClose={onAddEditClose}
@@ -291,7 +394,7 @@ function AttendanceManagement() {
         initialValues={initialValues}
         drawerFieldData={drawerFieldData}
         titleArray={["Approval", "Create"]}
-      />
+      /> */}
       <ChakraAlertDialog
         title="Delete Single"
         isOpen={isDeleteSingleOpen}

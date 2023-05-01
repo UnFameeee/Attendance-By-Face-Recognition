@@ -37,21 +37,25 @@ import {
 } from "react-icons/bs";
 import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
+import { useGetProfileDetail } from "../../services/setting/profile";
+import dayjs from "dayjs";
 function HomeSidebar() {
+  var decoded = Helper.getUseDecodeInfor();
   const [userRole, setUserRole] = useState("");
-  const [breadCrumbArray, setBreadCrumbArray] = useState();
-  const { collapseSidebar, toggleSidebar, collapsed, toggled } =
+  const { collapseSidebar, collapsed } =
     useProSidebar();
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const cookies = new Cookies();
   const location = useLocation();
   const {
     isOpen: isSignOutAlertOpen,
     onOpen: onSignOutAlertOpen,
     onClose: onSignOutAlertClose,
   } = useDisclosure();
+  const {
+    data: profileDetailData,
+  } = useGetProfileDetail(decoded.id);
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
@@ -71,8 +75,7 @@ function HomeSidebar() {
   const handleLogout = () => {
     useLogoutMutation.mutate();
   };
-  var decoded = Helper.getUseDecodeInfor();
-  let userEmail = decoded.email;
+
   useEffect(() => {
     setUserRole(Helper.getUserRole());
   }, []);
@@ -100,7 +103,7 @@ function HomeSidebar() {
               bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
-                <Avatar border="2px solid white" src={avt_user} />
+                <Avatar border="2px solid white" src={profileDetailData?.result?.employeeImages[0]?.link+'?'+dayjs()} />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"
@@ -110,7 +113,7 @@ function HomeSidebar() {
                     textOverflow="ellipsis"
                     whiteSpace="nowrap"
                   >
-                    {userEmail}
+                    {profileDetailData?.result?.email}
                   </Heading>
                   <Box display="flex" alignItems="center" gap={1}>
                     <Icon as={RiRadioButtonLine} color="green" boxSize={6} />

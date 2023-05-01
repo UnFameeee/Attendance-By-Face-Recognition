@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
@@ -35,6 +35,7 @@ import ImagesUploading from "../../../components/ImagesUploading";
 import { permissionProfile } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { Helper } from "../../../Utils/Helper";
+import dayjs from "dayjs";
 function Profile() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -45,8 +46,7 @@ function Profile() {
   const queryClient = useQueryClient();
   var userDecodeData = Helper.getUseDecodeInfor();
   const [images, setImages] = React.useState([]);
-  const maxNumber = 2;
-  let roleArray = [];
+  const maxNumber = 1;
   // #endregion
   // #region hooks
   const {
@@ -58,34 +58,29 @@ function Profile() {
   const {
     data: profileDetailData,
     isLoading: isLoadingProfileDetail,
-    isError,
-    error,
+    isFetching: isFetchingProfileDetail,
   } = useGetProfileDetail(userDecodeData.id);
-  // const {
-  //   data: listRoleOfEmployeeData,
-  //   isLoading: isLoadingListRoleOfEmployee,
-  // } = useGetListRoleOfEmployee();
   const useSaveProfileDetail = useMutation(saveProfileDetail, {
     onSuccess: (data) => {
       const { message } = data;
-        if (message) {
-          toast({
-            title: message,
-            position: "bottom-right",
-            status: "error",
-            isClosable: true,
-            duration: 5000,
-          });
-        } else {
-          queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
-          toast({
-            title: "Save Profile Detail Successfully",
-            position: "bottom-right",
-            status: "success",
-            isClosable: true,
-            duration: 5000,
-          });
-        }
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
+        toast({
+          title: "Save Profile Detail Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -100,23 +95,24 @@ function Profile() {
   const useUploadImages = useMutation(uploadProfileImages, {
     onSuccess: (data) => {
       const { message } = data;
-        if (message) {
-          toast({
-            title: message,
-            position: "bottom-right",
-            status: "error",
-            isClosable: true,
-            duration: 5000,
-          });
-        } else {
-          toast({
-            title: "Save Upload Photos Successfully",
-            position: "bottom-right",
-            status: "success",
-            isClosable: true,
-            duration: 5000,
-          });
-        }
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries(["profileDetail", userDecodeData?.id]);
+        toast({
+          title: "Save Upload Photos Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -160,26 +156,15 @@ function Profile() {
       city: profileDetailData?.result?.location?.city ?? "",
     },
     address: profileDetailData?.result?.location?.address ?? "",
-    department: profileDetailData?.result?.department ?? "",
+    department: profileDetailData?.result?.department?.departmentName ?? "",
     role: profileDetailData?.result?.role?.displayName ?? "",
   };
   const validationSchema = Yup.object().shape({
-    phone: Yup.string().matches(phoneRegExp, "Phone number is not valid"),
-    fullname: Yup.string().required("This field is required"),
-    email: Yup.string().required("This field is required"),
-    address: Yup.string().required("This field is required"),
     dateOfBirth: Yup.date()
       .max(new Date(), "Your birth date is invalid")
       .required("This field is required"),
   });
-  // #endregion
-  // if(listRoleOfEmployeeData?.result){
-  //   listRoleOfEmployeeData?.result.map((item) =>{
-  //     roleArray.push({label:item.displayName,value:item.roleId})
-  //   })
-  // }
-
-  if (isLoadingProfileDetail) return <LoadingSpinner />;
+  if (isFetchingProfileDetail) return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={3}>
       {resultPermission?.read && (
@@ -209,7 +194,10 @@ function Profile() {
                   fullname: values?.fullname,
                   email: values?.email,
                   gender: values?.gender,
-                  dateOfBirth: new Date(values?.dateOfBirth).toISOString(),
+                  dateOfBirth:
+                    values?.dateOfBirth != ""
+                      ? new Date(values?.dateOfBirth).toISOString()
+                      : "",
                   phoneNumber: values?.phone,
                   location: {
                     address: values?.address,
@@ -240,11 +228,13 @@ function Profile() {
                         Personal Information
                       </Heading>
                       <Button
-                        onClick={onSaveDetailAlertOpen}
-                        colorScheme="blue"
-                        isDisabled={
-                          !resultPermission?.update || !formik.isValid
+                        onClick={
+                          formik.isValid
+                            ? onSaveDetailAlertOpen
+                            : formik.handleSubmit
                         }
+                        colorScheme="blue"
+                        isDisabled={!resultPermission?.update}
                       >
                         Save
                       </Button>
@@ -379,7 +369,15 @@ function Profile() {
                   flexDirection="column"
                 >
                   <Flex gap={4} flexDirection="row" alignItems="center">
-                    <Avatar src={ta_test_avt} boxSize="80px" />
+                    <Avatar
+                      objectFit="cover"
+                      src={
+                        profileDetailData?.result?.employeeImages[0]?.link +
+                        "?" +
+                        dayjs()
+                      }
+                      boxSize="80px"
+                    />
                     <Box
                       display="flex"
                       flexDirection="column"
@@ -396,33 +394,15 @@ function Profile() {
                       </Button>
                     </Box>
                   </Flex>
-                  <ImagesUploading
-                    images={images}
-                    onChange={onChange}
-                    maxNumber={maxNumber}
-                    isDisabled={!resultPermission.update}
-                  />
+                  <Box w='80%' height='400px'>
+                    <ImagesUploading
+                      images={images}
+                      onChange={onChange}
+                      maxNumber={maxNumber}
+                      isDisabled={!resultPermission.update}
+                    />
+                  </Box>
                 </Flex>
-                {/* <Box flex={1}>
-                        <Flex
-                          alignItems="center"
-                          justifyContent="space-between"
-                        >
-                          <Image src={google_logo} width="150px" />
-                          <Box p={2} rounded="md" bgColor="#d8ffee">
-                            <Text fontWeight="bold" color="#54c793">
-                              Connected
-                            </Text>
-                          </Box>
-                        </Flex>
-                        <Box pl={2} fontSize="1.3rem">
-                          <Text fontWeight="bold">Google</Text>
-                          <Text>Use Google to sign in your account.</Text>
-                          <Text color="#4374e3" cursor="pointer">
-                            Click here to learn more.
-                          </Text>
-                        </Box>
-                      </Box> */}
               </Flex>
             </Stack>
           </Flex>
