@@ -45,8 +45,8 @@ model Employee {
   payrolls              Payroll[]
   departmentManager     DepartmentManager[]
   employeeImages        EmployeeImage[]
-  AttendanceException   AttendanceException[]
-  FaceTrainingImage     FaceTrainingImage[]
+  attendanceException   AttendanceException[]
+  faceTrainingImage     FaceTrainingImage[]
 
   @@map("employee")
 }
@@ -187,13 +187,14 @@ model Department {
   location   Location @relation(fields: [locationId], references: [locationId])
   locationId String   @unique
 
-  departmentName    String
-  deleted           Boolean             @default(false)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  deletedAt         DateTime?
-  departmentManager DepartmentManager[]
-  employee          Employee[]
+  departmentName      String
+  deleted             Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  deletedAt           DateTime?
+  departmentManager   DepartmentManager[]
+  employee            Employee[]
+  attendanceException AttendanceException[]
 
   @@map("department")
 }
@@ -381,12 +382,15 @@ model AttendanceException {
   attendanceExceptionId String @id @default(uuid())
 
   //employeeId
-  employee   Employee? @relation(fields: [approverId], references: [id])
+  approver   Employee? @relation(fields: [approverId], references: [id])
   approverId String?
+
+  //employeeId
+  department   Department @relation(fields: [departmentId], references: [departmentId])
+  departmentId String
 
   image          String
   name           String
-  department     String
   email          String
   attendanceType String
   datetime       DateTime

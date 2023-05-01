@@ -1,8 +1,10 @@
 import { env } from "../config/env.config";
+import { Page, Paging } from "../config/paginate.config";
 import { ResponseData } from "../config/responseData.config"
 import { attendance, attendanceExceptionStatus } from "../constant/attendance-exception.constant";
+import { ROLE } from "../constant/database.constant";
 import { prisma } from "../database/prisma.singleton";
-import { SubmitAttendanceExceptionDTO } from "../model/dtos/attendance-exception.dto";
+import { GetAttendanceExceptionDataDTO, SubmitAttendanceExceptionDTO } from "../model/dtos/attendance-exception.dto";
 import { Helper } from "../utils/helper";
 
 export class AttendanceExceptionService {
@@ -17,12 +19,9 @@ export class AttendanceExceptionService {
     })
     if (!validateEmail) {
       //delete the image
-
-
       response.message = "Email isn't exist, please check again!";
       return response;
     }
-
 
     let attendanceType: string;
     if (data.attendanceType == "CHECKIN") {
@@ -33,7 +32,7 @@ export class AttendanceExceptionService {
     const queryData = await prisma.attendanceException.create({
       data: {
         name: data.name,
-        department: data.department,
+        departmentId: data.departmentId,
         email: data.email,
         image: data.image,
         attendanceType: attendanceType,
@@ -78,17 +77,95 @@ export class AttendanceExceptionService {
     return response;
   }
 
-  public getListAttendanceException = async () => {
+  public getListAttendanceException = async (page: Page): Promise<ResponseData<Paging<any[]>>> => {
     //Chia theo checkin / checkout
     //Chia theo role, nếu role là manager thì coi dc trong phòng ban của mình, admin thì coi được tất cả
     //Filter theo ngày/tháng/năm trên param
+    //ApproverId -> Approver Name
+
+    const response = new ResponseData<Paging<any[]>>;
+    const pageResponse = new Paging<any[]>
+    const data: GetAttendanceExceptionDataDTO = page.extendData;
+
+    let attendanceType: string;
+    if (data.attendanceType == "CHECKIN") {
+      attendanceType = attendance.checkin;
+    } else if (data.attendanceType == "CHECKOUT") {
+      attendanceType = attendance.checkout;
+    }
+
+    let queryData: any;
+    let totalElement: number;
+
+    //Nếu Role là Admin -> lấy hết data
+    if (data.roleName == ROLE.ADMIN) {
+      queryData = await prisma.attendanceException.findMany({
+        where: {
+          attendanceType: attendanceType,
+          departmentId: data.departmentId,
+        },
+        select: {
+          attendanceExceptionId: true,
+          name: true,
+          department: {
+            select: {
+              departmentName: true,
+            }
+          },
+          datetime: true,
+          approver: {
+            select: {
+              fullname: true,
+            }
+          },
+          status: true,
+        }
+      })
+
+      totalElement = await prisma.attendanceException.count({
+        where: {
+          attendanceType: attendanceType,
+          departmentId: data.departmentId,
+        },
+      })
+    } else if (data.roleName == ROLE.MANAGER) {
+      queryData = await prisma.attendanceException.findMany({
+        where: {
+          attendanceType: attendanceType,
+        },
+        select: {
+          attendanceExceptionId: true,
+          name: true,
+          department: {
+            select: {
+              departmentName: true,
+            }
+          },
+          datetime: true,
+          approver: {
+            select: {
+              fullname: true,
+            }
+          },
+          status: true,
+        }
+      })
+      totalElement = await prisma.attendanceException.count({
+        where: {
+          attendanceType: attendanceType,
+        },
+      })
+    }
+    return;
   }
 
-  public getAttendanceExceptionData = async () => {
+  public getAttendanceExceptionData = async (attendanceExceptionId: string) => {
     //Lấy data ở cả 2 bên là system và employee nhập vào
+
   }
 
-  public verifyAttendanceException = async () => {
+  public verifyAttendanceException = async (attendanceExceptionId: string, status: string) => {
     //nhận đầu vào là reject hoặc là approve
+    //Update approver
   }
 }

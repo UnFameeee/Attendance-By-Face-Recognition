@@ -2,6 +2,7 @@ export class Page {
   page: number;
   pageSize: number;
   totalElement?: number;
+  extendData? : any;
 }
 
 export class Paging <T> {
