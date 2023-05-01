@@ -9,7 +9,7 @@ export const submitAttendanceExceptionSchema = z.object({
     .trim()
     .min(1, 'Name cannot be empty'),
 
-  department: z
+  departmentId: z
     .string({
       required_error: 'Department is required',
       invalid_type_error: 'Department must be string',
@@ -42,3 +42,37 @@ export const submitAttendanceExceptionSchema = z.object({
     .min(1, 'Image cannot be empty'),
 });
 export type SubmitAttendanceExceptionDTO = z.infer<typeof submitAttendanceExceptionSchema>;
+
+export const getAttendanceExceptionDataSchema = z.object({
+  attendanceType: z
+    .string({
+      required_error: 'Attendance Type is required',
+      invalid_type_error: 'Attendance Type must be string',
+    })
+    .trim()
+    .min(1, 'Attendance Type cannot be empty'),
+
+  departmentId: z
+    .string({
+      required_error: 'Department is required',
+      invalid_type_error: 'Department must be string',
+    })
+    .trim()
+    .min(1, 'Department cannot be empty'),
+
+  roleName: z
+    .string({
+      required_error: 'Role is required',
+      invalid_type_error: 'Role must be string',
+    })
+    .trim()
+    .min(1, 'Role cannot be empty'),
+
+  filter: z
+    .string({
+      invalid_type_error: 'Attendance Type must be string',
+    })
+    .trim()
+    .optional()
+});
+export type GetAttendanceExceptionDataDTO = z.infer<typeof getAttendanceExceptionDataSchema>;
