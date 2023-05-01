@@ -55,8 +55,9 @@ export class AttendanceExceptionController {
   public verifyAttendanceException = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const attendanceExceptionId: string = req.params.attendanceExceptionId;
-      const status: string = req.body;
-      const response = await this.attendanceExceptionService.verifyAttendanceException(attendanceExceptionId, status);
+      const status: string = req.body.status;
+      const employeeId: string = req.profile.id;
+      const response = await this.attendanceExceptionService.verifyAttendanceException(employeeId, attendanceExceptionId, status);
       res.status(201).json(response);
     } catch (err) {
       next(err);
