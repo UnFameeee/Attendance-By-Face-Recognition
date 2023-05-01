@@ -20,6 +20,7 @@ function ImagesUploading({
   onChange,
   maxNumber,
   isDisabled,
+  noDescription,
   ...props
 }) {
   return (
@@ -55,7 +56,7 @@ function ImagesUploading({
                     fontWeight="medium"
                     color="secondary1"
                   >
-                    The maximum number of selected images is 2
+                    The maximum number of selected images is {maxNumber}
                   </Text>
                 </Flex>
               )}
@@ -116,7 +117,7 @@ function ImagesUploading({
               boxSizing="border-box"
               rounded="lg"
               border={"2px dashed #999"}
-              height="400px"
+              height="100%"
             >
               <Heading fontWeight="medium">
                 You don't have permission to upload
@@ -129,7 +130,7 @@ function ImagesUploading({
               boxSizing="border-box"
               rounded="lg"
               border={imageList.length > 0 ? "none" : "2px dashed #999"}
-              height="400px"
+              height="100%"
               position="relative"
               onClick={onImageUpload}
               {...dragProps}
@@ -159,15 +160,19 @@ function ImagesUploading({
                     as={AiOutlineCloudUpload}
                   />
                 </Center>
-                <Center>
-                  <Text color="#4374e3" mr={1}>
-                    Click to upload
-                  </Text>
-                  <Text>or drag and drop</Text>
-                </Center>
-                <Center display="flex" flexDirection="column">
-                  <Text>SVG, PNG, JPEG or GIF</Text>
-                </Center>
+                {!noDescription && (
+                  <Center>
+                    <Text color="#4374e3" mr={1}>
+                      Click to upload
+                    </Text>
+                    <Text>or drag and drop</Text>
+                  </Center>
+                )}
+                {!noDescription && (
+                  <Center display="flex" flexDirection="column">
+                    <Text>SVG, PNG, JPEG or GIF</Text>
+                  </Center>
+                )}
               </Box>
               <Box display="flex" w="100%" h="100%" gap="5px">
                 {imageList.map((image, index) => (

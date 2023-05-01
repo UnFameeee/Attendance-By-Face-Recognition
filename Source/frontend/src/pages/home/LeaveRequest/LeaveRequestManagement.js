@@ -24,6 +24,7 @@ import { MdOutlineAlternateEmail } from "react-icons/md";
 import { leaveRequestDumbData, roleCodeColor } from "../../test/dumbTableData";
 
 function LeaveRequestManagement() {
+  // #region declare variable
   const resultPermission = useGetPermission(
     permissionLeaveRequestManagement,
     "leave-request-management"
@@ -32,6 +33,8 @@ function LeaveRequestManagement() {
   const queryClient = useQueryClient();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
+  // #endregion
+  // #region hooks
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -42,6 +45,8 @@ function LeaveRequestManagement() {
     onOpen: onAddEditOpen,
     onClose: onAddEditClose,
   } = useDisclosure();
+  // #endregion
+  // #region functions
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
@@ -65,12 +70,13 @@ function LeaveRequestManagement() {
     onAddEditClose();
     setEditData({});
   };
-  console.log("editData", editData);
   const matchingRoleColor = (value) => {
     return roleCodeColor.find(
       (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
     );
   };
+  // #endregion
+  // #region table
   const tableRowAction = [
     {
       actionName: "Edit",
@@ -88,19 +94,18 @@ function LeaveRequestManagement() {
       {
         Header: "Id",
         accessor: "id",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
         cellWidth: "150px",
         hidden: true,
       },
       {
         Header: "Approval",
         accessor: "isApproved",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
         Cell: ({ value }) => (
           <Badge fontSize="lg">{value ? "yes" : "no"}</Badge>
         ),
@@ -109,26 +114,26 @@ function LeaveRequestManagement() {
       {
         Header: "Full Name",
         accessor: "fullname",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
 
         cellWidth: "150px",
       },
       {
         Header: "Email",
         accessor: "email",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
       },
       {
         Header: "Role",
         accessor: "role",
         Cell: ({ value }) => <Badge fontSize="lg">{value}</Badge>,
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
         cellWidth: "150px",
       },
       {
@@ -136,53 +141,55 @@ function LeaveRequestManagement() {
         accessor: "department",
         cellWidth: "150px",
         Cell: ({ value }) => <span>{value}</span>,
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
       },
       {
         Header: "Leave type",
         accessor: "leaveType",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
         cellWidth: "150px",
       },
       {
         Header: "Reason",
         accessor: "reason",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
         cellWidth: "150px",
       },
       {
         Header: "Note",
         accessor: "note",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
         cellWidth: "150px",
       },
       {
         Header: "Start date",
         accessor: "startDate",
-        haveFilter: {
-          filterType: FilterType.DateTime,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.DateTime,
+        // },
         cellWidth: "150px",
       },
       {
         Header: "End date",
         accessor: "endDate",
-        haveFilter: {
-          filterType: FilterType.DateTime,
-        },
+        // haveFilter: {
+        //   filterType: FilterType.DateTime,
+        // },
         cellWidth: "150px",
       },
     ],
     []
   );
+  // #endregion
+  // #region drawer
   const drawerFieldData = [
     {
       name: "isApproved",
@@ -266,6 +273,10 @@ function LeaveRequestManagement() {
     note: editData?.note ?? "",
   };
   const validationSchema = Yup.object().shape();
+  // #endregion
+  // #region form
+  // #endregion
+
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -284,6 +295,8 @@ function LeaveRequestManagement() {
               columns={columns}
               data={leaveRequestDumbData}
               permission={resultPermission}
+              noPaging={true}
+              hideButtons={true}
             />
             <DynamicDrawer
               handleEdit={handleApprovalLeaveRequest}

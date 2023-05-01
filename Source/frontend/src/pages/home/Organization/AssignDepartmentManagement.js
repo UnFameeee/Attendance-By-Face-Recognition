@@ -219,29 +219,29 @@ function AssignDepartmentManagement() {
       {
         Header: "Id",
         accessor: "id",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
         hidden: true,
       },
       {
         Header: "Full Name",
         accessor: "fullname",
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
       },
       {
         Header: "Email",
         accessor: "email",
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        // haveSort: true,
       },
       {
         Header: "Role",
@@ -254,10 +254,10 @@ function AssignDepartmentManagement() {
             {value}
           </Badge>
         ),
-        haveFilter: {
-          filterType: FilterType.Default,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        // haveSort: true,
         cellWidth: "150px",
       },
       {
@@ -265,10 +265,10 @@ function AssignDepartmentManagement() {
         accessor: "department",
         cellWidth: "200px",
         Cell: ({ value }) => <span>{value?.departmentName}</span>,
-        haveFilter: {
-          filterType: FilterType.Text,
-        },
-        haveSort: true,
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        // haveSort: true,
       },
     ],
     []

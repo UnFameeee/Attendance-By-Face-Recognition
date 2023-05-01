@@ -38,12 +38,15 @@ import { setUser } from "../../store/Slice/authSlice";
 import jwtDecode from "jwt-decode";
 import avt_user from "../../assets/ta.jpeg";
 import { Helper } from "../../Utils/Helper";
-
+import { useGetProfileDetail } from "../../services/setting/profile";
+import dayjs from "dayjs";
 function HomeHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
   const cookies = new Cookies();
+  var decoded = Helper.getUseDecodeInfor();
+  const { data: profileDetailData } = useGetProfileDetail(decoded.id);
   const { collapseSidebar, toggleSidebar, collapsed, toggled } =
     useProSidebar();
 
@@ -178,15 +181,16 @@ function HomeHeader() {
                     alignItems="center"
                     gap="4px"
                   >
-                    {true ? (
-                      <Avatar
-                        size="sm"
-                        border="2px solid white"
-                        src={avt_user}
-                      />
-                    ) : (
-                      <Icon as={HiUserCircle} boxSize={8} />
-                    )}
+                    <Avatar
+                      size="sm"
+                      border="2px solid white"
+                      src={
+                        profileDetailData?.result?.employeeImages[0]?.link +
+                        "?" +
+                        dayjs()
+                      }
+                    />
+
                     <Hide below="sm">
                       <Text fontSize="1.2rem">{userData.email}</Text>
                     </Hide>

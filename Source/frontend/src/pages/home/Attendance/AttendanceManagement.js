@@ -1,306 +1,407 @@
-import React from "react";
+import React, { useState } from "react";
+import { useGetPermission } from "../../../hook/useGetPermission";
+import { permissionAttendanceManagement } from "../../../screen-permissions/permission";
+import { useQueryClient } from "react-query";
 import {
   Box,
+  Divider,
+  Flex,
   Heading,
   Stack,
-  Image,
-  Avatar,
   Text,
   HStack,
-  VStack,
-  Icon,
-  Center,
-  SimpleGrid,
-  Badge,
-  Flex,
   Button,
+  Tooltip,
+  useToast,
+  useDisclosure,
+  Badge,
+  VStack,
+  Highlight,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  ModalContent,
+  Center,
+  Icon,
+  Image,
+  Avatar,
 } from "@chakra-ui/react";
-import {
-  AiFillCheckCircle,
-  AiOutlineLogin,
-  AiOutlineLogout,
-  AiFillClockCircle,
-} from "react-icons/ai";
-import { BsFillPersonLinesFill } from "react-icons/bs";
-import test_img from "../../../assets/ta.jpeg";
+import * as Yup from "yup";
+import DynamicTable from "../../../components/table/DynamicTable";
+import DynamicDrawer from "../../../components/table/DynamicDrawer";
+import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
+import { attendanceDumbData } from "../../test/dumbTableData";
+import { Formik } from "formik";
+import FormTextField from "../../../components/field/FormTextField";
+import { BsArrowLeftRight } from "react-icons/bs";
+import test_Img from "../../../assets/ta.jpeg";
 function AttendanceManagement() {
-  return (
-    <Stack spacing={5}>
-      <VStack
-        paddingX={5}
-        paddingY={4}
-        bg="white"
-        rounded="xl"
-        alignItems="start"
-        spacing="15px"
-      >
-        <Flex gap="10px">
-          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontSize="2rem" fontWeight="medium">
-            Detail Employee
-          </Heading>
-        </Flex>
-        <HStack
-          w="100%"
-          justifyContent="start"
-          spacing="30px"
-          gap={{
-            base: "5px",
-            md: "30px",
-          }}
-          flexDirection={{
-            base: "column",
-            md: "row",
-          }}
-        >
-          <Avatar boxSize="120px" src={test_img} />
-          <VStack
-            ml="0 !important"
-            w="100%"
-            alignItems={{
-              base: "center",
-              md: "start",
-            }}
-          >
-            <Heading fontSize="1.7rem">User Name</Heading>
-            <HStack
-              w="100%"
-              spacing="3rem"
-              flexDirection={{
-                base: "column",
-                md: "row",
-              }}
-              gap={{
-                base: "5px",
-                md: "30px",
-              }}
-            >
-              <Flex
-                alignItems={{
-                  base: "center",
-                  md: "start",
-                }}
-                flexDirection="column"
-              >
-                <Text fontSize="1.2rem">Role</Text>
-                <Heading fontWeight="medium" fontSize="2xl">
-                  Admin
-                </Heading>
-              </Flex>
-              <Flex
-                alignItems={{
-                  base: "center",
-                  md: "start",
-                }}
-                flexDirection="column"
-                ml="0 !important"
-              >
-                <Text fontSize="1.2rem">Phone Number</Text>
-                <Heading fontWeight="medium" fontSize="2xl">
-                  213124643
-                </Heading>
-              </Flex>
-              <Flex
-                alignItems={{
-                  base: "center",
-                  md: "start",
-                }}
-                flexDirection="column"
-                ml="0 !important"
-              >
-                <Text fontSize="1.2rem">Email Address</Text>
-                <Heading fontWeight="medium" fontSize="2xl">
-                  Admin@gmail.com
-                </Heading>
-              </Flex>
-            </HStack>
-          </VStack>
-        </HStack>
-        <SimpleGrid
-          w="100%"
-          spacing={4}
-          gridTemplateColumns="repeat(auto-fit, minmax(240px,1fr))"
-        >
-          <HStack bg="blue.500" rounded="xl" p="15px" shadow="lg">
-            <Center bg="blue.300" rounded="50%" boxSize="3rem">
-              <Icon color="white" boxSize="30px" as={AiFillCheckCircle} />
-            </Center>
-            <Box color="white">
-              <Heading fontSize="2xl">308</Heading>
-              <Text fontSize="xl">Total Attendance</Text>
-            </Box>
-          </HStack>
-          <HStack bg="green.500" rounded="xl" p="15px" shadow="lg">
-            <Center bg="green.300" rounded="50%" boxSize="3rem">
-              <Icon color="white" boxSize="30px" as={AiOutlineLogin} />
-            </Center>
-            <Box color="white">
-              <Heading fontSize="2xl">08:46</Heading>
-              <Text fontSize="xl">Avg Check in Time</Text>
-            </Box>
-          </HStack>
-          <HStack bg="pink.500" rounded="xl" p="15px" shadow="lg">
-            <Center bg="pink.300" rounded="50%" boxSize="3rem">
-              <Icon color="white" boxSize="30px" as={AiOutlineLogout} />
-            </Center>
-            <Box color="white">
-              <Heading fontSize="2xl">17:04</Heading>
-              <Text fontSize="xl">Avg Check out Time</Text>
-            </Box>
-          </HStack>
-          <HStack bg="orange.500" rounded="xl" p="15px" shadow="lg">
-            <Center bg="orange.300" rounded="50%" boxSize="3rem">
-              <Icon color="white" boxSize="30px" as={BsFillPersonLinesFill} />
-            </Center>
-            <Box color="white">
-              <Heading fontSize="2xl">Role</Heading>
-              <Text fontSize="xl">Admin</Text>
-            </Box>
-          </HStack>
-        </SimpleGrid>
-      </VStack>
-      <VStack
-        paddingX={5}
-        paddingY={4}
-        bg="white"
-        rounded="xl"
-        alignItems="start"
-        justifyContent="center"
-        spacing="15px"
-      >
-        <Flex gap="10px">
-          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontWeight="medium" fontSize="2rem">
-            Attendance
-          </Heading>
-        </Flex>
+  // #region declare variable
+  const resultPermission = useGetPermission(
+    permissionAttendanceManagement,
+    "attendance-management"
+  );
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const finalRef = React.useRef(null);
+  const [editData, setEditData] = useState({});
+  const [deleteSingleData, setDeleteSingleData] = useState({});
+  // #endregion
+  // #region hooks
+  const {
+    isOpen: isDeleteSingleOpen,
+    onOpen: onDeleteSingleOpen,
+    onClose: onDeleteSingleClose,
+  } = useDisclosure();
+  const {
+    isOpen: isAddEditOpen,
+    onOpen: onAddEditOpen,
+    onClose: onAddEditClose,
+  } = useDisclosure();
+  // #endregion
+  // #region functions
+  const DeleteRange = (data) => {
+    console.log("handleDeleteRange", data);
+  };
+  const Delete = (row, action) => {
+    setDeleteSingleData(row);
+    onDeleteSingleOpen();
+  };
+  const handleAcceptDelete = () => {
+    console.log(deleteSingleData);
+    setDeleteSingleData({});
+    onDeleteSingleClose();
+  };
+  const Edit = (row, action) => {
+    onAddEditOpen();
+    setEditData(row);
+  };
+  const handleSubmitApproval = (values) => {
+    closeDrawer();
+  };
+  const closeDrawer = () => {
+    onAddEditClose();
+    setEditData({});
+  };
+  // #endregion
+  // #region table
+  const tableRowAction = [
+    {
+      actionName: "Approval",
+      func: Edit,
+      isDisabled: resultPermission?.read,
+    },
+  ];
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Id",
+        accessor: "id",
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        cellWidth: "150px",
+        hidden: true,
+      },
+      {
+        Header: "Check type",
+        accessor: "checkType",
+        Cell: ({ value }) => (
+          <Badge fontSize="lg">{value ? "In" : "Out"}</Badge>
+        ),
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        cellWidth: "150px",
+      },
+      {
+        Header: "Full name",
+        accessor: "fullname",
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        cellWidth: "150px",
+      },
+      {
+        Header: "Department",
+        accessor: "department",
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        cellWidth: "150px",
+      },
+      {
+        Header: "Approval",
+        accessor: "isApproved",
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        Cell: ({ value }) => (
+          <Badge fontSize="lg">{value ? "yes" : "no"}</Badge>
+        ),
+        cellWidth: "100px",
+      },
+      {
+        Header: "Time",
+        accessor: "time",
+        // haveFilter: {
+        //   filterType: FilterType.DateTime,
+        // },
+        cellWidth: "150px",
+      },
+    ],
+    []
+  );
+  // #endregion
+  // #region drawer
+  const drawerFieldData = [
+    {
+      name: "isApproved",
+      label: "Approval",
+      isSelectionField: true,
+      selectionArray: [
+        { label: "Yes", value: true },
+        { label: "No", value: false },
+      ],
+    },
+    {
+      name: "checkType",
+      label: "Check Type",
+      placeholder: "---",
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
+    },
+    {
+      name: "fullname",
+      label: "Fullname",
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
+      isTextAreaField: true,
+      rows: "5",
+      placeholder: "write out your reason...",
+    },
+    {
+      name: "department",
+      label: "Department",
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
+    },
 
-        <HStack
-          w="100%"
-          alignItems="center"
-          justifyContent="center"
-          flexDirection={{
-            base: "column",
-            md: "row",
-          }}
-          gap="10px"
-        >
-          <HStack
-            as={Button}
-            h="100%"
-            cursor="pointer"
-            w={{
-              base: "85%",
-              sm: "60%",
-              md: "50%",
-              lg: "40%",
-              xl: "30%",
-            }}
-            bg="green.400"
-            rounded="xl"
-            p="15px"
-            shadow="lg"
-          >
-            <Center bg="green.300" rounded="50%" boxSize="3rem">
-              <Icon color="white" boxSize="30px" as={AiOutlineLogin} />
-            </Center>
-            <Box color="white">
-              <Heading fontSize="2xl">Check In &shy; &shy; &shy;</Heading>
-            </Box>
-          </HStack>
-          <HStack
-            ml="0 !important"
-            as={Button}
-            h="100%"
-            cursor="pointer"
-            w={{
-              base: "85%",
-              sm: "60%",
-              md: "50%",
-              lg: "40%",
-              xl: "30%",
-            }}
-            bg="pink.400"
-            rounded="xl"
-            p="15px"
-            shadow="lg"
-          >
-            <Center bg="pink.300" rounded="50%" boxSize="3rem">
-              <Icon color="white" boxSize="30px" as={AiOutlineLogout} />
-            </Center>
-            <Box color="white">
-              <Heading fontSize="2xl">Check Out</Heading>
-            </Box>
-          </HStack>
-        </HStack>
-      </VStack>
-      <VStack
-        paddingX={5}
-        paddingY={4}
-        bg="white"
-        rounded="xl"
-        alignItems="start"
-        spacing="15px"
-      >
+    {
+      name: "time",
+      label: "Time",
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
+      isDateField: true,
+    },
+  ];
+  const initialValues = {
+    isApproved: `${editData?.isApproved ?? false}`,
+    checkType: editData?.checkType ? "In" : "Out",
+    time: editData?.time
+      ? new Date(editData?.time).toISOString().substring(0, 10)
+      : "",
+    fullname: editData?.fullname ?? "",
+    department: editData?.department ?? "",
+  };
+  const initialValuesForm = {
+    dateSelect: "",
+  };
+  const validationSchema = Yup.object().shape({});
+  // #endregion
+  // #region form
+  // #endregion
+  return (
+    <VStack minHeight="100vh" alignItems="flex-start" spacing={3}>
+      <HStack spacing="5">
         <Flex gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontWeight="medium" fontSize="2rem">
-            Attendance History
-          </Heading>
+          <Heading fontSize="3xl">Attendance Management</Heading>
         </Flex>
-        <SimpleGrid
-          w="100%"
-          spacing={3}
-          gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
-        >
-          {Array.from({ length: 24 }, (_, index) => {
-            return (
-              <VStack
-                color="white"
-                alignItems="start"
-                bg="gray.500"
-                rounded="xl"
-                p="20px"
-                key={index}
-                shadow="lg"
+        <HStack>
+          <Heading fontSize="xl" fontWeight="medium">
+            <Highlight
+              query={["Date Select:"]}
+              styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
+            >
+              Date Select:
+            </Highlight>
+          </Heading>
+          <Formik
+            initialValues={initialValuesForm}
+            onSubmit={(values, actions) => {
+              console.log("values", values);
+            }}
+          >
+            {(formik) => (
+              <HStack
+                alignItems="center"
+                as="form"
+                onSubmit={formik.handleSubmit}
               >
-                <HStack w="100%">
-                  <HStack w="100%" flex="1" spacing="5px">
-                    <Icon as={AiFillClockCircle} />
-                    <Text fontSize="xl" fontWeight="bold">
-                      3/27/2023
-                    </Text>
+                <FormTextField name="dateSelect" isDateField={true} />
+                <div className=" mt-[6px]">
+                  <Button colorScheme="blue" type="submit" size="md">
+                    Submit
+                  </Button>
+                </div>
+              </HStack>
+            )}
+          </Formik>
+        </HStack>
+      </HStack>
+      <Box w="100%">
+        <Tabs isFitted variant="soft-rounded" colorScheme="blue">
+          <TabList mb="1em">
+            <Tab border="1px solid gray">Check In</Tab>
+            <Tab border="1px solid gray">Check Out</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <Box w="100%">
+                <DynamicTable
+                  onAddEditOpen={onAddEditOpen}
+                  handleDeleteRange={DeleteRange}
+                  tableRowAction={tableRowAction}
+                  columns={columns}
+                  data={attendanceDumbData}
+                  permission={resultPermission}
+                  noPaging={true}
+                  hideButtons={true}
+                />
+              </Box>
+            </TabPanel>
+            <TabPanel>
+              <Box w="100%">
+                <DynamicTable
+                  onAddEditOpen={onAddEditOpen}
+                  handleDeleteRange={DeleteRange}
+                  tableRowAction={tableRowAction}
+                  columns={columns}
+                  data={attendanceDumbData}
+                  permission={resultPermission}
+                  noPaging={true}
+                  hideButtons={true}
+                />
+              </Box>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
+      <Modal
+        finalFocusRef={finalRef}
+        isOpen={isAddEditOpen}
+        onClose={onAddEditClose}
+        isCentered
+        size="2xl"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack alignItems="center">
+              <Heading fontSize="2xl">Approval</Heading>
+              <Heading fontSize="xl" fontWeight="medium">
+                <Highlight
+                  query={["Check In", "Check Out"]}
+                  styles={{ px: "2", py: "1", rounded: "md", bg: "red.100" }}
+                >
+                  Check In
+                </Highlight>
+              </Heading>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Formik>
+              {(formik) => (
+                <>
+                  <HStack spacing='10px'>
+                    <VStack flex="1" alignItems="flex-start">
+                      <Heading fontSize="xl" fontWeight="medium">
+                        System Information
+                      </Heading>
+                      <HStack spacing="20px">
+                        <Avatar src={test_Img} boxSize="100px" />
+                        <VStack>
+                          <Text fontSize="lg">Time:</Text>
+                          <Text>20:50 PM</Text>
+                        </VStack>
+                      </HStack>
+                      <FormTextField name="name" label="Name" />
+                      <FormTextField name="department" label="Department" />
+                      <FormTextField name="email" label="Email" />
+                    </VStack>
+                    <Flex alignItems="center">
+                      <Box mt='10rem'>
+                        <Icon
+                          color="blue.500"
+                          as={BsArrowLeftRight}
+                          fontSize="2.5rem"
+                        />
+                      </Box>
+                    </Flex>
+                    <VStack flex="1" alignItems="flex-start">
+                      <Heading fontSize="xl" fontWeight="medium">
+                        Employee Information
+                      </Heading>
+                      <HStack spacing="20px">
+                        <Avatar src={test_Img} boxSize="100px" />
+                        <VStack>
+                          <Text fontSize="lg">Time:</Text>
+                          <Text>20:50 PM</Text>
+                        </VStack>
+                      </HStack>
+                      <FormTextField name="name" label="Name" />
+                      <FormTextField name="department" label="Department" />
+                      <FormTextField name="email" label="Email" />
+                    </VStack>
                   </HStack>
-                  {index % 2 == 0 ? (
-                    <Badge rounded="md" colorScheme="green" fontSize="md">
-                      On Time
-                    </Badge>
-                  ) : (
-                    <Badge rounded="md" colorScheme="yellow" fontSize="md">
-                      Late
-                    </Badge>
-                  )}
-                </HStack>
-                <HStack w="100%" spacing="50px">
-                  <VStack alignItems="start">
-                    <Text fontSize="xl">Check in</Text>
-                    <Text fontSize="2xl" fontWeight="bold">
-                      08:53
-                    </Text>
-                  </VStack>
-                  <VStack alignItems="start">
-                    <Text fontSize="xl">Check out</Text>
-                    <Text fontSize="2xl" fontWeight="bold">
-                      18:53
-                    </Text>
-                  </VStack>
-                </HStack>
-              </VStack>
-            );
-          })}
-        </SimpleGrid>
-      </VStack>
-    </Stack>
+                </>
+              )}
+            </Formik>
+          </ModalBody>
+
+          <ModalFooter>
+            <Center>
+              <Button
+                variant="outline"
+                colorScheme="red"
+                mr={3}
+                borderWidth="2px"
+                onClick={onAddEditClose}
+              >
+                <Text fontWeight="bold">Reject</Text>
+              </Button>
+              <Button borderWidth="2px" colorScheme="green" variant="outline">
+                <Text fontWeight="bold">Approve</Text>
+              </Button>
+            </Center>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* <DynamicDrawer
+        handleCreate={handleSubmitApproval}
+        isAddEditOpen={isAddEditOpen}
+        onAddEditClose={onAddEditClose}
+        editData={editData}
+        setEditData={setEditData}
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        drawerFieldData={drawerFieldData}
+        titleArray={["Approval", "Create"]}
+      /> */}
+      <ChakraAlertDialog
+        title="Delete Single"
+        isOpen={isDeleteSingleOpen}
+        onClose={onDeleteSingleClose}
+        onAccept={handleAcceptDelete}
+      />
+    </VStack>
   );
 }
 

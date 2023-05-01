@@ -28,7 +28,7 @@ import EmployeesManagement from "./pages/home/Employees/EmployeesManagement";
 import OrganizationGeneral from "./pages/home/Organization/OrganizationGeneral";
 import FaceAttendance from "./pages/home/Attendance/FaceAttendance";
 import DepartmentManagement from "./pages/home/Organization/DepartmentManagement";
-import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
+import AttendancePersonal from "./pages/home/Attendance/AttendancePersonal";
 import LeaveRequestPersonal from "./pages/home/LeaveRequest/LeaveRequestPersonal";
 import WorkShift from "./pages/home/WorkShift/WorkShift";
 import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
@@ -36,6 +36,8 @@ import AttendanceModal from "./components/Attendance/AttendanceModal";
 import ExceptionModel from "./components/Attendance/ExceptionModel";
 import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
 import LeaveRequestManagement from "./pages/home/LeaveRequest/LeaveRequestManagement";
+import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
+import AlterAttendance from "./pages/home/Attendance/AlterAttendance";
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -117,7 +119,10 @@ root.render(
                         path="face-attendance"
                         element={<FaceAttendance />}
                       />
-
+                      <Route
+                        path="attendance-personal"
+                        element={<AttendancePersonal />}
+                      />
                       <Route
                         path="attendance-management"
                         element={<AttendanceManagement />}
@@ -128,6 +133,7 @@ root.render(
                     </Route>
                   </Route>
                 </Route>
+                <Route path="alter-attendance" element={<AlterAttendance />} />
                 <Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
                   <Route path="test" element={<AttendanceModal />} />

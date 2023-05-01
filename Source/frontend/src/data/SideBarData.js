@@ -130,8 +130,14 @@ export const SideBarData = [
       },
       {
         title: "Attendance",
-        url: "attendance-management",
+        url: "attendance-personal",
         icon: <MdTouchApp fontSize={iconSize} />,
+      },
+      {
+        title: "Management",
+        url: "attendance-management",
+        icon: <SiMagento fontSize={iconSize} />,
+        roleCanAccess: ["manager", "admin"],
       },
     ],
   },

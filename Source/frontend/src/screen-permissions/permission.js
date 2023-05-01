@@ -23,10 +23,16 @@ export const permissionAssignDepartmentManagement = {
   update: "update-assign-department-management",
 };
 export const permissionLeaveRequestPersonal = {
+  create: "create-leave-request-personal",
   read: "read-leave-request-personal",
 };
-export const permissionLeaveRequestManagement= {
+export const permissionLeaveRequestManagement = {
   read: "read-leave-request-management",
   update: "update-leave-request-management",
   delete: "delete-leave-request-management",
+};
+export const permissionAttendanceManagement = {
+  read: "read-attendance-management",
+  update: "update-attendance-management",
+  delete: "delete-attendance-management",
 };

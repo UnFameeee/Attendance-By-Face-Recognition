@@ -28,5 +28,7 @@ export const RESOURCE: stringObject = {
   ASSIGN_DEPARTMENT_MANAGEMENT: "assign-department-management",
   LEAVE_REQUEST_PERSONAL:"leave-request-personal",
   LEAVE_REQUEST_MANAGEMENT:"leave-request-management",
+  ATTENDANCE_MANAGEMENT:"attendance-management",
+
 
 }

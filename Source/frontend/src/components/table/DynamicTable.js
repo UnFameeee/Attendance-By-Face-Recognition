@@ -82,6 +82,7 @@ function DynamicTable(props) {
     tableRowAction,
     permission,
     hideAction,
+    hideButtons,
     noPaging,
   } = props;
 
@@ -303,47 +304,51 @@ function DynamicTable(props) {
             gap="10px"
             alignItems="flex-start"
           >
-            <HStack flex="1">
-              <Tooltip
-                placement="top"
-                hasArrow
-                label="Add new record for table"
-              >
-                <Button
-                  isDisabled={!permission?.create}
-                  colorScheme="blue"
-                  onClick={onAddEditOpen}
+            {!hideButtons && (
+              <HStack flex="1">
+                <Tooltip
+                  placement="top"
+                  hasArrow
+                  label="Add new record for table"
                 >
-                  Add New
-                </Button>
-              </Tooltip>
-              <Tooltip placement="top" hasArrow label="Reset table">
-                <Button colorScheme="blue" onClick={handleReset}>
-                  Reset
-                </Button>
-              </Tooltip>
-              <Tooltip
-                placement="top"
-                hasArrow
-                label="Delete a collection of record"
-              >
-                <Button
-                  onClick={onDeleteRangeOpen}
-                  isDisabled={selectedFlatRows.length < 2 || !permission.delete}
-                  colorScheme="blue"
+                  <Button
+                    isDisabled={!permission?.create}
+                    colorScheme="blue"
+                    onClick={onAddEditOpen}
+                  >
+                    Add New
+                  </Button>
+                </Tooltip>
+                <Tooltip placement="top" hasArrow label="Reset table">
+                  <Button colorScheme="blue" onClick={handleReset}>
+                    Reset
+                  </Button>
+                </Tooltip>
+                <Tooltip
+                  placement="top"
+                  hasArrow
+                  label="Delete a collection of record"
                 >
-                  Delete Range
-                </Button>
-              </Tooltip>
-              <ChakraAlertDialog
-                isOpen={isDeleteRangeOpen}
-                onClose={onDeleteRangeClose}
-                onAccept={handleDeleteRangeAlertAccept}
-                title={`Delete ${
-                  rows.length === selectedFlatRows.length ? "All" : ""
-                } ${selectedFlatRows.length} items`}
-              />
-            </HStack>
+                  <Button
+                    onClick={onDeleteRangeOpen}
+                    isDisabled={
+                      selectedFlatRows.length < 2 || !permission.delete
+                    }
+                    colorScheme="blue"
+                  >
+                    Delete Range
+                  </Button>
+                </Tooltip>
+                <ChakraAlertDialog
+                  isOpen={isDeleteRangeOpen}
+                  onClose={onDeleteRangeClose}
+                  onAccept={handleDeleteRangeAlertAccept}
+                  title={`Delete ${
+                    rows.length === selectedFlatRows.length ? "All" : ""
+                  } ${selectedFlatRows.length} items`}
+                />
+              </HStack>
+            )}
             {!noPaging && (
               <HStack
                 spacing="10px"

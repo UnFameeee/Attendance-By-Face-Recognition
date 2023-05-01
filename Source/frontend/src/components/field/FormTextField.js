@@ -55,6 +55,8 @@ function FormTextField(props) {
     isLoading,
     isPassword,
     isMenu,
+    size,
+    rows,
   } = props;
   const [field, meta] = useField(props);
   const [isShow, setIsShow] = useState(true);
@@ -89,7 +91,9 @@ function FormTextField(props) {
           {...field}
           resize={isResize ?? "none"}
           height={height ?? "none"}
+          size={size ?? 'md'}
           placeholder={placeholder ?? ""}
+          rows={5}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
