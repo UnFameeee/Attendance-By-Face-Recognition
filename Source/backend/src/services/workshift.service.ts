@@ -188,6 +188,19 @@ export class WorkshiftService {
 
     //create
     if (!data.shiftId) {
+      //Nếu nhân viên đã có ca trong cùng ngày -> hủy
+      const queryData = await prisma.workshift.findFirst({
+        where: {
+          employeeId: data.employeeId,
+          shiftDate: modifyDate,
+        }
+      })
+
+      if (queryData) {
+        response.message = "This employee already had workshift for this day";
+        return response;
+      }
+
       const queryModifyData = await prisma.workshift.create({
         data: {
           employeeId: data.employeeId,
@@ -202,17 +215,27 @@ export class WorkshiftService {
     }
     //update
     else {
-      //Nếu đổi ca cho một nhân viên khác có ca trong cùng ngày -> hủy
-      const queryData = await prisma.workshift.findFirst({
+      const queryWorkshiftData = await prisma.workshift.findFirst({
         where: {
-          employeeId: data.employeeId,
-          shiftDate: modifyDate,
+          shiftId: data.shiftId,
+          deleted: false,
         }
       })
 
-      if (queryData) {
-        response.message = "The employee that you moved the shift for, has their own workshift for today";
-        return response;
+      if (queryWorkshiftData.employeeId != data.employeeId) {
+        //Nếu đổi ca cho một nhân viên khác có ca trong cùng ngày -> hủy
+        const queryData = await prisma.workshift.findFirst({
+          where: {
+            employeeId: data.employeeId,
+            shiftDate: modifyDate,
+            deleted: false,
+          }
+        })
+
+        if (queryData) {
+          response.message = "The employee that you moved the shift for, has their own workshift for today";
+          return response;
+        }
       }
 
       const queryModifyData = await prisma.workshift.update({
