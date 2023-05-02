@@ -104,13 +104,12 @@ export default function Day({ day, rowIdx, listWorkShift }) {
                     <span className=" overflow-hidden text-ellipsis whitespace-nowrap">
                       {item?.shiftType?.startTime
                         ? moment(
-                            item?.shiftType?.startTime,
-                            "YYYY-MM-DD"
+                            item?.shiftType?.startTime
                           ).format("hh:mm A")
                         : ""}{" "}
                       To{" "}
                       {item?.shiftType?.endTime
-                        ? moment(item?.shiftType?.endTime, "YYYY-MM-DD").format(
+                        ? moment(item?.shiftType?.endTime).format(
                             "hh:mm A"
                           )
                         : ""}

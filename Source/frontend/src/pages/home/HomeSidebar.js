@@ -42,8 +42,8 @@ import dayjs from "dayjs";
 function HomeSidebar() {
   var decoded = Helper.getUseDecodeInfor();
   const [userRole, setUserRole] = useState("");
-  const { collapseSidebar, collapsed } =
-    useProSidebar();
+  const [userAvatar, setUserAvatar] = useState();
+  const { collapseSidebar, collapsed } = useProSidebar();
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -53,9 +53,8 @@ function HomeSidebar() {
     onOpen: onSignOutAlertOpen,
     onClose: onSignOutAlertClose,
   } = useDisclosure();
-  const {
-    data: profileDetailData,
-  } = useGetProfileDetail(decoded.id);
+  const { data: profileDetailData, isFetching: isFetchingProfileDetailData } =
+    useGetProfileDetail(decoded.id);
   const useLogoutMutation = useMutation(logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
@@ -79,6 +78,13 @@ function HomeSidebar() {
   useEffect(() => {
     setUserRole(Helper.getUserRole());
   }, []);
+  useEffect(() => {
+    if (profileDetailData?.result?.employeeImages[0]?.link) {
+      setUserAvatar(
+        profileDetailData?.result?.employeeImages[0]?.link + "?" + dayjs()
+      );
+    }
+  }, [isFetchingProfileDetailData]);
   return (
     <div
       style={{
@@ -103,7 +109,7 @@ function HomeSidebar() {
               bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
-                <Avatar border="2px solid white" src={profileDetailData?.result?.employeeImages[0]?.link+'?'+dayjs()} />
+                <Avatar border="2px solid white" src={userAvatar} />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"

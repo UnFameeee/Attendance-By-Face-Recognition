@@ -18,7 +18,7 @@ export class ShifttypeRoute {
 
   private async initializeRoutes() {
     // api/shifttype/autoCreateWorkshift
-    this.router.get(`${this.path}/getAllShiftType`,
+    this.router.post(`${this.path}/getAllShiftType`,
       authMiddleware,
       zodValidate(pageSchema),
       await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),

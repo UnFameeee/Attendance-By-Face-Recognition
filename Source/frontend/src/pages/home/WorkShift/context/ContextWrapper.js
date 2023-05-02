@@ -59,7 +59,7 @@ export default function ContextWrapper(props) {
 
   useEffect(() => {
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
-    console.log("savedEvent", savedEvents);
+    // console.log("savedEvent", savedEvents);
     setArrayDateEvents(getArrayDateEvents(savedEvents));
   }, [savedEvents]);
 

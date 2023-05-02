@@ -73,46 +73,54 @@ const getUserRole = () => {
   }
   return result;
 };
-const getScreenAuthorization = (userRole,pathname) =>{
-  let authorizeArray = []
-  SideBarData.map((parentItem) =>{
-    if(parentItem?.children){
-      parentItem?.children.map((childrenItem)=>{
-        if(childrenItem?.roleCanAccess){
-          if(childrenItem?.roleCanAccess.includes(userRole)){
-            authorizeArray.push({path:`/${parentItem.url}/${childrenItem.url}`,auth:true})
+const getScreenAuthorization = (userRole, pathname) => {
+  let authorizeArray = [];
+  SideBarData.map((parentItem) => {
+    if (parentItem?.children) {
+      parentItem?.children.map((childrenItem) => {
+        if (childrenItem?.roleCanAccess) {
+          if (childrenItem?.roleCanAccess.includes(userRole)) {
+            authorizeArray.push({
+              path: `/${parentItem.url}/${childrenItem.url}`,
+              auth: true,
+            });
+          } else {
+            authorizeArray.push({
+              path: `/${parentItem.url}/${childrenItem.url}`,
+              auth: false,
+            });
           }
-          else{
-            authorizeArray.push({path:`/${parentItem.url}/${childrenItem.url}`,auth:false})
-          }
+        } else {
+          authorizeArray.push({
+            path: `/${parentItem.url}/${childrenItem.url}`,
+            auth: true,
+          });
         }
-        else{
-          authorizeArray.push({path:`/${parentItem.url}/${childrenItem.url}`,auth:true})
+      });
+    } else {
+      if (parentItem?.roleCanAccess) {
+        if (parentItem?.roleCanAccess.includes(userRole)) {
+          authorizeArray.push({ path: `/${parentItem.url}`, auth: true });
+        } else {
+          authorizeArray.push({ path: `/${parentItem.url}`, auth: false });
         }
-      })
-    }
-    else{
-      if(parentItem?.roleCanAccess){
-        if(parentItem?.roleCanAccess.includes(userRole)){
-          authorizeArray.push({path:`/${parentItem.url}`,auth:true})
-        }
-        else{
-          authorizeArray.push({path:`/${parentItem.url}`,auth:false})
-        }
-      }
-      else{
-        authorizeArray.push({path:`/${parentItem.url}`,auth:true})
+      } else {
+        authorizeArray.push({ path: `/${parentItem.url}`, auth: true });
       }
     }
-  })
-  const result = authorizeArray.find((item) => item.path == pathname)
-  return result
-}
-const splitUrlPath = (path) =>{
+  });
+  const result = authorizeArray.find((item) => item.path == pathname);
+  return result;
+};
+const splitUrlPath = (path) => {
   const pathArr = path.split("/");
   pathArr.shift();
-  return pathArr
-}
+  return pathArr;
+};
+const splitUnderscoreStringToArray = (string) => {
+  const parts = string.split("_");
+  return parts;
+};
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -123,5 +131,6 @@ export const Helper = {
   getMomentDateFormat,
   getUserRole,
   getScreenAuthorization,
-  splitUrlPath
+  splitUrlPath,
+  splitUnderscoreStringToArray,
 };

@@ -4,6 +4,7 @@ import { Helper } from "./Helper";
 import { refreshToken } from "../services/auth/auth";
 import Cookies from "universal-cookie";
 import UnAuthorize from "../pages/unauthorize/UnAuthorize";
+import NotFound from "../pages/notfound/NotFound";
 
 const PrivateRoutes = () => {
   const cookies = new Cookies();
@@ -30,7 +31,9 @@ const PrivateRoutes = () => {
         return <Navigate to="/sign-in" />;
       }
     } else {
-      if (screenAuthorize.auth) {
+      if (!screenAuthorize) {
+        return <NotFound />;
+      } else if (screenAuthorize.auth) {
         return <Outlet />;
       } else {
         return <UnAuthorize />;

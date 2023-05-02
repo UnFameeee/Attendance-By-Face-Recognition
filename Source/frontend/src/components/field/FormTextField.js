@@ -57,6 +57,7 @@ function FormTextField(props) {
     isMenu,
     size,
     rows,
+    isTimeField,
   } = props;
   const [field, meta] = useField(props);
   const [isShow, setIsShow] = useState(true);
@@ -78,6 +79,21 @@ function FormTextField(props) {
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
+  } else if (isTimeField) {
+    return (
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        {label && <FormLabel>{label}</FormLabel>}
+        <InputGroup>
+          <Input {...field} type={type ?? "time"} />
+        </InputGroup>
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      </FormControl>
+    );
   } else if (isTextAreaField) {
     return (
       <FormControl
@@ -91,7 +107,7 @@ function FormTextField(props) {
           {...field}
           resize={isResize ?? "none"}
           height={height ?? "none"}
-          size={size ?? 'md'}
+          size={size ?? "md"}
           placeholder={placeholder ?? ""}
           rows={5}
         />
@@ -131,7 +147,11 @@ function FormTextField(props) {
         {isLoading ? (
           <Spinner />
         ) : (
-          <Select {...field} placeholder={placeholder ?? ""}>
+          <Select
+            pointerEvents={isReadOnly ? "none" : ""}
+            {...field}
+            placeholder={placeholder ?? ""}
+          >
             {selectionArray &&
               selectionArray.map((item, index) => (
                 <option key={index} value={item.value}>
