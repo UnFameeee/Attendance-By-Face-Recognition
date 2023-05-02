@@ -207,6 +207,7 @@ export class AttendanceExceptionService {
         },
         image: true,
         datetime: true,
+        attendanceType: true,
       }
     })
 
@@ -216,6 +217,7 @@ export class AttendanceExceptionService {
         deleted: false,
       },
       select: {
+        id: true,
         fullname: true,
         email: true,
         department: {
@@ -230,9 +232,47 @@ export class AttendanceExceptionService {
         }
       }
     })
+
+    const targetDate = moment(`${queryEmployeeData.datetime.getFullYear()}-${queryEmployeeData.datetime.getMonth() + 1}-${queryEmployeeData.datetime.getDate()}`, "YYYY-MM-DD")
+
+    const queryWorkshiftData = await prisma.workshift.findFirst({
+      where: {
+        employeeId: querySystemData.id,
+        shiftDate: {
+          gte: targetDate.startOf('day').toDate(),
+          lte: targetDate.endOf('day').toDate(),
+        }
+      },
+      select: {
+        shiftDate: true,
+        shiftType: {
+          select: {
+            startTime: true,
+            endTime: true,
+          }
+        }
+      }
+    })
+
+
+    
+    var shiftTime;
+    if (queryEmployeeData.attendanceType == attendance.checkin) {
+      const time = moment(queryWorkshiftData.shiftType.startTime, "HH:mm").format("HH:mm");
+      const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+      shiftTime = Helper.ConfigStaticDateTime(time, date);
+    } else if (queryEmployeeData.attendanceType == attendance.checkout) {
+      const time = moment(queryWorkshiftData.shiftType.endTime, "HH:mm").format("HH:mm");
+      const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+      shiftTime = Helper.ConfigStaticDateTime(time, date);
+    }
+
     const data = {
       employeeData: queryEmployeeData,
-      systemData: querySystemData,
+      systemData: {
+        shiftTime: shiftTime,
+        ...querySystemData
+      },
     }
     response.result = data;
     return response;
@@ -261,7 +301,7 @@ export class AttendanceExceptionService {
       }
     })
 
-    if (queryData) {
+    if (statusUpdate == attendanceExceptionStatus.approve && queryData) {
       //Update attendance record
       const queryAttendanceException = await prisma.attendanceException.findFirst({
         where: {
