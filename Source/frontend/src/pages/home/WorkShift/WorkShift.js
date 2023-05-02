@@ -287,7 +287,7 @@ function WorkShift() {
     setToggleAddNewShiftType(false);
   };
   const handleAcceptDeleteShiftType = () => {
-    onDeleteShiftTypeAlertClose()
+    onDeleteShiftTypeAlertClose();
     setDeleteShiftTypeId("");
     useDeleteShiftType.mutate(deleteShiftTypeId);
   };
@@ -367,12 +367,13 @@ function WorkShift() {
         rounded="md"
         p="5px"
         mb="10px"
+        gap='10px'
       >
         <Flex flex="1" gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
           <Heading fontSize="3xl">Work Shift</Heading>
         </Flex>
-        <HStack>
+        <HStack gap='5px' flexDirection={{ base: "column", md: "row" }} alignItems={{ base: "flex-start", md: "center" }} >
           <Button colorScheme="teal" onClick={onModifyShiftTypeModalOpen}>
             Modify ShiftType
           </Button>
@@ -571,53 +572,58 @@ function WorkShift() {
             onClose={onDeleteShiftTypeAlertClose}
             onAccept={handleAcceptDeleteShiftType}
           />
-          <Heading fontSize="xl" fontWeight="medium">
-            <Highlight
-              query={["Department:"]}
-              styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
-            >
-              Department:
-            </Highlight>
-          </Heading>
-          <Formik
-            initialValues={initialValuesSelectDepartment}
-            onSubmit={(values, actions) => {
-              const departmentId = values.department;
-              setDepartmentId(departmentId);
-              if (departmentId) {
-                useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
-              }
-            }}
-          >
-            {(formik) => (
-              <HStack
-                alignItems="center"
-                as="form"
-                onSubmit={formik.handleSubmit}
+          <HStack>
+            <Heading fontSize="xl" fontWeight="medium">
+              <Highlight
+                query={["Department:"]}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
               >
-                <FormTextField
-                  name="department"
-                  placeholder="---"
-                  isReadOnly={
-                    userDecodeInfo?.roleName == "employee" ||
-                    userDecodeInfo?.roleName == "manager"
-                  }
-                  isSelectionField={true}
-                  selectionArray={
-                    listDepartmentArray ? [...listDepartmentArray] : []
-                  }
-                />
-                {userDecodeInfo?.roleName != "employee" &&
-                  userDecodeInfo?.roleName != "manager" && (
-                    <div className=" mt-[6px]">
-                      <Button colorScheme="blue" type="submit" size="md">
-                        Submit
-                      </Button>
-                    </div>
-                  )}
-              </HStack>
-            )}
-          </Formik>
+                Department:
+              </Highlight>
+            </Heading>
+            <Formik
+              initialValues={initialValuesSelectDepartment}
+              onSubmit={(values, actions) => {
+                const departmentId = values.department;
+                setDepartmentId(departmentId);
+                if (departmentId) {
+                  useGetWorkShiftDepartment.mutate({
+                    departmentId,
+                    monthIndex,
+                  });
+                }
+              }}
+            >
+              {(formik) => (
+                <HStack
+                  alignItems="center"
+                  as="form"
+                  onSubmit={formik.handleSubmit}
+                >
+                  <FormTextField
+                    name="department"
+                    placeholder="---"
+                    isReadOnly={
+                      userDecodeInfo?.roleName == "employee" ||
+                      userDecodeInfo?.roleName == "manager"
+                    }
+                    isSelectionField={true}
+                    selectionArray={
+                      listDepartmentArray ? [...listDepartmentArray] : []
+                    }
+                  />
+                  {userDecodeInfo?.roleName != "employee" &&
+                    userDecodeInfo?.roleName != "manager" && (
+                      <div className=" mt-[6px]">
+                        <Button colorScheme="blue" type="submit" size="md">
+                          Submit
+                        </Button>
+                      </div>
+                    )}
+                </HStack>
+              )}
+            </Formik>
+          </HStack>
         </HStack>
       </Flex>
       {showEventModal && (
