@@ -6,18 +6,28 @@ import {
   HStack,
   Heading,
   Highlight,
+  useDisclosure,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Stack,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import CalendarHeader from "../../../components/Calendar/CalendarHeader";
-import Sidebar from "../../../components/Calendar/Sidebar";
 import Month from "../../../components/Calendar/Month";
 import GlobalContext from "./context/GlobalContext";
 import EventModal from "../../../components/Calendar/EventModal";
 import { Helper } from "../../../Utils/Helper";
-import {
-  getListEmployeeOfDepartment,
-  useGetListEmployee,
-} from "../../../services/employee/employee";
+import { getListEmployeeOfDepartment } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   getListShiftType,
@@ -31,10 +41,10 @@ import { Field, Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
 import { unionBy } from "lodash/array";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
-import {
-  getListDepartment,
-  useGetListDepartment,
-} from "../../../services/organization/department";
+import { useGetListDepartment } from "../../../services/organization/department";
+import moment from "moment";
+import * as Yup from "yup";
+
 function WorkShift() {
   // #region declare variable
   const toast = useToast();
@@ -45,12 +55,18 @@ function WorkShift() {
   const [listWorkShiftDepartment, setListWorkShiftDepartment] = useState([]);
   const [enableGetListEmployee, setEnableGetListEmployee] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
+  const [toggleAddNewShiftType, setToggleAddNewShiftType] = useState(false);
   const [departmentId, setDepartmentId] = useState(
     Helper.getUseDecodeInfor().departmentId ?? ""
   );
   const { monthIndex, showEventModal } = useContext(GlobalContext);
   // #endregion
   // #region hooks
+  const {
+    isOpen: isModifyShiftTypeModalOpen,
+    onOpen: onModifyShiftTypeModalOpen,
+    onClose: onModifyShiftTypeModalClose,
+  } = useDisclosure();
   const { data: listShiftType, isLoading: isLoadingListShiftType } =
     useGetListShiftType();
   const { data: listDepartmentData, isLoading: isLoadingListDepartment } =
@@ -187,9 +203,55 @@ function WorkShift() {
       }
     }
   };
-  const initialValues = {
+  const initialValuesSelectDepartment = {
     department: departmentId,
   };
+  const [objectShiftType, setObjectShiftType] = useState({});
+  useEffect(() => {
+    setObjectShiftType(() => {
+      let tempObject = {};
+      if (listShiftType?.result?.data) {
+        listShiftType?.result?.data.map((item) => {
+          tempObject[`startTime_${item.shiftName}_${item.shiftTypeId}`] =
+            moment(item.startTime).format("hh:mm");
+          tempObject[`endTime_${item.shiftName}_${item.shiftTypeId}`] = moment(
+            item.endTime
+          ).format("hh:mm");
+        });
+      }
+      return tempObject;
+    });
+  }, [isLoadingListShiftType, listShiftType]);
+  const [initialValuesModifyShiftType, setInitialValuesModifyShiftType] =
+    useState({
+      shiftName_New: "",
+      startTime_New: "",
+      endTime_New: "",
+    });
+  useEffect(() => {
+    setInitialValuesModifyShiftType((prev) => {
+      return { ...prev, ...objectShiftType };
+    });
+  }, [objectShiftType]);
+  const [currentModifyShiftTypeId, setCurrentModifyShiftTypeId] = useState("");
+  const handleModifyShiftType = () => {};
+  const initialValuesCreateShiftType = {
+    shiftName_New: "",
+    startTime_New: "",
+    endTime_New: "",
+  };
+  const validationSchemaForCreateShift = Yup.object().shape({
+    shiftName_New: Yup.string().required("This field is required"),
+    startTime_New: Yup.string().required("This field is required"),
+    endTime_New: Yup.string()
+      .test("is-after", "End time must be after start time", function (value) {
+        const { startTime_New } = this.parent;
+        return moment(value, "hh:mm").isAfter(moment(startTime_New, "hh:mm"));
+      })
+      .required("This field is required"),
+  });
+  // console.log("initialValuesModifyShiftType", initialValuesModifyShiftType);
+
   useEffect(() => {
     setCurrentMonth(Helper.getMonth(monthIndex));
     refreshListWorkDepartment();
@@ -205,7 +267,8 @@ function WorkShift() {
   // #endregion
   // #region drawer
   // #endregion
-  // #region form
+  // #region modal
+
   // #endregion
   if (userDecodeInfo?.roleName == "employee") {
   } else if (
@@ -230,6 +293,187 @@ function WorkShift() {
           <Heading fontSize="3xl">Work Shift</Heading>
         </Flex>
         <HStack>
+          <Button colorScheme="teal" onClick={onModifyShiftTypeModalOpen}>
+            Modify ShiftType
+          </Button>
+          <Modal
+            isOpen={isModifyShiftTypeModalOpen}
+            onClose={() => {
+              onModifyShiftTypeModalClose();
+              setCurrentModifyShiftTypeId("");
+              setToggleAddNewShiftType(false);
+            }}
+            isCentered
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <Formik
+                initialValues={initialValuesModifyShiftType}
+                onSubmit={(values, actions) => {
+                  console.log(
+                    "currentModifyShiftTypeId",
+                    currentModifyShiftTypeId
+                  );
+                  console.log("values", values);
+                  let keys = Object.keys(values);
+                  if (currentModifyShiftTypeId != "") {
+                    keys.map((key) => {
+                      const splitArray =
+                        Helper.splitUnderscoreStringToArray(key);
+                      if (splitArray.includes(currentModifyShiftTypeId)) {
+                        if (splitArray.includes("startTime")) {
+                          console.log("startTime", values[key]);
+                        } else if (splitArray.includes("endTime")) {
+                          console.log("endTime", values[key]);
+                        }
+                      }
+                    });
+                  } else {
+                    keys.map((key) => {
+                      const splitArray =
+                        Helper.splitUnderscoreStringToArray(key);
+                      if (splitArray.includes("New")) {
+                        if (splitArray.includes("startTime")) {
+                          console.log("startTime", values[key]);
+                        } else if (splitArray.includes("endTime")) {
+                          console.log("endTime", values[key]);
+                        } else if (splitArray.includes("shiftName")) {
+                          console.log("shiftName", values[key]);
+                        }
+                      }
+                    });
+                  }
+                  setCurrentModifyShiftTypeId("");
+                }}
+              >
+                {(formik) => (
+                  <>
+                    <ModalHeader>Modify ShiftType</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      <Accordion allowToggle>
+                        {listShiftType &&
+                          listShiftType.result.data.map((item) => (
+                            <AccordionItem key={item.shiftName}>
+                              <h2>
+                                <AccordionButton>
+                                  <Box as="span" flex="1" textAlign="left">
+                                    {item.shiftName}
+                                  </Box>
+                                  <AccordionIcon />
+                                </AccordionButton>
+                              </h2>
+                              <AccordionPanel pb={4}>
+                                <FormTextField
+                                  isTimeField={true}
+                                  label="Start Time"
+                                  name={`startTime_${item.shiftName}_${item.shiftTypeId}`}
+                                />
+                                <FormTextField
+                                  isTimeField={true}
+                                  label="End Time"
+                                  name={`endTime_${item.shiftName}_${item.shiftTypeId}`}
+                                />
+                                <Flex
+                                  w="100%"
+                                  justifyContent="end"
+                                  mt="10px"
+                                  gap="5px"
+                                >
+                                  <Button
+                                    variant="outline"
+                                    colorScheme="red"
+                                    type="submit"
+                                  >
+                                    Delete
+                                  </Button>
+                                  <Button
+                                    colorScheme="blue"
+                                    onClick={() => {
+                                      setCurrentModifyShiftTypeId(
+                                        item.shiftTypeId
+                                      );
+                                      formik.handleSubmit();
+                                    }}
+                                  >
+                                    Save
+                                  </Button>
+                                </Flex>
+                              </AccordionPanel>
+                            </AccordionItem>
+                          ))}
+                        {toggleAddNewShiftType && (
+                          <AccordionItem key="newShiftType">
+                            <h2>
+                              <AccordionButton
+                                bg="primary1"
+                                color="white"
+                                _hover={{}}
+                              >
+                                <Box as="span" flex="1" textAlign="left">
+                                  New Shift Type
+                                </Box>
+                                <AccordionIcon />
+                              </AccordionButton>
+                            </h2>
+                            <AccordionPanel pb={4}>
+                              <FormTextField
+                                label="Shift Name"
+                                name={`shiftName_New`}
+                              />
+                              <FormTextField
+                                isTimeField={true}
+                                label="Start Time"
+                                name={`startTime_New`}
+                              />
+                              <FormTextField
+                                isTimeField={true}
+                                label="End Time"
+                                name={`endTime_New`}
+                              />
+                              <Flex
+                                w="100%"
+                                justifyContent="end"
+                                mt="10px"
+                                gap="5px"
+                              >
+                                <Button
+                                  variant="outline"
+                                  colorScheme="red"
+                                  onClick={() =>
+                                    setToggleAddNewShiftType(false)
+                                  }
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  colorScheme="blue"
+                                  onClick={() => formik.handleSubmit()}
+                                >
+                                  Create
+                                </Button>
+                              </Flex>
+                            </AccordionPanel>
+                          </AccordionItem>
+                        )}
+                      </Accordion>
+                      {!toggleAddNewShiftType && (
+                        <Box mt="10px">
+                          <Button
+                            colorScheme="blue"
+                            onClick={() => setToggleAddNewShiftType(true)}
+                          >
+                            Add Another Shift
+                          </Button>
+                        </Box>
+                      )}
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
+                  </>
+                )}
+              </Formik>
+            </ModalContent>
+          </Modal>
           <Heading fontSize="xl" fontWeight="medium">
             <Highlight
               query={["Department:"]}
@@ -239,7 +483,7 @@ function WorkShift() {
             </Highlight>
           </Heading>
           <Formik
-            initialValues={initialValues}
+            initialValues={initialValuesSelectDepartment}
             onSubmit={(values, actions) => {
               const departmentId = values.department;
               setDepartmentId(departmentId);
@@ -282,7 +526,7 @@ function WorkShift() {
       {showEventModal && (
         <EventModal
           listEmployee={listEmployeeOfDepartment?.result?.data}
-          listShift={listShiftType?.result}
+          listShift={listShiftType?.result?.data}
           modifyEventHandler={modifyWorkShift}
           refreshListWorkDepartment={refreshListWorkDepartment}
           setListWorkShiftDepartment={setListWorkShiftDepartment}

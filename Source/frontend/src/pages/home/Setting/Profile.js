@@ -137,6 +137,7 @@ function Profile() {
       formData.append("images", item.file);
     });
     useUploadImages.mutate(formData);
+    setImages([])
   };
   // #endregion
   // #region form

@@ -6,7 +6,11 @@ import dayjs from "dayjs";
 
 const endPoint = baseURL + "/shifttype";
 export const getListShiftType = async () => {
-  const response = await axiosBase.get(`${endPoint}/getListShiftType`);
+  const paging = {
+    page: 0,
+    pageSize: 20,
+  };
+  const response = await axiosBase.post(`${endPoint}/getAllShiftType`,paging);
   return response.data;
 };
 

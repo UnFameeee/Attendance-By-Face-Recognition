@@ -120,7 +120,7 @@ export default function EventModal(props) {
     employeeId: Yup.string().required("This field is required"),
   });
   // #endregion
-
+  console.log("selectedEvent", selectedEvent);
   return (
     <>
       <Formik
@@ -195,8 +195,7 @@ export default function EventModal(props) {
                             From:{" "}
                             {selectedEvent?.shiftType?.startTime
                               ? moment(
-                                  selectedEvent?.shiftType?.startTime,
-                                  "YYYY-MM-DD"
+                                  selectedEvent?.shiftType?.startTime
                                 ).format("hh:mm A")
                               : ""}
                           </Text>
@@ -206,8 +205,7 @@ export default function EventModal(props) {
                             To:{" "}
                             {selectedEvent?.shiftType?.endTime
                               ? moment(
-                                  selectedEvent?.shiftType?.endTime,
-                                  "YYYY-MM-DD"
+                                  selectedEvent?.shiftType?.endTime
                                 ).format("hh:mm A")
                               : ""}
                           </Text>
