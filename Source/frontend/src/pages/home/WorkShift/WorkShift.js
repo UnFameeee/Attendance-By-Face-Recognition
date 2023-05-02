@@ -367,211 +367,224 @@ function WorkShift() {
         rounded="md"
         p="5px"
         mb="10px"
-        gap='10px'
+        gap="10px"
       >
         <Flex flex="1" gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
           <Heading fontSize="3xl">Work Shift</Heading>
         </Flex>
-        <HStack gap='5px' flexDirection={{ base: "column", md: "row" }} alignItems={{ base: "flex-start", md: "center" }} >
-          <Button colorScheme="teal" onClick={onModifyShiftTypeModalOpen}>
-            Modify ShiftType
-          </Button>
-          <Modal
-            isOpen={isModifyShiftTypeModalOpen}
-            onClose={() => {
-              onModifyShiftTypeModalClose();
-              resetModal();
-            }}
-            isCentered
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <Formik
-                initialValues={initialValuesModifyShiftType}
-                validationSchema={
-                  toggleAddNewShiftType ? validationSchemaForCreateShift : null
-                }
-                onSubmit={(values, actions) => {
-                  let modifyWorkShiftObject = {};
-                  let keys = Object.keys(values);
-                  if (currentModifyShiftTypeId != "") {
-                    keys.map((key) => {
-                      const splitArray =
-                        Helper.splitUnderscoreStringToArray(key);
-                      if (splitArray.includes(currentModifyShiftTypeId)) {
-                        if (splitArray.includes("startTime")) {
-                          modifyWorkShiftObject["startTime"] = values[key];
-                        } else if (splitArray.includes("endTime")) {
-                          modifyWorkShiftObject["endTime"] = values[key];
-                        } else if (splitArray.includes("shiftName")) {
-                          modifyWorkShiftObject["shiftName"] = values[key];
-                        }
-                      }
-                    });
-                    modifyWorkShiftObject["shiftTypeId"] =
-                      currentModifyShiftTypeId;
-                    useModifyShiftType.mutate(modifyWorkShiftObject);
-                  } else {
-                    keys.map((key) => {
-                      const splitArray =
-                        Helper.splitUnderscoreStringToArray(key);
-                      if (splitArray.includes("New")) {
-                        if (splitArray.includes("startTime")) {
-                          modifyWorkShiftObject["startTime"] = values[key];
-                        } else if (splitArray.includes("endTime")) {
-                          modifyWorkShiftObject["endTime"] = values[key];
-                        } else if (splitArray.includes("shiftName")) {
-                          modifyWorkShiftObject["shiftName"] = values[key];
-                        }
-                      }
-                    });
-                    useModifyShiftType.mutate(modifyWorkShiftObject);
-                  }
+        <HStack
+          gap="5px"
+          flexDirection={{ base: "column", md: "row" }}
+          alignItems={{ base: "flex-start", md: "center" }}
+        >
+          {userDecodeInfo?.roleName == "admin" && (
+            <>
+              <Button colorScheme="teal" onClick={onModifyShiftTypeModalOpen}>
+                Modify ShiftType
+              </Button>
+              <Modal
+                isOpen={isModifyShiftTypeModalOpen}
+                onClose={() => {
                   onModifyShiftTypeModalClose();
+                  resetModal();
                 }}
+                isCentered
               >
-                {(formik) => (
-                  <>
-                    <ModalHeader>Modify ShiftType</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                      <Accordion allowToggle>
-                        {listShiftType &&
-                          !toggleAddNewShiftType &&
-                          listShiftType.result.data.map((item) => (
-                            <AccordionItem key={item.shiftName}>
-                              <h2>
-                                <AccordionButton>
-                                  <Box as="span" flex="1" textAlign="left">
-                                    {item.shiftName}
-                                  </Box>
-                                  <AccordionIcon />
-                                </AccordionButton>
-                              </h2>
-                              <AccordionPanel pb={4}>
-                                <FormTextField
-                                  label="Shift Name"
-                                  name={`shiftName_${item.shiftName}_${item.shiftTypeId}`}
-                                />
-                                <FormTextField
-                                  isTimeField={true}
-                                  label="Start Time"
-                                  name={`startTime_${item.shiftName}_${item.shiftTypeId}`}
-                                />
-                                <FormTextField
-                                  isTimeField={true}
-                                  label="End Time"
-                                  name={`endTime_${item.shiftName}_${item.shiftTypeId}`}
-                                />
-                                <Flex
-                                  w="100%"
-                                  justifyContent="end"
-                                  mt="10px"
-                                  gap="5px"
-                                >
-                                  <Button
-                                    variant="outline"
-                                    colorScheme="red"
-                                    onClick={() => {
-                                      onDeleteShiftTypeAlertOpen();
-                                      setDeleteShiftTypeId(item.shiftTypeId);
-                                    }}
+                <ModalOverlay />
+                <ModalContent>
+                  <Formik
+                    initialValues={initialValuesModifyShiftType}
+                    validationSchema={
+                      toggleAddNewShiftType
+                        ? validationSchemaForCreateShift
+                        : null
+                    }
+                    onSubmit={(values, actions) => {
+                      let modifyWorkShiftObject = {};
+                      let keys = Object.keys(values);
+                      if (currentModifyShiftTypeId != "") {
+                        keys.map((key) => {
+                          const splitArray =
+                            Helper.splitUnderscoreStringToArray(key);
+                          if (splitArray.includes(currentModifyShiftTypeId)) {
+                            if (splitArray.includes("startTime")) {
+                              modifyWorkShiftObject["startTime"] = values[key];
+                            } else if (splitArray.includes("endTime")) {
+                              modifyWorkShiftObject["endTime"] = values[key];
+                            } else if (splitArray.includes("shiftName")) {
+                              modifyWorkShiftObject["shiftName"] = values[key];
+                            }
+                          }
+                        });
+                        modifyWorkShiftObject["shiftTypeId"] =
+                          currentModifyShiftTypeId;
+                        useModifyShiftType.mutate(modifyWorkShiftObject);
+                      } else {
+                        keys.map((key) => {
+                          const splitArray =
+                            Helper.splitUnderscoreStringToArray(key);
+                          if (splitArray.includes("New")) {
+                            if (splitArray.includes("startTime")) {
+                              modifyWorkShiftObject["startTime"] = values[key];
+                            } else if (splitArray.includes("endTime")) {
+                              modifyWorkShiftObject["endTime"] = values[key];
+                            } else if (splitArray.includes("shiftName")) {
+                              modifyWorkShiftObject["shiftName"] = values[key];
+                            }
+                          }
+                        });
+                        useModifyShiftType.mutate(modifyWorkShiftObject);
+                      }
+                      onModifyShiftTypeModalClose();
+                    }}
+                  >
+                    {(formik) => (
+                      <>
+                        <ModalHeader>Modify ShiftType</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                          <Accordion allowToggle>
+                            {listShiftType &&
+                              !toggleAddNewShiftType &&
+                              listShiftType.result.data.map((item) => (
+                                <AccordionItem key={item.shiftName}>
+                                  <h2>
+                                    <AccordionButton>
+                                      <Box as="span" flex="1" textAlign="left">
+                                        {item.shiftName}
+                                      </Box>
+                                      <AccordionIcon />
+                                    </AccordionButton>
+                                  </h2>
+                                  <AccordionPanel pb={4}>
+                                    <FormTextField
+                                      label="Shift Name"
+                                      name={`shiftName_${item.shiftName}_${item.shiftTypeId}`}
+                                    />
+                                    <FormTextField
+                                      isTimeField={true}
+                                      label="Start Time"
+                                      name={`startTime_${item.shiftName}_${item.shiftTypeId}`}
+                                    />
+                                    <FormTextField
+                                      isTimeField={true}
+                                      label="End Time"
+                                      name={`endTime_${item.shiftName}_${item.shiftTypeId}`}
+                                    />
+                                    <Flex
+                                      w="100%"
+                                      justifyContent="end"
+                                      mt="10px"
+                                      gap="5px"
+                                    >
+                                      <Button
+                                        variant="outline"
+                                        colorScheme="red"
+                                        onClick={() => {
+                                          onDeleteShiftTypeAlertOpen();
+                                          setDeleteShiftTypeId(
+                                            item.shiftTypeId
+                                          );
+                                        }}
+                                      >
+                                        Delete
+                                      </Button>
+                                      <Button
+                                        colorScheme="blue"
+                                        onClick={() => {
+                                          setCurrentModifyShiftTypeId(
+                                            item.shiftTypeId
+                                          );
+                                          formik.handleSubmit();
+                                        }}
+                                      >
+                                        Save
+                                      </Button>
+                                    </Flex>
+                                  </AccordionPanel>
+                                </AccordionItem>
+                              ))}
+                            {toggleAddNewShiftType && (
+                              <AccordionItem key="newShiftType">
+                                <h2>
+                                  <AccordionButton
+                                    bg="primary1"
+                                    color="white"
+                                    _hover={{}}
                                   >
-                                    Delete
-                                  </Button>
-                                  <Button
-                                    colorScheme="blue"
-                                    onClick={() => {
-                                      setCurrentModifyShiftTypeId(
-                                        item.shiftTypeId
-                                      );
-                                      formik.handleSubmit();
-                                    }}
+                                    <Box as="span" flex="1" textAlign="left">
+                                      New Shift Type
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel pb={4}>
+                                  <FormTextField
+                                    label="Shift Name"
+                                    name={`shiftName_New`}
+                                  />
+                                  <FormTextField
+                                    isTimeField={true}
+                                    label="Start Time"
+                                    name={`startTime_New`}
+                                  />
+                                  <FormTextField
+                                    isTimeField={true}
+                                    label="End Time"
+                                    name={`endTime_New`}
+                                  />
+                                  <Flex
+                                    w="100%"
+                                    justifyContent="end"
+                                    mt="10px"
+                                    gap="5px"
                                   >
-                                    Save
-                                  </Button>
-                                </Flex>
-                              </AccordionPanel>
-                            </AccordionItem>
-                          ))}
-                        {toggleAddNewShiftType && (
-                          <AccordionItem key="newShiftType">
-                            <h2>
-                              <AccordionButton
-                                bg="primary1"
-                                color="white"
-                                _hover={{}}
+                                    <Button
+                                      variant="outline"
+                                      colorScheme="red"
+                                      onClick={() =>
+                                        setToggleAddNewShiftType(false)
+                                      }
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button
+                                      colorScheme="blue"
+                                      onClick={() => formik.handleSubmit()}
+                                    >
+                                      Create
+                                    </Button>
+                                  </Flex>
+                                </AccordionPanel>
+                              </AccordionItem>
+                            )}
+                          </Accordion>
+                          {!toggleAddNewShiftType && (
+                            <Box mt="10px">
+                              <Button
+                                colorScheme="blue"
+                                onClick={() => setToggleAddNewShiftType(true)}
                               >
-                                <Box as="span" flex="1" textAlign="left">
-                                  New Shift Type
-                                </Box>
-                                <AccordionIcon />
-                              </AccordionButton>
-                            </h2>
-                            <AccordionPanel pb={4}>
-                              <FormTextField
-                                label="Shift Name"
-                                name={`shiftName_New`}
-                              />
-                              <FormTextField
-                                isTimeField={true}
-                                label="Start Time"
-                                name={`startTime_New`}
-                              />
-                              <FormTextField
-                                isTimeField={true}
-                                label="End Time"
-                                name={`endTime_New`}
-                              />
-                              <Flex
-                                w="100%"
-                                justifyContent="end"
-                                mt="10px"
-                                gap="5px"
-                              >
-                                <Button
-                                  variant="outline"
-                                  colorScheme="red"
-                                  onClick={() =>
-                                    setToggleAddNewShiftType(false)
-                                  }
-                                >
-                                  Cancel
-                                </Button>
-                                <Button
-                                  colorScheme="blue"
-                                  onClick={() => formik.handleSubmit()}
-                                >
-                                  Create
-                                </Button>
-                              </Flex>
-                            </AccordionPanel>
-                          </AccordionItem>
-                        )}
-                      </Accordion>
-                      {!toggleAddNewShiftType && (
-                        <Box mt="10px">
-                          <Button
-                            colorScheme="blue"
-                            onClick={() => setToggleAddNewShiftType(true)}
-                          >
-                            Add Another Shift
-                          </Button>
-                        </Box>
-                      )}
-                    </ModalBody>
-                    <ModalFooter></ModalFooter>
-                  </>
-                )}
-              </Formik>
-            </ModalContent>
-          </Modal>
-          <ChakraAlertDialog
-            isOpen={isDeleteShiftTypeAlertOpen}
-            onClose={onDeleteShiftTypeAlertClose}
-            onAccept={handleAcceptDeleteShiftType}
-          />
+                                Add Another Shift
+                              </Button>
+                            </Box>
+                          )}
+                        </ModalBody>
+                        <ModalFooter></ModalFooter>
+                      </>
+                    )}
+                  </Formik>
+                </ModalContent>
+              </Modal>
+              <ChakraAlertDialog
+                isOpen={isDeleteShiftTypeAlertOpen}
+                onClose={onDeleteShiftTypeAlertClose}
+                onAccept={handleAcceptDeleteShiftType}
+                title="Delete Shift Type"
+              />
+            </>
+          )}
           <HStack>
             <Heading fontSize="xl" fontWeight="medium">
               <Highlight
