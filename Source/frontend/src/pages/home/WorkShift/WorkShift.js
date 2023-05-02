@@ -30,9 +30,11 @@ import { Helper } from "../../../Utils/Helper";
 import { getListEmployeeOfDepartment } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
+  deleteShiftTypeService,
   getListShiftType,
   getWorkShiftOfDepartment,
   getWorkShiftOfEmployee,
+  modifyShiftTypeService,
   modifyWorkShiftService,
   useGetListShiftType,
 } from "../../../services/workshift/workshift";
@@ -44,6 +46,7 @@ import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import { useGetListDepartment } from "../../../services/organization/department";
 import moment from "moment";
 import * as Yup from "yup";
+import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 
 function WorkShift() {
   // #region declare variable
@@ -66,6 +69,12 @@ function WorkShift() {
     isOpen: isModifyShiftTypeModalOpen,
     onOpen: onModifyShiftTypeModalOpen,
     onClose: onModifyShiftTypeModalClose,
+  } = useDisclosure();
+  const [deleteShiftTypeId, setDeleteShiftTypeId] = useState("");
+  const {
+    isOpen: isDeleteShiftTypeAlertOpen,
+    onOpen: onDeleteShiftTypeAlertOpen,
+    onClose: onDeleteShiftTypeAlertClose,
   } = useDisclosure();
   const { data: listShiftType, isLoading: isLoadingListShiftType } =
     useGetListShiftType();
@@ -176,6 +185,76 @@ function WorkShift() {
       });
     },
   });
+  const useModifyShiftType = useMutation(modifyShiftTypeService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listShiftType");
+        toast({
+          title: `${
+            currentModifyShiftTypeId != "" ? "Modify" : "Create"
+          } Shift Type Successfully`,
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+      resetModal();
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+      resetModal();
+    },
+  });
+  const useDeleteShiftType = useMutation(deleteShiftTypeService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listShiftType");
+        toast({
+          title: `Delete Shift Type Successfully`,
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+      resetModal();
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+      resetModal();
+    },
+  });
   // #endregion
   // #region functions
   let listDepartmentArray = React.useMemo(() => {
@@ -203,6 +282,17 @@ function WorkShift() {
       }
     }
   };
+  const resetModal = () => {
+    setCurrentModifyShiftTypeId("");
+    setToggleAddNewShiftType(false);
+  };
+  const handleAcceptDeleteShiftType = () => {
+    onDeleteShiftTypeAlertClose()
+    setDeleteShiftTypeId("");
+    useDeleteShiftType.mutate(deleteShiftTypeId);
+  };
+  // #endregion
+  // #region form & modal declare
   const initialValuesSelectDepartment = {
     department: departmentId,
   };
@@ -217,6 +307,8 @@ function WorkShift() {
           tempObject[`endTime_${item.shiftName}_${item.shiftTypeId}`] = moment(
             item.endTime
           ).format("hh:mm");
+          tempObject[`shiftName_${item.shiftName}_${item.shiftTypeId}`] =
+            item.shiftName;
         });
       }
       return tempObject;
@@ -228,18 +320,6 @@ function WorkShift() {
       startTime_New: "",
       endTime_New: "",
     });
-  useEffect(() => {
-    setInitialValuesModifyShiftType((prev) => {
-      return { ...prev, ...objectShiftType };
-    });
-  }, [objectShiftType]);
-  const [currentModifyShiftTypeId, setCurrentModifyShiftTypeId] = useState("");
-  const handleModifyShiftType = () => {};
-  const initialValuesCreateShiftType = {
-    shiftName_New: "",
-    startTime_New: "",
-    endTime_New: "",
-  };
   const validationSchemaForCreateShift = Yup.object().shape({
     shiftName_New: Yup.string().required("This field is required"),
     startTime_New: Yup.string().required("This field is required"),
@@ -250,8 +330,15 @@ function WorkShift() {
       })
       .required("This field is required"),
   });
-  // console.log("initialValuesModifyShiftType", initialValuesModifyShiftType);
+  const [currentModifyShiftTypeId, setCurrentModifyShiftTypeId] = useState("");
 
+  // #endregion
+  // #region useEffect
+  useEffect(() => {
+    setInitialValuesModifyShiftType((prev) => {
+      return { ...prev, ...objectShiftType };
+    });
+  }, [objectShiftType]);
   useEffect(() => {
     setCurrentMonth(Helper.getMonth(monthIndex));
     refreshListWorkDepartment();
@@ -262,13 +349,6 @@ function WorkShift() {
       setEnableGetListEmployee(true);
     }
   }, [departmentId]);
-  // #endregion
-  // #region table
-  // #endregion
-  // #region drawer
-  // #endregion
-  // #region modal
-
   // #endregion
   if (userDecodeInfo?.roleName == "employee") {
   } else if (
@@ -300,8 +380,7 @@ function WorkShift() {
             isOpen={isModifyShiftTypeModalOpen}
             onClose={() => {
               onModifyShiftTypeModalClose();
-              setCurrentModifyShiftTypeId("");
-              setToggleAddNewShiftType(false);
+              resetModal();
             }}
             isCentered
           >
@@ -309,12 +388,11 @@ function WorkShift() {
             <ModalContent>
               <Formik
                 initialValues={initialValuesModifyShiftType}
+                validationSchema={
+                  toggleAddNewShiftType ? validationSchemaForCreateShift : null
+                }
                 onSubmit={(values, actions) => {
-                  console.log(
-                    "currentModifyShiftTypeId",
-                    currentModifyShiftTypeId
-                  );
-                  console.log("values", values);
+                  let modifyWorkShiftObject = {};
                   let keys = Object.keys(values);
                   if (currentModifyShiftTypeId != "") {
                     keys.map((key) => {
@@ -322,28 +400,34 @@ function WorkShift() {
                         Helper.splitUnderscoreStringToArray(key);
                       if (splitArray.includes(currentModifyShiftTypeId)) {
                         if (splitArray.includes("startTime")) {
-                          console.log("startTime", values[key]);
+                          modifyWorkShiftObject["startTime"] = values[key];
                         } else if (splitArray.includes("endTime")) {
-                          console.log("endTime", values[key]);
+                          modifyWorkShiftObject["endTime"] = values[key];
+                        } else if (splitArray.includes("shiftName")) {
+                          modifyWorkShiftObject["shiftName"] = values[key];
                         }
                       }
                     });
+                    modifyWorkShiftObject["shiftTypeId"] =
+                      currentModifyShiftTypeId;
+                    useModifyShiftType.mutate(modifyWorkShiftObject);
                   } else {
                     keys.map((key) => {
                       const splitArray =
                         Helper.splitUnderscoreStringToArray(key);
                       if (splitArray.includes("New")) {
                         if (splitArray.includes("startTime")) {
-                          console.log("startTime", values[key]);
+                          modifyWorkShiftObject["startTime"] = values[key];
                         } else if (splitArray.includes("endTime")) {
-                          console.log("endTime", values[key]);
+                          modifyWorkShiftObject["endTime"] = values[key];
                         } else if (splitArray.includes("shiftName")) {
-                          console.log("shiftName", values[key]);
+                          modifyWorkShiftObject["shiftName"] = values[key];
                         }
                       }
                     });
+                    useModifyShiftType.mutate(modifyWorkShiftObject);
                   }
-                  setCurrentModifyShiftTypeId("");
+                  onModifyShiftTypeModalClose();
                 }}
               >
                 {(formik) => (
@@ -353,6 +437,7 @@ function WorkShift() {
                     <ModalBody>
                       <Accordion allowToggle>
                         {listShiftType &&
+                          !toggleAddNewShiftType &&
                           listShiftType.result.data.map((item) => (
                             <AccordionItem key={item.shiftName}>
                               <h2>
@@ -364,6 +449,10 @@ function WorkShift() {
                                 </AccordionButton>
                               </h2>
                               <AccordionPanel pb={4}>
+                                <FormTextField
+                                  label="Shift Name"
+                                  name={`shiftName_${item.shiftName}_${item.shiftTypeId}`}
+                                />
                                 <FormTextField
                                   isTimeField={true}
                                   label="Start Time"
@@ -383,7 +472,10 @@ function WorkShift() {
                                   <Button
                                     variant="outline"
                                     colorScheme="red"
-                                    type="submit"
+                                    onClick={() => {
+                                      onDeleteShiftTypeAlertOpen();
+                                      setDeleteShiftTypeId(item.shiftTypeId);
+                                    }}
                                   >
                                     Delete
                                   </Button>
@@ -474,6 +566,11 @@ function WorkShift() {
               </Formik>
             </ModalContent>
           </Modal>
+          <ChakraAlertDialog
+            isOpen={isDeleteShiftTypeAlertOpen}
+            onClose={onDeleteShiftTypeAlertClose}
+            onAccept={handleAcceptDeleteShiftType}
+          />
           <Heading fontSize="xl" fontWeight="medium">
             <Highlight
               query={["Department:"]}

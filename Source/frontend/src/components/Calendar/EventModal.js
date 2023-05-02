@@ -120,7 +120,6 @@ export default function EventModal(props) {
     employeeId: Yup.string().required("This field is required"),
   });
   // #endregion
-  console.log("selectedEvent", selectedEvent);
   return (
     <>
       <Formik
