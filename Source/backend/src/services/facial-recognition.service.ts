@@ -50,17 +50,6 @@ export class FacialRecognitionService {
         // Resize the image
         const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
 
-        // //save the cut image
-        // // create canvas with desired dimensions
-        // const testCanvas = canvas.createCanvas(5000, 5000);
-        // const ctx = testCanvas.getContext('2d');
-        // ctx.drawImage(image, 0, 0);
-        // // save canvas as PNG file
-        // const out = fs.createWriteStream(`${pathToCanvas}/${label}_${i}.png`);
-        // const stream = testCanvas.createPNGStream();
-        // await stream.pipe(out);
-        // await out.on('finish', () => console.log('Image saved.'));
-
         console.log(resizedImage)
 
         const detection = await faceapi.detectSingleFace(resizedImage, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
