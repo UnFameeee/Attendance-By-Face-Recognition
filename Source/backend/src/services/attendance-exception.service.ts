@@ -184,8 +184,6 @@ export class AttendanceExceptionService {
   public getAttendanceExceptionData = async (attendanceExceptionId: string) => {
     const response = new ResponseData<any>;
 
-    console.log(attendanceExceptionId)
-
     //Lấy data ở cả 2 bên là system và employee nhập vào
     const queryEmployeeData = await prisma.attendanceException.findFirst({
       where: {
@@ -204,8 +202,6 @@ export class AttendanceExceptionService {
         },
       }
     })
-
-    console.log(queryEmployeeData)
 
     if (!queryEmployeeData) {
       response.message = "The exception attendance isn't exist";
@@ -252,14 +248,18 @@ export class AttendanceExceptionService {
     })
 
     var shiftTime;
-    if (queryEmployeeData.attendanceType == attendance.checkin) {
-      const time = moment(queryWorkshiftData.shiftType.startTime, "HH:mm").format("HH:mm");
-      const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
-      shiftTime = Helper.ConfigStaticDateTime(time, date);
-    } else if (queryEmployeeData.attendanceType == attendance.checkout) {
-      const time = moment(queryWorkshiftData.shiftType.endTime, "HH:mm").format("HH:mm");
-      const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
-      shiftTime = Helper.ConfigStaticDateTime(time, date);
+    if (!queryWorkshiftData) {
+      shiftTime = null;
+    } else {
+      if (queryEmployeeData.attendanceType == attendance.checkin) {
+        const time = moment(queryWorkshiftData.shiftType.startTime, "HH:mm").format("HH:mm");
+        const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+        shiftTime = Helper.ConfigStaticDateTime(time, date);
+      } else if (queryEmployeeData.attendanceType == attendance.checkout) {
+        const time = moment(queryWorkshiftData.shiftType.endTime, "HH:mm").format("HH:mm");
+        const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+        shiftTime = Helper.ConfigStaticDateTime(time, date);
+      }
     }
 
     const data = {
@@ -329,8 +329,6 @@ export class AttendanceExceptionService {
           }
         }
       })
-
-      console.log(workShift);
 
       //Get the shiftDate from workShift - YYYY-MM-DD
       const shiftDate = workShift.shiftDate;
