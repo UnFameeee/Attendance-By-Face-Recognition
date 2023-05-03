@@ -29,6 +29,7 @@ export const RESOURCE: stringObject = {
   LEAVE_REQUEST_PERSONAL:"leave-request-personal",
   LEAVE_REQUEST_MANAGEMENT:"leave-request-management",
   ATTENDANCE_MANAGEMENT:"attendance-management",
+  ATTENDANCE_EXCEPTION_MANAGEMENT:"attendance-exception-management",
 
 
 }

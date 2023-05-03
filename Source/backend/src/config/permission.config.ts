@@ -90,7 +90,7 @@ export const application_permission = {
     `${ROLE.MANAGER}-${PERMISSION.UPDATE}`,
     `${ROLE.MANAGER}-${PERMISSION.DELETE}`,
   ],
-  "attendance-management": [
+  "attendance-exception-management": [
     `${ROLE.ADMIN}-${PERMISSION.READ}`,
     `${ROLE.ADMIN}-${PERMISSION.UPDATE}`,
     `${ROLE.ADMIN}-${PERMISSION.DELETE}`,

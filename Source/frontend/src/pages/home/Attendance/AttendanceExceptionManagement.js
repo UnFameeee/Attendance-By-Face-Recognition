@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionAttendanceManagement } from "../../../screen-permissions/permission";
-import { useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import {
   Box,
   Divider,
@@ -43,7 +43,10 @@ import { Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
 import { BsArrowLeftRight } from "react-icons/bs";
 import test_Img from "../../../assets/ta.jpeg";
-function AttendanceManagement() {
+import { useGetListDepartment } from "../../../services/organization/department";
+import { attendanceService } from "../../../services/attendance/attendance";
+import { Helper } from "../../../Utils/Helper";
+function AttendanceExceptionManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
     permissionAttendanceManagement,
@@ -51,46 +54,65 @@ function AttendanceManagement() {
   );
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const finalRef = React.useRef(null);
   const [editData, setEditData] = useState({});
-  const [deleteSingleData, setDeleteSingleData] = useState({});
+  const [listAttendanceException, setListAttendanceException] = useState([]);
+  console.log("listAttendanceException", listAttendanceException);
+  const [checkType, setCheckType] = useState("CHECKIN");
+  const [userRole, setUserRole] = useState(Helper.getUserRole());
   // #endregion
   // #region hooks
-  const {
-    isOpen: isDeleteSingleOpen,
-    onOpen: onDeleteSingleOpen,
-    onClose: onDeleteSingleClose,
-  } = useDisclosure();
   const {
     isOpen: isAddEditOpen,
     onOpen: onAddEditOpen,
     onClose: onAddEditClose,
   } = useDisclosure();
+  const { data: listDepartmentData } = useGetListDepartment();
+  const useGetListAttendanceException = useMutation(
+    attendanceService.getListAttendanceException,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          setListAttendanceException((prevList) => {
+            let resultData = [...data?.result?.data];
+            // const mergedResult = unionBy(resultData, prevList, "shiftId");
+            queryClient.setQueryData(
+              ["listAttendanceException", checkType],
+              resultData
+            );
+            return resultData;
+          });
+        }
+      },
+      onError: (error) => {
+        toast({
+          title: error.response.data.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      },
+    }
+  );
   // #endregion
   // #region functions
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
-  const Delete = (row, action) => {
-    setDeleteSingleData(row);
-    onDeleteSingleOpen();
-  };
-  const handleAcceptDelete = () => {
-    console.log(deleteSingleData);
-    setDeleteSingleData({});
-    onDeleteSingleClose();
-  };
   const Edit = (row, action) => {
+    console.log("Row",row)
     onAddEditOpen();
     setEditData(row);
-  };
-  const handleSubmitApproval = (values) => {
-    closeDrawer();
-  };
-  const closeDrawer = () => {
-    onAddEditClose();
-    setEditData({});
   };
   // #endregion
   // #region table
@@ -105,7 +127,7 @@ function AttendanceManagement() {
     () => [
       {
         Header: "Id",
-        accessor: "id",
+        accessor: "attendanceExceptionId",
         // haveFilter: {
         //   filterType: FilterType.Text,
         // },
@@ -113,19 +135,8 @@ function AttendanceManagement() {
         hidden: true,
       },
       {
-        Header: "Check type",
-        accessor: "checkType",
-        Cell: ({ value }) => (
-          <Badge fontSize="lg">{value ? "In" : "Out"}</Badge>
-        ),
-        // haveFilter: {
-        //   filterType: FilterType.Default,
-        // },
-        cellWidth: "150px",
-      },
-      {
-        Header: "Full name",
-        accessor: "fullname",
+        Header: "Name",
+        accessor: "name",
         // haveFilter: {
         //   filterType: FilterType.Text,
         // },
@@ -133,133 +144,134 @@ function AttendanceManagement() {
       },
       {
         Header: "Department",
-        accessor: "department",
+        accessor: "department.departmentName",
         // haveFilter: {
         //   filterType: FilterType.Text,
         // },
         cellWidth: "150px",
       },
       {
-        Header: "Approval",
-        accessor: "isApproved",
-        // haveFilter: {
-        //   filterType: FilterType.Default,
-        // },
-        Cell: ({ value }) => (
-          <Badge fontSize="lg">{value ? "yes" : "no"}</Badge>
-        ),
-        cellWidth: "100px",
-      },
-      {
         Header: "Time",
-        accessor: "time",
+        accessor: "datetime",
         // haveFilter: {
         //   filterType: FilterType.DateTime,
         // },
+        type: "date",
         cellWidth: "150px",
+      },
+      {
+        Header: "Approver",
+        accessor: "approver",
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        cellWidth: "150px",
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        // haveFilter: {
+        //   filterType: FilterType.Default,
+        // },
+        Cell: ({ value }) => <Badge fontSize="lg">{value}</Badge>,
+        cellWidth: "100px",
       },
     ],
     []
   );
   // #endregion
   // #region drawer
-  const drawerFieldData = [
-    {
-      name: "isApproved",
-      label: "Approval",
-      isSelectionField: true,
-      selectionArray: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
-      ],
-    },
-    {
-      name: "checkType",
-      label: "Check Type",
-      placeholder: "---",
-      isReadOnly: Object.keys(editData).length === 0 ? false : true,
-    },
-    {
-      name: "fullname",
-      label: "Fullname",
-      isReadOnly: Object.keys(editData).length === 0 ? false : true,
-      isTextAreaField: true,
-      rows: "5",
-      placeholder: "write out your reason...",
-    },
-    {
-      name: "department",
-      label: "Department",
-      isReadOnly: Object.keys(editData).length === 0 ? false : true,
-    },
 
-    {
-      name: "time",
-      label: "Time",
-      isReadOnly: Object.keys(editData).length === 0 ? false : true,
-      isDateField: true,
-    },
-  ];
-  const initialValues = {
-    isApproved: `${editData?.isApproved ?? false}`,
-    checkType: editData?.checkType ? "In" : "Out",
-    time: editData?.time
-      ? new Date(editData?.time).toISOString().substring(0, 10)
-      : "",
-    fullname: editData?.fullname ?? "",
-    department: editData?.department ?? "",
-  };
-  const initialValuesForm = {
-    dateSelect: "",
-  };
-  const validationSchema = Yup.object().shape({});
   // #endregion
   // #region form
+  let listDepartmentArray = React.useMemo(() => {
+    if (listDepartmentData?.result?.data?.length > 0) {
+      let tempArray = [];
+      listDepartmentData?.result?.data.map((item) => {
+        tempArray.push({
+          label: item.departmentName,
+          value: item.departmentId,
+        });
+      });
+      return tempArray;
+    }
+  });
+  const initialValuesForm = {
+    dateSelect: "",
+    departmentId: "",
+  };
+  const validationSchemaForm = Yup.object().shape({
+    departmentId: Yup.string().required("This field is required"),
+    dateSelect: Yup.date().required("This field is required"),
+  });
   // #endregion
   return (
     <VStack minHeight="100vh" alignItems="flex-start" spacing={3}>
-      <HStack spacing="5">
+      <VStack spacing="5">
         <Flex gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontSize="3xl">Attendance Management</Heading>
+          <Heading fontSize="3xl">Attendance Exception Management</Heading>
         </Flex>
-        <HStack>
-          <Heading fontSize="xl" fontWeight="medium">
-            <Highlight
-              query={["Date Select:"]}
-              styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
-            >
-              Date Select:
-            </Highlight>
-          </Heading>
-          <Formik
-            initialValues={initialValuesForm}
-            onSubmit={(values, actions) => {
-              console.log("values", values);
-            }}
+      </VStack>
+      <HStack bg="white" p={3} rounded="md">
+        <Heading fontSize="xl" fontWeight="medium">
+          <Highlight
+            query={["Data Select"]}
+            styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
           >
-            {(formik) => (
-              <HStack
-                alignItems="center"
-                as="form"
-                onSubmit={formik.handleSubmit}
-              >
-                <FormTextField name="dateSelect" isDateField={true} />
-                <div className=" mt-[6px]">
-                  <Button colorScheme="blue" type="submit" size="md">
-                    Submit
-                  </Button>
-                </div>
-              </HStack>
-            )}
-          </Formik>
-        </HStack>
+            Data Select
+          </Highlight>
+        </Heading>
+        <Formik
+          initialValues={initialValuesForm}
+          validationSchema={validationSchemaForm}
+          onSubmit={(values, actions) => {
+            let attendanceExceptionDataObj = {};
+            attendanceExceptionDataObj["attendanceType"] = checkType;
+            attendanceExceptionDataObj["filter"] = values.dateSelect;
+            attendanceExceptionDataObj["roleName"] = userRole.role;
+            attendanceExceptionDataObj["departmentId"] = values.departmentId;
+            useGetListAttendanceException.mutate(attendanceExceptionDataObj);
+          }}
+        >
+          {(formik) => (
+            <HStack
+              alignItems="center"
+              as="form"
+              onSubmit={formik.handleSubmit}
+            >
+              <FormTextField name="dateSelect" isDateField={true} />
+              <FormTextField
+                name="departmentId"
+                isSelectionField={true}
+                placeholder="---"
+                selectionArray={listDepartmentArray}
+              />
+
+              <div className=" mt-[6px]">
+                <Button colorScheme="blue" type="submit" size="md">
+                  Submit
+                </Button>
+              </div>
+            </HStack>
+          )}
+        </Formik>
       </HStack>
       <Box w="100%">
         <Tabs isFitted variant="soft-rounded" colorScheme="blue">
           <TabList mb="1em">
-            <Tab border="1px solid gray">Check In</Tab>
-            <Tab border="1px solid gray">Check Out</Tab>
+            <Tab
+              border="1px solid gray"
+              onClick={() => setCheckType("CHECKIN")}
+            >
+              Check In
+            </Tab>
+            <Tab
+              border="1px solid gray"
+              onClick={() => setCheckType("CHECKOUT")}
+            >
+              Check Out
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -269,7 +281,7 @@ function AttendanceManagement() {
                   handleDeleteRange={DeleteRange}
                   tableRowAction={tableRowAction}
                   columns={columns}
-                  data={attendanceDumbData}
+                  data={listAttendanceException}
                   permission={resultPermission}
                   noPaging={true}
                   hideButtons={true}
@@ -283,7 +295,7 @@ function AttendanceManagement() {
                   handleDeleteRange={DeleteRange}
                   tableRowAction={tableRowAction}
                   columns={columns}
-                  data={attendanceDumbData}
+                  data={listAttendanceException}
                   permission={resultPermission}
                   noPaging={true}
                   hideButtons={true}
@@ -310,17 +322,18 @@ function AttendanceManagement() {
                   query={["Check In", "Check Out"]}
                   styles={{ px: "2", py: "1", rounded: "md", bg: "red.100" }}
                 >
-                  Check In
+                  {checkType == "CHECKIN" ? "Check in" : "Check out"}
                 </Highlight>
               </Heading>
             </HStack>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Formik>
+            <Formik
+            >
               {(formik) => (
                 <>
-                  <HStack spacing='10px'>
+                  <HStack spacing="10px">
                     <VStack flex="1" alignItems="flex-start">
                       <Heading fontSize="xl" fontWeight="medium">
                         System Information
@@ -332,12 +345,24 @@ function AttendanceManagement() {
                           <Text>20:50 PM</Text>
                         </VStack>
                       </HStack>
-                      <FormTextField name="name" label="Name" />
-                      <FormTextField name="department" label="Department" />
-                      <FormTextField name="email" label="Email" />
+                      <FormTextField
+                        isReadOnly={true}
+                        name="name_systemInfo"
+                        label="Name"
+                      />
+                      <FormTextField
+                        isReadOnly={true}
+                        name="department_systemInfo"
+                        label="Department"
+                      />
+                      <FormTextField
+                        isReadOnly={true}
+                        name="email_systemInfo"
+                        label="Email"
+                      />
                     </VStack>
                     <Flex alignItems="center">
-                      <Box mt='10rem'>
+                      <Box mt="10rem">
                         <Icon
                           color="blue.500"
                           as={BsArrowLeftRight}
@@ -356,9 +381,21 @@ function AttendanceManagement() {
                           <Text>20:50 PM</Text>
                         </VStack>
                       </HStack>
-                      <FormTextField name="name" label="Name" />
-                      <FormTextField name="department" label="Department" />
-                      <FormTextField name="email" label="Email" />
+                      <FormTextField
+                        isReadOnly={true}
+                        name="name_employeeInfo"
+                        label="Name"
+                      />
+                      <FormTextField
+                        isReadOnly={true}
+                        name="department_employeeInfo"
+                        label="Department"
+                      />
+                      <FormTextField
+                        isReadOnly={true}
+                        name="email_employeeInfo"
+                        label="Email"
+                      />
                     </VStack>
                   </HStack>
                 </>
@@ -384,25 +421,8 @@ function AttendanceManagement() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {/* <DynamicDrawer
-        handleCreate={handleSubmitApproval}
-        isAddEditOpen={isAddEditOpen}
-        onAddEditClose={onAddEditClose}
-        editData={editData}
-        setEditData={setEditData}
-        validationSchema={validationSchema}
-        initialValues={initialValues}
-        drawerFieldData={drawerFieldData}
-        titleArray={["Approval", "Create"]}
-      /> */}
-      <ChakraAlertDialog
-        title="Delete Single"
-        isOpen={isDeleteSingleOpen}
-        onClose={onDeleteSingleClose}
-        onAccept={handleAcceptDelete}
-      />
     </VStack>
   );
 }
 
-export default AttendanceManagement;
+export default AttendanceExceptionManagement;

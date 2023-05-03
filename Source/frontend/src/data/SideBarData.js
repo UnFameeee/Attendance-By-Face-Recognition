@@ -16,7 +16,7 @@ import { SlOrganization } from "react-icons/sl";
 import { RiUserVoiceFill } from "react-icons/ri";
 import { GoReport } from "react-icons/go";
 import { IoNotifications } from "react-icons/io5";
-import { BsCalendar3 } from "react-icons/bs";
+import { BsCalendar3, BsFillPatchExclamationFill } from "react-icons/bs";
 import { ImProfile } from "react-icons/im";
 import {IoCreateSharp} from 'react-icons/io5'
 const iconSize = "23px";
@@ -137,6 +137,12 @@ export const SideBarData = [
         title: "Management",
         url: "attendance-management",
         icon: <SiMagento fontSize={iconSize} />,
+        roleCanAccess: ["manager", "admin"],
+      },
+      {
+        title: "Exception",
+        url: "attendance-exception-management",
+        icon: <BsFillPatchExclamationFill fontSize={iconSize} />,
         roleCanAccess: ["manager", "admin"],
       },
     ],

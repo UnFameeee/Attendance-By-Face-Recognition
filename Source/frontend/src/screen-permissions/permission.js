@@ -32,7 +32,7 @@ export const permissionLeaveRequestManagement = {
   delete: "delete-leave-request-management",
 };
 export const permissionAttendanceManagement = {
-  read: "read-attendance-management",
-  update: "update-attendance-management",
-  delete: "delete-attendance-management",
+  read: "read-attendance-exception-management",
+  update: "update-attendance-exception-management",
+  delete: "delete-attendance-exception-management",
 };
