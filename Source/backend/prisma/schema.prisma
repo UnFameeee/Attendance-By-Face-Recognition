@@ -22,7 +22,7 @@ model Employee {
   location   Location? @relation(fields: [locationId], references: [locationId])
   locationId String?   @unique
 
-  picture               String?
+  image                 String?
   fullname              String
   email                 String                @unique
   password              String
@@ -44,28 +44,10 @@ model Employee {
   leaveRequestApproveds LeaveRequest[]        @relation("LeaveRequestApproveds")
   payrolls              Payroll[]
   departmentManager     DepartmentManager[]
-  employeeImages        EmployeeImage[]
   attendanceException   AttendanceException[]
   faceTrainingImage     FaceTrainingImage[]
 
   @@map("employee")
-}
-
-model EmployeeImage {
-  imageId String @id @default(uuid())
-
-  // roleId 
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId String
-
-  link      String
-  // index     Int
-  // isPrimary Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  // deletedAt DateTime?
-
-  @@map("employeeimage")
 }
 
 model FaceTrainingImage {

@@ -18,15 +18,7 @@ export class ProfileService {
       select: {
         id: true,
         fullname: true,
-        employeeImages: {
-          where: {
-            employeeId: employeeId,
-            // isPrimary: true,
-          },
-          select: {
-            link: true,
-          }
-        },
+        image: true,
         email: true,
         gender: true,
         dateOfBirth: true,
@@ -106,6 +98,7 @@ export class ProfileService {
       select: {
         id: true,
         fullname: true,
+        image: true,
         email: true,
         gender: true,
         dateOfBirth: true,
@@ -177,47 +170,29 @@ export class ProfileService {
 
   public uploadImages = async (employeeId: string, files: { [fieldname: string]: Express.Multer.File[] }) => {
     const response = new ResponseData<any>;
-    let isUpdateValidate = await prisma.employeeImage.findFirst({
-      where: {
-        employeeId: employeeId,
-      }
-    })
     let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
-    //If we have found exist image in the database
-    if (isUpdateValidate) {
-      const queryData = await prisma.employeeImage.update({
-        where: {
-          imageId: isUpdateValidate.imageId
-        },
-        data: {
-          link: Helper.ConvertDoubleSlashURL(link),
-        },
-      })
-    }
-    //If there isn't any image in the database 
-    else {
-      const queryData = await prisma.employeeImage.create({
-        data: {
-          employeeId: employeeId,
-          link: Helper.ConvertDoubleSlashURL(link),
-        },
-      })
-    }
+
+    const queryData = await prisma.employee.update({
+      where: {
+        id: employeeId,
+      },
+      data: {
+        image: Helper.ConvertDoubleSlashURL(link),
+      },
+    })
+
     response.result = (await this.getProfileImages(employeeId)).result;
     return response;
   }
 
   public getProfileImages = async (employeeId: string) => {
     const response = new ResponseData<any>;
-    const queryData = await prisma.employeeImage.findMany({
+    const queryData = await prisma.employee.findFirst({
       where: {
-        employeeId: employeeId,
+        id: employeeId,
       },
       select: {
-        link: true,
-        employeeId: true,
-        // index: true,
-        // isPrimary: true,
+        image: true,
       },
 
     })

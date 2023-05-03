@@ -14,7 +14,7 @@ export class URLService {
     let URL: string;
 
     if (URLtype == "AttendanceException") {
-      URL = `${env.CLIENT_URL}/qr/attendance_exception/${v4()}`
+      URL = `${env.CLIENT_URL}/report-attendance-exception?session=${v4()}`
     }
 
     const queryData = await prisma.urlmanagement.create({
@@ -40,20 +40,26 @@ export class URLService {
         URL: URL,
       }
     })
-    //Expire by submiting
-    if (queryData.isExpired) {
+
+    if (!queryData) {
       response.result = false;
       return response;
-    }
+    } else {
+      //Expire by submiting
+      if (queryData.isExpired) {
+        response.result = false;
+        return response;
+      }
 
-    //Expire by not submiting for too long
-    if (moment(new Date(queryData.expiredTime.getTime()), "HH:mm:ss").diff(moment(new Date(now.getTime()), "HH:mm:ss")) < 0) {
-      response.result = false;
+      //Expire by not submiting for too long
+      if (moment(new Date(queryData.expiredTime.getTime()), "HH:mm:ss").diff(moment(new Date(now.getTime()), "HH:mm:ss")) < 0) {
+        response.result = false;
+        return response;
+      }
+
+      response.result = true;
       return response;
     }
-
-    response.result = true;
-    return response;
   }
 
   public changeURLtoExpire = async (URL: string) => {

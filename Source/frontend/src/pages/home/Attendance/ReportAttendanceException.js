@@ -19,7 +19,7 @@ import ta_test from "../../../assets/ta.jpeg";
 import { AiOutlineMail } from "react-icons/ai";
 import { BiUser } from "react-icons/bi";
 import ImagesUploading from "../../../components/ImagesUploading";
-function AlterAttendance() {
+function ReportAttendanceException() {
   const [images, setImages] = React.useState([]);
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
@@ -92,4 +92,4 @@ function AlterAttendance() {
   );
 }
 
-export default AlterAttendance;
+export default ReportAttendanceException;
