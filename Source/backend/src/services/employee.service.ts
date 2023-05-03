@@ -85,6 +85,7 @@ export class EmployeeService {
       select: {
         id: true,
         fullname: true,
+        image: true,
         role: {
           select: {
             displayName: true,
@@ -138,15 +139,7 @@ export class EmployeeService {
       select: {
         id: true,
         fullname: true,
-        employeeImages: {
-          where: {
-            employeeId: employeeId,
-            // isPrimary: true,
-          },
-          select: {
-            link: true,
-          }
-        },
+        image: true,
         role: {
           select: {
             displayName: true,
@@ -277,6 +270,7 @@ export class EmployeeService {
       select: {
         id: true,
         fullname: true,
+        image: true,
         email: true,
         role: {
           select: {

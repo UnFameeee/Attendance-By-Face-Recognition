@@ -66,14 +66,6 @@ export class AttendanceExceptionService {
       return response;
     }
 
-    //If there isn't any image in the database 
-    const queryData = await prisma.employeeImage.create({
-      data: {
-        employeeId: queryValidateData.id,
-        link: Helper.ConvertDoubleSlashURL(link),
-      },
-    })
-
     response.result = Helper.ConvertDoubleSlashURL(link);
     return response;
   }
@@ -200,14 +192,14 @@ export class AttendanceExceptionService {
       select: {
         name: true,
         email: true,
+        image: true,
+        datetime: true,
+        attendanceType: true,
         department: {
           select: {
             departmentName: true,
           }
         },
-        image: true,
-        datetime: true,
-        attendanceType: true,
       }
     })
 
@@ -220,16 +212,12 @@ export class AttendanceExceptionService {
         id: true,
         fullname: true,
         email: true,
+        image: true,
         department: {
           select: {
             departmentName: true,
           }
         },
-        employeeImages: {
-          select: {
-            link: true,
-          }
-        }
       }
     })
 

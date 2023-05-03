@@ -167,7 +167,6 @@ export default function FaceAttendance() {
             //   label: faceDetected
             // });
 
-            console.log("?:", isScaningPaused)
             if (!isScaningPaused) {
               faceDetectArray.push(faceDetected.label);
               console.log(faceDetectArray);
@@ -178,12 +177,13 @@ export default function FaceAttendance() {
                   dispatch(setIsScaningPaused({
                     isScaningPaused: true,
                   }))
+
                   dispatch(setAttendanceModalProps({
                     isAttendanceModalOpen: true,
                     employeeId: highestFaceValue
                   }))
+
                   const imageSrc = videoRef.current.getScreenshot();
-                  console.log(imageSrc);
                   const IMG = document.getElementById("captureImage");
                   IMG.src = imageSrc;
                 }
@@ -195,8 +195,6 @@ export default function FaceAttendance() {
           }
         }
       }
-
-      console.log("re-render")
       intervalRef.current = setInterval(realtimeFaceRegconition, 1000);
     }
     addEvent();

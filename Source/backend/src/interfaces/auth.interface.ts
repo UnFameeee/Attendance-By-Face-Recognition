@@ -9,7 +9,7 @@ export interface TokenData {
 export interface DataStoredInAccessToken {
   id: string;
   email: string;
-  link: string;
+  image: string;
   departmentId: string;
   roleName: string;
 }

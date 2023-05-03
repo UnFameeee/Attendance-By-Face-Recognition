@@ -17,15 +17,6 @@ class AuthenticationService {
     const expiresIn: number = Number.parseInt(env.SECRET_EXPRIED);
     const secret = env.SECRET_KEY;
 
-    const queryImageData = await prisma.employeeImage.findFirst({
-      where: {
-        employeeId: employeeData.id,
-      },
-      select: {
-        link: true,
-      }
-    })
-
     const queryRoleData = await prisma.role.findFirst({
       where: {
         roleId: employeeData.roleId,
@@ -36,7 +27,7 @@ class AuthenticationService {
     const dataStoredInToken: DataStoredInAccessToken = {
       id: employeeData.id,
       email: employeeData.email,
-      link: queryImageData ? queryImageData.link : null,
+      image: employeeData.image,
       departmentId: employeeData.departmentId,
       roleName: queryRoleData.roleName,
     }
