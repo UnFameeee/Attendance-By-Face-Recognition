@@ -43,7 +43,7 @@ export class AttendanceExceptionRoute implements Routes {
     )
 
     // api/attendance-exception/saveImage
-    this.router.get(`${this.path}/getAttendanceExceptionData/:id`,
+    this.router.get(`${this.path}/getAttendanceExceptionData/:attendanceExceptionId`,
       // authMiddleware,
       // zodValidate(submitAttendanceExceptionSchema),
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
