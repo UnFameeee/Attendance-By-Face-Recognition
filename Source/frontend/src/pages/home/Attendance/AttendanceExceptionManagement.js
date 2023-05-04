@@ -61,7 +61,6 @@ function AttendanceExceptionManagement() {
   const [readOnlyApproval, setReadOnlyApproval] = useState(false);
   const [attendanceExceptionGetListObj, setAttendanceExceptionGetListObj] =
     useState();
-
   const [checkType, setCheckType] = useState("CHECKIN");
   const [userRole, setUserRole] = useState(Helper.getUserRole());
   // #endregion
