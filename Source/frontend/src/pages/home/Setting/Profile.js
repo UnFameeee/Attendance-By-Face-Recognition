@@ -24,8 +24,7 @@ import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
 import { useMutation, useQueryClient } from "react-query";
 import {
-  saveProfileDetail,
-  uploadProfileImages,
+  profileService,
   useGetProfileDetail,
 } from "../../../services/setting/profile";
 import jwtDecode from "jwt-decode";
@@ -60,7 +59,7 @@ function Profile() {
     isLoading: isLoadingProfileDetail,
     isFetching: isFetchingProfileDetail,
   } = useGetProfileDetail(userDecodeData.id);
-  const useSaveProfileDetail = useMutation(saveProfileDetail, {
+  const useSaveProfileDetail = useMutation(profileService.saveProfileDetail, {
     onSuccess: (data) => {
       const { message } = data;
       if (message) {
@@ -92,7 +91,7 @@ function Profile() {
       });
     },
   });
-  const useUploadImages = useMutation(uploadProfileImages, {
+  const useUploadImages = useMutation(profileService.uploadProfileImages, {
     onSuccess: (data) => {
       const { message } = data;
       if (message) {

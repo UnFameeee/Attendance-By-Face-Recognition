@@ -2,14 +2,14 @@ import axiosBase from "../../Utils/AxiosInstance";
 import { baseURL } from "./../../Utils/AxiosInstance";
 import { useQuery } from "react-query";
 
-const endPoint = baseURL + "/attendance";
+const endPointAttendance = baseURL + "/attendance";
 const endPointAttendanceException = baseURL + "/attendance-exception";
 const takeAttendance = async (employeeId, attendanceType) => {
   const postObj = {
     employeeId: employeeId,
     attendanceType: attendanceType,
   };
-  const response = await axiosBase.post(`${endPoint}/takeAttendance`, postObj);
+  const response = await axiosBase.post(`${endPointAttendance}/takeAttendance`, postObj);
   return response.data;
 };
 
@@ -17,7 +17,7 @@ const getEmployeeDetailById = async (id) => {
   // debugger;
   if (id) {
     const response = await axiosBase.get(
-      `${endPoint}/getEmployeeDetailById/${id}`
+      `${endPointAttendance}/getEmployeeDetailById/${id}`
     );
     return response.data;
   }

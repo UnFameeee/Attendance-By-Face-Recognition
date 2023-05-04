@@ -18,13 +18,12 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Country, State } from "country-state-city";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
-  createDepartmentService,
-  saveDepartmentService,
+  departmentService,
   useGetListDepartment,
 } from "../../../services/organization/department";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentManagement } from "../../../screen-permissions/permission";
-import { getListOrganization } from "../../../services/organization/organization";
+import { organizationService } from "../../../services/organization/organization";
 function DepartmentManagement() {
   // #region declare variables
   const resultPermission = useGetPermission(
@@ -37,16 +36,14 @@ function DepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const { 
-    data: dataListDepartment,
-    isFetching: isFetchingListDepartment,
-   } = useGetListDepartment();
+  const { data: dataListDepartment, isFetching: isFetchingListDepartment } =
+    useGetListDepartment();
   const {
     data: dataListOrganization,
     isLoading: isLoadingListOrganization,
     isFetching: isFetchingListOrganization,
     isFetched,
-  } = useQuery("listOrganization", getListOrganization, {
+  } = useQuery("listOrganization", organizationService.getListOrganization, {
     refetchOnWindowFocus: false,
     retry: 3,
     enabled: dataListDepartment && Object.keys(dataListDepartment).length > 0,
@@ -63,70 +60,76 @@ function DepartmentManagement() {
       return tempArray;
     }
   });
-  const useCreateDepartment = useMutation(createDepartmentService, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
+  const useCreateDepartment = useMutation(
+    departmentService.createDepartmentService,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries("listDepartment");
+          toast({
+            title: "Create Department Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        queryClient.invalidateQueries("listDepartment");
+      },
+    }
+  );
+  const useSaveDepartment = useMutation(
+    departmentService.saveDepartmentService,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries("listDepartment");
+          toast({
+            title: "Save Department Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: "Create Department Successfully",
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
-  const useSaveDepartment = useMutation(saveDepartmentService, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
-        toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        queryClient.invalidateQueries("listDepartment");
-        toast({
-          title: "Save Department Successfully",
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
+      },
+    }
+  );
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -348,7 +351,8 @@ function DepartmentManagement() {
     address: Yup.string().required("This field is required"),
   });
   // #endregion
-  if (isFetchingListOrganization || isFetchingListDepartment) return <LoadingSpinner />;
+  if (isFetchingListOrganization || isFetchingListDepartment)
+    return <LoadingSpinner />;
   return (
     <Stack minHeight="100vh" spacing={4}>
       <Flex gap="10px">
@@ -356,7 +360,9 @@ function DepartmentManagement() {
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        {dataListDepartment && dataListDepartment.result.data != undefined && dataListDepartment.result.data.length == 0 ? (
+        {dataListDepartment &&
+        dataListDepartment.result.data != undefined &&
+        dataListDepartment.result.data.length == 0 ? (
           <NoDataToDisplay h="450px" />
         ) : (
           <>

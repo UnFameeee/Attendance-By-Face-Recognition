@@ -6,40 +6,32 @@ import {
   Heading,
   Stack,
   Button,
-  Icon,
-  Toast,
   useToast,
 } from "@chakra-ui/react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { LockIcon, AtSignIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Link } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
 import React, { useEffect } from "react";
 import AuthTextField from "../../components/field/AuthTextField";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
-import { login } from "../../services/auth/auth";
-import { setAuth, setUser } from "../../store/Slice/authSlice";
+import { authService } from "../../services/auth/auth";
 import jwtDecode from "jwt-decode";
-import { useRowSelect } from "react-table";
-import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
-import { useProSidebar } from "react-pro-sidebar";
-import { getPermission } from "../../services/permission/permission";
+import {  permissionService } from "../../services/permission/permission";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
   const cookies = new Cookies();
-  const getUserPermission = useMutation(getPermission, {
+  const getUserPermission = useMutation(permissionService.getPermission, {
     onSuccess: (data) => {
       localStorage.setItem("userPermission", JSON.stringify(data.result));
     },
   });
-  const useLoginMutation = useMutation(login, {
+  const useLoginMutation = useMutation(authService.login, {
     onSuccess: (data) => {
       const { refresh, access } = data;
       const decoded = jwtDecode(refresh);

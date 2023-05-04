@@ -1,7 +1,6 @@
 import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import { Helper } from "./Helper";
-import { refreshToken } from "../services/auth/auth";
+import { authService } from "../services/auth/auth";
 import Cookies from "universal-cookie";
 import UnAuthorize from "../pages/unauthorize/UnAuthorize";
 import NotFound from "../pages/notfound/NotFound";
@@ -21,7 +20,7 @@ const PrivateRoutes = () => {
   if (jwt_accessToken) {
     if (Helper.isTokenExpired(jwt_accessToken)) {
       if (jtw_refreshToken && !Helper.isTokenExpired(jtw_refreshToken)) {
-        refreshToken({ refreshToken: jtw_refreshToken });
+        authService.refreshToken({ refreshToken: jtw_refreshToken });
         if (screenAuthorize.auth) {
           return <Outlet />;
         } else {

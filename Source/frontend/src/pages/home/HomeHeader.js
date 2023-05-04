@@ -24,7 +24,7 @@ import { IoNotifications } from "react-icons/io5";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useMutation } from "react-query";
 import Cookies from "universal-cookie";
-import { logout } from "../../services/auth/auth";
+import { authService } from "../../services/auth/auth";
 import { setUser } from "../../store/Slice/authSlice";
 import { Helper } from "../../Utils/Helper";
 import { useGetProfileDetail } from "../../services/setting/profile";
@@ -48,7 +48,7 @@ function HomeHeader() {
       toggleSidebar();
     }
   };
-  const useLogoutMutation = useMutation(logout, {
+  const useLogoutMutation = useMutation(authService.logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
       navigate("/sign-in");

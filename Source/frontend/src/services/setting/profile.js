@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
 const endPoint = baseURL + "/profile";
-export const getProfileDetail = async (id) => {
+const getProfileDetail = async (id) => {
   const response = await axiosBase.get(`${endPoint}/getProfileDetail/${id}`);
   return response.data;
 };
@@ -11,7 +11,7 @@ export const useGetProfileDetail = (id) => {
     retry: 1,
   });
 };
-export const saveProfileDetail = async ({ id, profileDetail }) => {
+const saveProfileDetail = async ({ id, profileDetail }) => {
   const response = await axiosBase.post(
     `${endPoint}/updateProfileDetail/${id}`,
     profileDetail
@@ -19,12 +19,22 @@ export const saveProfileDetail = async ({ id, profileDetail }) => {
   return response.data;
 };
 
-export const uploadProfileImages = async (uploadImages) => {
+const uploadProfileImages = async (uploadImages) => {
   const headers = {
     "Content-Type": "multipart/form-data",
   };
-  const response = await axiosBase.post(`${endPoint}/uploadImages`,uploadImages, {
-    headers,
-  });
-  return response.data
+  const response = await axiosBase.post(
+    `${endPoint}/uploadImages`,
+    uploadImages,
+    {
+      headers,
+    }
+  );
+  return response.data;
+};
+
+export const profileService = {
+  getProfileDetail,
+  saveProfileDetail,
+  uploadProfileImages,
 };

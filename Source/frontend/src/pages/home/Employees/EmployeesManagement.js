@@ -26,11 +26,9 @@ import { roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
-import { FilterType } from "../../../components/table/DynamicTable";
 import { useMutation, useQueryClient } from "react-query";
 import {
-  createEmployeeService,
-  saveEmployeeService,
+  employeeService,
   useGetListEmployee,
 } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -66,7 +64,7 @@ function EmployeesManagement() {
   const DeleteRange = (data) => {
     console.log("handleDeleteRange", data);
   };
-  const useCreateEmployee = useMutation(createEmployeeService, {
+  const useCreateEmployee = useMutation(employeeService.createEmployeeService, {
     onSuccess: (data) => {
       const { message } = data;
       if (message) {
@@ -98,7 +96,7 @@ function EmployeesManagement() {
       });
     },
   });
-  const useSaveEmployee = useMutation(saveEmployeeService, {
+  const useSaveEmployee = useMutation(employeeService.saveEmployeeService, {
     onSuccess: (data) => {
       queryClient.invalidateQueries("listEmployee");
       toast({

@@ -3,7 +3,7 @@ import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
 import { pagingInstance } from "../../Utils/PagingInstance";
 
 const endPoint = baseURL + "/employee";
-export const getListEmployee = async ({paging}) => {
+const getListEmployee = async ({ paging }) => {
   var pagingObj;
   if (paging) pagingObj = paging;
   else pagingObj = pagingInstance;
@@ -16,15 +16,18 @@ export const useGetListEmployee = () => {
     retry: 1,
   });
 };
-export const getListEmployeeOfDepartment = async ({departmentId,paging}) => {
+const getListEmployeeOfDepartment = async ({ departmentId, paging }) => {
   var pagingObj;
   if (paging) pagingObj = paging;
   else pagingObj = pagingInstance;
-  const response = await axiosBase.post(`${endPoint}/listEmpInDepartment/${departmentId}`, pagingObj);
+  const response = await axiosBase.post(
+    `${endPoint}/listEmpInDepartment/${departmentId}`,
+    pagingObj
+  );
   return response.data;
 };
 
-export const getListRoleOfEmployee = async () => {
+const getListRoleOfEmployee = async () => {
   const response = await axiosBase.get(`${endPoint}/getListRoleOfEmployee`);
   return response.data;
 };
@@ -35,7 +38,7 @@ export const useGetListRoleOfEmployee = () => {
   });
 };
 
-export const createEmployeeService = async (employeeObj) => {
+const createEmployeeService = async (employeeObj) => {
   const response = await axiosBase.post(
     `${endPoint}/createEmployee`,
     employeeObj
@@ -43,7 +46,7 @@ export const createEmployeeService = async (employeeObj) => {
   return response.data;
 };
 
-export const saveEmployeeService = async ({ id, employeeObj }) => {
+ const saveEmployeeService = async ({ id, employeeObj }) => {
   const response = await axiosBase.post(
     `${endPoint}/updateEmployeeDetail/${id}`,
     employeeObj
@@ -51,14 +54,14 @@ export const saveEmployeeService = async ({ id, employeeObj }) => {
   return response.data;
 };
 
-export const assignEmployeeToDepartmentService = async (assignObj) => {
+const assignEmployeeToDepartmentService = async (assignObj) => {
   const response = await axiosBase.post(
     `${endPoint}/assignEmployeeToDepartment`,
     assignObj
   );
   return response.data;
 };
-export const assignManagerToDepartmentService = async (assignObj) => {
+ const assignManagerToDepartmentService = async (assignObj) => {
   const response = await axiosBase.post(
     `${endPoint}/assignManagerToDepartment`,
     assignObj
@@ -72,3 +75,13 @@ export const assignManagerToDepartmentService = async (assignObj) => {
 //   );
 //   return response.data;
 // };
+
+export const employeeService = {
+  getListEmployee,
+  getListRoleOfEmployee,
+  assignManagerToDepartmentService,
+  assignEmployeeToDepartmentService,
+  saveEmployeeService,
+  createEmployeeService,
+  getListEmployeeOfDepartment,
+};

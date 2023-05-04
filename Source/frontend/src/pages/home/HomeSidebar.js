@@ -9,9 +9,6 @@ import {
   useDisclosure,
   useToast,
   Tooltip,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
 } from "@chakra-ui/react";
 import {
   Sidebar,
@@ -21,15 +18,13 @@ import {
   useProSidebar,
 } from "react-pro-sidebar";
 import { SideBarData } from "../../data/SideBarData";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";
-import avt_user from "../../assets/ta.jpeg";
 import { useMutation } from "react-query";
-import { logout } from "../../services/auth/auth";
+import { authService } from "../../services/auth/auth";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/Slice/authSlice";
-import Cookies from "universal-cookie";
 import { MdLogout } from "react-icons/md";
 import {
   BsLayoutSidebarInsetReverse,
@@ -55,7 +50,7 @@ function HomeSidebar() {
   } = useDisclosure();
   const { data: profileDetailData, isFetching: isFetchingProfileDetailData } =
     useGetProfileDetail(decoded.id);
-  const useLogoutMutation = useMutation(logout, {
+  const useLogoutMutation = useMutation(authService.logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
       navigate("/sign-in");
@@ -80,9 +75,7 @@ function HomeSidebar() {
   }, []);
   useEffect(() => {
     if (profileDetailData?.result?.image) {
-      setUserAvatar(
-        profileDetailData?.result?.image + "?" + dayjs()
-      );
+      setUserAvatar(profileDetailData?.result?.image + "?" + dayjs());
     }
   }, [isFetchingProfileDetailData]);
   return (

@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
-  assignEmployeeToDepartmentService,
+  employeeService,
   useGetListEmployee,
 } from "../../../services/employee/employee";
 import { useState } from "react";
@@ -28,8 +28,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import {
-  getListDepartment,
-  useGetListDepartment,
+  departmentService,
 } from "../../../services/organization/department";
 
 function AssignDepartmentManagement() {
@@ -52,7 +51,7 @@ function AssignDepartmentManagement() {
     data: dataListDepartment,
     isLoading: isLoadingListDepartment,
     isFetching: isFetchingListDepartment,
-  } = useQuery("listDepartment", getListDepartment, {
+  } = useQuery("listDepartment",departmentService.getListDepartment, {
     refetchOnWindowFocus: false,
     retry: 1,
     enabled: listEmployeeData && Object.keys(listEmployeeData).length > 0,
@@ -80,7 +79,7 @@ function AssignDepartmentManagement() {
     onClose: onAddEditClose,
   } = useDisclosure();
   const useAssignEmployeeToDepartment = useMutation(
-    assignEmployeeToDepartmentService,
+    employeeService.assignEmployeeToDepartmentService,
     {
       onSuccess: (data) => {
         const { message } = data;
@@ -115,7 +114,7 @@ function AssignDepartmentManagement() {
     }
   );
   const useAssignManagerToDepartment = useMutation(
-    assignEmployeeToDepartmentService,
+   employeeService.assignEmployeeToDepartmentService,
     {
       onSuccess: (data) => {
         const { message } = data;

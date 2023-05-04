@@ -27,16 +27,15 @@ import Month from "../../../components/Calendar/Month";
 import GlobalContext from "./context/GlobalContext";
 import EventModal from "../../../components/Calendar/EventModal";
 import { Helper } from "../../../Utils/Helper";
-import { getListEmployeeOfDepartment } from "../../../services/employee/employee";
+import {
+  employeeService,
+  getListEmployeeOfDepartment,
+} from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
-  deleteShiftTypeService,
-  getListShiftType,
-  getWorkShiftOfDepartment,
-  getWorkShiftOfEmployee,
-  modifyShiftTypeService,
-  modifyWorkShiftService,
+  shiftTypeService,
   useGetListShiftType,
+  workShiftService,
 } from "../../../services/workshift/workshift";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Field, Formik } from "formik";
@@ -83,7 +82,7 @@ function WorkShift() {
   const useGetListEmployeeOfDepartment = (departmentId, isEnable = false) => {
     return useQuery(
       ["listEmployeeOfDepartment", departmentId],
-      () => getListEmployeeOfDepartment({ departmentId }),
+      () => employeeService.getListEmployeeOfDepartment({ departmentId }),
       {
         refetchOnWindowFocus: false,
         retry: 1,
@@ -93,168 +92,183 @@ function WorkShift() {
   };
   const { data: listEmployeeOfDepartment, isLoading: isLoadingListEmployee } =
     useGetListEmployeeOfDepartment(departmentId, enableGetListEmployee);
-  const useModifyWorkShift = useMutation(modifyWorkShiftService, {
-    onSuccess: (data) => {
-      const { result, message } = data;
-      if (message) {
+  const useModifyWorkShift = useMutation(
+    workShiftService.modifyWorkShiftService,
+    {
+      onSuccess: (data) => {
+        const { result, message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          refreshListWorkDepartment();
+          toast({
+            title: "Modify WorkShift successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        refreshListWorkDepartment();
+      },
+    }
+  );
+  const useGetWorkShiftDepartment = useMutation(
+    workShiftService.getWorkShiftOfDepartment,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          setListWorkShiftDepartment((prevList) => {
+            let resultData = [...data?.result];
+            const mergedResult = unionBy(resultData, prevList, "shiftId");
+            queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
+            return mergedResult;
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: "Modify WorkShift successfully",
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
-  const useGetWorkShiftDepartment = useMutation(getWorkShiftOfDepartment, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
-        toast({
-          title: message,
-          position: "bottom-right",
-          status: "error",
-          isClosable: true,
-          duration: 5000,
-        });
-      } else {
-        setListWorkShiftDepartment((prevList) => {
-          let resultData = [...data?.result];
-          const mergedResult = unionBy(resultData, prevList, "shiftId");
-          queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
-          return mergedResult;
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
-  const useGetWorkShiftOfEmployee = useMutation(getWorkShiftOfEmployee, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
-        toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        setListWorkShiftDepartment((prevList) => {
-          let resultData = [...data?.result];
-          const mergedResult = unionBy(resultData, prevList, "shiftId");
-          queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
-          return mergedResult;
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
-  const useModifyShiftType = useMutation(modifyShiftTypeService, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
+      },
+    }
+  );
+  const useGetWorkShiftOfEmployee = useMutation(
+    workShiftService.getWorkShiftOfEmployee,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          setListWorkShiftDepartment((prevList) => {
+            let resultData = [...data?.result];
+            const mergedResult = unionBy(resultData, prevList, "shiftId");
+            queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
+            return mergedResult;
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        queryClient.invalidateQueries("listShiftType");
+      },
+    }
+  );
+  const useModifyShiftType = useMutation(
+    shiftTypeService.modifyShiftTypeService,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries("listShiftType");
+          toast({
+            title: `${
+              currentModifyShiftTypeId != "" ? "Modify" : "Create"
+            } Shift Type Successfully`,
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+        resetModal();
+      },
+      onError: (error) => {
         toast({
-          title: `${
-            currentModifyShiftTypeId != "" ? "Modify" : "Create"
-          } Shift Type Successfully`,
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-      resetModal();
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-      resetModal();
-    },
-  });
-  const useDeleteShiftType = useMutation(deleteShiftTypeService, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
-        toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        queryClient.invalidateQueries("listShiftType");
+        resetModal();
+      },
+    }
+  );
+  const useDeleteShiftType = useMutation(
+    shiftTypeService.deleteShiftTypeService,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries("listShiftType");
+          toast({
+            title: `Delete Shift Type Successfully`,
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+        resetModal();
+      },
+      onError: (error) => {
         toast({
-          title: `Delete Shift Type Successfully`,
+          title: error.response.data.message,
           position: "bottom-right",
-          status: "success",
+          status: "error",
           isClosable: true,
           duration: 5000,
         });
-      }
-      resetModal();
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-      resetModal();
-    },
-  });
+        resetModal();
+      },
+    }
+  );
   // #endregion
   // #region functions
   let listDepartmentArray = React.useMemo(() => {
