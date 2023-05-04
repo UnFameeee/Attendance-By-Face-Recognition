@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGetPermission } from "../../../hook/useGetPermission";
-import { permissionAttendanceManagement } from "../../../screen-permissions/permission";
+import { permissionAttendanceExceptionManagement } from "../../../screen-permissions/permission";
 import { useMutation, useQueryClient } from "react-query";
 import {
   Box,
@@ -36,28 +36,32 @@ import {
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import DynamicTable from "../../../components/table/DynamicTable";
-import DynamicDrawer from "../../../components/table/DynamicDrawer";
-import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
-import { attendanceDumbData } from "../../test/dumbTableData";
 import { Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
 import { BsArrowLeftRight } from "react-icons/bs";
-import test_Img from "../../../assets/ta.jpeg";
 import { useGetListDepartment } from "../../../services/organization/department";
 import { attendanceService } from "../../../services/attendance/attendance";
 import { Helper } from "../../../Utils/Helper";
+import moment from "moment";
 function AttendanceExceptionManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
-    permissionAttendanceManagement,
+    permissionAttendanceExceptionManagement,
     "attendance-management"
   );
   const toast = useToast();
   const queryClient = useQueryClient();
   const finalRef = React.useRef(null);
-  const [editData, setEditData] = useState({});
+  const [
+    currentApprovalAttendanceException,
+    setCurrentApprovalAttendanceException,
+  ] = useState({});
   const [listAttendanceException, setListAttendanceException] = useState([]);
-  console.log("listAttendanceException", listAttendanceException);
+  const [approvalId, setApprovalId] = useState("");
+  const [readOnlyApproval, setReadOnlyApproval] = useState(false);
+  const [attendanceExceptionGetListObj, setAttendanceExceptionGetListObj] =
+    useState();
+
   const [checkType, setCheckType] = useState("CHECKIN");
   const [userRole, setUserRole] = useState(Helper.getUserRole());
   // #endregion
@@ -84,12 +88,82 @@ function AttendanceExceptionManagement() {
         } else {
           setListAttendanceException((prevList) => {
             let resultData = [...data?.result?.data];
-            // const mergedResult = unionBy(resultData, prevList, "shiftId");
             queryClient.setQueryData(
               ["listAttendanceException", checkType],
               resultData
             );
             return resultData;
+          });
+        }
+      },
+      onError: (error) => {
+        toast({
+          title: error.response.data.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      },
+    }
+  );
+  const useGetAttendanceExceptionData = useMutation(
+    attendanceService.getAttendanceExceptionData,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          setCurrentApprovalAttendanceException((prevList) => {
+            let resultData = data?.result;
+            // const mergedResult = unionBy(resultData, prevList, "shiftId");
+            queryClient.setQueryData(
+              ["currentApprovalAttendanceException", checkType],
+              resultData
+            );
+            return resultData;
+          });
+        }
+      },
+      onError: (error) => {
+        toast({
+          title: error.response.data.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      },
+    }
+  );
+  const useVerifyExceptionAttendance = useMutation(
+    attendanceService.verifyExceptionAttendance,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          useGetListAttendanceException.mutate(attendanceExceptionGetListObj);
+          toast({
+            title: "Verify Attendance Exception Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
           });
         }
       },
@@ -110,9 +184,36 @@ function AttendanceExceptionManagement() {
     console.log("handleDeleteRange", data);
   };
   const Edit = (row, action) => {
-    console.log("Row",row)
-    onAddEditOpen();
-    setEditData(row);
+    if (row.status !== "WAITING") {
+      setReadOnlyApproval(true);
+    } else {
+      setReadOnlyApproval(false);
+    }
+    const id = row.attendanceExceptionId;
+    setApprovalId(id);
+    useGetAttendanceExceptionData.mutate(id);
+  };
+  const handleApproveApproval = () => {
+    let verifyApprovalObj = {};
+    verifyApprovalObj["status"] = "APPROVE";
+    verifyApprovalObj["id"] = approvalId;
+    useVerifyExceptionAttendance.mutate(verifyApprovalObj);
+    onAddEditClose();
+  };
+  const handleRejectApproval = () => {
+    let verifyApprovalObj = {};
+    verifyApprovalObj["status"] = "REJECT";
+    verifyApprovalObj["id"] = approvalId;
+    useVerifyExceptionAttendance.mutate(verifyApprovalObj);
+    onAddEditClose();
+  };
+  const handleChangeTab = (checkType) => {
+    setCheckType(checkType);
+    if (attendanceExceptionGetListObj?.departmentId) {
+      let getListAttendanceExceptionObj = { ...attendanceExceptionGetListObj };
+      getListAttendanceExceptionObj.attendanceType = checkType;
+      useGetListAttendanceException.mutate(getListAttendanceExceptionObj);
+    }
   };
   // #endregion
   // #region table
@@ -161,7 +262,7 @@ function AttendanceExceptionManagement() {
       },
       {
         Header: "Approver",
-        accessor: "approver",
+        accessor: "approver.fullname",
         // haveFilter: {
         //   filterType: FilterType.Text,
         // },
@@ -179,9 +280,6 @@ function AttendanceExceptionManagement() {
     ],
     []
   );
-  // #endregion
-  // #region drawer
-
   // #endregion
   // #region form
   let listDepartmentArray = React.useMemo(() => {
@@ -202,8 +300,43 @@ function AttendanceExceptionManagement() {
   };
   const validationSchemaForm = Yup.object().shape({
     departmentId: Yup.string().required("This field is required"),
-    dateSelect: Yup.date().required("This field is required"),
   });
+  const [initialValuesModal, setInitialValuesModal] = useState();
+  useEffect(() => {
+    if (currentApprovalAttendanceException) {
+      setInitialValuesModal(() => {
+        let tempObj = {};
+        tempObj["name_employeeInfo"] =
+          currentApprovalAttendanceException?.employeeData?.name;
+        tempObj["email_employeeInfo"] =
+          currentApprovalAttendanceException?.employeeData?.email;
+        tempObj["department_employeeInfo"] =
+          currentApprovalAttendanceException?.employeeData?.department?.departmentName;
+        tempObj["name_systemInfo"] =
+          currentApprovalAttendanceException?.systemData?.fullname;
+        tempObj["email_systemInfo"] =
+          currentApprovalAttendanceException?.systemData?.email;
+        tempObj["department_systemInfo"] =
+          currentApprovalAttendanceException?.systemData?.department?.departmentName;
+        tempObj["employeeImage"] =
+          currentApprovalAttendanceException?.employeeData?.image;
+        tempObj["systemImage"] =
+          currentApprovalAttendanceException?.systemData?.image;
+        tempObj["employeeTime"] = moment(
+          currentApprovalAttendanceException?.employeeData?.datetime
+        ).format("DD/MM/yyyy hh:mm A");
+        tempObj["systemTime"] = moment(
+          currentApprovalAttendanceException?.systemData?.shiftTime
+        ).format("DD/MM/yyyy hh:mm A");
+        return tempObj;
+      });
+    }
+  }, [currentApprovalAttendanceException]);
+  useEffect(() => {
+    if (initialValuesModal?.name_employeeInfo) {
+      onAddEditOpen();
+    }
+  }, [initialValuesModal]);
   // #endregion
   return (
     <VStack minHeight="100vh" alignItems="flex-start" spacing={3}>
@@ -226,12 +359,18 @@ function AttendanceExceptionManagement() {
           initialValues={initialValuesForm}
           validationSchema={validationSchemaForm}
           onSubmit={(values, actions) => {
-            let attendanceExceptionDataObj = {};
-            attendanceExceptionDataObj["attendanceType"] = checkType;
-            attendanceExceptionDataObj["filter"] = values.dateSelect;
-            attendanceExceptionDataObj["roleName"] = userRole.role;
-            attendanceExceptionDataObj["departmentId"] = values.departmentId;
-            useGetListAttendanceException.mutate(attendanceExceptionDataObj);
+            let attendanceExceptionListDataObj = {};
+            attendanceExceptionListDataObj["attendanceType"] = checkType;
+            if (values.dateSelect != "") {
+              attendanceExceptionListDataObj["filter"] = values.dateSelect;
+            }
+            attendanceExceptionListDataObj["roleName"] = userRole.role;
+            attendanceExceptionListDataObj["departmentId"] =
+              values.departmentId;
+            setAttendanceExceptionGetListObj(attendanceExceptionListDataObj);
+            useGetListAttendanceException.mutate(
+              attendanceExceptionListDataObj
+            );
           }}
         >
           {(formik) => (
@@ -262,13 +401,13 @@ function AttendanceExceptionManagement() {
           <TabList mb="1em">
             <Tab
               border="1px solid gray"
-              onClick={() => setCheckType("CHECKIN")}
+              onClick={() => handleChangeTab("CHECKIN")}
             >
               Check In
             </Tab>
             <Tab
               border="1px solid gray"
-              onClick={() => setCheckType("CHECKOUT")}
+              onClick={() => handleChangeTab("CHECKOUT")}
             >
               Check Out
             </Tab>
@@ -329,8 +468,7 @@ function AttendanceExceptionManagement() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Formik
-            >
+            <Formik initialValues={initialValuesModal}>
               {(formik) => (
                 <>
                   <HStack spacing="10px">
@@ -338,11 +476,18 @@ function AttendanceExceptionManagement() {
                       <Heading fontSize="xl" fontWeight="medium">
                         System Information
                       </Heading>
-                      <HStack spacing="20px">
-                        <Avatar src={test_Img} boxSize="100px" />
-                        <VStack>
-                          <Text fontSize="lg">Time:</Text>
-                          <Text>20:50 PM</Text>
+                      <HStack spacing="10px">
+                        <Avatar
+                          src={initialValuesModal?.systemImage}
+                          boxSize="100px"
+                        />
+                        <VStack alignItems="flex-start">
+                          <Text fontSize="lg" fontWeight="medium">
+                            Shift Time:
+                          </Text>
+                          <Text fontWeight="medium">
+                            {initialValuesModal?.systemTime}
+                          </Text>
                         </VStack>
                       </HStack>
                       <FormTextField
@@ -374,11 +519,18 @@ function AttendanceExceptionManagement() {
                       <Heading fontSize="xl" fontWeight="medium">
                         Employee Information
                       </Heading>
-                      <HStack spacing="20px">
-                        <Avatar src={test_Img} boxSize="100px" />
-                        <VStack>
-                          <Text fontSize="lg">Time:</Text>
-                          <Text>20:50 PM</Text>
+                      <HStack spacing="10px">
+                        <Avatar
+                          src={initialValuesModal?.employeeImage}
+                          boxSize="100px"
+                        />
+                        <VStack alignItems="flex-start">
+                          <Text fontSize="lg" fontWeight="medium">
+                            Time:
+                          </Text>
+                          <Text fontWeight="medium">
+                            {initialValuesModal?.employeeTime}
+                          </Text>
                         </VStack>
                       </HStack>
                       <FormTextField
@@ -410,11 +562,18 @@ function AttendanceExceptionManagement() {
                 colorScheme="red"
                 mr={3}
                 borderWidth="2px"
-                onClick={onAddEditClose}
+                isDisabled={readOnlyApproval}
+                onClick={handleRejectApproval}
               >
                 <Text fontWeight="bold">Reject</Text>
               </Button>
-              <Button borderWidth="2px" colorScheme="green" variant="outline">
+              <Button
+                borderWidth="2px"
+                colorScheme="green"
+                variant="outline"
+                isDisabled={readOnlyApproval}
+                onClick={handleApproveApproval}
+              >
                 <Text fontWeight="bold">Approve</Text>
               </Button>
             </Center>

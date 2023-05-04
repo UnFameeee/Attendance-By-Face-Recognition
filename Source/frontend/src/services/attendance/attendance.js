@@ -76,7 +76,7 @@ const verifyExceptionAttendance = async (data) => {
   const { id, status } = data;
   const response = await axiosBase.post(
     `${endPointAttendanceException}/verifyAttendanceException/${id}`,
-    status
+    { status: status }
   );
   return response.data;
 };
