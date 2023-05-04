@@ -144,7 +144,7 @@ function DynamicTable(props) {
                   />
                 )}
                 <Box>
-                  <Menu computePositionOnMount={true}>
+                  <Menu >
                     <Tooltip
                       placement="right"
                       label="Record Bulk Action"
