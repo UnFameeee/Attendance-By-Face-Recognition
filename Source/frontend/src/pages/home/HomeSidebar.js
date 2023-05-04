@@ -79,9 +79,9 @@ function HomeSidebar() {
     setUserRole(Helper.getUserRole());
   }, []);
   useEffect(() => {
-    if (profileDetailData?.result?.employeeImages[0]?.link) {
+    if (profileDetailData?.result?.image) {
       setUserAvatar(
-        profileDetailData?.result?.employeeImages[0]?.link + "?" + dayjs()
+        profileDetailData?.result?.image + "?" + dayjs()
       );
     }
   }, [isFetchingProfileDetailData]);
