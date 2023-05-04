@@ -58,15 +58,14 @@ const submissionOfExceptionAttendance = async (submissionData) => {
   return response.data;
 };
 const getListAttendanceException = async (data) => {
-  const pagingData = {};
-  pagingData = { page: 0, pageSize: 1000, ...data };
+  let pagingData = {};
+  pagingData = { page: 0, pageSize: 1000, extendData: { ...data } };
   const response = await axiosBase.post(
     `${endPointAttendanceException}/getListAttendanceException?`,
     pagingData
   );
   return response.data;
 };
-
 const getAttendanceExceptionData = async (id) => {
   const response = await axiosBase.get(
     `${endPointAttendanceException}/getAttendanceExceptionData/${id}`
@@ -77,7 +76,7 @@ const verifyExceptionAttendance = async (data) => {
   const { id, status } = data;
   const response = await axiosBase.post(
     `${endPointAttendanceException}/verifyAttendanceException/${id}`,
-    status
+    { status: status }
   );
   return response.data;
 };

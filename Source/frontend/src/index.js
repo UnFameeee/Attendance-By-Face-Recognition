@@ -36,7 +36,7 @@ import AttendanceModal from "./components/Attendance/AttendanceModal";
 import ExceptionModel from "./components/Attendance/ExceptionModel";
 import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
 import LeaveRequestManagement from "./pages/home/LeaveRequest/LeaveRequestManagement";
-import AttendanceManagement from "./pages/home/Attendance/AttendanceManagement";
+import AttendanceExceptionManagement from "./pages/home/Attendance/AttendanceExceptionManagement";
 import ReportAttendanceException from "./pages/home/Attendance/ReportAttendanceException";
 import URLValidationRoute from "./Utils/URLValidateRoute";
 const { ToastContainer, toast } = createStandaloneToast();
@@ -121,8 +121,8 @@ root.render(
                         element={<AttendancePersonal />}
                       />
                       <Route
-                        path="attendance-management"
-                        element={<AttendanceManagement />}
+                        path="attendance-exception-management"
+                        element={<AttendanceExceptionManagement />}
                       />
                     </Route>
                     <Route path="setting">

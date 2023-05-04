@@ -144,7 +144,7 @@ function DynamicTable(props) {
                   />
                 )}
                 <Box>
-                  <Menu>
+                  <Menu >
                     <Tooltip
                       placement="right"
                       label="Record Bulk Action"
@@ -452,6 +452,7 @@ function DynamicTable(props) {
           </HStack>
           <TableContainer rounded="lg" transform="rotateX(180deg)">
             <Table
+              minH='160px'
               transform="rotateX(180deg)"
               variant="simple"
               {...getTableProps()}

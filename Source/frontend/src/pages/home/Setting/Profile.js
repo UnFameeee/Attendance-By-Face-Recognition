@@ -373,7 +373,7 @@ function Profile() {
                     <Avatar
                       objectFit="cover"
                       src={
-                        profileDetailData?.result?.employeeImages[0]?.link +
+                        profileDetailData?.result?.image +
                         "?" +
                         dayjs()
                       }

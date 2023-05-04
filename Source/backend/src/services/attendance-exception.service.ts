@@ -287,6 +287,18 @@ export class AttendanceExceptionService {
       statusUpdate = attendanceExceptionStatus.reject;
     }
 
+    //Update attendance record
+    const queryAttendanceException = await prisma.attendanceException.findFirst({
+      where: {
+        attendanceExceptionId: attendanceExceptionId,
+      }
+    })
+
+    if (!queryAttendanceException) {
+      response.message = "The attendance exception record isn't exist";
+      return response;
+    }
+
     const queryData = await prisma.attendanceException.update({
       data: {
         status: statusUpdate,
@@ -297,13 +309,16 @@ export class AttendanceExceptionService {
       }
     })
 
-    if (statusUpdate == attendanceExceptionStatus.approve && queryData) {
-      //Update attendance record
-      const queryAttendanceException = await prisma.attendanceException.findFirst({
+    if (statusUpdate == attendanceExceptionStatus.approve) {
+      const queryEmployeeAttendanceExceptionData = await prisma.employee.findFirst({
         where: {
-          attendanceExceptionId: attendanceExceptionId,
+          email: queryAttendanceException.email,
+        },
+        select: {
+          id: true,
         }
       })
+
       const dateException = queryAttendanceException.datetime;
 
       const modifyDate = Helper.ConfigStaticDateTime("00:00", `${dateException.getFullYear()}-${dateException.getMonth() + 1}-${dateException.getDate()}`)
@@ -311,7 +326,7 @@ export class AttendanceExceptionService {
       //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
       const workShift = await prisma.workshift.findFirst({
         where: {
-          employeeId: employeeId,
+          employeeId: queryEmployeeAttendanceExceptionData.id,
           shiftDate: modifyDate,
           deleted: false,
         },
@@ -329,6 +344,11 @@ export class AttendanceExceptionService {
           }
         }
       })
+
+      if (!workShift) {
+        response.message = "The employee doesn't have workshift for this day";
+        return response;
+      }
 
       //Get the shiftDate from workShift - YYYY-MM-DD
       const shiftDate = workShift.shiftDate;
