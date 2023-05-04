@@ -3,18 +3,21 @@ import { ResponseData } from '../config/responseData.config';
 import { prisma } from '../database/prisma.singleton';
 import { AttendanceType } from '../utils/enum';
 import { Helper } from '../utils/helper';
+import { env } from '../config/env.config';
+import { TakeAttendanceDTO } from '../model/dtos/attendance.dto';
 
 export class AttendanceService {
 
-  public takeAttendance = async (employeeId: string, attendanceType: string) => {
+  public takeAttendance = async (data: TakeAttendanceDTO) => {
     const response = new ResponseData<string>();
+
     const now = new Date();
     const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
       where: {
-        employeeId: employeeId,
+        employeeId: data.employeeId,
         shiftDate: modifyDate,
         deleted: false,
       },
@@ -41,7 +44,7 @@ export class AttendanceService {
     //Kiểm tra xem đã có lần takeAttendance nào chưa ?
     const checkAttendance = await prisma.attendance.findFirst({
       where: {
-        employeeId: employeeId,
+        employeeId: data.employeeId,
         attendanceDate: modifyDate,
         deleted: false,
       }
@@ -95,9 +98,10 @@ export class AttendanceService {
 
       let queryData = await prisma.attendance.create({
         data: {
-          employeeId: employeeId,
+          employeeId: data.employeeId,
           attendanceDate: modifyDate,
           checkIn: new Date(now.toISOString()),
+          checkinCapture: data.image,
           checkOut: null,
           lateArrival: lateArrival,
           totalHours: 0,
@@ -155,7 +159,7 @@ export class AttendanceService {
 
       const queryShiftData = await prisma.attendance.findFirst({
         where: {
-          employeeId: employeeId,
+          employeeId: data.employeeId,
           attendanceDate: Helper.ConfigStaticDateTime("00:00", date),
           deleted: false,
         }
@@ -166,9 +170,10 @@ export class AttendanceService {
           attendanceId: queryShiftData.attendanceId,
         },
         data: {
-          employeeId: employeeId,
+          employeeId: data.employeeId,
           attendanceDate: modifyDate,
           checkOut: new Date(now.toISOString()),
+          checkoutCapture: data.image,
           earlyLeave: earlyLeave,
           totalHours: 0,
         }
@@ -181,4 +186,13 @@ export class AttendanceService {
       return response;
     }
   }
+
+  public saveImage = async (files: { [fieldname: string]: Express.Multer.File[] }) => {
+    const response = new ResponseData<string>;
+    let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
+
+    response.result = Helper.ConvertDoubleSlashURL(link);
+    return response;
+  }
+
 }

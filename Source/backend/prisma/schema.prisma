@@ -38,7 +38,7 @@ model Employee {
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
   attendances           Attendance[]
-  contracts             Contract[]
+  // contracts             Contract[]
   workshifts            Workshift[]
   leaveRequests         LeaveRequest[]        @relation("LeaveRequests")
   leaveRequestApproveds LeaveRequest[]        @relation("LeaveRequestApproveds")
@@ -174,8 +174,8 @@ model Department {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   deletedAt           DateTime?
-  departmentManager   DepartmentManager[]
   employee            Employee[]
+  departmentManager   DepartmentManager[]
   attendanceException AttendanceException[]
 
   @@map("department")
@@ -206,18 +206,20 @@ model Attendance {
   employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId String
 
-  attendanceDate DateTime
-  checkIn        DateTime?
-  checkOut       DateTime?
-  lateArrival    DateTime?
-  earlyLeave     DateTime?
-  totalHours     Float
-  absent         Boolean
-  note           String
-  deleted        Boolean   @default(false)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
+  attendanceDate  DateTime
+  checkIn         DateTime?
+  checkOut        DateTime?
+  checkinCapture  String?
+  checkoutCapture String?
+  lateArrival     DateTime?
+  earlyLeave      DateTime?
+  totalHours      Float
+  absent          Boolean
+  note            String
+  deleted         Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
 
   @@map("attendance")
 }
@@ -256,47 +258,47 @@ model ShiftType {
   @@map("shifttype")
 }
 
-model Contract {
-  contractId String    @id @default(uuid())
-  // EmployeeId
-  employee   Employee? @relation(fields: [employeeId], references: [id])
-  employeeId String?
+// model Contract {
+//   contractId String    @id @default(uuid())
+//   // EmployeeId
+//   employee   Employee? @relation(fields: [employeeId], references: [id])
+//   employeeId String?
 
-  startDate     DateTime
-  endDate       DateTime
-  jobTitle      String
-  payFrequency  String
-  hoursPerWeek  Int
-  overTimeRate  Float
-  bonuses       Float
-  note          String
-  deleted       Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  deletedAt     DateTime?
-  salaryReviews SalaryReview[]
+//   startDate     DateTime
+//   endDate       DateTime
+//   jobTitle      String
+//   payFrequency  String
+//   hoursPerWeek  Int
+//   overTimeRate  Float
+//   bonuses       Float
+//   note          String
+//   deleted       Boolean        @default(false)
+//   createdAt     DateTime       @default(now())
+//   updatedAt     DateTime       @updatedAt
+//   deletedAt     DateTime?
+//   salaryReviews SalaryReview[]
 
-  @@map("contract")
-}
+//   @@map("contract")
+// }
 
-model SalaryReview {
-  salaryReviewId String    @id @default(uuid())
-  // contractId
-  contract       Contract? @relation(fields: [contractId], references: [contractId])
-  contractId     String?
+// model SalaryReview {
+//   salaryReviewId String    @id @default(uuid())
+//   // contractId
+//   contract       Contract? @relation(fields: [contractId], references: [contractId])
+//   contractId     String?
 
-  date         DateTime
-  salary       Float
-  reason       String
-  payFrequency String
-  note         String
-  deleted      Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
+//   date         DateTime
+//   salary       Float
+//   reason       String
+//   payFrequency String
+//   note         String
+//   deleted      Boolean   @default(false)
+//   createdAt    DateTime  @default(now())
+//   updatedAt    DateTime  @updatedAt
+//   deletedAt    DateTime?
 
-  @@map("salaryreview")
-}
+//   @@map("salaryreview")
+// }
 
 model LeaveRequest {
   leaveRequestId String   @id @default(uuid())

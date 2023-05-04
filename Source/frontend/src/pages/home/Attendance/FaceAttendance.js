@@ -16,9 +16,12 @@ import { setAttendanceModalProps } from '../../../store/Slice/AttendanceSlice/at
 import { setIsScaningPaused, setIsTakeAttendance } from '../../../store/Slice/AttendanceSlice/takeAttendanceSlice';
 import ExceptionModel from './../../../components/Attendance/ExceptionModel';
 import Webcam from 'react-webcam'
+import { resetFailedCount, setExceptionModalOpen } from '../../../store/Slice/AttendanceSlice/exceptionModalSlice';
+import { setImageCapture } from '../../../store/Slice/AttendanceSlice/attendanceStorageSlice';
 // const WebcamComponent = () => <Webcam />
 
 let streamObj;
+var unknownCount = 0;
 export default function FaceAttendance() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const videoRef = useRef(null);
@@ -26,12 +29,33 @@ export default function FaceAttendance() {
   const toast = useToast();
   const dispatch = useDispatch();
   const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
+  const { imageCapture } = useSelector(state => state.attendanceStorage);
   const employeeId = useSelector(state => state.attendanceModal.employeeId);
 
-  const useTakeAttendance = useMutation((variable) =>
-    attendanceService.takeAttendance(variable.employeeId, variable.attendanceType), {
+  const useSaveImageOfAttendance = useMutation((variable) =>
+    attendanceService.saveImageOfAttendance(variable), {
     onSuccess: (data) => {
+      useTakeAttendance.mutate({
+        employeeId: employeeId,
+        attendanceType: "FACE",
+        image: data.result,
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  })
 
+  const useTakeAttendance = useMutation((variable) =>
+    attendanceService.takeAttendance(variable), {
+    onSuccess: (data) => {
       dispatch(setIsTakeAttendance({
         isTakeAttendance: false,
       }))
@@ -67,6 +91,7 @@ export default function FaceAttendance() {
         }))
       }, 10000);
     },
+
     onError: (error) => {
       console.log(error);
       toast({
@@ -76,7 +101,7 @@ export default function FaceAttendance() {
         isClosable: true,
         duration: 5000,
       });
-    }
+    },
   })
 
   useEffect(() => {
@@ -144,7 +169,6 @@ export default function FaceAttendance() {
       const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
         if (!useTakeAttendance.isLoading) {
-          console.log(videoRef.current)
           const detections = await faceapi
             // .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
             .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
@@ -169,11 +193,37 @@ export default function FaceAttendance() {
 
             if (!isScaningPaused) {
               faceDetectArray.push(faceDetected.label);
+              console.log(faceDetected.label)
+              if (faceDetected.label == "unknown") {
+                // setUnknownCount((prevValue) => prevValue + 1);
+                unknownCount++;
+                console.log(unknownCount)
+                if (unknownCount == 15) {
+                  //remove the data in the detection array
+                  faceDetectArray.splice(0, faceDetectArray.length);
+
+                  dispatch(setImageCapture({
+                    imageCapture: videoRef.current.getScreenshot(),
+                  }))
+
+                  unknownCount = 0;
+                  dispatch(resetFailedCount());
+                  dispatch(setIsScaningPaused({
+                    isScaningPaused: true,
+                  }))
+                  dispatch(setExceptionModalOpen({
+                    isExceptionModalOpen: true,
+                  }))
+                }
+              }
+
               console.log(faceDetectArray);
               if (faceDetectArray.length >= 3) {
                 //if the case isn't "unknown"
                 const highestFaceValue = Helper.findMostDuplicatedValue(faceDetectArray);
                 if (highestFaceValue !== "unknown") {
+                  unknownCount = 0;
+
                   dispatch(setIsScaningPaused({
                     isScaningPaused: true,
                   }))
@@ -181,6 +231,10 @@ export default function FaceAttendance() {
                   dispatch(setAttendanceModalProps({
                     isAttendanceModalOpen: true,
                     employeeId: highestFaceValue
+                  }))
+
+                  dispatch(setImageCapture({
+                    imageCapture: videoRef.current.getScreenshot(),
                   }))
 
                   const imageSrc = videoRef.current.getScreenshot();
@@ -206,11 +260,10 @@ export default function FaceAttendance() {
 
   useEffect(() => {
     if (isTakeAttendance) {
-      const data = {
+      useSaveImageOfAttendance.mutate({
         employeeId: employeeId,
-        attendanceType: "FACE",
-      }
-      useTakeAttendance.mutate(data);
+        image: imageCapture
+      });
     }
   }, [isTakeAttendance]);
 
@@ -229,7 +282,7 @@ export default function FaceAttendance() {
         <Webcam id='video' ref={videoRef} audio={false} screenshotFormat="image/jpeg" ></Webcam>
       </div>
       <div>
-        <Img style={{border: "1px solid red"}} id='captureImage' src={null}/>
+        <Img style={{ border: "1px solid red" }} id='captureImage' src={null} />
       </div>
       {employeeId && <AttendanceModal />}
       <ExceptionModel />

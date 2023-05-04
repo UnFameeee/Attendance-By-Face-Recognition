@@ -2,22 +2,24 @@ import axiosBase from "../../Utils/AxiosInstance";
 import { baseURL } from "./../../Utils/AxiosInstance";
 import { useQuery } from "react-query";
 
-const endPoint = baseURL + "/attendance";
+const endPointAttendance = baseURL + "/attendance";
 const endPointAttendanceException = baseURL + "/attendance-exception";
-const takeAttendance = async (employeeId, attendanceType) => {
-  const postObj = {
+
+const takeAttendance = async (data) => {
+  const { employeeId, attendanceType, image } = data;
+
+  const response = await axiosBase.post(`${endPointAttendance}/takeAttendance`, {
     employeeId: employeeId,
     attendanceType: attendanceType,
-  };
-  const response = await axiosBase.post(`${endPoint}/takeAttendance`, postObj);
+    image: image,
+  });
   return response.data;
 };
 
 const getEmployeeDetailById = async (id) => {
-  // debugger;
   if (id) {
     const response = await axiosBase.get(
-      `${endPoint}/getEmployeeDetailById/${id}`
+      `${endPointAttendance}/getEmployeeDetailById/${id}`
     );
     return response.data;
   }
@@ -81,6 +83,18 @@ const verifyExceptionAttendance = async (data) => {
   );
   return response.data;
 };
+
+const saveImageOfAttendance = async (data) => {
+  const { employeeId, image } = data;
+  const headers = {
+    "Content-Type": "multipart/form-data",
+  };
+  const response = await axiosBase.post(`${endPointAttendance}/saveImage?employeeId=${employeeId}`,
+    image, { headers }
+  );
+  return response.data;
+};
+
 export const attendanceService = {
   takeAttendance,
   useGetEmployeeDetailById,
@@ -89,4 +103,5 @@ export const attendanceService = {
   getListAttendanceException,
   getAttendanceExceptionData,
   verifyExceptionAttendance,
+  saveImageOfAttendance,
 };

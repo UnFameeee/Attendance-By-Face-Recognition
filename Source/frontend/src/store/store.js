@@ -5,6 +5,7 @@ import authReducer from "./Slice/authSlice";
 import exceptionModalReducer from "./Slice/AttendanceSlice/exceptionModalSlice";
 import attendanceModalReducer from "./Slice/AttendanceSlice/attendanceModalSlice";
 import takeAttendanceReducer from "./Slice/AttendanceSlice/takeAttendanceSlice";
+import attendanceStorageReducer from "./Slice/AttendanceSlice/attendanceStorageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,5 +14,6 @@ export const store = configureStore({
     attendanceModal: attendanceModalReducer,
     exceptionModal: exceptionModalReducer,
     takeAttendance: takeAttendanceReducer,
+    attendanceStorage: attendanceStorageReducer,
   },
 });
