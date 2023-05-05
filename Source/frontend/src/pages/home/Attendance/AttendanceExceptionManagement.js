@@ -45,6 +45,7 @@ import { Helper } from "../../../Utils/Helper";
 import moment from "moment";
 import { approvalCodeColor } from "../../../data/ColorData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
+import AvatarWithPreview from "../../../components/AvatarWithPreview";
 function AttendanceExceptionManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -383,9 +384,9 @@ function AttendanceExceptionManagement() {
               // alignItems="end"
               as="form"
               onSubmit={formik.handleSubmit}
-              flexDirection={{ 'sm': "row", 'base': "column" }}
-              gap='10px'
-              alignItems={{ 'base': "baseline", 'sm': "end" }}
+              flexDirection={{ sm: "row", base: "column" }}
+              gap="10px"
+              alignItems={{ base: "baseline", sm: "end" }}
             >
               <FormTextField
                 label="Date"
@@ -595,9 +596,11 @@ function AttendanceExceptionManagement() {
                         System Information
                       </Heading>
                       <HStack spacing="10px">
-                        <Avatar
+                        <AvatarWithPreview
+                          alt="avatar-from-system"
                           src={initialValuesModal?.systemImage}
-                          boxSize="100px"
+                          className="h-[100px] w-[100px] rounded-md"
+                          altBoxSide="100px"
                         />
                         <VStack alignItems="flex-start">
                           <Text fontSize="lg" fontWeight="medium">
@@ -638,9 +641,11 @@ function AttendanceExceptionManagement() {
                         Employee Information
                       </Heading>
                       <HStack spacing="10px">
-                        <Avatar
+                        <AvatarWithPreview
+                          alt="avatar-from-employee"
                           src={initialValuesModal?.employeeImage}
-                          boxSize="100px"
+                          className="h-[100px] w-[100px] rounded-md"
+                          altBoxSide="100px"
                         />
                         <VStack alignItems="flex-start">
                           <Text fontSize="lg" fontWeight="medium">

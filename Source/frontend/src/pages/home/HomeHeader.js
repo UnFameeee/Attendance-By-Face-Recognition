@@ -29,6 +29,7 @@ import { setUser } from "../../store/Slice/authSlice";
 import { Helper } from "../../Utils/Helper";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
+import AvatarWithPreview from "../../components/AvatarWithPreview";
 function HomeHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,8 +39,7 @@ function HomeHeader() {
   const [userAvatar, setUserAvatar] = useState();
   const { data: profileDetailData, isFetching: isFetchingProfileDetailData } =
     useGetProfileDetail(decoded.id);
-  const { collapseSidebar, toggleSidebar, toggled } =
-    useProSidebar();
+  const { collapseSidebar, toggleSidebar, toggled } = useProSidebar();
 
   const handleCollapseSidebar = () => {
     collapseSidebar();
@@ -73,9 +73,7 @@ function HomeHeader() {
   const userData = Helper.getUseDecodeInfor();
   useEffect(() => {
     if (profileDetailData?.result?.image) {
-      setUserAvatar(
-        profileDetailData?.result?.image + "?" + dayjs()
-      );
+      setUserAvatar(profileDetailData?.result?.image + "?" + dayjs());
     }
   }, [isFetchingProfileDetailData]);
   return (
@@ -184,7 +182,6 @@ function HomeHeader() {
                       border="2px solid white"
                       src={userAvatar}
                     />
-
                     <Hide below="sm">
                       <Text fontSize="1.2rem">{userData.email}</Text>
                     </Hide>

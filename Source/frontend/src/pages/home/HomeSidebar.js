@@ -34,6 +34,7 @@ import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
+import AvatarWithPreview from "../../components/AvatarWithPreview";
 function HomeSidebar() {
   var decoded = Helper.getUseDecodeInfor();
   const [userRole, setUserRole] = useState("");
@@ -102,7 +103,11 @@ function HomeSidebar() {
               bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
-                <Avatar border="2px solid white" src={userAvatar} />
+                <AvatarWithPreview
+                  src={userAvatar}
+                  alt="avatar"
+                  className=" h-[48px] w-[48px] 2px solid white"
+                />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"
