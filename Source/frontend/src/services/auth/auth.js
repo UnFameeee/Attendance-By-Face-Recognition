@@ -4,15 +4,14 @@ import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
 import jwtDecode from "jwt-decode";
 import Cookies from "universal-cookie";
 
-export const login = async ({ email, password }) => {
+const login = async ({ email, password }) => {
   const response = await axiosBase.post(`auth/login`, {
     email,
     password,
   });
   return response.data;
 };
-
-export const register = async ({ username, email, password }) => {
+const register = async ({ username, email, password }) => {
   const response = await axiosBase.post(`auth/register`, {
     username,
     email,
@@ -20,16 +19,15 @@ export const register = async ({ username, email, password }) => {
   });
   return response.data;
 };
-export const logout = async () => {
+const logout = async () => {
   const response = await axiosBase.delete(`auth/logout`);
   const cookies = new Cookies();
   cookies.remove("jwt_authentication");
   localStorage.removeItem("accessToken");
-  localStorage.removeItem("userPermission")
+  localStorage.removeItem("userPermission");
   return response.data;
 };
-
-export const refreshToken = async ({ refreshToken }) => {
+const refreshToken = async ({ refreshToken }) => {
   const cookies = new Cookies();
   const headers = {
     "Content-Type": "application/json",
@@ -44,4 +42,11 @@ export const refreshToken = async ({ refreshToken }) => {
   cookies.set("jwt_authentication", refresh, {
     expires: new Date(decoded.exp * 1000),
   });
+};
+
+export const authService = {
+  login,
+  register,
+  logout,
+  refreshToken,
 };

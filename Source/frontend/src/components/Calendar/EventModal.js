@@ -21,7 +21,7 @@ import FormTextField from "../field/FormTextField";
 import { Helper } from "../../Utils/Helper";
 import moment from "moment";
 import { useMutation } from "react-query";
-import { deleteWorkShiftService } from "../../services/workshift/workshift";
+import { workShiftService } from "../../services/workshift/workshift";
 import ChakraAlertDialog from "../ChakraAlertDialog";
 export default function EventModal(props) {
   // #region declare variable
@@ -58,44 +58,47 @@ export default function EventModal(props) {
   });
   // #endregion
   // #region hooks
-  const useDeleteWorkShift = useMutation(deleteWorkShiftService, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
+  const useDeleteWorkShift = useMutation(
+    workShiftService.deleteWorkShiftService,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          setListWorkShiftDepartment((prevList) => {
+            const removeSingleArray = prevList.filter(
+              (item) => item?.shiftId != selectedEvent?.shiftId
+            );
+            return removeSingleArray;
+          });
+          refreshListWorkDepartment();
+          toast({
+            title: "Delete Shift Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        setListWorkShiftDepartment((prevList) => {
-          const removeSingleArray = prevList.filter(
-            (item) => item?.shiftId != selectedEvent?.shiftId
-          );
-          return removeSingleArray;
-        });
-        refreshListWorkDepartment();
-        toast({
-          title: "Delete Shift Successfully",
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
+      },
+    }
+  );
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,

@@ -17,8 +17,7 @@ import { Formik } from "formik";
 import { SlOrganization } from "react-icons/sl";
 import FormTextField from "../../../components/field/FormTextField";
 import {
-  createOrganizationDetail,
-  saveOrganizationDetail,
+  organizationService,
   useGetOrganizationDetail,
 } from "../../../services/organization/organization";
 import { useMutation, useQueryClient } from "react-query";
@@ -35,71 +34,81 @@ function OrganizationGeneral() {
   const queryClient = useQueryClient();
   // #endregion
   // #region hooks
-  const { data: organizationDetailData, isLoading, isFetching:isFetchingOrganizationDetail } = useGetOrganizationDetail();
-  const useCreateOrganizationDetail = useMutation(createOrganizationDetail, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
+  const {
+    data: organizationDetailData,
+    isLoading,
+    isFetching: isFetchingOrganizationDetail,
+  } = useGetOrganizationDetail();
+  const useCreateOrganizationDetail = useMutation(
+    organizationService.createOrganizationDetail,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries("organizationDetail");
+          toast({
+            title: "Save Organization Detail Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        queryClient.invalidateQueries("organizationDetail");
+      },
+    }
+  );
+  const useSaveOrganizationDetail = useMutation(
+    organizationService.saveOrganizationDetail,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          queryClient.invalidateQueries("organizationDetail");
+          toast({
+            title: "Save Organization Detail Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
         toast({
-          title: "Save Organization Detail Successfully",
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
-  const useSaveOrganizationDetail = useMutation(saveOrganizationDetail, {
-    onSuccess: (data) => {
-      const { message } = data;
-      if (message) {
-        toast({
-          title: message,
+          title: error.response.data.message,
           position: "bottom-right",
           status: "error",
           isClosable: true,
           duration: 5000,
         });
-      } else {
-        queryClient.invalidateQueries("organizationDetail");
-        toast({
-          title: "Save Organization Detail Successfully",
-          position: "bottom-right",
-          status: "success",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: error.response.data.message,
-        position: "bottom-right",
-        status: "error",
-        isClosable: true,
-        duration: 5000,
-      });
-    },
-  });
+      },
+    }
+  );
   // #endregion
   // #region form
   var initialValuesExisted = {

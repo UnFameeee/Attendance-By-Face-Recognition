@@ -1,19 +1,11 @@
 import {
   Box,
   Flex,
-  Image,
   Center,
   Text,
   Heading,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  HStack,
   Stack,
-  InputRightAddon,
   Button,
-  FormControl,
-  FormLabel,
   useToast,
 } from "@chakra-ui/react";
 import { Formik } from "formik";
@@ -25,19 +17,16 @@ import {
   ViewOffIcon,
   StarIcon,
 } from "@chakra-ui/icons";
-import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Form, Link, useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import AuthTextField from "../../components/field/AuthTextField";
 import { useMutation } from "react-query";
-import { register } from "../../services/auth/auth";
-import { useProSidebar } from "react-pro-sidebar";
-import { useDispatch, useSelector } from "react-redux";
-import { collapsedHomeSideBar } from "../../store/Slice/responsiveSlice";
+import { authService } from "../../services/auth/auth";
+import { useDispatch } from "react-redux";
 function Register() {
   const navigate = useNavigate();
   const toast = useToast();
-  const useRegisterMutation = useMutation(register, {
+  const useRegisterMutation = useMutation(authService.register, {
     onSuccess: (data) => {
       toast({
         title: "Sign up successfully",
@@ -58,7 +47,7 @@ function Register() {
       });
     },
   });
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   return (
     <Center minHeight="calc(100vh - 160px)" width="100vw" bgColor="gray.200">
       <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">

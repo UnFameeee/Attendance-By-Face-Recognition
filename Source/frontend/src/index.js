@@ -98,13 +98,13 @@ root.render(
                         element={<EmployeesManagement />}
                       />
                     </Route>
-                    <Route path="payroll">
+                    {/* <Route path="payroll">
                       <Route path="gross-net" element={<Test />} />
                       <Route path="payslip" element={<Test />} />
-                    </Route>
+                    </Route> */}
                     <Route path="work-shift" element={<WorkShift />} />
                     <Route path="notification" element={<Test />} />
-                    <Route path="report" element={<Test />} />
+                    {/* <Route path="report" element={<Test />} /> */}
                     <Route path="leave-request">
                       <Route
                         path="leave-request-personal"

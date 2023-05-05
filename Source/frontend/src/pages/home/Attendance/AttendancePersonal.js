@@ -272,11 +272,11 @@ function AttendancePersonal() {
                     </Text>
                   </HStack>
                   {index % 2 == 0 ? (
-                    <Badge rounded="md" colorScheme="green" fontSize="md">
+                    <Badge rounded="md" colorScheme="green" fontSize="md" p='5px'>
                       On Time
                     </Badge>
                   ) : (
-                    <Badge rounded="md" colorScheme="yellow" fontSize="md">
+                    <Badge rounded="md" colorScheme="yellow" fontSize="md" p='5px'>
                       Late
                     </Badge>
                   )}

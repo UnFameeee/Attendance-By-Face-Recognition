@@ -9,9 +9,6 @@ import {
   useDisclosure,
   useToast,
   Tooltip,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
 } from "@chakra-ui/react";
 import {
   Sidebar,
@@ -21,15 +18,13 @@ import {
   useProSidebar,
 } from "react-pro-sidebar";
 import { SideBarData } from "../../data/SideBarData";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { RiRadioButtonLine } from "react-icons/ri";
-import avt_user from "../../assets/ta.jpeg";
 import { useMutation } from "react-query";
-import { logout } from "../../services/auth/auth";
+import { authService } from "../../services/auth/auth";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/Slice/authSlice";
-import Cookies from "universal-cookie";
 import { MdLogout } from "react-icons/md";
 import {
   BsLayoutSidebarInsetReverse,
@@ -39,6 +34,7 @@ import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
+import AvatarWithPreview from "../../components/AvatarWithPreview";
 function HomeSidebar() {
   var decoded = Helper.getUseDecodeInfor();
   const [userRole, setUserRole] = useState("");
@@ -55,7 +51,7 @@ function HomeSidebar() {
   } = useDisclosure();
   const { data: profileDetailData, isFetching: isFetchingProfileDetailData } =
     useGetProfileDetail(decoded.id);
-  const useLogoutMutation = useMutation(logout, {
+  const useLogoutMutation = useMutation(authService.logout, {
     onSuccess: (data) => {
       dispatch(setUser(null));
       navigate("/sign-in");
@@ -80,9 +76,7 @@ function HomeSidebar() {
   }, []);
   useEffect(() => {
     if (profileDetailData?.result?.image) {
-      setUserAvatar(
-        profileDetailData?.result?.image + "?" + dayjs()
-      );
+      setUserAvatar(profileDetailData?.result?.image + "?" + dayjs());
     }
   }, [isFetchingProfileDetailData]);
   return (
@@ -109,7 +103,11 @@ function HomeSidebar() {
               bg="primary2"
             >
               <Flex flex="8" alignItems="center" gap="2">
-                <Avatar border="2px solid white" src={userAvatar} />
+                <AvatarWithPreview
+                  src={userAvatar}
+                  alt="avatar"
+                  className=" h-[48px] w-[48px] 2px solid white"
+                />
                 <Box display="flex" flexDirection="column">
                   <Heading
                     fontSize="large"
@@ -122,7 +120,7 @@ function HomeSidebar() {
                     {profileDetailData?.result?.email}
                   </Heading>
                   <Box display="flex" alignItems="center" gap={1}>
-                    <Icon as={RiRadioButtonLine} color="green" boxSize={6} />
+                    <Icon as={RiRadioButtonLine} color="#19d819" boxSize={6} />
                     <Text color="white">Signed in</Text>
                   </Box>
                 </Box>

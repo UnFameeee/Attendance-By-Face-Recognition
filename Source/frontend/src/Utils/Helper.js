@@ -121,6 +121,11 @@ const splitUnderscoreStringToArray = (string) => {
   const parts = string.split("_");
   return parts;
 };
+const matchingCodeColor = (value,codeColorObj) => {
+  return codeColorObj.find(
+    (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
+  );
+};
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -133,4 +138,5 @@ export const Helper = {
   getScreenAuthorization,
   splitUrlPath,
   splitUnderscoreStringToArray,
+  matchingCodeColor,
 };

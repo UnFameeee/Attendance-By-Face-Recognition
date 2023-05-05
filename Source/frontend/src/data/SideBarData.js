@@ -67,23 +67,23 @@ export const SideBarData = [
       },
     ],
   },
-  {
-    title: "Payroll",
-    url: "payroll",
-    icon: <MdPayments fontSize={iconSize} />,
-    children: [
-      {
-        title: "Gross and Net",
-        url: "gross-net",
-        icon: <TbReportMoney fontSize={iconSize} />,
-      },
-      {
-        title: "Payslip",
-        url: "payslip",
-        icon: <GiPayMoney fontSize={iconSize} />,
-      },
-    ],
-  },
+  // {
+  //   title: "Payroll",
+  //   url: "payroll",
+  //   icon: <MdPayments fontSize={iconSize} />,
+  //   children: [
+  //     {
+  //       title: "Gross and Net",
+  //       url: "gross-net",
+  //       icon: <TbReportMoney fontSize={iconSize} />,
+  //     },
+  //     {
+  //       title: "Payslip",
+  //       url: "payslip",
+  //       icon: <GiPayMoney fontSize={iconSize} />,
+  //     },
+  //   ],
+  // },
   {
     title: "Work Shift",
     url: "work-shift",
@@ -94,11 +94,11 @@ export const SideBarData = [
     url: "notification",
     icon: <IoNotifications fontSize={iconSize} />,
   },
-  {
-    title: "Report",
-    url: "report",
-    icon: <GoReport fontSize={iconSize} />,
-  },
+  // {
+  //   title: "Report",
+  //   url: "report",
+  //   icon: <GoReport fontSize={iconSize} />,
+  // },
   {
     title: "Leave Request",
     url: "leave-request",

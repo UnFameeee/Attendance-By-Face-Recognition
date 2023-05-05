@@ -37,7 +37,7 @@ const calculateRealMonth = (monthIndex) => {
   }
   return month;
 };
-export const getListShiftType = async () => {
+const getListShiftType = async () => {
   const paging = {
     page: 0,
     pageSize: 20,
@@ -48,22 +48,20 @@ export const getListShiftType = async () => {
   );
   return response.data;
 };
-
 export const useGetListShiftType = () => {
   return useQuery("listShiftType", getListShiftType, {
     refetchOnWindowFocus: false,
     retry: 1,
   });
 };
-export const modifyWorkShiftService = async (workShiftObj) => {
+const modifyWorkShiftService = async (workShiftObj) => {
   const response = await axiosBase.post(
     `${endPointWorkShift}/modifyWorkshift`,
     workShiftObj
   );
   return response.data;
 };
-
-export const getWorkShiftOfEmployee = async (data) => {
+const getWorkShiftOfEmployee = async (data) => {
   const { employeeId, monthIndex } = data;
   let month = calculateRealMonth(monthIndex);
   const response = await axiosBase.post(
@@ -72,7 +70,6 @@ export const getWorkShiftOfEmployee = async (data) => {
   );
   return response.data;
 };
-
 export const useGetWorkShiftEmployee = (monthIndex) => {
   const userData = Helper.getUseDecodeInfor();
   return useQuery(
@@ -84,8 +81,7 @@ export const useGetWorkShiftEmployee = (monthIndex) => {
     }
   );
 };
-
-export const getWorkShiftOfDepartment = async (data) => {
+const getWorkShiftOfDepartment = async (data) => {
   const { departmentId, monthIndex } = data;
   let month = calculateRealMonth(monthIndex);
   const response = await axiosBase.post(
@@ -94,24 +90,34 @@ export const getWorkShiftOfDepartment = async (data) => {
   );
   return response.data;
 };
-export const deleteWorkShiftService = async (shiftId) => {
+const deleteWorkShiftService = async (shiftId) => {
   const response = await axiosBase.delete(
     `${endPointWorkShift}/deleteWorkshift/${shiftId}`
   );
   return response.data;
 };
-
-export const modifyShiftTypeService = async (data) => {
+const modifyShiftTypeService = async (data) => {
   const response = await axiosBase.post(
     `${endPointShiftType}/modifyShiftType`,
     data
   );
   return response.data;
 };
-
-export const deleteShiftTypeService = async (id) => {
+const deleteShiftTypeService = async (id) => {
   const response = await axiosBase.delete(
     `${endPointShiftType}/deleteShiftType/${id}`
   );
   return response.data;
+};
+
+export const workShiftService = {
+  modifyWorkShiftService,
+  getWorkShiftOfEmployee,
+  getWorkShiftOfDepartment,
+  deleteWorkShiftService,
+};
+export const shiftTypeService = {
+  getListShiftType,
+  modifyShiftTypeService,
+  deleteShiftTypeService,
 };

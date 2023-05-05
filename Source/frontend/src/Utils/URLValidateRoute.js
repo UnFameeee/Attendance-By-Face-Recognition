@@ -12,15 +12,15 @@ export default function URLValidationRoute() {
     isFetching: urlValidateisFetching,
     error: urlValidateError,
   } = urlService.useValidateURL(dataQuery);
-
+  
   if (urlValidateisFetching) {
     return <Outlet />
   }
 
-  if (urlValidateData.result == false) {
-    // return <Navigate to="notfound" />;
-    return <NotFound />;
-  }
+  // if (urlValidateData.result == false) {
+  //   // return <Navigate to="notfound" />;
+  //   return <NotFound />;
+  // }
 
   return (
     <Outlet />
