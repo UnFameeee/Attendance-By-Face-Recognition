@@ -110,7 +110,7 @@ export const dateTimeSchema = z.object({
       .number({
         required_error: 'Month is required',
         invalid_type_error: "Month must be number",
-        description: "Year should be an array"
+        description: "Month should be an array"
       })
       .min(1, "Month must be more than or equal to 1")
       .max(13, "Month must be less than or equal to 12")
@@ -125,3 +125,31 @@ export const dateTimeSchema = z.object({
 
 });
 export type DateTimeDTO = z.infer<typeof dateTimeSchema>;
+
+export const dateTimeV2Schema = z.object({
+  date: z
+    .number({
+      required_error: 'Date is required',
+      invalid_type_error: "Date must be number"
+    })
+    .min(1, "Date must be more than or equal to 1")
+    .max(31, "Date must be less than or equal to 31")
+    .optional(),
+
+  month: z
+    .number({
+      required_error: 'Month is required',
+      invalid_type_error: "Month must be number",
+    })
+    .min(1, "Month must be more than or equal to 1")
+    .max(13, "Month must be less than or equal to 12"),
+
+  year: z
+    .number({
+      required_error: 'Year is required',
+      invalid_type_error: "Year must be number",
+    })
+    .min(1, "Year must be positive number")
+
+});
+export type DateTimeV2DTO = z.infer<typeof dateTimeV2Schema>;

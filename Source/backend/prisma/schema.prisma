@@ -32,6 +32,7 @@ model Employee {
   description           String?
   worktype              String?
   status                Boolean?
+  firsttimeLogin        Boolean               @default(true)
   refreshToken          String?
   deleted               Boolean               @default(false)
   createdAt             DateTime              @default(now())

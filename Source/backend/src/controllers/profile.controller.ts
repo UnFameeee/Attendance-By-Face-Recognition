@@ -84,4 +84,15 @@ export class ProfileController {
       next(err);
     }
   }
+
+  public validateFirstTimeLogin = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId: string = req.profile.id;
+      const response = await this.profileService.validateFirstTimeLogin(employeeId);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+  
 }
