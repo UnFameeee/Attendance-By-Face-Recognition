@@ -121,67 +121,65 @@ function DynamicTable(props) {
       manualPagination: false,
     },
     (hooks) => {
-      {
-        hooks?.visibleColumns?.push((columns) => [
-          {
-            id: "action",
-            Header: ({ getToggleAllRowsSelectedProps }) => (
-              <Flex gap="5px">
-                {permission?.delete && (
-                  <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                )}
-                <Text color="white" fontWeight="normal" fontSize="1.2rem">
-                  Action
-                </Text>
-              </Flex>
-            ),
-            Cell: ({ row }) => (
-              <HStack>
-                {permission?.delete && (
-                  <IndeterminateCheckbox
-                    {...row.getToggleRowSelectedProps()}
-                    type="checkbox"
-                  />
-                )}
-                <Box>
-                  <Menu >
-                    <Tooltip
-                      placement="right"
-                      label="Record Bulk Action"
-                      hasArrow
+      hooks?.visibleColumns?.push((columns) => [
+        {
+          id: "action",
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            <Flex gap="5px">
+              {permission?.delete && (
+                <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+              )}
+              <Text color="white" fontWeight="normal" fontSize="1.2rem">
+                Action
+              </Text>
+            </Flex>
+          ),
+          Cell: ({ row }) => (
+            <HStack>
+              {permission?.delete && (
+                <IndeterminateCheckbox
+                  {...row.getToggleRowSelectedProps()}
+                  type="checkbox"
+                />
+              )}
+              <Box>
+                <Menu>
+                  <Tooltip
+                    placement="right"
+                    label="Record Bulk Action"
+                    hasArrow
+                  >
+                    <MenuButton
+                      colorScheme="blue"
+                      variant="outline"
+                      as={Button}
                     >
-                      <MenuButton
-                        colorScheme="blue"
-                        variant="outline"
-                        as={Button}
-                      >
-                        <Icon as={FiMoreVertical} />
-                      </MenuButton>
-                    </Tooltip>
-                    <MenuList>
-                      {tableRowAction.map((item) => {
-                        return (
-                          <MenuItem
-                            isDisabled={!item?.isDisabled}
-                            key={item.actionName}
-                            onClick={() => {
-                              item.func(row?.values, item.actionName);
-                              // console.log("row", row);
-                            }}
-                          >
-                            {item.actionName}
-                          </MenuItem>
-                        );
-                      })}
-                    </MenuList>
-                  </Menu>
-                </Box>
-              </HStack>
-            ),
-          },
-          ...columns,
-        ]);
-      }
+                      <Icon as={FiMoreVertical} />
+                    </MenuButton>
+                  </Tooltip>
+                  <MenuList>
+                    {tableRowAction.map((item) => {
+                      return (
+                        <MenuItem
+                          isDisabled={!item?.isDisabled}
+                          key={item.actionName}
+                          onClick={() => {
+                            item.func(row?.values, item.actionName);
+                            // console.log("row", row);
+                          }}
+                        >
+                          {item.actionName}
+                        </MenuItem>
+                      );
+                    })}
+                  </MenuList>
+                </Menu>
+              </Box>
+            </HStack>
+          ),
+        },
+        ...columns,
+      ]);
     },
     useSortBy,
     usePagination,
@@ -452,7 +450,7 @@ function DynamicTable(props) {
           </HStack>
           <TableContainer rounded="lg" transform="rotateX(180deg)">
             <Table
-              minH='160px'
+              minH="160px"
               transform="rotateX(180deg)"
               variant="simple"
               {...getTableProps()}
