@@ -3,11 +3,14 @@ import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
 import { pagingInstance } from "../../Utils/PagingInstance";
 
 const endPoint = baseURL + "/department";
-export const getListDepartment = async ({paging}) => {
+const getListDepartment = async ({ paging }) => {
   var pagingObj;
   if (paging) pagingObj = paging;
   else pagingObj = pagingInstance;
-  const response = await axiosBase.post(`${endPoint}/listDepartment`, pagingObj);
+  const response = await axiosBase.post(
+    `${endPoint}/listDepartment`,
+    pagingObj
+  );
   return response.data;
 };
 export const useGetListDepartment = () => {
@@ -16,7 +19,7 @@ export const useGetListDepartment = () => {
     retry: 1,
   });
 };
-export const createDepartmentService = async (departmentObj) => {
+const createDepartmentService = async (departmentObj) => {
   const response = await axiosBase.post(
     `${endPoint}/createDepartment`,
     departmentObj
@@ -24,10 +27,16 @@ export const createDepartmentService = async (departmentObj) => {
   return response.data;
 };
 
-export const saveDepartmentService = async ({ id, departmentObj }) => {
+const saveDepartmentService = async ({ id, departmentObj }) => {
   const response = await axiosBase.post(
     `${endPoint}/updateDepartmentDetail/${id}`,
     departmentObj
   );
   return response.data;
+};
+
+export const departmentService = {
+  getListDepartment,
+  createDepartmentService,
+  saveDepartmentService,
 };

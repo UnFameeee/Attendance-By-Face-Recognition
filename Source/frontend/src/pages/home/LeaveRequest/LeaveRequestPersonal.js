@@ -115,7 +115,7 @@ function LeaveRequestPersonal() {
         //   filterType: FilterType.Default,
         // },
         Cell: ({ value }) => (
-          <Badge fontSize="lg">{value ? "yes" : "no"}</Badge>
+          <Badge p='5px' fontSize="lg">{value ? "yes" : "no"}</Badge>
         ),
         cellWidth: "100px",
       },

@@ -24,11 +24,9 @@ import { phoneRegExp } from "../../../Utils/ValidationRegExp";
 import _ from "lodash";
 import { useMutation, useQueryClient } from "react-query";
 import {
-  saveProfileDetail,
-  uploadProfileImages,
+  profileService,
   useGetProfileDetail,
 } from "../../../services/setting/profile";
-import jwtDecode from "jwt-decode";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import ImagesUploading from "../../../components/ImagesUploading";
@@ -36,6 +34,9 @@ import { permissionProfile } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { Helper } from "../../../Utils/Helper";
 import dayjs from "dayjs";
+import ModalImage from "react-modal-image";
+import onErrorImage from "../../../assets/onErrorImage.jpg";
+import AvatarWithPreview from "../../../components/AvatarWithPreview";
 function Profile() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -60,7 +61,7 @@ function Profile() {
     isLoading: isLoadingProfileDetail,
     isFetching: isFetchingProfileDetail,
   } = useGetProfileDetail(userDecodeData.id);
-  const useSaveProfileDetail = useMutation(saveProfileDetail, {
+  const useSaveProfileDetail = useMutation(profileService.saveProfileDetail, {
     onSuccess: (data) => {
       const { message } = data;
       if (message) {
@@ -92,7 +93,7 @@ function Profile() {
       });
     },
   });
-  const useUploadImages = useMutation(uploadProfileImages, {
+  const useUploadImages = useMutation(profileService.uploadProfileImages, {
     onSuccess: (data) => {
       const { message } = data;
       if (message) {
@@ -128,7 +129,7 @@ function Profile() {
   // #region functions
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
-    console.log(imageList, addUpdateIndex);
+    // console.log(imageList, addUpdateIndex);
     setImages(imageList);
   };
   const handleSaveUploadImages = () => {
@@ -137,7 +138,7 @@ function Profile() {
       formData.append("images", item.file);
     });
     useUploadImages.mutate(formData);
-    setImages([])
+    setImages([]);
   };
   // #endregion
   // #region form
@@ -370,14 +371,11 @@ function Profile() {
                   flexDirection="column"
                 >
                   <Flex gap={4} flexDirection="row" alignItems="center">
-                    <Avatar
-                      objectFit="cover"
-                      src={
-                        profileDetailData?.result?.image +
-                        "?" +
-                        dayjs()
-                      }
-                      boxSize="80px"
+                    <AvatarWithPreview
+                      src={profileDetailData?.result?.image + "?" + dayjs()}
+                      alt="avatar"
+                      altBoxSide="80px"
+                      className=" h-[120px] w-[120px] rounded-md"
                     />
                     <Box
                       display="flex"
@@ -395,7 +393,7 @@ function Profile() {
                       </Button>
                     </Box>
                   </Flex>
-                  <Box w='80%' height='400px'>
+                  <Box w="80%" height="400px">
                     <ImagesUploading
                       images={images}
                       onChange={onChange}
