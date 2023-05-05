@@ -332,7 +332,7 @@ function DynamicTable(props) {
                     isDisabled={
                       selectedFlatRows.length < 2 || !permission.delete
                     }
-                    colorScheme="blue"
+                    colorScheme='blue'
                   >
                     Delete Range
                   </Button>
@@ -468,6 +468,7 @@ function DynamicTable(props) {
                             color="white"
                             {...column?.getHeaderProps()}
                             display={column?.hidden ? "none" : "undefine"}
+                            bg="#338BFF"
                           >
                             <Flex alignItems="center" gap="5px">
                               {column?.haveFilter && (
@@ -545,8 +546,8 @@ function DynamicTable(props) {
                               ) : (
                                 <Text
                                   color="white"
-                                  fontWeight="normal"
-                                  fontSize="1.2rem"
+                                  fontWeight="600"
+                                  fontSize="1.1rem"
                                 >
                                   {column?.Header}
                                 </Text>
@@ -599,10 +600,16 @@ function DynamicTable(props) {
                         <Th
                           textTransform="capitalize"
                           fontSize="lg"
-                          color="white"
+                          bg="#338BFF"
                           {...column?.getHeaderProps()}
                         >
-                          {column?.render("Header")}
+                          <Text
+                            color="white"
+                            fontWeight="600"
+                            fontSize="1.1rem"
+                          >
+                            Action
+                          </Text>
                         </Th>
                       );
                     })}
@@ -619,6 +626,7 @@ function DynamicTable(props) {
                         {...row?.getRowProps()}
                       >
                         {row?.cells?.map((cell) => {
+                          // console.log("cell");
                           return (
                             <Td
                               {...cell?.getCellProps()}
@@ -641,9 +649,11 @@ function DynamicTable(props) {
                                   textOverflow="ellipsis"
                                   overflow="hidden"
                                 >
-                                  {new Date(cell?.value)
-                                    .toISOString()
-                                    .substring(0, 10)}
+                                  <Text fontSize="1.05rem" fontWeight='medium'>
+                                    {new Date(cell?.value)
+                                      .toISOString()
+                                      .substring(0, 10)}
+                                  </Text>
                                 </Box>
                               ) : (
                                 <Box
@@ -659,6 +669,8 @@ function DynamicTable(props) {
                                   }
                                   textOverflow="ellipsis"
                                   overflow="hidden"
+                                  fontSize="1.05rem"
+                                  fontWeight='medium'
                                 >
                                   {cell?.render("Cell")}
                                 </Box>

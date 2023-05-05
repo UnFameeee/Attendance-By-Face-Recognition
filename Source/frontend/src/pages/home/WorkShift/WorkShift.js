@@ -208,6 +208,7 @@ function WorkShift() {
           });
         } else {
           queryClient.invalidateQueries("listShiftType");
+          refreshListWorkDepartment()
           toast({
             title: `${
               currentModifyShiftTypeId != "" ? "Modify" : "Create"
@@ -603,7 +604,7 @@ function WorkShift() {
             <Heading fontSize="xl" fontWeight="medium">
               <Highlight
                 query={["Department:"]}
-                styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
               >
                 Department:
               </Highlight>
@@ -685,7 +686,7 @@ function WorkShift() {
             >
               <Highlight
                 query={["Department"]}
-                styles={{ px: "2", py: "1", rounded: "full", bg: "red.100" }}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
               >
                 Please choose your Department
               </Highlight>

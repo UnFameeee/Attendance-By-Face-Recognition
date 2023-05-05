@@ -30,3 +30,22 @@ export const colorData = [
   "pink",
   "rose",
 ];
+export const roleCodeColor = [
+  {
+    Employee: "green",
+  },
+  {
+    Manager: "purple",
+  },
+  {
+    Admin: "red",
+  },
+];
+export const approvalCodeColor = [
+  {
+    REJECT: "red",
+  },
+  {
+    APPROVE: "green",
+  },
+];

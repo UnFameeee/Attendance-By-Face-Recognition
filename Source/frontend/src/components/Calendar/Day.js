@@ -99,7 +99,7 @@ export default function Day({ day, rowIdx, listWorkShift }) {
                   {item?.employee?.fullname ?? "Unknown"}
                 </span>
                 <div>
-                  <Badge>{item?.shiftType?.shiftName ?? ""}</Badge>
+                  <Badge >{item?.shiftType?.shiftName ?? ""}</Badge>
                   <div className="flex gap-[2px]">
                     <span className=" overflow-hidden text-ellipsis whitespace-nowrap">
                       {item?.shiftType?.startTime

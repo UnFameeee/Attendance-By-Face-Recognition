@@ -249,6 +249,7 @@ function AssignDepartmentManagement() {
           <Badge
             colorScheme={Object.values(matchingRoleColor(value))[0]}
             fontSize="lg"
+            p='5px'
           >
             {value}
           </Badge>

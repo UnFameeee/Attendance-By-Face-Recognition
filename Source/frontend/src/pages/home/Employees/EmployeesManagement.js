@@ -22,7 +22,6 @@ import {
 import PieChart from "../../../components/chart/PieChart";
 import ColumnChart from "../../../components/chart/ColumnChart";
 import DynamicTable from "../../../components/table/DynamicTable";
-import { roleCodeColor } from "../../test/dumbTableData";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 import DynamicDrawer from "../../../components/table/DynamicDrawer";
@@ -36,7 +35,8 @@ import { Country, State } from "country-state-city";
 import { permissionEmployeeManagement } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { passwordRegex } from "../../../Utils/ValidationRegExp";
-
+import { roleCodeColor } from "../../../data/ColorData";
+import { Helper } from "../../../Utils/Helper";
 function EmployeesManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -158,11 +158,6 @@ function EmployeesManagement() {
     onAddEditClose();
     setEditData({});
   };
-  const matchingItem = (value) => {
-    return roleCodeColor.find(
-      (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
-    );
-  };
   // #endregion
   // #region table
   const tableRowAction = [
@@ -214,14 +209,16 @@ function EmployeesManagement() {
         // },
         // haveSort: true,
         cellWidth: "150px",
-        textAlign: "center",
       },
       {
         Header: "Role",
         accessor: "role.displayName",
         Cell: ({ value }) => (
           <Badge
-            colorScheme={Object.values(matchingItem(value))[0]}
+            p="5px"
+            colorScheme={
+              Object.values(Helper.matchingCodeColor(value, roleCodeColor))[0]
+            }
             fontSize="lg"
           >
             {value}
@@ -475,10 +472,10 @@ function EmployeesManagement() {
   return (
     <Stack minHeight="100vh" spacing={4}>
       <HStack>
-        <Icon boxSize="40px" as={FaHouseUser} />
-        <Heading fontSize="3xl" fontWeight="semibold">
-          Employees Overview
-        </Heading>
+        <Flex gap="10px">
+          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+          <Heading fontSize="3xl">Employees Overview</Heading>
+        </Flex>
       </HStack>
       <Flex
         justifyContent="space-between"

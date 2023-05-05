@@ -107,7 +107,7 @@ function LeaveRequestManagement() {
         //   filterType: FilterType.Default,
         // },
         Cell: ({ value }) => (
-          <Badge fontSize="lg">{value ? "yes" : "no"}</Badge>
+          <Badge p='5px' fontSize="lg">{value ? "yes" : "no"}</Badge>
         ),
         cellWidth: "150px",
       },
@@ -130,7 +130,7 @@ function LeaveRequestManagement() {
       {
         Header: "Role",
         accessor: "role",
-        Cell: ({ value }) => <Badge fontSize="lg">{value}</Badge>,
+        Cell: ({ value }) => <Badge p='5px' fontSize="lg">{value}</Badge>,
         // haveFilter: {
         //   filterType: FilterType.Default,
         // },
