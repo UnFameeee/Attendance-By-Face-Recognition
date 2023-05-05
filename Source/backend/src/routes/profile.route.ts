@@ -57,5 +57,13 @@ export class ProfileRoute implements Routes {
       await authorizeRoute(PERMISSION.READ, RESOURCE.PROFILE_MANAGEMENT),
       this.profileController.getProfileImages
     );
+
+    //api/profile/validateFirstTimeLogin
+    this.router.get(`${this.path}/validateFirstTimeLogin`,
+      authMiddleware,
+      // zodValidate(updateProfilePasswordSchema),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.PROFILE_MANAGEMENT),
+      this.profileController.validateFirstTimeLogin
+    );
   }
 }
