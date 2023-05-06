@@ -197,9 +197,71 @@ export class AttendanceService {
   }
 
   public getThisMonthAttendance = async (employeeId: string, data: DateTimeV2DTO) => {
-    const response = new ResponseData<string>();
+    const response = new ResponseData<any>();
+    const daysInMonth = moment(`${data.year + 1}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    response.result = "";
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const queryData = await prisma.attendance.findMany({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      },
+      select: {
+        checkIn: true,
+        checkOut: true,
+        lateArrival: true,
+        earlyLeave: true,
+      }
+    })
+
+    const totalAttendance = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        checkOut: {
+          not: null,
+        },
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      },
+    })
+
+    var totalWorkingHours: number = 0;
+    var totalLateArrival: number = 0;
+    var totalEarlyLeave: number = 0;
+
+    for (var attendance of queryData) {
+      console.log(attendance);
+      if (attendance.checkOut != null) {
+        totalWorkingHours += Helper.MinusDate(attendance.checkOut, attendance.checkIn, false);
+
+        totalLateArrival += moment.duration(moment(attendance.lateArrival, "HH:mm").format("HH:mm")).asMilliseconds();
+
+        totalEarlyLeave += moment.duration(moment(attendance.earlyLeave, "HH:mm").format("HH:mm")).asMilliseconds();
+
+      } else {
+        totalWorkingHours += 0;
+        totalLateArrival += 0;
+        totalEarlyLeave += 0;
+      }
+    }
+
+    const returnData = {
+      totalAttendance: totalAttendance,
+      totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
+      totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
+      totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
+    }
+
+    response.result = returnData;
     return response;
   }
 
@@ -212,7 +274,7 @@ export class AttendanceService {
         employeeId: employeeId,
         attendanceDate: {
           gte: convertedDate.startOf('day').toDate(),
-          lt: convertedDate.endOf('day').toDate(),
+          lte: convertedDate.endOf('day').toDate(),
         },
         deleted: false,
       },
@@ -230,15 +292,11 @@ export class AttendanceService {
     }
 
     var totalWorkingHours;
-
     if (queryData.checkOut != null) {
-      const millisecondDif = moment(new Date(queryData.checkOut.getTime()), "HH:mm").diff(moment(new Date(queryData.checkIn.getTime()), "HH:mm"));
-
-      totalWorkingHours = moment.utc(millisecondDif).format('HH:mm');
+      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
     } else {
       totalWorkingHours = null;
     }
-
     const returnData = {
       totalWorkingHours,
       ...queryData
@@ -302,15 +360,11 @@ export class AttendanceService {
     }
 
     var totalWorkingHours;
-
     if (queryData.checkOut != null) {
-      const millisecondDif = moment(new Date(queryData.checkOut.getTime()), "HH:mm").diff(moment(new Date(queryData.checkIn.getTime()), "HH:mm"));
-
-      totalWorkingHours = moment.utc(millisecondDif).format('HH:mm');
+      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
     } else {
       totalWorkingHours = null;
     }
-
     const returnData = {
       totalWorkingHours,
       ...queryData

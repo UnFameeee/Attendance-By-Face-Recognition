@@ -45,7 +45,7 @@ export class AttendanceRoute implements Routes {
     )
 
     // api/attendance/getThisMonthAttendance
-    this.router.get(`${this.path}/getThisMonthAttendance`,
+    this.router.post(`${this.path}/getThisMonthAttendance`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
