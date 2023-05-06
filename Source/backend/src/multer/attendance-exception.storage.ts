@@ -40,7 +40,7 @@ const attendanceExceptionImageStorage = multer.diskStorage({
           },
           attendanceDate: {
             gte: targetDate.startOf('day').toDate(),
-            lt: targetDate.endOf('day').toDate(),
+            lte: targetDate.endOf('day').toDate(),
           },
           checkIn: {
             not: null
@@ -64,7 +64,7 @@ const attendanceExceptionImageStorage = multer.diskStorage({
           },
           attendanceDate: {
             gte: targetDate.startOf('day').toDate(),
-            lt: targetDate.endOf('day').toDate(),
+            lte: targetDate.endOf('day').toDate(),
           },
           checkIn: {
             not: null
