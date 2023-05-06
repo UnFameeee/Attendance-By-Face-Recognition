@@ -5,7 +5,7 @@ export interface LeaveRequestModel extends
     "leaveRequestId" |
     "leaveTypeId" |
     "requestDate" |
-    "isApproved" |
+    "status" |
     "reason" |
     "note" |
     "startDate" |

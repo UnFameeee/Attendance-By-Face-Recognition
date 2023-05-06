@@ -7,7 +7,7 @@ import { ModifyLeavetypeDTO } from "../model/dtos/leavetype.dto";
 export class LeavetypeController {
   public leavetypeService = new LeavetypeService();
 
-  public getAllShiftType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  public getAllLeaveType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page: Page = req.body;
       const response = await this.leavetypeService.getAllLeaveType(page);
@@ -17,7 +17,7 @@ export class LeavetypeController {
     }
   }
 
-  public getListShiftType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  public getListLeaveType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const response = await this.leavetypeService.getListLeaveType();
       res.status(200).json(response);
@@ -26,7 +26,7 @@ export class LeavetypeController {
     }
   }
 
-  public modifyShiftType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  public modifyLeaveType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: ModifyLeavetypeDTO = req.body;
       const response = await this.leavetypeService.modifyLeaveType(data);
