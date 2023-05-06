@@ -144,8 +144,9 @@ model Location {
 }
 
 model Organization {
-  organizationId   String @id @default(uuid())
-  organizationName String
+  organizationId    String @id @default(uuid())
+  organizationName  String
+  yearlyAnnualLeave Int?
 
   // locationId
   location   Location @relation(fields: [locationId], references: [locationId])
@@ -332,6 +333,7 @@ model LeaveRequest {
 model LeaveType {
   leaveTypeId   String         @id @default(uuid())
   name          String
+  annualLeave   Boolean
   deleted       Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

@@ -95,7 +95,7 @@ export class ShifttypeService {
         }
       })
     }
-    response.result = "Modify shifttype sucessfully";
+    response.result = "Modify shifttype successfully";
     return response;
   }
 
@@ -111,7 +111,7 @@ export class ShifttypeService {
       }
     })
     if (queryData) {
-      response.result = "Delete shifttype sucessfully";
+      response.result = "Delete shifttype successfully";
     } else {
       response.message = "Delete shifttype error";
     }
