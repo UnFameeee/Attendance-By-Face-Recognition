@@ -238,6 +238,7 @@ model Workshift {
   shiftType   ShiftType @relation(fields: [shiftTypeId], references: [shiftTypeId])
   shiftTypeId String
 
+  absent    Boolean   @default(false)
   shiftDate DateTime
   deleted   Boolean   @default(false)
   createdAt DateTime  @default(now())

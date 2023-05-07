@@ -49,4 +49,26 @@ export class LeaveRequestController {
       next(err);
     }
   }
+
+  public verifyLeaveRequest = async (req: RequestWithProfile, res: Response, next: NextFunction) => {
+    try {
+      const status: string = req.body.status;
+      const approverId: string = req.profile.id;
+      const leaveRequestId: string = req.params.leaveRequestId;
+      const response = await this.leaveRequestService.verifyLeaveRequest(leaveRequestId, approverId, status);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public deleteLeaveRequest = async (req: RequestWithProfile, res: Response, next: NextFunction) => {
+    try {
+      const leaveRequestId: string = req.params.leaveRequestId;
+      const response = await this.leaveRequestService.deleteLeaveRequest(leaveRequestId);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

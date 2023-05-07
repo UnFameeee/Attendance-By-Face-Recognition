@@ -250,5 +250,104 @@ export class LeaveRequestService {
   }
 
   //verify leave request
+  public verifyLeaveRequest = async (leaveRequestId: string, approverId: string, status: string) => {
+    const response = new ResponseData<any>;
 
+    const queryData = await prisma.leaveRequest.findFirst({
+      where: {
+        leaveRequestId: leaveRequestId,
+        deleted: false,
+      }
+    })
+
+    if (!queryData) {
+      response.result = "Leave Request isn't exist";
+      return response;
+    }
+
+    if (new Date(queryData.startDate) <= new Date()) {
+      response.message = "This leave request is overdate and cannot be approve or reject";
+      return response;
+    }
+
+    var statusUpdate: string;
+    if (status == "APPROVE") {
+      statusUpdate = leaveRequestStatus.approve;
+    } else {
+      statusUpdate = leaveRequestStatus.reject;
+    }
+
+    if (status == "APPROVE") {
+      const queryWorkshift = await prisma.workshift.findMany({
+        where: {
+          employeeId: queryData.employeeId,
+          shiftDate: {
+            gte: queryData.startDate,
+            lte: queryData.endDate,
+          }
+        }
+      })
+
+      var arrayWorkshiftId: string[];
+      for (var workshift of queryWorkshift) {
+        arrayWorkshiftId.push(workshift.shiftId);
+      }
+
+      const queryUpdateWorkshift = await prisma.workshift.updateMany({
+        where: {
+          shiftId: {
+            in: arrayWorkshiftId,
+          }
+        },
+        data: {
+          absent: true,
+        }
+      })
+
+    }
+
+    const queryUpdateLeaveRequest = await prisma.leaveRequest.update({
+      where: {
+        leaveRequestId: leaveRequestId,
+      },
+      data: {
+        status: statusUpdate,
+      }
+    })
+
+    response.result = "Update Status successfully";
+    return response;
+  }
+
+  //delete leave request
+  public deleteLeaveRequest = async (leaveRequestId: string) => {
+    const response = new ResponseData<any>;
+    const queryData = await prisma.leaveRequest.findFirst({
+      where: {
+        leaveRequestId: leaveRequestId,
+        deleted: false,
+      }
+    })
+
+    if (new Date(queryData.startDate) <= new Date()) {
+      response.message = "This leave request is overdate and cannot be deleted";
+      return response;
+    }
+
+    const queryUpdateData = await prisma.leaveRequest.update({
+      where: {
+        leaveRequestId: leaveRequestId,
+      },
+      data: {
+        deleted: true,
+      }
+    })
+
+    if (!queryUpdateData) {
+      response.message = "System Error";
+      return response;
+    }
+    response.result = "Delete Leave Request successfully";
+    return response;
+  }
 }

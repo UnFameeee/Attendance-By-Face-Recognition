@@ -46,5 +46,21 @@ export class LeaveRequestRoute {
       // await authorizeRoute(PERMISSION.DELETE, RESOURCE.SHIFTTYPE_MANAGEMENT),
       this.leaveRequestController.getAnnualDetail
     );
+
+    //api/leaverequest/verifyLeaveRequest
+    this.router.post(`${this.path}/verifyLeaveRequest/:leaveRequestId`,
+      authMiddleware,
+      // zodValidate(createLeaveRequestSchema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      this.leaveRequestController.verifyLeaveRequest
+    );
+
+    //api/leaverequest/deleteLeaveRequest
+    this.router.post(`${this.path}/deleteLeaveRequest/:leaveRequestId`,
+      authMiddleware,
+      // zodValidate(createLeaveRequestSchema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      this.leaveRequestController.deleteLeaveRequest
+    );
   }
 }
