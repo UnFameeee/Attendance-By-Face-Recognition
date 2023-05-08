@@ -284,7 +284,7 @@ function AttendancePersonal() {
               <Text fontWeight="medium">Working Hours</Text>
             </Box>
           </SimpleGrid>
-          <HStack
+          {/* <HStack
             w="100%"
             alignItems="center"
             justifyContent="center"
@@ -341,7 +341,7 @@ function AttendancePersonal() {
                 <Heading fontSize="2xl">Check Out</Heading>
               </Box>
             </HStack>
-          </HStack>
+          </HStack> */}
         </VStack>
         <VStack
           paddingX={5}
