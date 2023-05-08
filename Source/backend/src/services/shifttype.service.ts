@@ -95,12 +95,24 @@ export class ShifttypeService {
         }
       })
     }
-    response.result = "Modify shifttype sucessfully";
+    response.result = "Modify shifttype successfully";
     return response;
   }
 
   public deleteShiftType = async (shiftTypeId: string): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
+
+    const queryDataCheck = await prisma.shiftType.findFirst({
+      where: {
+        shiftTypeId: shiftTypeId,
+        deleted: false,
+      }
+    })
+
+    if (!queryDataCheck) {
+      response.message = "Shifttype isn't exist";
+      return response;
+    }
 
     const queryData = await prisma.shiftType.update({
       data: {
@@ -111,7 +123,7 @@ export class ShifttypeService {
       }
     })
     if (queryData) {
-      response.result = "Delete shifttype sucessfully";
+      response.result = "Delete shifttype successfully";
     } else {
       response.message = "Delete shifttype error";
     }

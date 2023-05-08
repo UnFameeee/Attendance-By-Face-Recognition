@@ -191,9 +191,17 @@ export class EmployeeService {
         displayName: data.displayName
       }
     })
+
+    const queryOrganizationData = await prisma.organization.findFirst({
+      select: {
+        yearlyAnnualLeave: true,
+      }
+    })
+
     const createEmployeeData = await prisma.employee.create({
       data: {
         fullname: data.fullname,
+        annualLeaveDays: queryOrganizationData.yearlyAnnualLeave,
         email: data.email,
         password: hashedPassword,
         role: {

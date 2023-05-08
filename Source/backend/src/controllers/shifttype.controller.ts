@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express';
 import { RequestWithProfile } from '../interfaces/request.interface';
 import { Page } from '../config/paginate.config';
 import { ShifttypeService } from '../services/shifttype.service';
-import { ModifyWorkshiftDTO } from '../model/dtos/workshift.dto';
+import { ModifyShifttypeDTO } from '../model/dtos/shifttype.dto';
 
 export class ShifttypeController {
   public shifttypeService = new ShifttypeService();
@@ -28,7 +28,7 @@ export class ShifttypeController {
 
   public modifyShiftType = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data: ModifyWorkshiftDTO = req.body;
+      const data: ModifyShifttypeDTO = req.body;
       const response = await this.shifttypeService.modifyShiftType(data);
       res.status(200).json(response);
     } catch (err) {

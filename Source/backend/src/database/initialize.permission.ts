@@ -1,4 +1,5 @@
-import { application_permission, application_admin_account } from '../config/permission.config';
+import { application_admin_account } from '../config/initializeData.config';
+import { application_permission } from '../config/permission.config';
 import { ROLE, PERMISSION, RESOURCE } from '../constant/database.constant';
 import { Helper } from '../utils/helper';
 import { prisma } from "./prisma.singleton";

@@ -32,6 +32,7 @@ model Employee {
   description           String?
   worktype              String?
   status                Boolean?
+  annualLeaveDays       Int?
   firsttimeLogin        Boolean               @default(true)
   refreshToken          String?
   deleted               Boolean               @default(false)
@@ -144,8 +145,9 @@ model Location {
 }
 
 model Organization {
-  organizationId   String @id @default(uuid())
-  organizationName String
+  organizationId    String @id @default(uuid())
+  organizationName  String
+  yearlyAnnualLeave Int?
 
   // locationId
   location   Location @relation(fields: [locationId], references: [locationId])
@@ -233,9 +235,10 @@ model Workshift {
   employeeId String
 
   // shiftTypeId DateTime
-  shiftType   ShiftType @relation(fields: [shiftTypeId], references: [shiftTypeId])
-  shiftTypeId String
+  shiftType   ShiftType? @relation(fields: [shiftTypeId], references: [shiftTypeId])
+  shiftTypeId String?
 
+  absent    Boolean   @default(false)
   shiftDate DateTime
   deleted   Boolean   @default(false)
   createdAt DateTime  @default(now())
@@ -318,7 +321,7 @@ model LeaveRequest {
   requestDate DateTime
   startDate   DateTime
   endDate     DateTime
-  isApproved  Boolean
+  status      String
   reason      String
   note        String
   deleted     Boolean   @default(false)
@@ -332,6 +335,8 @@ model LeaveRequest {
 model LeaveType {
   leaveTypeId   String         @id @default(uuid())
   name          String
+  description   String         @db.Text
+  annualLeave   Boolean
   deleted       Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

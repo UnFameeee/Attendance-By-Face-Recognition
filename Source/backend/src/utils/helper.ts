@@ -57,12 +57,31 @@ const PlusDate = (firstDate: Date, secondDate: Date, format?: boolean) => {
   }
 };
 
+function CountDaysFromStartDate(startDate: string, endDate: string) {
+  // Convert the date strings to Date objects
+  var start = new Date(startDate);
+  var end = new Date(endDate);
+
+  // Set the time for both dates to midnight
+  start.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+
+  // Calculate the time difference in milliseconds
+  var timeDiff = Math.abs(end.getTime() - start.getTime());
+
+  // Convert the time difference from milliseconds to days
+  var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  return daysDiff + 1; // Add 1 to include the start date
+}
+
 interface IHelper {
   UppercaseFirstLetter: Function,
   ConvertDoubleSlashURL: Function,
   ConfigStaticDateTime: Function,
   MinusDate: Function,
   PlusDate: Function,
+  CountDaysFromStartDate: Function,
 }
 
 export const Helper: IHelper = {
@@ -71,4 +90,5 @@ export const Helper: IHelper = {
   ConfigStaticDateTime,
   MinusDate,
   PlusDate,
+  CountDaysFromStartDate,
 }

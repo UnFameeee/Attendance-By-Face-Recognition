@@ -48,6 +48,7 @@ export class WorkshiftService {
             fullname: true,
           }
         },
+        absent: true,
         shiftTypeId: true,
         shiftDate: true,
         shiftType: {
@@ -99,6 +100,7 @@ export class WorkshiftService {
       },
       select: {
         shiftId: true,
+        absent: true,
         employee: {
           select: {
             id: true,

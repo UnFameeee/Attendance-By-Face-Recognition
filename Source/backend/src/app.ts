@@ -9,7 +9,7 @@ import { env } from './config/env.config';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { initializeShiftTypeData } from './database/initialize.data';
+import { initializeLeaveTypeData, initializeShiftTypeData } from './database/initialize.data';
 
 export default class App {
   public app: express.Application;
@@ -58,7 +58,8 @@ export default class App {
 
   private initializeData() {
     initializeRolePermission();
-    initializeShiftTypeData(true);
+    initializeShiftTypeData();
+    initializeLeaveTypeData();
   }
 
   private initializeMiddlewares() {

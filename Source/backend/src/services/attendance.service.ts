@@ -198,7 +198,7 @@ export class AttendanceService {
 
   public getThisMonthAttendance = async (employeeId: string, data: DateTimeV2DTO) => {
     const response = new ResponseData<any>();
-    const daysInMonth = moment(`${data.year + 1}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+    const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
     const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
@@ -239,7 +239,6 @@ export class AttendanceService {
     var totalEarlyLeave: number = 0;
 
     for (var attendance of queryData) {
-      console.log(attendance);
       if (attendance.checkOut != null) {
         totalWorkingHours += Helper.MinusDate(attendance.checkOut, attendance.checkIn, false);
 
@@ -308,7 +307,7 @@ export class AttendanceService {
 
   public getAttendanceHistory = async (employeeId: string, data: DateTimeV2DTO) => {
     const response = new ResponseData<any>();
-    const daysInMonth = moment(`${data.year + 1}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+    const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
     const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
@@ -327,6 +326,8 @@ export class AttendanceService {
         attendanceDate: true,
         checkIn: true,
         checkOut: true,
+        lateArrival: true,
+        earlyLeave: true,
       }
     })
 
