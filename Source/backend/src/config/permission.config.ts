@@ -99,18 +99,3 @@ export const application_permission = {
     `${ROLE.MANAGER}-${PERMISSION.DELETE}`,
   ],
 }
-
-export const application_admin_account = [
-  {
-    fullname: "admin",
-    email: "admin@unfame.tech",
-    password: "admin123!!!",
-    roleName: "admin"
-  },
-  {
-    fullname: "junrante",
-    email: "junrante@gmail.com",
-    password: "741123963",
-    roleName: "admin"
-  },
-]

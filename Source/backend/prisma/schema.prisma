@@ -335,6 +335,7 @@ model LeaveRequest {
 model LeaveType {
   leaveTypeId   String         @id @default(uuid())
   name          String
+  description   String
   annualLeave   Boolean
   deleted       Boolean        @default(false)
   createdAt     DateTime       @default(now())
