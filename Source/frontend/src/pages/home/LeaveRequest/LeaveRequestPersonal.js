@@ -117,7 +117,7 @@ function LeaveRequestPersonal() {
         Cell: ({ value }) => (
           <Badge p='5px' fontSize="lg">{value ? "yes" : "no"}</Badge>
         ),
-        cellWidth: "100px",
+        cellWidth: "70px",
       },
       {
         Header: "Leave type",
@@ -151,7 +151,7 @@ function LeaveRequestPersonal() {
         // haveFilter: {
         //   filterType: FilterType.DateTime,
         // },
-        cellWidth: "150px",
+        cellWidth: "100px",
       },
       {
         Header: "End date",
@@ -159,7 +159,7 @@ function LeaveRequestPersonal() {
         // haveFilter: {
         //   filterType: FilterType.DateTime,
         // },
-        cellWidth: "150px",
+        cellWidth: "100px",
       },
     ],
     []
@@ -244,7 +244,7 @@ function LeaveRequestPersonal() {
   // #endregion
   if (isLoadingProfileDetail) return <LoadingSpinner />;
   return (
-    <VStack minHeight="100vh" alignItems="flex-start" spacing={3}>
+    <VStack h='100%' alignItems="flex-start" spacing={3}>
       <Flex gap="10px">
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Personal</Heading>

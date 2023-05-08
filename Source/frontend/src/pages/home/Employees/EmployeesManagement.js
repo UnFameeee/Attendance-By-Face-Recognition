@@ -470,7 +470,7 @@ function EmployeesManagement() {
   // #endregion
   if (isFetchingListEmployee) return <LoadingSpinner />;
   return (
-    <Stack minHeight="100vh" spacing={4}>
+    <Stack h='100%' spacing={4}>
       <HStack>
         <Flex gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
