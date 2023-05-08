@@ -135,7 +135,7 @@ function ImagesUploading({
               onClick={onImageUpload}
               {...dragProps}
             >
-              <Button colorScheme="blue" pos="absolute" top="0" left="0">
+              <Button colorScheme="blue" zIndex='5' pos="absolute" top="0" left="0">
                 Upload
               </Button>
               <Box

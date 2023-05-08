@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Heading,
@@ -36,8 +36,18 @@ import { BiTimer } from "react-icons/bi";
 import AvatarWithPreview from "../../../components/AvatarWithPreview";
 import { FaEquals } from "react-icons/fa";
 import { TbArrowsRight } from "react-icons/tb";
+import { attendanceService } from "../../../services/attendance/attendance";
+import dayjs from "dayjs";
+import { Helper } from "../../../Utils/Helper";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import { useMutation, useQuery } from "react-query";
+import moment from "moment";
 function AttendancePersonal() {
   // #region declare variable
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString());
+  const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
+  const [attendanceDetailObj, setAttendanceDetailObj] = useState({});
+
   // #endregion
   // #region hooks
   const {
@@ -45,9 +55,28 @@ function AttendancePersonal() {
     onOpen: onOpenAttendanceDetailModal,
     onClose: onCloseAttendanceDetailModal,
   } = useDisclosure();
-
+  const { data: employeeData, isFetching: isFetchingEmployeeData } =
+    attendanceService.useGetEmployeeDetailById(userInfo.id);
+  const { data: attendanceHistoryData, isFetching: isFetchingHistoryData } =
+    attendanceService.useGetAttendanceHistory({ currentDate, userInfo });
+  const { data: attendanceMonthData, isFetching: isFetchingMonthData } =
+    attendanceService.useGetThisMonthAttendance({ currentDate });
+  const { data: attendanceTodayData, isFetching: isFetchingTodayData } =
+    attendanceService.useGetTodayAttendance({ currentDate });
+  const useGetAttendanceDetail = useMutation(
+    attendanceService.getAttendanceDetail,
+    {
+      onSuccess: (data) => {
+        setAttendanceDetailObj(data);
+      },
+    }
+  );
   // #endregion
   // #region functions
+  const handleOpenAttendanceDetail = (attendanceId) => {
+    useGetAttendanceDetail.mutate(attendanceId);
+    onOpenAttendanceDetailModal();
+  };
   // #endregion
   // #region table
   // #endregion
@@ -55,6 +84,13 @@ function AttendancePersonal() {
   // #endregion
   // #region form
   // #endregion
+  if (
+    isFetchingHistoryData ||
+    isFetchingMonthData ||
+    isFetchingTodayData ||
+    isFetchingEmployeeData
+  )
+    return <LoadingSpinner />;
   return (
     <>
       <Stack spacing={5} h="100%">
@@ -85,7 +121,7 @@ function AttendancePersonal() {
               md: "row",
             }}
           >
-            <Avatar boxSize="120px" src={test_img} />
+            <Avatar boxSize="120px" src={employeeData?.image} />
             <VStack
               ml="0 !important"
               w="100%"
@@ -94,7 +130,7 @@ function AttendancePersonal() {
                 md: "start",
               }}
             >
-              <Heading fontSize="1.7rem">User Name</Heading>
+              <Heading fontSize="1.7rem">{employeeData?.fullname}</Heading>
               <HStack
                 w="100%"
                 spacing="3rem"
@@ -116,7 +152,7 @@ function AttendancePersonal() {
                 >
                   <Text fontSize="1.2rem">Role</Text>
                   <Heading fontWeight="medium" fontSize="2xl">
-                    Admin
+                    {employeeData?.role?.displayName}
                   </Heading>
                 </Flex>
                 <Flex
@@ -129,7 +165,7 @@ function AttendancePersonal() {
                 >
                   <Text fontSize="1.2rem">Phone Number</Text>
                   <Heading fontWeight="medium" fontSize="2xl">
-                    213124643
+                    {employeeData?.phoneNumber}
                   </Heading>
                 </Flex>
                 <Flex
@@ -142,7 +178,7 @@ function AttendancePersonal() {
                 >
                   <Text fontSize="1.2rem">Email Address</Text>
                   <Heading fontWeight="medium" fontSize="2xl">
-                    Admin@gmail.com
+                    {employeeData?.email}
                   </Heading>
                 </Flex>
               </HStack>
@@ -174,7 +210,9 @@ function AttendancePersonal() {
                 <Icon color="white" boxSize="30px" as={AiFillCheckCircle} />
               </Center>
               <Box color="white">
-                <Heading fontSize="2xl">308</Heading>
+                <Heading fontSize="2xl">
+                  {attendanceMonthData?.totalAttendance}
+                </Heading>
                 <Text fontSize="xl">Total Attendance</Text>
               </Box>
             </HStack>
@@ -183,7 +221,11 @@ function AttendancePersonal() {
                 <Icon color="white" boxSize="30px" as={MdWorkHistory} />
               </Center>
               <Box color="white">
-                <Heading fontSize="2xl">08:46</Heading>
+                <Heading fontSize="2xl">
+                  {attendanceMonthData?.totalWorkingHours == "00:00"
+                    ? "--:--"
+                    : attendanceMonthData?.totalWorkingHours}
+                </Heading>
                 <Text fontSize="xl">Total Working Hours</Text>
               </Box>
             </HStack>
@@ -192,7 +234,11 @@ function AttendancePersonal() {
                 <Icon color="white" boxSize="30px" as={MdTimerOff} />
               </Center>
               <Box color="white">
-                <Heading fontSize="2xl">17:04</Heading>
+                <Heading fontSize="2xl">
+                  {attendanceMonthData?.totalLateArrival == "00:00"
+                    ? "--:--"
+                    : attendanceMonthData?.totalLateArrival}
+                </Heading>
                 <Text fontSize="xl">Total Late Arrival</Text>
               </Box>
             </HStack>
@@ -201,7 +247,11 @@ function AttendancePersonal() {
                 <Icon color="white" boxSize="30px" as={BiTimer} />
               </Center>
               <Box color="white">
-                <Heading fontSize="2xl">Role</Heading>
+                <Heading fontSize="2xl">
+                  {attendanceMonthData?.totalEarlyLeave == "00:00"
+                    ? "--:--"
+                    : attendanceMonthData?.totalEarlyLeave}
+                </Heading>
                 <Text fontSize="xl">Total Early Leave</Text>
               </Box>
             </HStack>
@@ -236,7 +286,7 @@ function AttendancePersonal() {
               fontSize="xl"
               flex="1"
             >
-              <Text>09:00</Text>
+              <Text>{attendanceTodayData?.checkIn ?? "--:--"}</Text>
               <Text fontWeight="medium">Check In</Text>
             </Box>
             <Box
@@ -247,7 +297,7 @@ function AttendancePersonal() {
               fontSize="xl"
               flex="1"
             >
-              <Text>09:00</Text>
+              <Text>{attendanceTodayData?.lateArrival ?? "--:--"}</Text>
               <Text fontWeight="medium">Late Arrival</Text>
             </Box>
             <Box
@@ -258,7 +308,7 @@ function AttendancePersonal() {
               fontSize="xl"
               flex="1"
             >
-              <Text>09:00</Text>
+              <Text>{attendanceTodayData?.checkOut ?? "--:--"}</Text>
               <Text fontWeight="medium">Check Out</Text>
             </Box>
             <Box
@@ -269,7 +319,7 @@ function AttendancePersonal() {
               fontSize="xl"
               flex="1"
             >
-              <Text>09:00</Text>
+              <Text>{attendanceTodayData?.earlyLeave ?? "--:--"}</Text>
               <Text fontWeight="medium">Early Leave</Text>
             </Box>
             <Box
@@ -280,7 +330,7 @@ function AttendancePersonal() {
               fontSize="xl"
               flex="1"
             >
-              <Text>--:--</Text>
+              <Text>{attendanceTodayData?.totalWorkingHours ?? "--:--"}</Text>
               <Text fontWeight="medium">Working Hours</Text>
             </Box>
           </SimpleGrid>
@@ -356,7 +406,7 @@ function AttendancePersonal() {
             w="100%"
             flexDirection={{ base: "column", md: "row" }}
           >
-            <Flex gap='10px'>
+            <Flex gap="10px">
               <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
               <Heading fontWeight="medium" fontSize="2rem">
                 Attendance History
@@ -408,37 +458,43 @@ function AttendancePersonal() {
             spacing={3}
             gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
           >
-            {Array.from({ length: 24 }, (_, index) => {
-              return (
-                <VStack
-                  color="white"
-                  alignItems="start"
-                  bg="gray.500"
-                  rounded="xl"
-                  p="20px"
-                  key={index}
-                  shadow="lg"
-                  onClick={onOpenAttendanceDetailModal}
-                  cursor="pointer"
-                >
-                  <HStack w="100%">
-                    <HStack w="100%" flex="1" spacing="5px">
-                      <Icon as={AiFillClockCircle} />
-                      <Text fontSize="xl" fontWeight="bold">
-                        3/27/2023
-                      </Text>
-                    </HStack>
-                    {index % 2 == 0 ? (
-                      <Badge
-                        rounded="md"
-                        colorScheme="green"
-                        fontSize="md"
-                        p="5px"
-                      >
-                        O.T
-                      </Badge>
-                    ) : (
-                      <>
+            {attendanceHistoryData &&
+              attendanceHistoryData.map((item, index) => {
+                return (
+                  <VStack
+                    color="white"
+                    alignItems="start"
+                    bg="gray.500"
+                    rounded="xl"
+                    p="20px"
+                    key={index}
+                    shadow="lg"
+                    onClick={() =>
+                      handleOpenAttendanceDetail(item.attendanceId)
+                    }
+                    cursor="pointer"
+                  >
+                    <HStack w="100%">
+                      <HStack w="100%" flex="1" spacing="5px">
+                        <Icon as={AiFillClockCircle} />
+                        <Text fontSize="xl" fontWeight="bold">
+                          {moment(item?.attendanceDate).format("DD/MM/yyyy") !=
+                          "Invalid date"
+                            ? moment(item?.attendanceDate).format("DD/MM/yyyy")
+                            : "--:--"}
+                        </Text>
+                      </HStack>
+                      {!item?.earlyLeave && !item?.lateArrival && (
+                        <Badge
+                          rounded="md"
+                          colorScheme="green"
+                          fontSize="md"
+                          p="5px"
+                        >
+                          O.T
+                        </Badge>
+                      )}
+                      {item?.lateArrival && (
                         <Badge
                           rounded="md"
                           colorScheme="yellow"
@@ -447,6 +503,8 @@ function AttendancePersonal() {
                         >
                           A.L
                         </Badge>
+                      )}
+                      {item?.earlyLeave && (
                         <Badge
                           rounded="md"
                           colorScheme="yellow"
@@ -455,26 +513,31 @@ function AttendancePersonal() {
                         >
                           E.L
                         </Badge>
-                      </>
-                    )}
-                  </HStack>
-                  <HStack w="100%" spacing="50px">
-                    <VStack alignItems="start">
-                      <Text fontSize="xl">Check in</Text>
-                      <Text fontSize="2xl" fontWeight="bold">
-                        08:53
-                      </Text>
-                    </VStack>
-                    <VStack alignItems="start">
-                      <Text fontSize="xl">Check out</Text>
-                      <Text fontSize="2xl" fontWeight="bold">
-                        18:53
-                      </Text>
-                    </VStack>
-                  </HStack>
-                </VStack>
-              );
-            })}
+                      )}
+                    </HStack>
+                    <HStack w="100%" spacing="50px">
+                      <VStack alignItems="start">
+                        <Text fontSize="xl">Check in</Text>
+                        <Text fontSize="2xl" fontWeight="bold">
+                          {moment(item?.checkIn).format("hh:mm") !=
+                          "Invalid date"
+                            ? moment(item?.checkIn).format("hh:mm")
+                            : "--:--"}
+                        </Text>
+                      </VStack>
+                      <VStack alignItems="start">
+                        <Text fontSize="xl">Check out</Text>
+                        <Text fontSize="2xl" fontWeight="bold">
+                          {moment(item?.checkOut).format("hh:mm") !=
+                          "Invalid date"
+                            ? moment(item?.checkOut).format("hh:mm")
+                            : "--:--"}
+                        </Text>
+                      </VStack>
+                    </HStack>
+                  </VStack>
+                );
+              })}
           </SimpleGrid>
         </VStack>
       </Stack>
@@ -495,54 +558,100 @@ function AttendancePersonal() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Stack spacing="15px">
-              <HStack w="100%">
+            <HStack w="100%" spacing="10px">
+              <VStack alignItems="flex-start" flex="1">
                 <Box flex="1" fontSize="1.2rem" fontWeight="medium">
                   <Flex alignItems="center" gap="5px">
                     <AiFillClockCircle />
-                    <Text>12/12/2023</Text>
+                    <Text>
+                      {moment(attendanceDetailObj?.attendanceDate).format(
+                        "DD/MM/yyyy"
+                      ) != "Invalid date"
+                        ? moment(attendanceDetailObj?.attendanceDate).format(
+                            "DD/MM/yyyy"
+                          )
+                        : "--:--"}
+                    </Text>
                   </Flex>
                   <Text>Date</Text>
                 </Box>
-                <Box flex="1" fontSize="1.2rem" fontWeight="medium">
-                  <Flex gap="5px" alignItems="center">
-                    <MdWorkHistory />
-                    <Text>08:00</Text>
-                  </Flex>
-                  <Text>Total working hours</Text>
-                </Box>
-              </HStack>
-
-              <HStack w="100%" spacing="10px">
-                <VStack alignItems="start" flex="1">
+                <VStack alignItems="center">
                   <AvatarWithPreview
                     className="h-[150px] rounded-md"
-                    src={test_img}
+                    src={attendanceDetailObj?.checkinCapture}
+                    altBoxSide="100px"
                     alt="Check In Image"
                   />
                   <Box fontSize="1.1rem" fontWeight="medium">
-                    <Text color="green.600">Check In: 09:00</Text>
-                    <Text color="orange.400">Late Arrival: 01:00</Text>
+                    <Text color="green.600">
+                      Check In:{" "}
+                      {moment(attendanceDetailObj?.checkIn).format("hh:mm") !=
+                      "Invalid date"
+                        ? moment(attendanceDetailObj?.checkIn).format("hh:mm")
+                        : "--:--"}
+                    </Text>
+                    <Text color="orange.400">
+                      Late Arrival:{" "}
+                      {moment(attendanceDetailObj?.lateArrival).format(
+                        "hh:mm"
+                      ) != "Invalid date"
+                        ? moment(attendanceDetailObj?.lateArrival).format(
+                            "hh:mm"
+                          )
+                        : "--:--"}
+                    </Text>
                   </Box>
                 </VStack>
-                <Flex marginBottom="70px !important" fontSize="1.5rem">
-                  <Icon as={TbArrowsRight} />
-                </Flex>
-                <VStack alignItems="start" flex="1">
+              </VStack>
+              <Flex margin="auto" ml="0 !important" fontSize="1.5rem">
+                <Icon as={TbArrowsRight} />
+              </Flex>
+              <VStack alignItems="flex-start" flex="1">
+                <Box flex="1" fontSize="1.2rem" fontWeight="medium">
+                  <Flex gap="5px" alignItems="center">
+                    <MdWorkHistory />
+                    <Text>
+                      {moment(attendanceDetailObj?.totalWorkingHours).format(
+                        "hh:mm"
+                      ) != "Invalid date"
+                        ? moment(attendanceDetailObj?.totalWorkingHours).format(
+                            "hh:mm"
+                          )
+                        : "--:--"}
+                    </Text>
+                  </Flex>
+                  <Text>Total working hours</Text>
+                </Box>
+                <VStack alignItems="center">
                   <AvatarWithPreview
                     className="h-[150px] rounded-md"
-                    src={test_img}
+                    src={attendanceDetailObj?.checkoutCapture}
+                    altBoxSide="100px"
                     alt="Check Out Image"
                   />
                   <Box fontSize="1.1rem" fontWeight="medium">
-                    <Text color="pink.600">Check Out: 18:00</Text>
-                    <Text color="orange.400">Early Leave: 02:00</Text>
+                    <Text color="pink.600">
+                      Check Out:{" "}
+                      {moment(attendanceDetailObj?.checkOut).format("hh:mm") !=
+                      "Invalid date"
+                        ? moment(attendanceDetailObj?.checkOut).format("hh:mm")
+                        : "--:--"}
+                    </Text>
+                    <Text color="orange.400">
+                      Early Leave:{" "}
+                      {moment(attendanceDetailObj?.earlyLeave).format(
+                        "hh:mm"
+                      ) != "Invalid date"
+                        ? moment(attendanceDetailObj?.earlyLeave).format(
+                            "hh:mm"
+                          )
+                        : "--:--"}
+                    </Text>
                   </Box>
                 </VStack>
-              </HStack>
-            </Stack>
+              </VStack>
+            </HStack>
           </ModalBody>
-
           <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
