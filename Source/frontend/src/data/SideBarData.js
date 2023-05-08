@@ -18,7 +18,7 @@ import { GoReport } from "react-icons/go";
 import { IoNotifications } from "react-icons/io5";
 import { BsCalendar3, BsFillPatchExclamationFill } from "react-icons/bs";
 import { ImProfile } from "react-icons/im";
-import {IoCreateSharp} from 'react-icons/io5'
+import { IoCreateSharp } from "react-icons/io5";
 const iconSize = "23px";
 export const SideBarData = [
   {
@@ -133,12 +133,12 @@ export const SideBarData = [
         url: "attendance-personal",
         icon: <MdTouchApp fontSize={iconSize} />,
       },
-      {
-        title: "Management",
-        url: "attendance-management",
-        icon: <SiMagento fontSize={iconSize} />,
-        roleCanAccess: ["manager", "admin"],
-      },
+      // {
+      //   title: "Management",
+      //   url: "attendance-management",
+      //   icon: <SiMagento fontSize={iconSize} />,
+      //   roleCanAccess: ["manager", "admin"],
+      // },
       {
         title: "Exception",
         url: "attendance-exception-management",
