@@ -168,7 +168,7 @@ function Profile() {
   });
   if (isFetchingProfileDetail) return <LoadingSpinner />;
   return (
-    <Stack minHeight="100vh" spacing={3}>
+    <Stack h="100%" spacing={3}>
       {resultPermission?.read && (
         <Stack>
           <Flex justifyContent="space-between">
@@ -242,7 +242,7 @@ function Profile() {
                       </Button>
                     </Flex>
                     <Divider />
-                    <Stack spacing={3} p={4} px={8}>
+                    <Stack spacing={2} p={4} px={8}>
                       <Flex gap={8}>
                         <FormTextField
                           name="fullname"
@@ -253,21 +253,21 @@ function Profile() {
                           }
                           isDisabled={!resultPermission?.update}
                         />
+                        <FormTextField
+                          name="email"
+                          label="Email"
+                          type="email"
+                          isReadOnly={true}
+                          placeholder="abc@gmail.com"
+                          leftIcon={
+                            <MdOutlineAlternateEmail
+                              color="#999"
+                              fontSize="1.5rem"
+                            />
+                          }
+                          isDisabled={!resultPermission?.update}
+                        />
                       </Flex>
-                      <FormTextField
-                        name="email"
-                        label="Email"
-                        type="email"
-                        isReadOnly={true}
-                        placeholder="abc@gmail.com"
-                        leftIcon={
-                          <MdOutlineAlternateEmail
-                            color="#999"
-                            fontSize="1.5rem"
-                          />
-                        }
-                        isDisabled={!resultPermission?.update}
-                      />
                       <Flex gap={8}>
                         <FormTextField
                           name="dateOfBirth"

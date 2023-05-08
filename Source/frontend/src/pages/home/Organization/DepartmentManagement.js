@@ -354,7 +354,7 @@ function DepartmentManagement() {
   if (isFetchingListOrganization || isFetchingListDepartment)
     return <LoadingSpinner />;
   return (
-    <Stack minHeight="100vh" spacing={4}>
+    <Stack h='100%' spacing={4}>
       <Flex gap="10px">
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Department Management</Heading>
@@ -363,7 +363,7 @@ function DepartmentManagement() {
         {dataListDepartment &&
         dataListDepartment.result.data != undefined &&
         dataListDepartment.result.data.length == 0 ? (
-          <NoDataToDisplay h="450px" />
+          <NoDataToDisplay h="100%" />
         ) : (
           <>
             <DynamicTable

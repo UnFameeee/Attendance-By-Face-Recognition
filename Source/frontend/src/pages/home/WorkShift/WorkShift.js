@@ -208,7 +208,7 @@ function WorkShift() {
           });
         } else {
           queryClient.invalidateQueries("listShiftType");
-          refreshListWorkDepartment()
+          refreshListWorkDepartment();
           toast({
             title: `${
               currentModifyShiftTypeId != "" ? "Modify" : "Create"
@@ -374,7 +374,7 @@ function WorkShift() {
     return <LoadingSpinner />;
   }
   return (
-    <React.Fragment>
+    <Stack h="100%">
       <Flex
         flexDirection={{ base: "column", md: "row" }}
         alignItems={{ base: "start", md: "center" }}
@@ -665,7 +665,7 @@ function WorkShift() {
         />
       )}
       {departmentId ? (
-        <div className=" min-h-screen flex flex-col p-[10px] bg-white rounded-md">
+        <div className=" h-[100%] flex flex-col p-[10px] bg-white rounded-md">
           <CalendarHeader />
           <div className="flex flex-1">
             {/* <Sidebar /> */}
@@ -705,12 +705,12 @@ function WorkShift() {
               </Highlight>
             </Heading>
           </Box>
-          <Box h="80vh">
+          <Box h="100%">
             <NoDataToDisplay />
           </Box>
         </>
       )}
-    </React.Fragment>
+    </Stack>
   );
 }
 
