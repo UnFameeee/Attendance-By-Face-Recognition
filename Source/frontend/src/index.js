@@ -39,6 +39,8 @@ import LeaveRequestManagement from "./pages/home/LeaveRequest/LeaveRequestManage
 import AttendanceExceptionManagement from "./pages/home/Attendance/AttendanceExceptionManagement";
 import ReportAttendanceException from "./pages/home/Attendance/ReportAttendanceException";
 import URLValidationRoute from "./Utils/URLValidateRoute";
+import FirstTimeLogin from "./pages/auth/FirstTimeLogin";
+
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
   colors: {
@@ -137,6 +139,8 @@ root.render(
                   <Route path="face-attendance" element={<FaceAttendance />} />
                   <Route path="test" element={<AttendanceModal />} />
                   <Route path="test2" element={<ExceptionModel />} />
+                  <Route path="first-time-login" element={<FirstTimeLogin />} />
+
                 </Route>
                 <Route path="*" element={<NotFound />} />
                 {/* <Route path="notfound" element={<NotFound />} /> */}
