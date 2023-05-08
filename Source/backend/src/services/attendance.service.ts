@@ -326,6 +326,8 @@ export class AttendanceService {
         attendanceDate: true,
         checkIn: true,
         checkOut: true,
+        lateArrival: true,
+        earlyLeave: true,
       }
     })
 

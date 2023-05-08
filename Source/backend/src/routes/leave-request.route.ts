@@ -6,6 +6,7 @@ import { PERMISSION, RESOURCE } from "../constant/database.constant";
 import { authorizeRoute } from "../middlewares/authorization.middleware";
 import { LeaveRequestController } from "../controllers/leave-request.controller";
 import { createLeaveRequestSchema } from "../model/dtos/leave-request.dto";
+import { dateTimeV2Schema } from "../model/dtos/workshift.dto";
 
 export class LeaveRequestRoute {
   public path = "/leaverequest";
@@ -23,11 +24,13 @@ export class LeaveRequestRoute {
       zodValidate(pageSchema),
       // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
       this.leaveRequestController.getLeaveRequestOfDepartment
-    );
-
-    //api/leaverequest/getLeaveRequestOfEmployee
-    this.router.post(`${this.path}/getLeaveRequestOfEmployee/:employeeId`,
+      );
+      
+      //api/leaverequest/getLeaveRequestOfEmployee
+      this.router.post(`${this.path}/getLeaveRequestOfEmployee/:employeeId`,
       authMiddleware,
+      // zodValidate(dateTimeV2Schema),
+      zodValidate(pageSchema),
       // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
       this.leaveRequestController.getLeaveRequestOfEmployee
     );
@@ -56,7 +59,7 @@ export class LeaveRequestRoute {
     );
 
     //api/leaverequest/deleteLeaveRequest
-    this.router.post(`${this.path}/deleteLeaveRequest/:leaveRequestId`,
+    this.router.delete(`${this.path}/deleteLeaveRequest/:leaveRequestId`,
       authMiddleware,
       // zodValidate(createLeaveRequestSchema),
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),

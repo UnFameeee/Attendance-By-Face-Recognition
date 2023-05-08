@@ -9,13 +9,6 @@ export const createLeaveRequestSchema = z.object({
     .trim()
     .optional(),
 
-  requestDate: z
-    .string({
-      required_error: 'Request Date is required',
-      invalid_type_error: "Request Date must be string"
-    })
-    .trim(),
-
   startDate: z
     .string({
       required_error: 'Start Date is required',
@@ -27,13 +20,6 @@ export const createLeaveRequestSchema = z.object({
     .string({
       required_error: 'End Date is required',
       invalid_type_error: "End Date must be string"
-    })
-    .trim(),
-
-  status: z
-    .string({
-      required_error: 'Status is required',
-      invalid_type_error: "Status must be string"
     })
     .trim(),
 

@@ -102,6 +102,18 @@ export class ShifttypeService {
   public deleteShiftType = async (shiftTypeId: string): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
 
+    const queryDataCheck = await prisma.shiftType.findFirst({
+      where: {
+        shiftTypeId: shiftTypeId,
+        deleted: false,
+      }
+    })
+
+    if (!queryDataCheck) {
+      response.message = "Shifttype isn't exist";
+      return response;
+    }
+
     const queryData = await prisma.shiftType.update({
       data: {
         deleted: true,

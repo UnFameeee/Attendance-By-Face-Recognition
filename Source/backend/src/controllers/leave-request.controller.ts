@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestWithProfile } from "../interfaces/request.interface";
 import { LeaveRequestService } from "../services/leave-request.service";
-import { DateTimeV2DTO } from "../model/dtos/workshift.dto";
 import { CreateLeaveRequestDTO } from "../model/dtos/leave-request.dto";
+import { Page } from "../config/paginate.config";
 
 export class LeaveRequestController {
   public leaveRequestService = new LeaveRequestService();
@@ -10,8 +10,8 @@ export class LeaveRequestController {
   public getLeaveRequestOfDepartment = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const departmentId: string = req.params.departmentId;
-      const data: DateTimeV2DTO = req.body;
-      const response = await this.leaveRequestService.getLeaveRequestOfDepartment(departmentId, data);
+      const page: Page = req.body;
+      const response = await this.leaveRequestService.getLeaveRequestOfDepartment(departmentId, page);
       res.status(200).json(response);
     } catch (err) {
       next(err);
@@ -21,8 +21,8 @@ export class LeaveRequestController {
   public getLeaveRequestOfEmployee = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const employeeId: string = req.params.employeeId;
-      const data: DateTimeV2DTO = req.body;
-      const response = await this.leaveRequestService.getLeaveRequestOfEmployee(employeeId, data);
+      const page: Page = req.body;
+      const response = await this.leaveRequestService.getLeaveRequestOfEmployee(employeeId, page);
       res.status(200).json(response);
     } catch (err) {
       next(err);

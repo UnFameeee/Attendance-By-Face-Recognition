@@ -6,15 +6,28 @@ import { prisma } from "../database/prisma.singleton";
 import { LeaveRequestModel } from "../model/view-model/leaverequest.model";
 import { CreateLeaveRequestDTO } from "../model/dtos/leave-request.dto";
 import { leaveRequestStatus } from "../constant/leave-request.constant";
+import { Page, Paging, paginate } from "../config/paginate.config";
 
 export class LeaveRequestService {
-  public getLeaveRequestOfDepartment = async (departmentId: string, data: DateTimeV2DTO): Promise<ResponseData<LeaveRequestModel[]>> => {
-    const response = new ResponseData<LeaveRequestModel[]>;
+  public getLeaveRequestOfDepartment = async (departmentId: string, page: Page): Promise<ResponseData<Paging<LeaveRequestModel[]>>> => {
+    const response = new ResponseData<Paging<LeaveRequestModel[]>>;
+    const pageResponse = new Paging<LeaveRequestModel[]>
+    const data: DateTimeV2DTO = page.extendData;
 
-    const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+    // const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    var startDate;
+    var endDate;
+    if (data.month == 1) {
+      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year - 1}-${data.month}-${12}`)
+      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    } else if (data.month == 12) {
+      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year + 1}-${1}-${12}`)
+    } else {
+      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    }
 
     const queryData = await prisma.leaveRequest.findMany({
       where: {
@@ -58,21 +71,54 @@ export class LeaveRequestService {
         }
       },
       orderBy: {
-        requestDate: "asc",
+        requestDate: "desc",
+      },
+      ...paginate(page)
+    })
+
+    const totalElement = await prisma.leaveRequest.count({
+      where: {
+        deleted: false,
+        employee: {
+          department: {
+            departmentId: departmentId,
+          }
+        },
+        startDate: {
+          gte: startDate,
+        },
+        endDate: {
+          lte: endDate,
+        }
       },
     })
 
-    response.result = queryData;
+    pageResponse.data = queryData;
+    pageResponse.page = page;
+    pageResponse.page.totalElement = totalElement;
+    response.result = pageResponse;
     return response;
   }
 
-  public getLeaveRequestOfEmployee = async (employeeId: string, data: DateTimeV2DTO): Promise<ResponseData<LeaveRequestModel[]>> => {
-    const response = new ResponseData<LeaveRequestModel[]>;
+  public getLeaveRequestOfEmployee = async (employeeId: string, page: Page): Promise<ResponseData<Paging<LeaveRequestModel[]>>> => {
+    const response = new ResponseData<Paging<LeaveRequestModel[]>>;
+    const pageResponse = new Paging<LeaveRequestModel[]>
+    const data: DateTimeV2DTO = page.extendData;
 
-    const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+    // const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    var startDate;
+    var endDate;
+    if (data.month == 1) {
+      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year - 1}-${data.month}-${12}`)
+      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    } else if (data.month == 12) {
+      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year + 1}-${1}-${12}`)
+    } else {
+      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    }
 
     const queryData = await prisma.leaveRequest.findMany({
       where: {
@@ -112,11 +158,28 @@ export class LeaveRequestService {
         }
       },
       orderBy: {
-        requestDate: "asc",
+        requestDate: "desc",
+      },
+      ...paginate(page)
+    })
+
+    const totalElement = await prisma.leaveRequest.count({
+      where: {
+        deleted: false,
+        employeeId: employeeId,
+        startDate: {
+          gte: startDate,
+        },
+        endDate: {
+          lte: endDate,
+        }
       },
     })
 
-    response.result = queryData;
+    pageResponse.data = queryData;
+    pageResponse.page = page;
+    pageResponse.page.totalElement = totalElement;
+    response.result = pageResponse;
     return response;
   }
 
@@ -265,6 +328,11 @@ export class LeaveRequestService {
       return response;
     }
 
+    if (queryData.status != leaveRequestStatus.waiting) {
+      response.message = `This leave request is already ${queryData.status}`;
+      return response;
+    }
+
     if (new Date(queryData.startDate) <= new Date()) {
       response.message = "This leave request is overdate and cannot be approve or reject";
       return response;
@@ -278,32 +346,119 @@ export class LeaveRequestService {
     }
 
     if (status == "APPROVE") {
-      const queryWorkshift = await prisma.workshift.findMany({
-        where: {
-          employeeId: queryData.employeeId,
-          shiftDate: {
-            gte: queryData.startDate,
-            lte: queryData.endDate,
+      //Tìm trong dãy ngày, nếu đã có lịch làm thì gán status, nếu chưa thì tạo mới với null shiftDate và gán status
+      const leaveRequestDateStart = new Date(queryData.startDate).getDate();
+      const leaveRequestDateEnd = new Date(queryData.endDate).getDate();
+
+      const leaveRequestMonthStart = new Date(queryData.startDate).getMonth() + 1;
+      const leaveRequestMonthEnd = new Date(queryData.endDate).getMonth() + 1;
+
+      const leaveRequestYear = new Date(queryData.startDate).getFullYear();
+
+      //Nếu trong cùng 1 tháng
+      if (leaveRequestMonthStart == leaveRequestMonthEnd) {
+        for (let i = leaveRequestDateStart; i <= leaveRequestDateEnd; ++i) {
+          // Get the date in ISO 8601 format (e.g. "2023-04-01")
+          const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
+
+          const queryWorkshiftData = await prisma.workshift.findFirst({
+            where: {
+              employeeId: queryData.employeeId,
+              shiftDate: date,
+              deleted: false,
+            }
+          })
+
+          if (!queryWorkshiftData) {
+            await prisma.workshift.create({
+              data: {
+                employeeId: queryData.employeeId,
+                shiftDate: date,
+                absent: true,
+              }
+            })
+          } else {
+            await prisma.workshift.update({
+              data: {
+                employeeId: queryData.employeeId,
+                shiftDate: date,
+                absent: true,
+              },
+              where: {
+                shiftId: queryWorkshiftData.shiftId,
+              }
+            })
           }
         }
-      })
+      } else {
+        const dateInMonth = moment(`${leaveRequestYear + 1}-${leaveRequestMonthStart}-01`, "YYYY-MM-DD").daysInMonth();
+        for (let i = leaveRequestDateStart; i <= dateInMonth; ++i) {
+          // Get the date in ISO 8601 format (e.g. "2023-04-01")
+          const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
 
-      var arrayWorkshiftId: string[];
-      for (var workshift of queryWorkshift) {
-        arrayWorkshiftId.push(workshift.shiftId);
+          const queryWorkshiftData = await prisma.workshift.findFirst({
+            where: {
+              employeeId: queryData.employeeId,
+              shiftDate: date,
+              deleted: false,
+            }
+          })
+
+          if (!queryWorkshiftData) {
+            await prisma.workshift.create({
+              data: {
+                employeeId: queryData.employeeId,
+                shiftDate: date,
+                absent: true,
+              }
+            })
+          } else {
+            await prisma.workshift.update({
+              data: {
+                employeeId: queryData.employeeId,
+                shiftDate: date,
+                absent: true,
+              },
+              where: {
+                shiftId: queryWorkshiftData.shiftId,
+              }
+            })
+          }
+        }
+        for (let i = 1; i <= leaveRequestDateEnd; ++i) {
+          // Get the date in ISO 8601 format (e.g. "2023-04-01")
+          const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthEnd}-${i}`)
+
+          const queryWorkshiftData = await prisma.workshift.findFirst({
+            where: {
+              employeeId: queryData.employeeId,
+              shiftDate: date,
+              deleted: false,
+            }
+          })
+
+          if (!queryWorkshiftData) {
+            await prisma.workshift.create({
+              data: {
+                employeeId: queryData.employeeId,
+                shiftDate: date,
+                absent: true,
+              }
+            })
+          } else {
+            await prisma.workshift.update({
+              data: {
+                employeeId: queryData.employeeId,
+                shiftDate: date,
+                absent: true,
+              },
+              where: {
+                shiftId: queryWorkshiftData.shiftId,
+              }
+            })
+          }
+        }
       }
-
-      const queryUpdateWorkshift = await prisma.workshift.updateMany({
-        where: {
-          shiftId: {
-            in: arrayWorkshiftId,
-          }
-        },
-        data: {
-          absent: true,
-        }
-      })
-
     }
 
     const queryUpdateLeaveRequest = await prisma.leaveRequest.update({

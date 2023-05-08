@@ -26,8 +26,8 @@ export class LeavetypeRoute {
       this.leavetypeController.getAllLeaveType
     );
 
-    //api/leavetype/getListShiftType
-    this.router.get(`${this.path}/getListShiftType`,
+    //api/leavetype/getListLeaveType
+    this.router.get(`${this.path}/getListLeaveType`,
       authMiddleware,
       // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
       this.leavetypeController.getListLeaveType

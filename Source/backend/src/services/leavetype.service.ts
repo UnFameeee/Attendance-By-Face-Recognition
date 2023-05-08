@@ -16,6 +16,7 @@ export class LeavetypeService {
       select: {
         leaveTypeId: true,
         name: true,
+        description: true,
         annualLeave: true,
       },
       orderBy: {
@@ -47,6 +48,7 @@ export class LeavetypeService {
       select: {
         leaveTypeId: true,
         name: true,
+        description: true,
         annualLeave: true,
       }
     })
@@ -62,6 +64,7 @@ export class LeavetypeService {
       const queryData = await prisma.leaveType.create({
         data: {
           name: data.name,
+          description: data.description,
           annualLeave: data.annualLeave,
         }
       })
@@ -80,7 +83,8 @@ export class LeavetypeService {
       const queryData = await prisma.leaveType.update({
         data: {
           name: data.name,
-          annualLeave: data.annualLeave, 
+          description: data.description,
+          annualLeave: data.annualLeave,
         },
         where: {
           leaveTypeId: data.leaveTypeId,
@@ -94,6 +98,18 @@ export class LeavetypeService {
   public deleteLeaveType = async (leaveTypeId: string): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
 
+    const queryDataCheck = await prisma.leaveType.findFirst({
+      where: {
+        leaveTypeId: leaveTypeId,
+        deleted: false,
+      }
+    })
+
+    if (!queryDataCheck) {
+      response.message = "Leavetype isn't exist";
+      return response;
+    }
+
     const queryData = await prisma.leaveType.update({
       data: {
         deleted: true,
@@ -102,7 +118,7 @@ export class LeavetypeService {
         leaveTypeId: leaveTypeId,
       }
     })
-    
+
     if (queryData) {
       response.result = "Delete leavetype successfully";
     } else {

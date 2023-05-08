@@ -34,7 +34,7 @@ export const leavetype_data = [
     description: "Personal leave or Unpaid leave is often granted for specific personal reasons that are not covered by other types of leave. It may be used for personal appointments, family events, or other non-work-related purposes",
     annualLeave: false,
   },
-  {
+  { 
     leaveTypeId: "0ea876d6-4b00-4aed-8fca-25b6a2faa227",
     name: "Sick Leave",
     description: "Sick leave is provided to employees when they are ill or injured and unable to perform their duties. It allows employees to take time off to recover and seek medical treatment",

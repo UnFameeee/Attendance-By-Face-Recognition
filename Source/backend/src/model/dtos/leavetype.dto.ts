@@ -16,6 +16,13 @@ export const modifyLeavetypeSchema = z.object({
     })
     .trim(),
 
+  description: z
+    .string({
+      required_error: 'Description is required',
+      invalid_type_error: "Description must be string"
+    })
+    .trim(),
+
   annualLeave: z
     .boolean({
       required_error: 'Annual Leave is required',
