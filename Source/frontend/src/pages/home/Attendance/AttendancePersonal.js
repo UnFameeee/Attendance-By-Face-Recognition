@@ -3,7 +3,6 @@ import {
   Box,
   Heading,
   Stack,
-  Image,
   Avatar,
   Text,
   HStack,
@@ -13,7 +12,6 @@ import {
   SimpleGrid,
   Badge,
   Flex,
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -25,22 +23,17 @@ import {
 } from "@chakra-ui/react";
 import {
   AiFillCheckCircle,
-  AiOutlineLogin,
-  AiOutlineLogout,
   AiFillClockCircle,
 } from "react-icons/ai";
-import { BsFillPersonLinesFill } from "react-icons/bs";
-import test_img from "../../../assets/ta.jpeg";
 import { MdWorkHistory, MdTimerOff } from "react-icons/md";
 import { BiTimer } from "react-icons/bi";
 import AvatarWithPreview from "../../../components/AvatarWithPreview";
 import { FaEquals } from "react-icons/fa";
 import { TbArrowsRight } from "react-icons/tb";
 import { attendanceService } from "../../../services/attendance/attendance";
-import dayjs from "dayjs";
 import { Helper } from "../../../Utils/Helper";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import moment from "moment";
 function AttendancePersonal() {
   // #region declare variable
