@@ -109,7 +109,7 @@ function LeaveRequestManagement() {
         Cell: ({ value }) => (
           <Badge p='5px' fontSize="lg">{value ? "yes" : "no"}</Badge>
         ),
-        cellWidth: "150px",
+        cellWidth: "70px",
       },
       {
         Header: "Full Name",
@@ -175,7 +175,7 @@ function LeaveRequestManagement() {
         // haveFilter: {
         //   filterType: FilterType.DateTime,
         // },
-        cellWidth: "150px",
+        cellWidth: "100px",
       },
       {
         Header: "End date",
@@ -183,7 +183,7 @@ function LeaveRequestManagement() {
         // haveFilter: {
         //   filterType: FilterType.DateTime,
         // },
-        cellWidth: "150px",
+        cellWidth: "100px",
       },
     ],
     []
@@ -278,7 +278,7 @@ function LeaveRequestManagement() {
   // #endregion
 
   return (
-    <Stack minHeight="100vh" spacing={4}>
+    <Stack h='100%' spacing={4}>
       <Flex gap="10px">
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Management</Heading>

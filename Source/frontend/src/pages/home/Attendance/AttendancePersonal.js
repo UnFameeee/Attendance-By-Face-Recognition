@@ -25,7 +25,7 @@ import { BsFillPersonLinesFill } from "react-icons/bs";
 import test_img from "../../../assets/ta.jpeg";
 function AttendancePersonal() {
   return (
-    <Stack spacing={5}>
+    <Stack spacing={5} h='100%'>
       <VStack
         paddingX={5}
         paddingY={4}

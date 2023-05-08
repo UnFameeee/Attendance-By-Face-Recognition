@@ -130,7 +130,7 @@ function OrganizationGeneral() {
 
   if (isFetchingOrganizationDetail) return <LoadingSpinner />;
   return (
-    <Stack minHeight="100vh" spacing={3}>
+    <Stack h='100%' spacing={3}>
       {resultPermission?.read && (
         <Formik
           initialValues={initialValuesExisted}
@@ -158,7 +158,7 @@ function OrganizationGeneral() {
           }}
         >
           {(formik) => (
-            <Stack as="form" onSubmit={formik.handleSubmit}>
+            <Stack  as="form" onSubmit={formik.handleSubmit}>
               <Flex
                 justifyContent="space-between"
                 gap="10px"

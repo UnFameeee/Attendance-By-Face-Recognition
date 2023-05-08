@@ -353,7 +353,7 @@ function AttendanceExceptionManagement() {
   }, [initialValuesModal]);
   // #endregion
   return (
-    <VStack minHeight="100vh" alignItems="flex-start" spacing={3}>
+    <VStack h="100%" alignItems="flex-start" spacing={3}>
       <VStack spacing="5">
         <Flex gap="10px">
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -456,7 +456,7 @@ function AttendanceExceptionManagement() {
                   />
                 </Box>
               ) : (
-                <>
+                <Stack>
                   <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
                     <Heading
                       fontSize="2xl"
@@ -492,10 +492,10 @@ function AttendanceExceptionManagement() {
                       </Highlight>
                     </Heading>
                   </Box>
-                  <Box h="80vh">
+                  <Box h="500px">
                     <NoDataToDisplay />
                   </Box>
-                </>
+                </Stack>
               )}
             </TabPanel>
             <TabPanel p="0">
@@ -513,7 +513,7 @@ function AttendanceExceptionManagement() {
                   />
                 </Box>
               ) : (
-                <>
+                <Stack>
                   <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
                     <Heading
                       fontSize="2xl"
@@ -549,10 +549,10 @@ function AttendanceExceptionManagement() {
                       </Highlight>
                     </Heading>
                   </Box>
-                  <Box h="80vh">
+                  <Box h="500px">
                     <NoDataToDisplay />
                   </Box>
-                </>
+                </Stack>
               )}
             </TabPanel>
           </TabPanels>
