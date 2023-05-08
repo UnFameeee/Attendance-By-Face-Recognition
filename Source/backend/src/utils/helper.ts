@@ -31,14 +31,44 @@ const ConfigStaticDateTime = (time: string, date?: string): Date => {
   return result
 }
 
+const MinusDate = (bigDate: Date, smallDate: Date, format?: boolean) => {
+  const millisecondDif = moment(new Date(bigDate.getTime()), "HH:mm").diff(moment(new Date(smallDate.getTime()), "HH:mm"));
+  if (format) {
+    return moment.utc(millisecondDif).format('HH:mm');
+  } else {
+    return moment.utc(millisecondDif);
+  }
+};
+
+const PlusDate = (firstDate: Date, secondDate: Date, format?: boolean) => {
+  // Parse the time values into moment objects
+  const momentTime1 = moment(firstDate, 'HH:mm');
+  const momentTime2 = moment(secondDate, 'HH:mm');
+
+  // Calculate the total duration by adding the durations of both times
+  const duration1 = moment.duration(momentTime1.format('HH:mm'));
+  const duration2 = moment.duration(momentTime2.format('HH:mm'));
+  const totalDuration = duration1.add(duration2);
+
+  if (format) {
+    return moment.utc(totalDuration.asMilliseconds()).format('HH:mm');
+  } else {
+    return moment.utc(totalDuration.asMilliseconds());
+  }
+};
+
 interface IHelper {
   UppercaseFirstLetter: Function,
   ConvertDoubleSlashURL: Function,
   ConfigStaticDateTime: Function,
+  MinusDate: Function,
+  PlusDate: Function,
 }
 
 export const Helper: IHelper = {
   UppercaseFirstLetter,
   ConvertDoubleSlashURL,
   ConfigStaticDateTime,
+  MinusDate,
+  PlusDate,
 }

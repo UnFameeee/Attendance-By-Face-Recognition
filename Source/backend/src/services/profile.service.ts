@@ -74,6 +74,7 @@ export class ProfileService {
         id: employeeId,
       },
       data: {
+        firsttimeLogin: false,
         fullname: data.fullname,
         gender: data.gender,
         dateOfBirth: data.dateOfBirth,
@@ -197,6 +198,24 @@ export class ProfileService {
 
     })
     response.result = queryData;
+    return response;
+  }
+
+  public validateFirstTimeLogin = async (employeeId: string) => {
+    const response = new ResponseData<any>;
+    const queryData = await prisma.employee.findFirst({
+      where: {
+        id: employeeId,
+      },
+      select: {
+        firsttimeLogin: true,
+      },
+    })
+    if (!queryData) {
+      response.message = "The employee isn't exist";
+      return response;
+    }
+    response.result = queryData.firsttimeLogin;
     return response;
   }
 }

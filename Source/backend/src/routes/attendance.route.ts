@@ -6,6 +6,8 @@ import { takeAttendanceSchema } from "../model/dtos/attendance.dto";
 import { authMiddleware } from "../middlewares/authentication.middleware";
 import { authorizeRoute } from "../middlewares/authorization.middleware";
 import { PERMISSION, RESOURCE } from "../constant/database.constant";
+import { attendanceImageUpload } from "../multer/attendance.storage";
+import { dateTimeV2Schema } from "../model/dtos/workshift.dto";
 
 export class AttendanceRoute implements Routes {
   public path = "/attendance";
@@ -31,6 +33,47 @@ export class AttendanceRoute implements Routes {
       // zodValidate(takeAttendanceSchema),
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getEmployeeDetailById
+    )
+
+    // api/attendance/saveImage
+    this.router.post(`${this.path}/saveImage`,
+      // authMiddleware,
+      // zodValidate(dateTimeV2Schema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      attendanceImageUpload,
+      this.attendanceController.saveImage
+    )
+
+    // api/attendance/getThisMonthAttendance
+    this.router.post(`${this.path}/getThisMonthAttendance`,
+      authMiddleware,
+      zodValidate(dateTimeV2Schema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceController.getThisMonthAttendance
+    )
+
+    // api/attendance/getTodayAttendance
+    this.router.post(`${this.path}/getTodayAttendance`,
+      authMiddleware,
+      zodValidate(dateTimeV2Schema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceController.getTodayAttendance
+    )
+
+    // api/attendance/getAttendanceHistory
+    this.router.post(`${this.path}/getAttendanceHistory/:employeeId`,
+      authMiddleware,
+      zodValidate(dateTimeV2Schema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceController.getAttendanceHistory
+    )
+
+    // api/attendance/getAttendanceDetail
+    this.router.get(`${this.path}/getAttendanceDetail/:attendanceId`,
+      authMiddleware,
+      // zodValidate(dateTimeV2Schema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceController.getAttendanceDetail
     )
   }
 }

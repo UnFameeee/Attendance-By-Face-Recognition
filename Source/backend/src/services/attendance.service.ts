@@ -3,18 +3,22 @@ import { ResponseData } from '../config/responseData.config';
 import { prisma } from '../database/prisma.singleton';
 import { AttendanceType } from '../utils/enum';
 import { Helper } from '../utils/helper';
+import { env } from '../config/env.config';
+import { TakeAttendanceDTO } from '../model/dtos/attendance.dto';
+import { DateTimeV2DTO } from '../model/dtos/workshift.dto';
 
 export class AttendanceService {
 
-  public takeAttendance = async (employeeId: string, attendanceType: string) => {
+  public takeAttendance = async (data: TakeAttendanceDTO) => {
     const response = new ResponseData<string>();
+
     const now = new Date();
     const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
       where: {
-        employeeId: employeeId,
+        employeeId: data.employeeId,
         shiftDate: modifyDate,
         deleted: false,
       },
@@ -41,7 +45,7 @@ export class AttendanceService {
     //Kiểm tra xem đã có lần takeAttendance nào chưa ?
     const checkAttendance = await prisma.attendance.findFirst({
       where: {
-        employeeId: employeeId,
+        employeeId: data.employeeId,
         attendanceDate: modifyDate,
         deleted: false,
       }
@@ -95,9 +99,10 @@ export class AttendanceService {
 
       let queryData = await prisma.attendance.create({
         data: {
-          employeeId: employeeId,
+          employeeId: data.employeeId,
           attendanceDate: modifyDate,
           checkIn: new Date(now.toISOString()),
+          checkinCapture: data.image,
           checkOut: null,
           lateArrival: lateArrival,
           totalHours: 0,
@@ -155,7 +160,7 @@ export class AttendanceService {
 
       const queryShiftData = await prisma.attendance.findFirst({
         where: {
-          employeeId: employeeId,
+          employeeId: data.employeeId,
           attendanceDate: Helper.ConfigStaticDateTime("00:00", date),
           deleted: false,
         }
@@ -166,9 +171,10 @@ export class AttendanceService {
           attendanceId: queryShiftData.attendanceId,
         },
         data: {
-          employeeId: employeeId,
+          employeeId: data.employeeId,
           attendanceDate: modifyDate,
           checkOut: new Date(now.toISOString()),
+          checkoutCapture: data.image,
           earlyLeave: earlyLeave,
           totalHours: 0,
         }
@@ -180,5 +186,191 @@ export class AttendanceService {
       }
       return response;
     }
+  }
+
+  public saveImage = async (files: { [fieldname: string]: Express.Multer.File[] }) => {
+    const response = new ResponseData<string>;
+    let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
+
+    response.result = Helper.ConvertDoubleSlashURL(link);
+    return response;
+  }
+
+  public getThisMonthAttendance = async (employeeId: string, data: DateTimeV2DTO) => {
+    const response = new ResponseData<any>();
+    const daysInMonth = moment(`${data.year + 1}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const queryData = await prisma.attendance.findMany({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      },
+      select: {
+        checkIn: true,
+        checkOut: true,
+        lateArrival: true,
+        earlyLeave: true,
+      }
+    })
+
+    const totalAttendance = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        checkOut: {
+          not: null,
+        },
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      },
+    })
+
+    var totalWorkingHours: number = 0;
+    var totalLateArrival: number = 0;
+    var totalEarlyLeave: number = 0;
+
+    for (var attendance of queryData) {
+      console.log(attendance);
+      if (attendance.checkOut != null) {
+        totalWorkingHours += Helper.MinusDate(attendance.checkOut, attendance.checkIn, false);
+
+        totalLateArrival += moment.duration(moment(attendance.lateArrival, "HH:mm").format("HH:mm")).asMilliseconds();
+
+        totalEarlyLeave += moment.duration(moment(attendance.earlyLeave, "HH:mm").format("HH:mm")).asMilliseconds();
+
+      } else {
+        totalWorkingHours += 0;
+        totalLateArrival += 0;
+        totalEarlyLeave += 0;
+      }
+    }
+
+    const returnData = {
+      totalAttendance: totalAttendance,
+      totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
+      totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
+      totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
+    }
+
+    response.result = returnData;
+    return response;
+  }
+
+  public getTodayAttendance = async (employeeId: string, data: DateTimeV2DTO) => {
+    const response = new ResponseData<any>();
+    const convertedDate = moment(`${data.year}-${data.month}-${data.date}`, "YYYY-MM-DD")
+
+    const queryData = await prisma.attendance.findFirst({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: convertedDate.startOf('day').toDate(),
+          lte: convertedDate.endOf('day').toDate(),
+        },
+        deleted: false,
+      },
+      select: {
+        checkIn: true,
+        checkOut: true,
+        lateArrival: true,
+        earlyLeave: true,
+      }
+    })
+
+    if (!queryData) {
+      response.message = "No attendance recorded today";
+      return response;
+    }
+
+    var totalWorkingHours;
+    if (queryData.checkOut != null) {
+      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
+    } else {
+      totalWorkingHours = null;
+    }
+    const returnData = {
+      totalWorkingHours,
+      ...queryData
+    }
+
+    response.result = returnData;
+    return response;
+  }
+
+  public getAttendanceHistory = async (employeeId: string, data: DateTimeV2DTO) => {
+    const response = new ResponseData<any>();
+    const daysInMonth = moment(`${data.year + 1}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const queryData = await prisma.attendance.findMany({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      },
+      select: {
+        attendanceId: true,
+        attendanceDate: true,
+        checkIn: true,
+        checkOut: true,
+      }
+    })
+
+    response.result = queryData;
+    return response;
+  }
+
+  public getAttendanceDetail = async (attendanceId: string) => {
+    const response = new ResponseData<any>();
+
+    const queryData = await prisma.attendance.findFirst({
+      where: {
+        attendanceId: attendanceId,
+        deleted: false,
+      },
+      select: {
+        attendanceId: true,
+        attendanceDate: true,
+        checkIn: true,
+        checkOut: true,
+        checkinCapture: true,
+        checkoutCapture: true,
+        lateArrival: true,
+        earlyLeave: true,
+      }
+    })
+
+    if (!queryData) {
+      response.message = "Attendance isn't exist";
+      return response;
+    }
+
+    var totalWorkingHours;
+    if (queryData.checkOut != null) {
+      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
+    } else {
+      totalWorkingHours = null;
+    }
+    const returnData = {
+      totalWorkingHours,
+      ...queryData
+    }
+
+    response.result = returnData;
+    return response;
   }
 }
