@@ -3,7 +3,7 @@ import React from "react";
 import ModalImage from "react-modal-image";
 import onErrorImage from "../assets/onErrorImage.jpg";
 function AvatarWithPreview(props) {
-  const { src, alt, className, altBoxSide, altSize } = props;
+  const { src, alt, className, altBoxSide, altSize, altRounded } = props;
   const handleOnError = (e) => {
     e.target.src = onErrorImage;
   };
@@ -19,7 +19,7 @@ function AvatarWithPreview(props) {
       />
     );
   } else {
-    return <Avatar alt={alt} boxSize={altBoxSide} size={altSize} />;
+    return <Avatar alt={alt} boxSize={altBoxSide} size={altSize} rounded={altRounded} />;
   }
 }
 
