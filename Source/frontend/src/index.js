@@ -40,6 +40,7 @@ import AttendanceExceptionManagement from "./pages/home/Attendance/AttendanceExc
 import ReportAttendanceException from "./pages/home/Attendance/ReportAttendanceException";
 import URLValidationRoute from "./Utils/URLValidateRoute";
 import FirstTimeLogin from "./pages/auth/FirstTimeLogin";
+import TrainingFace from "./pages/home/Training/TrainingFace";
 
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
@@ -137,6 +138,7 @@ root.render(
                     <Route path="report-attendance-exception" element={<ReportAttendanceException />} />
                   </Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
+                  <Route path="training-face" element={<TrainingFace />} />
                   <Route path="test" element={<AttendanceModal />} />
                   <Route path="test2" element={<ExceptionModel />} />
                   <Route path="first-time-login" element={<FirstTimeLogin />} />
