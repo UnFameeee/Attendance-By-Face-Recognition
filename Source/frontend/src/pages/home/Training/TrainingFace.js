@@ -7,6 +7,7 @@ import axiosBase from '../../../Utils/AxiosInstance';
 import "./TrainingFace.css";
 
 let streamTrainingObj;
+const limitPictures = 2;
 export default function TrainingFace() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const videoRef = useRef(null);
@@ -14,6 +15,7 @@ export default function TrainingFace() {
   const toast = useToast();
   const dispatch = useDispatch();
   const [capturedImages, setCapturedImages] = useState([]);
+  const [isScaningPaused, setIsScaningPaused] = useState(false);
 
   // const useSaveImageOfAttendance = useMutation((variable) =>
   //   attendanceService.saveImageOfAttendance(variable), {
@@ -86,8 +88,8 @@ export default function TrainingFace() {
 
     // const displaySize = { width: 720, height: 560 }
     const videoResolution = document.getElementById("video_training");
-    console.log(videoResolution.offsetWidth)
-    console.log(videoResolution.offsetHeight)
+    // console.log(videoResolution.offsetWidth)
+    // console.log(videoResolution.offsetHeight)
     const resolution = {
       width: videoResolution.offsetWidth,
       height: videoResolution.offsetHeight,
@@ -102,33 +104,39 @@ export default function TrainingFace() {
 
       // const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
-        // if (!useTakeAttendance.isLoading) {
         const detections = await faceapi
           // .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
           .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
           .withFaceLandmarks()
           .withFaceDescriptors()
 
-        const resizedDetections = faceapi.resizeResults(
-          detections,
-          displaySize
-        );
-
-        canvas
-          .getContext('2d')
-          .clearRect(0, 0, canvas.width, canvas.height);
-
-        for (const detection of resizedDetections) {
-          // let faceDetected = faceMatcher.findBestMatch(detection.descriptor);
-          const box = detection.detection.box;
-          const drawBox = new faceapi.draw.DrawBox(box,
-            // {
-            //   label: faceDetected
-            // }
+        if (!isScaningPaused) {
+          console.log(detections);
+          if (detections.length !== 0) {
+            const image = videoRef.current.getScreenshot();
+            setCapturedImages(prevImages => [...prevImages, image]);
+          }
+  
+          const resizedDetections = faceapi.resizeResults(
+            detections,
+            displaySize
           );
-          drawBox.draw(canvas);
+  
+          canvas
+            .getContext('2d')
+            .clearRect(0, 0, canvas.width, canvas.height);
+  
+          for (const detection of resizedDetections) {
+            // let faceDetected = faceMatcher.findBestMatch(detection.descriptor);
+            const box = detection.detection.box;
+            const drawBox = new faceapi.draw.DrawBox(box,
+              // {
+              //   label: faceDetected
+              // }
+            );
+            drawBox.draw(canvas);
+          }
         }
-        // }
       }
       intervalRef.current = setInterval(realtimeFaceRegconition, 1000);
     }
@@ -137,7 +145,7 @@ export default function TrainingFace() {
     return () => {
       clearInterval(intervalRef.current);
     };
-  }, [videoRef])
+  }, [videoRef, isScaningPaused])
 
   useEffect(() => {
     return () => {
@@ -147,27 +155,28 @@ export default function TrainingFace() {
     };
   }, []);
 
-  const captureImage = () => {
-    const image = videoRef.current.getScreenshot();
-    setCapturedImages(prevImages => [...prevImages, image]);
-  };
+  useEffect(() => {
+    if (capturedImages.length >= limitPictures) {
+      setIsScaningPaused(true);
+      console.log(capturedImages.length);
+    }
+  }, [capturedImages])
 
   return (
-    <Box width={"100%"} height={"100%"}>
-      <div className="template_training" style={{
-        margin: 0,
-        padding: 0,
-        width: "100%",
-        height: "fit-content",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-      }}>
+    <Box width={"100%"} height={"100%"} style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+    }}>
+      <div className="template_training">
         <Webcam style={{
-          display: "flex",
-          width: "1244px",
-          height: "90vh",
+          // display: "flex",
+          // width: "1244px",
+          // height: "100%",
+          height: "88vh",
+          width: "100%",
+          objectFit: "cover",
         }} id='video_training' ref={videoRef} audio={false} screenshotFormat="image/jpeg" ></Webcam>
       </div>
       {/* <div>
@@ -175,7 +184,8 @@ export default function TrainingFace() {
       </div> */}
       <Box width={"100%"} height={"10vh"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
         <Text fontSize={"1.35rem"} fontWeight={500} >TRAINING PROGRESS</Text>
-        <Progress colorScheme='green' height='1.75rem' width={"80%"} value={20} />
+        {/* <Progress colorScheme='green' height='1.75rem' width={"80%"} value={20} /> */}
+        <Progress colorScheme='green' height='1.75rem' width={"80%"} value={(capturedImages.length / limitPictures) * 100} />
       </Box>
     </Box>
   )

@@ -1,15 +1,23 @@
-/* .template_training {
+.template_training {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+  overflow: hidden;
+  width: 70%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-#video_training {
+@media (max-width: 720px) {
+  .template_training {
+    width: 100%;
+  }
+}
+
+/* #video_training {
   display: flex;
   width: 1244px;
   height: 100vh;
@@ -17,4 +25,6 @@
 
 #canvas_training {
   position: absolute;
+  border: 1px red solid;
+  z-index: 1000;
 }
