@@ -129,7 +129,7 @@ function DynamicTable(props) {
               {permission?.delete && (
                 <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
               )}
-              <Text color="white" fontWeight="normal" fontSize="1.2rem">
+              <Text color="white" fontWeight="600" fontSize="1.1rem">
                 Action
               </Text>
             </Flex>
@@ -332,7 +332,7 @@ function DynamicTable(props) {
                     isDisabled={
                       selectedFlatRows.length < 2 || !permission.delete
                     }
-                    colorScheme='blue'
+                    colorScheme="blue"
                   >
                     Delete Range
                   </Button>
@@ -603,13 +603,7 @@ function DynamicTable(props) {
                           bg="#338BFF"
                           {...column?.getHeaderProps()}
                         >
-                          <Text
-                            color="white"
-                            fontWeight="600"
-                            fontSize="1.1rem"
-                          >
-                            Action
-                          </Text>
+                          {column?.render("Header")}
                         </Th>
                       );
                     })}
@@ -649,7 +643,7 @@ function DynamicTable(props) {
                                   textOverflow="ellipsis"
                                   overflow="hidden"
                                 >
-                                  <Text fontSize="1.05rem" fontWeight='medium'>
+                                  <Text fontSize="1.05rem" fontWeight="medium">
                                     {new Date(cell?.value)
                                       .toISOString()
                                       .substring(0, 10)}
@@ -670,7 +664,7 @@ function DynamicTable(props) {
                                   textOverflow="ellipsis"
                                   overflow="hidden"
                                   fontSize="1.05rem"
-                                  fontWeight='medium'
+                                  fontWeight="medium"
                                 >
                                   {cell?.render("Cell")}
                                 </Box>

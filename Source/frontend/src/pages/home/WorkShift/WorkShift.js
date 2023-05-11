@@ -317,12 +317,12 @@ function WorkShift() {
       let tempObject = {};
       if (listShiftType?.result?.data) {
         listShiftType?.result?.data.map((item) => {
-          tempObject[`startTime_${item.shiftName}_${item.shiftTypeId}`] =
+          tempObject[`startTime_${item.shiftTypeId}`] =
             moment(item.startTime).format("hh:mm");
-          tempObject[`endTime_${item.shiftName}_${item.shiftTypeId}`] = moment(
+          tempObject[`endTime_${item.shiftTypeId}`] = moment(
             item.endTime
           ).format("hh:mm");
-          tempObject[`shiftName_${item.shiftName}_${item.shiftTypeId}`] =
+          tempObject[`shiftName_${item.shiftTypeId}`] =
             item.shiftName;
         });
       }
@@ -335,16 +335,37 @@ function WorkShift() {
       startTime_New: "",
       endTime_New: "",
     });
-  const validationSchemaForCreateShift = Yup.object().shape({
-    shiftName_New: Yup.string().required("This field is required"),
-    startTime_New: Yup.string().required("This field is required"),
-    endTime_New: Yup.string()
-      .test("is-after", "End time must be after start time", function (value) {
-        const { startTime_New } = this.parent;
-        return moment(value, "hh:mm").isAfter(moment(startTime_New, "hh:mm"));
+  const [validationSchemaForCreateShift, setValidationSchemaForCreateShift] =
+    useState(
+      Yup.object().shape({
+        shiftName_New: Yup.string().required("This field is required"),
+        startTime_New: Yup.string().required("This field is required"),
+        endTime_New: Yup.string()
+          .test(
+            "is-after",
+            "End time must be after start time",
+            function (value) {
+              const { startTime_New } = this.parent;
+              return moment(value, "hh:mm").isAfter(
+                moment(startTime_New, "hh:mm")
+              );
+            }
+          )
+          .required("This field is required"),
       })
-      .required("This field is required"),
-  });
+    );
+  const [validationSchemaForModifyShift, setValidationSchemaForModifyShift] =
+    useState();
+  // const validationSchemaForCreateShift = Yup.object().shape({
+  //   shiftName_New: Yup.string().required("This field is required"),
+  //   startTime_New: Yup.string().required("This field is required"),
+  //   endTime_New: Yup.string()
+  //     .test("is-after", "End time must be after start time", function (value) {
+  //       const { startTime_New } = this.parent;
+  //       return moment(value, "hh:mm").isAfter(moment(startTime_New, "hh:mm"));
+  //     })
+  //     .required("This field is required"),
+  // });
   const [currentModifyShiftTypeId, setCurrentModifyShiftTypeId] = useState("");
 
   // #endregion
@@ -352,6 +373,31 @@ function WorkShift() {
   useEffect(() => {
     setInitialValuesModifyShiftType((prev) => {
       return { ...prev, ...objectShiftType };
+    });
+    setValidationSchemaForModifyShift((prev) => {
+      let keys = Object.keys(objectShiftType);
+      let validateObj = {};
+      keys.map((key) => {
+        const splitArray = Helper.splitUnderscoreStringToArray(key);
+        if (!splitArray.includes("endTime")) {
+          validateObj[key] = Yup.string().required("This field is required");
+        } else {
+          validateObj[key] = Yup.string()
+            .test(
+              "is-after",
+              "End time must be after start time",
+              function (value) {
+                const {[`startTime_${splitArray[1]}`]: startTimeValue} = this.parent;
+                return moment(value, "hh:mm").isAfter(
+                  moment(startTimeValue, "hh:mm")
+                );
+              }
+            )
+            .required("This field is required");
+        }
+      });
+      let temp = Yup.object().shape({ ...validateObj });
+      return temp;
     });
   }, [objectShiftType]);
   useEffect(() => {
@@ -413,7 +459,7 @@ function WorkShift() {
                     validationSchema={
                       toggleAddNewShiftType
                         ? validationSchemaForCreateShift
-                        : null
+                        : validationSchemaForModifyShift
                     }
                     onSubmit={(values, actions) => {
                       let modifyWorkShiftObject = {};
@@ -475,17 +521,17 @@ function WorkShift() {
                                   <AccordionPanel pb={4}>
                                     <FormTextField
                                       label="Shift Name"
-                                      name={`shiftName_${item.shiftName}_${item.shiftTypeId}`}
+                                      name={`shiftName_${item.shiftTypeId}`}
                                     />
                                     <FormTextField
                                       isTimeField={true}
                                       label="Start Time"
-                                      name={`startTime_${item.shiftName}_${item.shiftTypeId}`}
+                                      name={`startTime_${item.shiftTypeId}`}
                                     />
                                     <FormTextField
                                       isTimeField={true}
                                       label="End Time"
-                                      name={`endTime_${item.shiftName}_${item.shiftTypeId}`}
+                                      name={`endTime_${item.shiftTypeId}`}
                                     />
                                     <Flex
                                       w="100%"
