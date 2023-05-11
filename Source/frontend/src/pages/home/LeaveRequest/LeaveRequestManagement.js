@@ -43,6 +43,7 @@ import FormTextField from "../../../components/field/FormTextField";
 import { Helper } from "../../../Utils/Helper";
 import { leaveRequestService } from "../../../services/leaveRequest/leaveRequest";
 import { selectionData } from "../../../data/SelectionData";
+import { approvalCodeColor } from "../../../data/ColorData";
 function LeaveRequestManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -62,12 +63,6 @@ function LeaveRequestManagement() {
   const [currentModifyLeaveTypeId, setCurrentModifyLeaveTypeId] = useState("");
   const [toggleAddNewLeaveType, setToggleAddNewLeaveType] = useState(false);
   const [deleteLeaveTypeId, setDeleteLeaveTypeId] = useState("");
-  const [initialValuesModifyShiftType, setInitialValuesModifyShiftType] =
-    useState({
-      name_New: "",
-      description_New: "",
-      annualLeave_New: false,
-    });
 
   // #endregion
   // #region hooks
@@ -177,6 +172,46 @@ function LeaveRequestManagement() {
       resetModal();
     },
   });
+  const useDeleteLeaveRequest = useMutation(
+    leaveRequestService.deleteLeaveRequest,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          useGetLeaveRequestOfDepartment.mutate({
+            departmentId,
+            currentDate,
+          });
+          toast({
+            title: `Delete Leave Type Successfully`,
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+        resetModal();
+      },
+      onError: (error) => {
+        toast({
+          title: error.response.data.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+        resetModal();
+      },
+    }
+  );
   const useDeleteLeaveType = useMutation(leaveRequestService.deleteLeaveType, {
     onSuccess: (data) => {
       const { message } = data;
@@ -211,6 +246,44 @@ function LeaveRequestManagement() {
       resetModal();
     },
   });
+  const useVerifyLeaveRequest = useMutation(
+    leaveRequestService.verifyLeaveRequest,
+    {
+      onSuccess: (data) => {
+        const { message } = data;
+        if (message) {
+          toast({
+            title: message,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        } else {
+          useGetLeaveRequestOfDepartment.mutate({
+            departmentId,
+            currentDate,
+          });
+          toast({
+            title: "Verify Leave Request Successfully",
+            position: "bottom-right",
+            status: "success",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      },
+      onError: (error) => {
+        toast({
+          title: error.response.data.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      },
+    }
+  );
   // #endregion
   // #region functions
   const DeleteRange = (data) => {
@@ -221,7 +294,8 @@ function LeaveRequestManagement() {
     onDeleteSingleOpen();
   };
   const handleAcceptDelete = () => {
-    console.log(deleteSingleData);
+    // console.log(deleteSingleData);
+    useDeleteLeaveRequest.mutate(deleteSingleData.leaveRequestId)
     setDeleteSingleData({});
     onDeleteSingleClose();
   };
@@ -230,7 +304,14 @@ function LeaveRequestManagement() {
     setEditData(row);
   };
   const handleApprovalLeaveRequest = (values) => {
+    let leaveRequestId = editData.leaveRequestId;
+    let status = values.status;
+    let leaveRequestObj = {
+      leaveRequestId,
+      status,
+    };
     closeDrawer();
+    if (status != "WAITING") useVerifyLeaveRequest.mutate(leaveRequestObj);
   };
   const closeDrawer = () => {
     onAddEditClose();
@@ -297,7 +378,15 @@ function LeaveRequestManagement() {
         //   filterType: FilterType.Default,
         // },
         Cell: ({ value }) => (
-          <Badge p="5px" fontSize="lg">
+          <Badge
+            p="5px"
+            fontSize="lg"
+            colorScheme={
+              Object.values(
+                Helper.matchingCodeColor(value, approvalCodeColor)
+              )[0]
+            }
+          >
             {value}
           </Badge>
         ),
@@ -481,8 +570,13 @@ function LeaveRequestManagement() {
   };
   const validationSchema = Yup.object().shape();
   // #endregion
-  // #region form
-  // #endregion
+  // #region form and Modal
+  const [initialValuesModifyLeaveType, setInitialValuesModifyLeaveType] =
+    useState({
+      name_New: "",
+      description_New: "",
+      annualLeave_New: false,
+    });
   const initialValuesSelectDepartment = {
     department: departmentId,
   };
@@ -500,6 +594,8 @@ function LeaveRequestManagement() {
     setValidationSchemaForModifyLeaveType,
   ] = useState();
   const [objectLeaveType, setObjectLeaveType] = useState({});
+  // #endregion
+  // #region useEffect
   useEffect(() => {
     setObjectLeaveType(() => {
       let tempObject = {};
@@ -514,7 +610,7 @@ function LeaveRequestManagement() {
     });
   }, [isLoadingLRLeaveTypeData, LRLeaveTypeData]);
   useEffect(() => {
-    setInitialValuesModifyShiftType((prev) => {
+    setInitialValuesModifyLeaveType((prev) => {
       return { ...prev, ...objectLeaveType };
     });
     setValidationSchemaForModifyLeaveType((prev) => {
@@ -530,6 +626,11 @@ function LeaveRequestManagement() {
       return temp;
     });
   }, [objectLeaveType]);
+  useEffect(() => {
+    refreshListLRDepartment();
+  }, []);
+
+  // #endregion
   return (
     <Stack h="100%" spacing={4}>
       <Flex gap="10px">
@@ -553,7 +654,7 @@ function LeaveRequestManagement() {
               <ModalOverlay />
               <ModalContent>
                 <Formik
-                  initialValues={initialValuesModifyShiftType}
+                  initialValues={initialValuesModifyLeaveType}
                   validationSchema={
                     toggleAddNewLeaveType
                       ? validationSchemaForCreateLeaveType

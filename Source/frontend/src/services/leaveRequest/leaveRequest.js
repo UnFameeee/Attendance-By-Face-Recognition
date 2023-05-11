@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
 import { pagingInstance } from "../../Utils/PagingInstance";
 import moment from "moment";
-const endPoint = baseURL + "/leaverequest";
+const endPointLeaveRequest = baseURL + "/leaverequest";
 const endPointLeaveType = baseURL + "/leavetype";
 
 const getLeaveRequestOfDepartment = async (data) => {
@@ -17,7 +17,7 @@ const getLeaveRequestOfDepartment = async (data) => {
     extendData,
   };
   const response = await axiosBase.post(
-    `${endPoint}/getLeaveRequestOfDepartment/${departmentId}`,
+    `${endPointLeaveRequest}/getLeaveRequestOfDepartment/${departmentId}`,
     getLROfDepartmentObj
   );
   return response.data;
@@ -44,7 +44,7 @@ const getLeaveRequestOfAnEmployee = async (data) => {
     extendData,
   };
   const response = await axiosBase.post(
-    `${endPoint}/getLeaveRequestOfEmployee/${userInfo.id}`,
+    `${endPointLeaveRequest}/getLeaveRequestOfEmployee/${userInfo.id}`,
     getLROfAnEmployeeObj
   );
   return response.data;
@@ -63,7 +63,7 @@ const useGetLeaveRequestOfAnEmployee = (data) => {
 
 const createLeaveRequest = async (createLRObj) => {
   const response = await axiosBase.post(
-    `${endPoint}/createLeaveRequest`,
+    `${endPointLeaveRequest}/createLeaveRequest`,
     createLRObj
   );
   return response.data;
@@ -72,20 +72,20 @@ const createLeaveRequest = async (createLRObj) => {
 const verifyLeaveRequest = async (data) => {
   const { leaveRequestId, status } = data;
   const response = await axiosBase.post(
-    `${endPoint}/verifyLeaveRequest/${leaveRequestId}`,
+    `${endPointLeaveRequest}/verifyLeaveRequest/${leaveRequestId}`,
     { status: status }
   );
   return response.data;
 };
 const deleteLeaveRequest = async (leaveRequestId) => {
   const response = await axiosBase.delete(
-    `${endPoint}/deleteLeaveRequest/${leaveRequestId}`
+    `${endPointLeaveRequest}/deleteLeaveRequest/${leaveRequestId}`
   );
   return response.data;
 };
 const getAnnualDetail = async (annualDetailObj) => {
   const response = await axiosBase.get(
-    `${endPoint}/getAnnualDetail`,
+    `${endPointLeaveRequest}/getAnnualDetail`,
     annualDetailObj
   );
   return response.data;

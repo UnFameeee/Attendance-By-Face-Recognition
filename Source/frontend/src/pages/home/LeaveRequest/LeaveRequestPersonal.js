@@ -29,6 +29,7 @@ import DynamicTable, {
 } from "../../../components/table/DynamicTable";
 import { leaveRequestService } from "../../../services/leaveRequest/leaveRequest";
 import { selectionData, selectionVerifyData } from "../../../data/SelectionData";
+import { approvalCodeColor } from "../../../data/ColorData";
 function LeaveRequestPersonal() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -134,7 +135,7 @@ function LeaveRequestPersonal() {
     onAddEditOpen();
     setEditData(row);
   };
-  const handleSubmitApproval = (values) => {
+  const handleSubmitLeaveRequest = (values) => {
     const leaveRequestObj = {
       leaveTypeId: values.leaveType,
       startDate: new Date(values?.startDate).toISOString(),
@@ -142,7 +143,7 @@ function LeaveRequestPersonal() {
       reason: values.reason,
       note: values.note,
     };
-    console.log("leaveRequestObj", leaveRequestObj);
+    // console.log("leaveRequestObj", leaveRequestObj);
     useCreateLeaveRequest.mutate(leaveRequestObj);
     closeDrawer();
   };
@@ -188,7 +189,9 @@ function LeaveRequestPersonal() {
         //   filterType: FilterType.Default,
         // },
         Cell: ({ value }) => (
-          <Badge p="5px" fontSize="lg">
+          <Badge p="5px" fontSize="lg"  colorScheme={
+            Object.values(Helper.matchingCodeColor(value, approvalCodeColor))[0]
+          }>
             {value}
           </Badge>
         ),
@@ -390,7 +393,7 @@ function LeaveRequestPersonal() {
           noPaging={true}
         />
         <DynamicDrawer
-          handleCreate={handleSubmitApproval}
+          handleCreate={handleSubmitLeaveRequest}
           isAddEditOpen={isAddEditOpen}
           onAddEditClose={onAddEditClose}
           editData={editData}

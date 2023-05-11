@@ -48,4 +48,7 @@ export const approvalCodeColor = [
   {
     APPROVE: "green",
   },
+  {
+    WAITING: "yellow",
+  },
 ];
