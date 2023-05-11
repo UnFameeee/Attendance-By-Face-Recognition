@@ -9,8 +9,8 @@ import QRCode from "react-qr-code";
 import { urlService } from '../../services/url/url';
 
 const ModalBodyStyle = {
-  width: "100%",
-  height: "100%",
+  width: "35rem",
+  height: "35rem",
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -19,10 +19,8 @@ const ModalBodyStyle = {
 }
 
 const ModalContentStyle = {
-  minHeight: "fit-content",
-  maxWidth: "100%",
-  width: "60%",
-  height: "40%",
+  width: "fit-content",
+  height: "fit-content"
 }
 
 export default function ExceptionModel() {
@@ -93,7 +91,7 @@ export default function ExceptionModel() {
 
                 <Text textAlign={"center"} fontSize={"1rem"} fontWeight={700}>You have failed to take attendance many times. This may be due to errors coming from the attendance machine, do you want to report this to the Administrator?</Text>
 
-                <Text textAlign={"center"} fontSize={"0.85rem"} fontWeight={"bold"} color={"gray"}>We will take an picture of you and send it to your manager if you click the <b style={{ color: "red" }}>Report</b> button</Text>
+                <Text textAlign={"center"} fontSize={"0.85rem"} fontWeight={"bold"} color={"gray"}>We will take a picture of you and send it to your manager if you click the <b style={{ color: "red" }}>Report</b> button</Text>
 
                 <Text textAlign={"center"} fontSize={"0.85rem"} fontWeight={"bold"} color={"gray"}>We suggest you try a few more times, before doing this action</Text>
               </ModalBody>

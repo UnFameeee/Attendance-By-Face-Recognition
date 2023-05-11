@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import * as faceapi from '@vladmandic/face-api';
-import { Box, Img, Progress, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Img, Progress, Text, useToast } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import Webcam from 'react-webcam';
+import Mask from "./mask.svg";
 import axiosBase from '../../../Utils/AxiosInstance';
 import "./TrainingFace.css";
+import InstructionModal from '../../../components/Training/InstructionModal';
+import FinishModal from '../../../components/Training/FinishModal';
 
 let streamTrainingObj;
 const limitPictures = 2;
@@ -15,7 +18,9 @@ export default function TrainingFace() {
   const toast = useToast();
   const dispatch = useDispatch();
   const [capturedImages, setCapturedImages] = useState([]);
-  const [isScaningPaused, setIsScaningPaused] = useState(false);
+  const [isScaningPaused, setIsScaningPaused] = useState(true);
+  const [startTraining, setStartTraining] = useState(false);
+  const [finishScanning, setFinishScanning] = useState(false);
 
   // const useSaveImageOfAttendance = useMutation((variable) =>
   //   attendanceService.saveImageOfAttendance(variable), {
@@ -67,12 +72,9 @@ export default function TrainingFace() {
           return;
         }
         video.srcObject = stream;
-        // Save the stream object for later use
         streamTrainingObj = stream;
-        // video.style.transform = 'scaleX(-1)';
       })
       .catch(error => {
-        // Handle errors, such as the user denying permission
         console.error('Error accessing camera:', error);
       });
   }, []);
@@ -86,10 +88,7 @@ export default function TrainingFace() {
       template.append(canvas);
     }
 
-    // const displaySize = { width: 720, height: 560 }
     const videoResolution = document.getElementById("video_training");
-    // console.log(videoResolution.offsetWidth)
-    // console.log(videoResolution.offsetHeight)
     const resolution = {
       width: videoResolution.offsetWidth,
       height: videoResolution.offsetHeight,
@@ -98,10 +97,6 @@ export default function TrainingFace() {
     faceapi.matchDimensions(canvas, displaySize);
 
     async function addEvent() {
-      //load the model
-      // const FaceMatcherJson = await axiosBase.get(`/public/train-model/FaceMatcher.json`);
-      // const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
-
       // const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
         const detections = await faceapi
@@ -116,16 +111,16 @@ export default function TrainingFace() {
             const image = videoRef.current.getScreenshot();
             setCapturedImages(prevImages => [...prevImages, image]);
           }
-  
+
           const resizedDetections = faceapi.resizeResults(
             detections,
             displaySize
           );
-  
+
           canvas
             .getContext('2d')
             .clearRect(0, 0, canvas.width, canvas.height);
-  
+
           for (const detection of resizedDetections) {
             // let faceDetected = faceMatcher.findBestMatch(detection.descriptor);
             const box = detection.detection.box;
@@ -158,9 +153,15 @@ export default function TrainingFace() {
   useEffect(() => {
     if (capturedImages.length >= limitPictures) {
       setIsScaningPaused(true);
+      setFinishScanning(true);
       console.log(capturedImages.length);
     }
   }, [capturedImages])
+
+  const startTrainingHandleClick = () => {
+    setStartTraining(true);
+    setIsScaningPaused(false);
+  }
 
   return (
     <Box width={"100%"} height={"100%"} style={{
@@ -170,23 +171,50 @@ export default function TrainingFace() {
       flexDirection: "column",
     }}>
       <div className="template_training">
+        <Img style={{
+          position: "absolute",
+          height: "50vh",
+          top: "44%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 4,
+        }} src={Mask} />
         <Webcam style={{
-          // display: "flex",
-          // width: "1244px",
-          // height: "100%",
           height: "88vh",
           width: "100%",
           objectFit: "cover",
+          transform: "rotateY(180deg)",
+          WebkitTransform: "rotateY(180deg)",
+          MozTransform: "rotateY(180deg)",
         }} id='video_training' ref={videoRef} audio={false} screenshotFormat="image/jpeg" ></Webcam>
       </div>
-      {/* <div>
-        <Img style={{ border: "1px solid red" }} id='captureImage_training' src={null} />
-      </div> */}
       <Box width={"100%"} height={"10vh"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
-        <Text fontSize={"1.35rem"} fontWeight={500} >TRAINING PROGRESS</Text>
-        {/* <Progress colorScheme='green' height='1.75rem' width={"80%"} value={20} /> */}
-        <Progress colorScheme='green' height='1.75rem' width={"80%"} value={(capturedImages.length / limitPictures) * 100} />
+        {
+          !startTraining &&
+          <Button
+            onClick={startTrainingHandleClick}
+            padding={"1.5rem"}
+            textColor={"white"}
+            fontWeight={600}
+            fontSize={"1.2rem"}
+            background={"linear-gradient(90deg, rgba(72,180,255,1) 0%, rgba(36,72,255,1) 100%)"}
+            _hover={{
+              background: "linear-gradient(90deg, rgba(118,199,255,1) 0%, rgba(61,94,255,1) 100%)"
+            }}
+          >
+            Scan My Face
+          </Button>
+        }
+        {
+          startTraining &&
+          <>
+            <Text fontSize={"1.35rem"} fontWeight={500} >TRAINING PROGRESS</Text>
+            <Progress background={"#e1e1e1"} colorScheme='blue' height='1.75rem' width={"80%"} value={(capturedImages.length / limitPictures) * 100} />
+          </>
+        }
       </Box>
+      <InstructionModal />
+      <FinishModal openModal={finishScanning} />
     </Box>
   )
 }

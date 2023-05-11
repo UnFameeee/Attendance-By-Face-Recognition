@@ -41,6 +41,7 @@ import ReportAttendanceException from "./pages/home/Attendance/ReportAttendanceE
 import URLValidationRoute from "./Utils/URLValidateRoute";
 import FirstTimeLogin from "./pages/auth/FirstTimeLogin";
 import TrainingFace from "./pages/home/Training/TrainingFace";
+import TrainingQR from "./pages/home/Training/TrainingQR";
 
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
@@ -139,13 +140,13 @@ root.render(
                   </Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
                   <Route path="training-face" element={<TrainingFace />} />
-                  <Route path="test" element={<AttendanceModal />} />
-                  <Route path="test2" element={<ExceptionModel />} />
+                  <Route path="training-qr" element={<TrainingQR />} />
                   <Route path="first-time-login" element={<FirstTimeLogin />} />
 
+                  <Route path="test" element={<AttendanceModal />} />
+                  <Route path="test2" element={<ExceptionModel />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
-                {/* <Route path="notfound" element={<NotFound />} /> */}
               </Routes>
             </BrowserRouter>
           </ContextWrapper>
