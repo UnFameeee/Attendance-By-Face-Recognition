@@ -3,15 +3,17 @@ import { RequestWithProfile } from "../interfaces/request.interface";
 import { LeaveRequestService } from "../services/leave-request.service";
 import { CreateLeaveRequestDTO } from "../model/dtos/leave-request.dto";
 import { Page } from "../config/paginate.config";
+import { Employee } from "@prisma/client";
 
 export class LeaveRequestController {
   public leaveRequestService = new LeaveRequestService();
 
-  public getLeaveRequestOfDepartment = async (req: Request, res: Response, next: NextFunction) => {
+  public getLeaveRequestOfDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction) => {
     try {
       const departmentId: string = req.params.departmentId;
       const page: Page = req.body;
-      const response = await this.leaveRequestService.getLeaveRequestOfDepartment(departmentId, page);
+      const employee: Employee = req.profile;
+      const response = await this.leaveRequestService.getLeaveRequestOfDepartment(employee, departmentId, page);
       res.status(200).json(response);
     } catch (err) {
       next(err);

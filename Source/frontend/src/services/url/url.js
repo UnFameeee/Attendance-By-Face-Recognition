@@ -22,16 +22,27 @@ const useValidateURL = ({ url }) => {
   })
 }
 
-const generateURL = async (urlType) => {
-  const response = await axiosBase.get(`${endPoint}/qr?type=${urlType}`);
+const generateURL = async ({ urlType, employeeId }) => {
+  var response;
+  if (employeeId) {
+    response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
+  } else {
+    response = await axiosBase.get(`${endPoint}/qr?type=${urlType}`);
+  }
   return response.data;
 }
 
-const useGenerateURL = (urlType) => {
+const useGenerateURL = ({ urlType, employeeId }) => {
+  console.log(employeeId);
   return useQuery({
-    queryKey: ['URL', 'generate', `${urlType}`],
+    queryKey: ['URL', 'generate', `${urlType}`, employeeId],
     queryFn: async () => {
-      const response = await generateURL(urlType);
+      var response;
+      if (employeeId) {
+        response = await generateURL({ urlType, employeeId });
+      } else {
+        response = await generateURL({ urlType });
+      }
       return response;
     },
     enabled: false,

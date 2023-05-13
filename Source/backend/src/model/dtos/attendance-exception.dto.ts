@@ -70,7 +70,7 @@ export const getAttendanceExceptionDataSchema = z.object({
 
   filter: z
     .string({
-      invalid_type_error: 'Attendance Type must be string',
+      invalid_type_error: 'Filter must be string',
     })
     .trim()
     .optional()

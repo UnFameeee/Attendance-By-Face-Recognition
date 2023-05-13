@@ -1,0 +1,34 @@
+.template_training {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  width: 70%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .template_training {
+    width: 100%;
+  }
+}
+
+/* #video_training {
+  display: flex;
+  width: 1244px;
+  height: 100vh;
+} */
+
+#canvas_training {
+  position: absolute;
+  border: 1px red solid;
+  z-index: 1000;
+}
+
+/* .css-137wf4k .css-1jrtelv{
+  background: linear-gradient(90deg, rgba(72,180,255,1) 0%, rgba(36,72,255,1) 100%)
+} */

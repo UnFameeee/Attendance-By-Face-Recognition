@@ -1,4 +1,15 @@
-import { Employee, LeaveRequest, LeaveType } from "@prisma/client";
+import { Employee, LeaveRequest, LeaveType, Department } from "@prisma/client";
+
+export interface IEmployee extends Pick<Employee,
+  "id" |
+  "fullname" |
+  "email"
+> {
+  department: Pick<Department,
+    "departmentName"
+  >; // Nest the Department model here
+}
+
 
 export interface LeaveRequestModel extends
   Pick<LeaveRequest,
@@ -14,11 +25,8 @@ export interface LeaveRequestModel extends
   leaveType: Pick<LeaveType,
     "name"
   >,
-  employee: Pick<Employee,
-    "id" |
-    "fullname"
-  >,
   approver: Pick<Employee,
     "fullname"
   >,
+  employee: IEmployee
 }
