@@ -563,7 +563,7 @@ function AttendanceExceptionManagement() {
         isOpen={isAddEditOpen}
         onClose={onAddEditClose}
         isCentered
-        size="2xl"
+        size="6xl"
       >
         <ModalOverlay />
         <ModalContent>
@@ -599,8 +599,9 @@ function AttendanceExceptionManagement() {
                         <AvatarWithPreview
                           alt="avatar-from-system"
                           src={initialValuesModal?.systemImage}
-                          className="h-[100px] w-[100px] rounded-md"
-                          altBoxSide="100px"
+                          className="h-[300px] w-[300px] rounded-md"
+                          altBoxSide="300px"
+                          altRounded="5px"
                         />
                         <VStack alignItems="flex-start">
                           <Text fontSize="lg" fontWeight="medium">
@@ -628,7 +629,7 @@ function AttendanceExceptionManagement() {
                       />
                     </VStack>
                     <Flex alignItems="center">
-                      <Box mt="10rem">
+                      <Box mt="23rem">
                         <Icon
                           color="blue.500"
                           as={BsArrowLeftRight}
@@ -644,8 +645,9 @@ function AttendanceExceptionManagement() {
                         <AvatarWithPreview
                           alt="avatar-from-employee"
                           src={initialValuesModal?.employeeImage}
-                          className="h-[100px] w-[100px] rounded-md"
-                          altBoxSide="100px"
+                          className="h-[300px] w-[300px] rounded-md"
+                          altBoxSide="300px"
+                          altRounded="5px"
                         />
                         <VStack alignItems="flex-start">
                           <Text fontSize="lg" fontWeight="medium">

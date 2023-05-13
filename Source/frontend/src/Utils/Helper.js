@@ -46,7 +46,10 @@ const getUseDecodeInfor = () => {
   var decoded = jwtDecode(accessToken);
   return decoded;
 };
-
+const isFirstTimeLogin = () => {
+  const isFirstTime = localStorage.getItem("isFirstTimeLogin");
+  return JSON.parse(isFirstTime);
+};
 const getMomentDateFormat = (dateInput) => {
   const date = new Date(new Date(dateInput).toISOString());
   const formatDate = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
@@ -131,7 +134,7 @@ const splitUnderscoreStringToArray = (string) => {
   return parts;
 };
 
-const matchingCodeColor = (value,codeColorObj) => {
+const matchingCodeColor = (value, codeColorObj) => {
   return codeColorObj.find(
     (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
   );
@@ -152,6 +155,7 @@ export const Helper = {
   findMostDuplicatedValue,
   convertDateISOToDDMMYYY,
   getUseDecodeInfor,
+  isFirstTimeLogin,
   getMomentDateFormat,
   getUserRole,
   getScreenAuthorization,

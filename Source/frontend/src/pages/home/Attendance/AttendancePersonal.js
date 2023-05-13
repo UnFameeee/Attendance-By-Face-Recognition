@@ -21,10 +21,7 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  AiFillCheckCircle,
-  AiFillClockCircle,
-} from "react-icons/ai";
+import { AiFillCheckCircle, AiFillClockCircle } from "react-icons/ai";
 import { MdWorkHistory, MdTimerOff } from "react-icons/md";
 import { BiTimer } from "react-icons/bi";
 import AvatarWithPreview from "../../../components/AvatarWithPreview";
@@ -424,13 +421,13 @@ function AttendancePersonal() {
               </Flex>
               <Flex alignItems="center" gap="5px">
                 <Badge rounded="md" colorScheme="yellow" fontSize="md" p="5px">
-                  A.L
+                  L.A
                 </Badge>
                 <Text>
                   <FaEquals />{" "}
                 </Text>
                 <Badge rounded="md" colorScheme="yellow" fontSize="md" p="5px">
-                  Arrive Late
+                  Late Arrival
                 </Badge>
               </Flex>
               <Flex alignItems="center" gap="5px">
@@ -494,7 +491,7 @@ function AttendancePersonal() {
                           fontSize="md"
                           p="5px"
                         >
-                          A.L
+                          L.A
                         </Badge>
                       )}
                       {item?.earlyLeave && (
@@ -538,31 +535,73 @@ function AttendancePersonal() {
         isOpen={isOpenAttendanceDetailModal}
         onClose={onCloseAttendanceDetailModal}
         isCentered
+        size="4xl"
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <Flex gap="10px">
-              <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-              <Heading fontWeight="medium" fontSize="2rem">
-                Detail
-              </Heading>
+            <Flex gap="10px" flexDirection="row">
+              <Flex gap="10px">
+                <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                <Heading fontWeight="medium" fontSize="2rem">
+                  Detail
+                </Heading>
+              </Flex>
+              <Box>
+                {!attendanceDetailObj?.result?.earlyLeave &&
+                  !attendanceDetailObj?.result?.lateArrival && (
+                    <Badge
+                      rounded="md"
+                      colorScheme="green"
+                      fontSize="md"
+                      p="5px"
+                    >
+                      On Time
+                    </Badge>
+                  )}
+                {attendanceDetailObj?.result?.lateArrival && (
+                  <Badge
+                    rounded="md"
+                    colorScheme="yellow"
+                    fontSize="md"
+                    p="5px"
+                  >
+                    Late Arrival
+                  </Badge>
+                )}
+                {attendanceDetailObj?.result?.earlyLeave && (
+                  <Badge
+                    rounded="md"
+                    colorScheme="yellow"
+                    fontSize="md"
+                    p="5px"
+                  >
+                    Early Leave
+                  </Badge>
+                )}
+              </Box>
             </Flex>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <HStack w="100%" spacing="10px">
-              <VStack alignItems="flex-start" flex="1">
-                <Box flex="1" fontSize="1.2rem" fontWeight="medium">
+            <HStack w="100%" spacing="20px">
+              <VStack alignItems="center" flex="1">
+                <Box
+                  w="100%"
+                  ml="7rem"
+                  flex="1"
+                  fontSize="1.2rem"
+                  fontWeight="medium"
+                >
                   <Flex alignItems="center" gap="5px">
                     <AiFillClockCircle />
                     <Text>
-                      {moment(attendanceDetailObj?.attendanceDate).format(
-                        "DD/MM/yyyy"
-                      ) != "Invalid date"
-                        ? moment(attendanceDetailObj?.attendanceDate).format(
-                            "DD/MM/yyyy"
-                          )
+                      {moment(
+                        attendanceDetailObj?.result?.attendanceDate
+                      ).format("DD/MM/yyyy") != "Invalid date"
+                        ? moment(
+                            attendanceDetailObj?.result?.attendanceDate
+                          ).format("DD/MM/yyyy")
                         : "--:--"}
                     </Text>
                   </Flex>
@@ -571,45 +610,52 @@ function AttendancePersonal() {
                 <VStack alignItems="center">
                   <AvatarWithPreview
                     className="h-[150px] rounded-md"
-                    src={attendanceDetailObj?.checkinCapture}
-                    altBoxSide="100px"
+                    src={attendanceDetailObj?.result?.checkinCapture}
                     alt="Check In Image"
+                    altBoxSide="300px"
+                    altRounded="5px"
                   />
                   <Box fontSize="1.1rem" fontWeight="medium">
                     <Text color="green.600">
                       Check In:{" "}
-                      {moment(attendanceDetailObj?.checkIn).format("hh:mm") !=
-                      "Invalid date"
-                        ? moment(attendanceDetailObj?.checkIn).format("hh:mm")
+                      {moment(attendanceDetailObj?.result?.checkIn).format(
+                        "hh:mm"
+                      ) != "Invalid date"
+                        ? moment(attendanceDetailObj?.result?.checkIn).format(
+                            "hh:mm"
+                          )
                         : "--:--"}
                     </Text>
                     <Text color="orange.400">
                       Late Arrival:{" "}
-                      {moment(attendanceDetailObj?.lateArrival).format(
+                      {moment(attendanceDetailObj?.result?.lateArrival).format(
                         "hh:mm"
                       ) != "Invalid date"
-                        ? moment(attendanceDetailObj?.lateArrival).format(
-                            "hh:mm"
-                          )
+                        ? moment(
+                            attendanceDetailObj?.result?.lateArrival
+                          ).format("hh:mm")
                         : "--:--"}
                     </Text>
                   </Box>
                 </VStack>
               </VStack>
-              <Flex margin="auto" ml="0 !important" fontSize="1.5rem">
-                <Icon as={TbArrowsRight} />
-              </Flex>
-              <VStack alignItems="flex-start" flex="1">
-                <Box flex="1" fontSize="1.2rem" fontWeight="medium">
+              <VStack alignItems="center" flex="1">
+                <Box
+                  w="100%"
+                  ml="7rem"
+                  flex="1"
+                  fontSize="1.2rem"
+                  fontWeight="medium"
+                >
                   <Flex gap="5px" alignItems="center">
                     <MdWorkHistory />
                     <Text>
-                      {moment(attendanceDetailObj?.totalWorkingHours).format(
-                        "hh:mm"
-                      ) != "Invalid date"
-                        ? moment(attendanceDetailObj?.totalWorkingHours).format(
-                            "hh:mm"
-                          )
+                      {moment(
+                        attendanceDetailObj?.result?.totalWorkingHours
+                      ).format("hh:mm") != "Invalid date"
+                        ? moment(
+                            attendanceDetailObj?.result?.totalWorkingHours
+                          ).format("hh:mm")
                         : "--:--"}
                     </Text>
                   </Flex>
@@ -618,26 +664,30 @@ function AttendancePersonal() {
                 <VStack alignItems="center">
                   <AvatarWithPreview
                     className="h-[150px] rounded-md"
-                    src={attendanceDetailObj?.checkoutCapture}
-                    altBoxSide="100px"
+                    src={attendanceDetailObj?.result?.checkoutCapture}
                     alt="Check Out Image"
+                    altBoxSide="300px"
+                    altRounded="5px"
                   />
                   <Box fontSize="1.1rem" fontWeight="medium">
                     <Text color="pink.600">
                       Check Out:{" "}
-                      {moment(attendanceDetailObj?.checkOut).format("hh:mm") !=
-                      "Invalid date"
-                        ? moment(attendanceDetailObj?.checkOut).format("hh:mm")
+                      {moment(attendanceDetailObj?.result?.checkOut).format(
+                        "hh:mm"
+                      ) != "Invalid date"
+                        ? moment(attendanceDetailObj?.result?.checkOut).format(
+                            "hh:mm"
+                          )
                         : "--:--"}
                     </Text>
                     <Text color="orange.400">
                       Early Leave:{" "}
-                      {moment(attendanceDetailObj?.earlyLeave).format(
+                      {moment(attendanceDetailObj?.result?.earlyLeave).format(
                         "hh:mm"
                       ) != "Invalid date"
-                        ? moment(attendanceDetailObj?.earlyLeave).format(
-                            "hh:mm"
-                          )
+                        ? moment(
+                            attendanceDetailObj?.result?.earlyLeave
+                          ).format("hh:mm")
                         : "--:--"}
                     </Text>
                   </Box>

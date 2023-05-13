@@ -7,19 +7,21 @@ import {
   Stack,
   Button,
   useToast,
+
 } from "@chakra-ui/react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { LockIcon, AtSignIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import React, { useEffect } from "react";
 import AuthTextField from "../../components/field/AuthTextField";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { authService } from "../../services/auth/auth";
 import jwtDecode from "jwt-decode";
-import {  permissionService } from "../../services/permission/permission";
+import { permissionService } from "../../services/permission/permission";
+import { profileService } from "../../services/setting/profile";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -32,16 +34,24 @@ export default function Login() {
     },
   });
   const useLoginMutation = useMutation(authService.login, {
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       const { refresh, access } = data;
       const decoded = jwtDecode(refresh);
       cookies.set("jwt_authentication", refresh, {
         expires: new Date(decoded.exp * 1000),
       });
       localStorage.setItem("accessToken", JSON.stringify(access));
-      navigate("/dashboard");
       const decodeData = jwtDecode(access);
       queryClient.setQueryData(["userDecodeData"], decodeData);
+
+      const isFirstTimeLogin = await profileService.validateFirstTimeLogin();
+      if (isFirstTimeLogin && isFirstTimeLogin.result) {
+        navigate("/first-time-login");
+        localStorage.setItem("isFirstTimeLogin", true);
+      } else {
+        navigate("/dashboard");
+        localStorage.setItem("isFirstTimeLogin", false);
+      }
       toast({
         title: "Sign in successfully",
         position: "bottom-right",
@@ -62,7 +72,6 @@ export default function Login() {
       });
     },
   });
-
   const initialValues = { email: "", password: "" };
   const validationSchema = Yup.object().shape({
     password: Yup.string()
