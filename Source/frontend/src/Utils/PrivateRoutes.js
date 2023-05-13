@@ -13,6 +13,7 @@ const PrivateRoutes = () => {
   console.log("is access expired", Helper.isTokenExpired(jwt_accessToken));
   const userRole = Helper.getUserRole();
   const location = useLocation();
+  const isFirstTimeLogin = Helper.isFirstTimeLogin();
   const screenAuthorize = Helper.getScreenAuthorization(
     userRole.role,
     location.pathname
@@ -21,7 +22,7 @@ const PrivateRoutes = () => {
     if (Helper.isTokenExpired(jwt_accessToken)) {
       if (jtw_refreshToken && !Helper.isTokenExpired(jtw_refreshToken)) {
         authService.refreshToken({ refreshToken: jtw_refreshToken });
-        if (screenAuthorize.auth) {
+        if (screenAuthorize.auth && !isFirstTimeLogin) {
           return <Outlet />;
         } else {
           return <UnAuthorize />;
@@ -32,9 +33,11 @@ const PrivateRoutes = () => {
     } else {
       if (!screenAuthorize) {
         return <NotFound />;
-      } else if (screenAuthorize.auth) {
+      } 
+      else if (screenAuthorize.auth && !isFirstTimeLogin) {
         return <Outlet />;
-      } else {
+      } 
+      else {
         return <UnAuthorize />;
       }
     }

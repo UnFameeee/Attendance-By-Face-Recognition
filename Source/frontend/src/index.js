@@ -40,6 +40,7 @@ import AttendanceExceptionManagement from "./pages/home/Attendance/AttendanceExc
 import ReportAttendanceException from "./pages/home/Attendance/ReportAttendanceException";
 import URLValidationRoute from "./Utils/URLValidateRoute";
 import FirstTimeLogin from "./pages/auth/FirstTimeLogin";
+import ProtectedFirstTimeLoginRoute from "./Utils/ProtectedFirstTimeLoginRoute";
 
 const { ToastContainer, toast } = createStandaloneToast();
 const theme = extendTheme({
@@ -132,16 +133,22 @@ root.render(
                     </Route>
                   </Route>
                 </Route>
-                <Route> {/* Anonymous route  */}
+                <Route element={<ProtectedFirstTimeLoginRoute />}>
+                  <Route path="first-time-login" element={<FirstTimeLogin />} />
+                </Route>
+                <Route>
+                  {/* Anonymous route  */}
                   <Route element={<URLValidationRoute />}>
-                    <Route path="report-attendance-exception" element={<ReportAttendanceException />} />
+                    <Route
+                      path="report-attendance-exception"
+                      element={<ReportAttendanceException />}
+                    />
                   </Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
                   <Route path="test" element={<AttendanceModal />} />
                   <Route path="test2" element={<ExceptionModel />} />
-                  <Route path="first-time-login" element={<FirstTimeLogin />} />
-
                 </Route>
+
                 <Route path="*" element={<NotFound />} />
                 {/* <Route path="notfound" element={<NotFound />} /> */}
               </Routes>

@@ -32,9 +32,13 @@ const uploadProfileImages = async (uploadImages) => {
   );
   return response.data;
 };
-
+const validateFirstTimeLogin = async () => {
+  const response = await axiosBase.get(`${endPoint}/validateFirstTimeLogin`);
+  return response.data;
+};
 export const profileService = {
   getProfileDetail,
   saveProfileDetail,
   uploadProfileImages,
+  validateFirstTimeLogin,
 };
