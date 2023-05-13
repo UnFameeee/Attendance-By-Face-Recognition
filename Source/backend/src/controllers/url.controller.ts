@@ -7,7 +7,8 @@ export class URLController {
   public generateURL = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const type: string = (req.query.type).toString();
-      const response = await this.urlService.generateURL(type);
+      const employeeId: string = req.query?.id ? (req.query?.id).toString() : null;
+      const response = await this.urlService.generateURL(type, employeeId);
       res.status(200).json(response);
     } catch (err) {
       next(err);

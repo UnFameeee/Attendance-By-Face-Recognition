@@ -1,6 +1,7 @@
 import jwtDecode from "jwt-decode";
 import dayjs from "dayjs";
 import moment from "moment";
+import CryptoJS from "crypto-js";
 import { SideBarData } from "../data/SideBarData";
 
 const isTokenExpired = (token) => {
@@ -12,9 +13,11 @@ const isTokenExpired = (token) => {
   }
   return true;
 };
+
 const isOdd = (value) => {
   return value % 2 === 0;
 };
+
 const getMonth = (month = dayjs().month()) => {
   month = Math.floor(month);
   const year = dayjs().year();
@@ -36,6 +39,7 @@ const convertDateISOToDDMMYYY = (dateISO) => {
   const year = dateObj.getFullYear().toString().substring(2);
   return `${day}-${month}-${year}`;
 };
+
 const getUseDecodeInfor = () => {
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
@@ -48,6 +52,7 @@ const getMomentDateFormat = (dateInput) => {
   const formatDate = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
   return formatDate;
 };
+
 function findMostDuplicatedValue(array) {
   let counts = {};
   let maxCount = 0;
@@ -62,6 +67,7 @@ function findMostDuplicatedValue(array) {
   }
   return maxCount > 1 ? mostDuplicatedValue : "unknown";
 }
+
 const getUserRole = () => {
   const userPermission_JSON = localStorage.getItem("userPermission");
   const userPermission = JSON.parse(userPermission_JSON);
@@ -73,6 +79,7 @@ const getUserRole = () => {
   }
   return result;
 };
+
 const getScreenAuthorization = (userRole, pathname) => {
   let authorizeArray = [];
   SideBarData.map((parentItem) => {
@@ -112,20 +119,32 @@ const getScreenAuthorization = (userRole, pathname) => {
   const result = authorizeArray.find((item) => item.path == pathname);
   return result;
 };
+
 const splitUrlPath = (path) => {
   const pathArr = path.split("/");
   pathArr.shift();
   return pathArr;
 };
+
 const splitUnderscoreStringToArray = (string) => {
   const parts = string.split("_");
   return parts;
 };
+
 const matchingCodeColor = (value,codeColorObj) => {
   return codeColorObj.find(
     (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
   );
 };
+
+// Function to decode a message using Cipher
+const decodeWithCipher = (encodedMessage) => {
+  console.log(encodedMessage)
+  var decodedData = (CryptoJS.enc.Base64.parse(encodedMessage)).toString(CryptoJS.enc.Utf8);
+  console.log(decodedData);
+  return decodedData;
+}
+
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -139,4 +158,5 @@ export const Helper = {
   splitUrlPath,
   splitUnderscoreStringToArray,
   matchingCodeColor,
+  decodeWithCipher,
 };

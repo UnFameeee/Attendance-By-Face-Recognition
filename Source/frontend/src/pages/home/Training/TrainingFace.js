@@ -8,6 +8,7 @@ import axiosBase from '../../../Utils/AxiosInstance';
 import "./TrainingFace.css";
 import InstructionModal from '../../../components/Training/InstructionModal';
 import FinishModal from '../../../components/Training/FinishModal';
+import { Helper } from '../../../Utils/Helper';
 
 let streamTrainingObj;
 const limitPictures = 2;
@@ -21,7 +22,11 @@ export default function TrainingFace() {
   const [isScaningPaused, setIsScaningPaused] = useState(true);
   const [startTraining, setStartTraining] = useState(false);
   const [finishScanning, setFinishScanning] = useState(false);
+  const params = new URLSearchParams(window.location.search);
+  const employeeId = params.get("id");
 
+  console.log(Helper.decodeWithCipher(employeeId));
+  
   // const useSaveImageOfAttendance = useMutation((variable) =>
   //   attendanceService.saveImageOfAttendance(variable), {
   //   onSuccess: (data) => {

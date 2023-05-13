@@ -149,7 +149,13 @@ export const dateTimeV2Schema = z.object({
       required_error: 'Year is required',
       invalid_type_error: "Year must be number",
     })
-    .min(1, "Year must be positive number")
+    .min(1, "Year must be positive number"),
 
+  filter: z
+    .string({
+      invalid_type_error: 'Filter must be string',
+    })
+    .trim()
+    .optional()
 });
 export type DateTimeV2DTO = z.infer<typeof dateTimeV2Schema>;

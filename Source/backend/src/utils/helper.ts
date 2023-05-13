@@ -1,4 +1,7 @@
+// Import the 'crypto' module for encryption and decryption
+import CryptoJS from 'crypto-js';
 import moment from "moment";
+import { env } from '../config/env.config';
 
 const UppercaseFirstLetter = (prop: string): string => {
   return prop.charAt(0).toUpperCase() + prop.slice(1);
@@ -75,6 +78,19 @@ function CountDaysFromStartDate(startDate: string, endDate: string) {
   return daysDiff + 1; // Add 1 to include the start date
 }
 
+
+// Function to encode a message using Cipher
+const EncodeWithCipher = (message: string) => {
+  var encodedData = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(message));
+  return encodedData;
+}
+
+// Function to decode a message using Cipher
+const DecodeWithCipher = (encodedMessage: string) => {
+  var decodedData = CryptoJS.enc.Base64.parse(encodedMessage).toString(CryptoJS.enc.Utf8);
+  return decodedData;
+}
+
 interface IHelper {
   UppercaseFirstLetter: Function,
   ConvertDoubleSlashURL: Function,
@@ -82,6 +98,8 @@ interface IHelper {
   MinusDate: Function,
   PlusDate: Function,
   CountDaysFromStartDate: Function,
+  EncodeWithCipher: Function,
+  DecodeWithCipher: Function,
 }
 
 export const Helper: IHelper = {
@@ -91,4 +109,6 @@ export const Helper: IHelper = {
   MinusDate,
   PlusDate,
   CountDaysFromStartDate,
+  EncodeWithCipher,
+  DecodeWithCipher,
 }

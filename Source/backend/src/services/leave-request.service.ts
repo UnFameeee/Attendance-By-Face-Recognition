@@ -50,6 +50,12 @@ export class LeaveRequestService {
           select: {
             id: true,
             fullname: true,
+            email: true,
+            department: {
+              select: {
+                departmentName: true,
+              }
+            }
           }
         },
         leaveTypeId: true,
@@ -137,6 +143,12 @@ export class LeaveRequestService {
           select: {
             id: true,
             fullname: true,
+            email: true,
+            department: {
+              select: {
+                departmentName: true,
+              }
+            }
           }
         },
         leaveTypeId: true,

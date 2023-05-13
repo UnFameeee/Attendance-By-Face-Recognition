@@ -16,6 +16,7 @@
     "canvas": "^2.11.0",
     "chroma-js": "^2.4.2",
     "country-state-city": "^3.1.2",
+    "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
     "formik": "^2.2.9",
     "framer-motion": "^9.0.1",

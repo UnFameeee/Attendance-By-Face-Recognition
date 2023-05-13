@@ -3,9 +3,10 @@ import { env } from "../config/env.config";
 import { ResponseData } from "../config/responseData.config";
 import { prisma } from "../database/prisma.singleton";
 import moment from "moment";
+import { Helper } from "../utils/helper";
 
 export class URLService {
-  public generateURL = async (URLtype: string) => {
+  public generateURL = async (URLtype: string, employeeId?: string) => {
     const response = new ResponseData<string>();
     // Get the current date and time
     let datetime = new Date();
@@ -15,6 +16,9 @@ export class URLService {
 
     if (URLtype == "AttendanceException") {
       URL = `${env.CLIENT_URL}/report-attendance-exception?session=${v4()}`
+    } else if(URLtype == "TrainingFace") {
+      console.log(Helper.EncodeWithCipher(employeeId));
+      URL = `${env.CLIENT_URL}/training-face?id=${Helper.EncodeWithCipher(employeeId)}&session=${v4()}`;
     }
 
     const queryData = await prisma.urlmanagement.create({

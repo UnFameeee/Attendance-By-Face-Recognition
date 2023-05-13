@@ -137,11 +137,11 @@ root.render(
                 <Route> {/* Anonymous route  */}
                   <Route element={<URLValidationRoute />}>
                     <Route path="report-attendance-exception" element={<ReportAttendanceException />} />
+                    <Route path="training-face" element={<TrainingFace />} />
                   </Route>
                   <Route path="face-attendance" element={<FaceAttendance />} />
-                  <Route path="training-face" element={<TrainingFace />} />
-                  <Route path="training-qr" element={<TrainingQR />} />
                   <Route path="first-time-login" element={<FirstTimeLogin />} />
+                  <Route path="training-qr" element={<TrainingQR />} />
 
                   <Route path="test" element={<AttendanceModal />} />
                   <Route path="test2" element={<ExceptionModel />} />
