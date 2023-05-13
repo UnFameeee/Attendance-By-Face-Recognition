@@ -136,6 +136,11 @@ export function Profile() {
       });
     },
   });
+  useEffect(() => {
+    if (profileDetailData?.result?.image) {
+      setIsAlrUploadImage(true);
+    }
+  }, [profileDetailData?.result?.image]);
   // #endregion
   // #region functions
   const onChange = (imageList, addUpdateIndex) => {
@@ -194,6 +199,7 @@ export function Profile() {
             .required("This field is required"),
         }
   );
+  // #endregion
   if (isFetchingProfileDetail) return <LoadingSpinner />;
   else if (!isFirstTimeLogin && !isFetchingProfileDetail) {
     return (
@@ -209,48 +215,6 @@ export function Profile() {
                 <Text>Update your photo and personal details here.</Text>
               </Box>
             </Flex>
-            {isFirstTimeLogin && (
-              <Box p="10px" bg="yellow.100" rounded="md">
-                <Heading fontSize="2xl" fontWeight="medium">
-                  <Highlight
-                    query={["Your Photo"]}
-                    styles={{
-                      px: "2",
-                      py: "1",
-                      rounded: "md",
-                      bg: "white",
-                      color: "black",
-                      fontWeight: "bold",
-                      fontSize: "xl",
-                    }}
-                  >
-                    Please upload Your Photo in your first time of update the
-                    Profile!
-                  </Highlight>
-                </Heading>
-              </Box>
-            )}
-            {showNeedToUploadImageMessage && (
-              <Box p="10px" bg="yellow.100" rounded="md">
-                <Heading fontSize="2xl" fontWeight="medium">
-                  <Highlight
-                    query={["Your Photo"]}
-                    styles={{
-                      px: "2",
-                      py: "1",
-                      rounded: "md",
-                      bg: "white",
-                      color: "black",
-                      fontWeight: "bold",
-                      fontSize: "xl",
-                    }}
-                  >
-                    Please also upload Your Photo in your first time of update
-                    the Profile!
-                  </Highlight>
-                </Heading>
-              </Box>
-            )}
             <Flex
               gap={8}
               flexDirection={{
@@ -263,55 +227,27 @@ export function Profile() {
                 validationSchema={validationSchema}
                 onSubmit={(values, actions) => {
                   onSaveDetailAlertClose();
-                  if (!isFirstTimeLogin) {
-                    const profileDetail = {
-                      fullname: values?.fullname,
-                      email: values?.email,
-                      gender: values?.gender,
-                      dateOfBirth:
-                        values?.dateOfBirth != ""
-                          ? new Date(values?.dateOfBirth).toISOString()
-                          : "",
-                      phoneNumber: values?.phone,
-                      location: {
-                        address: values?.address,
-                        city: values?.location?.city ?? "",
-                        country: values?.location?.country ?? "",
-                        state: values?.location?.state ?? "",
-                      },
-                    };
-                    const profileDetailObj = {
-                      id: userDecodeData?.id,
-                      profileDetail: profileDetail,
-                    };
-                    useSaveProfileDetail.mutate(profileDetailObj);
-                  } else {
-                    if (isAlrUploadImage) {
-                      const profileDetail = {
-                        fullname: values?.fullname,
-                        email: values?.email,
-                        gender: values?.gender,
-                        dateOfBirth:
-                          values?.dateOfBirth != ""
-                            ? new Date(values?.dateOfBirth).toISOString()
-                            : "",
-                        phoneNumber: values?.phone,
-                        location: {
-                          address: values?.address,
-                          city: values?.location?.city ?? "",
-                          country: values?.location?.country ?? "",
-                          state: values?.location?.state ?? "",
-                        },
-                      };
-                      const profileDetailObj = {
-                        id: userDecodeData?.id,
-                        profileDetail: profileDetail,
-                      };
-                      useSaveProfileDetail.mutate(profileDetailObj);
-                    } else {
-                      setShowNeedToUploadImageMessage(true);
-                    }
-                  }
+                  const profileDetail = {
+                    fullname: values?.fullname,
+                    email: values?.email,
+                    gender: values?.gender,
+                    dateOfBirth:
+                      values?.dateOfBirth != ""
+                        ? new Date(values?.dateOfBirth).toISOString()
+                        : "",
+                    phoneNumber: values?.phone,
+                    location: {
+                      address: values?.address,
+                      city: values?.location?.city ?? "",
+                      country: values?.location?.country ?? "",
+                      state: values?.location?.state ?? "",
+                    },
+                  };
+                  const profileDetailObj = {
+                    id: userDecodeData?.id,
+                    profileDetail: profileDetail,
+                  };
+                  useSaveProfileDetail.mutate(profileDetailObj);
                 }}
               >
                 {(formik) => (
@@ -555,7 +491,6 @@ export function Profile() {
                 </Heading>
               </Box>
             )}
-
             <Flex
               gap={8}
               flexDirection={{
@@ -569,55 +504,27 @@ export function Profile() {
                   validationSchema={validationSchema}
                   onSubmit={(values, actions) => {
                     onSaveDetailAlertClose();
-                    if (!isFirstTimeLogin) {
-                      const profileDetail = {
-                        fullname: values?.fullname,
-                        email: values?.email,
-                        gender: values?.gender,
-                        dateOfBirth:
-                          values?.dateOfBirth != ""
-                            ? new Date(values?.dateOfBirth).toISOString()
-                            : "",
-                        phoneNumber: values?.phone,
-                        location: {
-                          address: values?.address,
-                          city: values?.location?.city ?? "",
-                          country: values?.location?.country ?? "",
-                          state: values?.location?.state ?? "",
-                        },
-                      };
-                      const profileDetailObj = {
-                        id: userDecodeData?.id,
-                        profileDetail: profileDetail,
-                      };
-                      useSaveProfileDetail.mutate(profileDetailObj);
-                    } else {
-                      if (isAlrUploadImage) {
-                        const profileDetail = {
-                          fullname: values?.fullname,
-                          email: values?.email,
-                          gender: values?.gender,
-                          dateOfBirth:
-                            values?.dateOfBirth != ""
-                              ? new Date(values?.dateOfBirth).toISOString()
-                              : "",
-                          phoneNumber: values?.phone,
-                          location: {
-                            address: values?.address,
-                            city: values?.location?.city ?? "",
-                            country: values?.location?.country ?? "",
-                            state: values?.location?.state ?? "",
-                          },
-                        };
-                        const profileDetailObj = {
-                          id: userDecodeData?.id,
-                          profileDetail: profileDetail,
-                        };
-                        useSaveProfileDetail.mutate(profileDetailObj);
-                      } else {
-                        setShowNeedToUploadImageMessage(true);
-                      }
-                    }
+                    const profileDetail = {
+                      fullname: values?.fullname,
+                      email: values?.email,
+                      gender: values?.gender,
+                      dateOfBirth:
+                        values?.dateOfBirth != ""
+                          ? new Date(values?.dateOfBirth).toISOString()
+                          : "",
+                      phoneNumber: values?.phone,
+                      location: {
+                        address: values?.address,
+                        city: values?.location?.city ?? "",
+                        country: values?.location?.country ?? "",
+                        state: values?.location?.state ?? "",
+                      },
+                    };
+                    const profileDetailObj = {
+                      id: userDecodeData?.id,
+                      profileDetail: profileDetail,
+                    };
+                    useSaveProfileDetail.mutate(profileDetailObj);
                   }}
                 >
                   {(formik) => (
