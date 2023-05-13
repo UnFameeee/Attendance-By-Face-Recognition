@@ -7,14 +7,14 @@ import { LeaveRequestModel } from "../model/view-model/leaverequest.model";
 import { CreateLeaveRequestDTO } from "../model/dtos/leave-request.dto";
 import { leaveRequestStatus } from "../constant/leave-request.constant";
 import { Page, Paging, paginate } from "../config/paginate.config";
+import { Employee } from "@prisma/client";
+import { ROLE } from "../constant/database.constant";
 
 export class LeaveRequestService {
-  public getLeaveRequestOfDepartment = async (departmentId: string, page: Page): Promise<ResponseData<Paging<LeaveRequestModel[]>>> => {
+  public getLeaveRequestOfDepartment = async (employee: Employee, departmentId: string, page: Page): Promise<ResponseData<Paging<LeaveRequestModel[]>>> => {
     const response = new ResponseData<Paging<LeaveRequestModel[]>>;
     const pageResponse = new Paging<LeaveRequestModel[]>
     const data: DateTimeV2DTO = page.extendData;
-
-    // const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
     var startDate;
     var endDate;
@@ -29,75 +29,171 @@ export class LeaveRequestService {
       endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
     }
 
-    const queryData = await prisma.leaveRequest.findMany({
+    if (data.filter) {
+      var now = new Date(data.filter);
+      var dateFilter = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    }
+
+    const queryRoleData = await prisma.role.findFirst({
       where: {
+        roleId: employee.roleId,
         deleted: false,
-        employee: {
-          department: {
-            departmentId: departmentId,
+      }
+    })
+
+    var queryData;
+    var totalElement;
+
+    if (queryRoleData.roleName == ROLE.ADMIN) {
+      var whereData: any;
+      if (data.filter) {
+        whereData = {
+          deleted: false,
+          startDate: {
+            gte: dateFilter.startOf('day').toDate(),
+            lte: dateFilter.endOf('day').toDate(),
+          },
+          endDate: {
+            lte: endDate,
           }
-        },
-        startDate: {
-          gte: startDate,
-        },
-        endDate: {
-          lte: endDate,
         }
-      },
-      select: {
-        leaveRequestId: true,
-        employee: {
-          select: {
-            id: true,
-            fullname: true,
-            email: true,
-            department: {
-              select: {
-                departmentName: true,
+      } else {
+        whereData = {
+          deleted: false,
+          startDate: {
+            gte: startDate,
+          },
+          endDate: {
+            lte: endDate,
+          }
+        }
+      }
+
+      queryData = await prisma.leaveRequest.findMany({
+        where: whereData,
+        select: {
+          leaveRequestId: true,
+          employee: {
+            select: {
+              id: true,
+              fullname: true,
+              email: true,
+              department: {
+                select: {
+                  departmentName: true,
+                }
               }
+            }
+          },
+          leaveTypeId: true,
+          requestDate: true,
+          status: true,
+          approver: {
+            select: {
+              fullname: true,
+            }
+          },
+          reason: true,
+          note: true,
+          startDate: true,
+          endDate: true,
+          leaveType: {
+            select: {
+              name: true,
             }
           }
         },
-        leaveTypeId: true,
-        requestDate: true,
-        status: true,
-        approver: {
-          select: {
-            fullname: true,
-          }
+        orderBy: {
+          requestDate: "desc",
         },
-        reason: true,
-        note: true,
-        startDate: true,
-        endDate: true,
-        leaveType: {
-          select: {
-            name: true,
-          }
-        }
-      },
-      orderBy: {
-        requestDate: "desc",
-      },
-      ...paginate(page)
-    })
+        ...paginate(page)
+      })
 
-    const totalElement = await prisma.leaveRequest.count({
-      where: {
-        deleted: false,
-        employee: {
-          department: {
-            departmentId: departmentId,
+      totalElement = await prisma.leaveRequest.count({
+        where: whereData,
+      })
+    } else if (queryRoleData.roleName == ROLE.MANAGER) {
+      var whereData: any;
+      if (data.filter) {
+        whereData = {
+          deleted: false,
+          employee: {
+            department: {
+              departmentId: departmentId,
+            },
+            id: {
+              not: employee.id
+            }
+          },
+          startDate: {
+            gte: dateFilter.startOf('day').toDate(),
+            lte: dateFilter.endOf('day').toDate(),
+          }
+        }
+      } else {
+        whereData = {
+          deleted: false,
+          employee: {
+            department: {
+              departmentId: departmentId,
+            },
+            id: {
+              not: employee.id
+            }
+          },
+          startDate: {
+            gte: startDate,
+          },
+          endDate: {
+            lte: endDate,
+          }
+        }
+      }
+
+      queryData = await prisma.leaveRequest.findMany({
+        where: whereData,
+        select: {
+          leaveRequestId: true,
+          employee: {
+            select: {
+              id: true,
+              fullname: true,
+              email: true,
+              department: {
+                select: {
+                  departmentName: true,
+                }
+              }
+            }
+          },
+          leaveTypeId: true,
+          requestDate: true,
+          status: true,
+          approver: {
+            select: {
+              fullname: true,
+            }
+          },
+          reason: true,
+          note: true,
+          startDate: true,
+          endDate: true,
+          leaveType: {
+            select: {
+              name: true,
+            }
           }
         },
-        startDate: {
-          gte: startDate,
+        orderBy: {
+          requestDate: "desc",
         },
-        endDate: {
-          lte: endDate,
-        }
-      },
-    })
+        ...paginate(page)
+      })
+
+      totalElement = await prisma.leaveRequest.count({
+        where: whereData,
+      })
+    }
 
     pageResponse.data = queryData;
     pageResponse.page = page;
@@ -110,8 +206,6 @@ export class LeaveRequestService {
     const response = new ResponseData<Paging<LeaveRequestModel[]>>;
     const pageResponse = new Paging<LeaveRequestModel[]>
     const data: DateTimeV2DTO = page.extendData;
-
-    // const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
     var startDate;
     var endDate;
