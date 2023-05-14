@@ -2,6 +2,7 @@ import { CheckCircleIcon } from '@chakra-ui/icons';
 import { Box, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react';
 import React from 'react'
 import { useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const ModalBodyStyle = {
   width: "25rem",
@@ -21,6 +22,7 @@ const ModalContentStyle = {
 
 export default function FinishModal({ openModal }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (openModal) {
@@ -29,6 +31,11 @@ export default function FinishModal({ openModal }) {
       onClose();
     }
   }, [openModal])
+
+  const onCloseHandle = () => {
+    onClose();
+    navigate("/sign-in")
+  }
 
   return (
     <Box>

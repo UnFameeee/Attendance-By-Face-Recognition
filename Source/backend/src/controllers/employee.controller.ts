@@ -4,6 +4,7 @@ import { EmployeeService } from "../services/employee.service";
 import { RequestWithProfile } from '../interfaces/request.interface';
 import { Page } from "../config/paginate.config";
 import { AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO, CreateEmployeeDTO, UpdateEmployeeDTO } from '../model/dtos/employee.dto';
+import { Employee } from "@prisma/client";
 
 class EmployeeController {
   public employeeService = new EmployeeService();
@@ -91,8 +92,38 @@ class EmployeeController {
   }
   public getListRoleOfEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // const data: ChangeRoleDTO = req.body;
       const response = await this.employeeService.getListRoleOfEmployee();
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public getListImageOfEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId = req.params.employeeId;
+      // const employee: Employee = req.profile;
+      const response = await this.employeeService.getListImageOfEmployee(employeeId);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public retrain = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId = req.params.employeeId;
+      const response = await this.employeeService.retrain(employeeId);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public validateRetrain = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId = (req.query.employeeId).toString();
+      const response = await this.employeeService.validateRetrain(employeeId);
       res.status(200).json(response);
     } catch (err) {
       next(err);

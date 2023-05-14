@@ -34,6 +34,7 @@ model Employee {
   status                Boolean?
   annualLeaveDays       Int?
   firsttimeLogin        Boolean               @default(true)
+  isTrain               Boolean               @default(false)
   refreshToken          String?
   deleted               Boolean               @default(false)
   createdAt             DateTime              @default(now())

@@ -27,7 +27,7 @@ export class FacialRecognitionController {
   public uploadingImagesAndTraining = async (req: MulterRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const files: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
-      const employeeId: string = req.profile.id;
+      const employeeId: string = (req.query.employeeId).toString();
 
       const response = await this.facialRecognitionService.uploadingImagesAndTraining(employeeId, files);
       res.status(200).json(response);

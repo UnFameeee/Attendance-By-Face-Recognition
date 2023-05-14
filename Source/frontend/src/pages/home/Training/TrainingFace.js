@@ -9,6 +9,8 @@ import "./TrainingFace.css";
 import InstructionModal from '../../../components/Training/InstructionModal';
 import FinishModal from '../../../components/Training/FinishModal';
 import { Helper } from '../../../Utils/Helper';
+import { useMutation } from 'react-query';
+import { trainingService } from '../../../services/training/training';
 
 let streamTrainingObj;
 const limitPictures = 2;
@@ -23,30 +25,31 @@ export default function TrainingFace() {
   const [startTraining, setStartTraining] = useState(false);
   const [finishScanning, setFinishScanning] = useState(false);
   const params = new URLSearchParams(window.location.search);
-  const employeeId = params.get("id");
+  const employeeId = Helper.decodeWithCipher(params.get("id"));
 
-  console.log(Helper.decodeWithCipher(employeeId));
-  
-  // const useSaveImageOfAttendance = useMutation((variable) =>
-  //   attendanceService.saveImageOfAttendance(variable), {
-  //   onSuccess: (data) => {
-  //     useTakeAttendance.mutate({
-  //       employeeId: employeeId,
-  //       attendanceType: "FACE",
-  //       image: data.result,
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     console.log(error);
-  //     toast({
-  //       title: error.response.data.message,
-  //       position: "bottom-right",
-  //       status: "error",
-  //       isClosable: true,
-  //       duration: 5000,
-  //     });
-  //   },
-  // })
+  const useSaveImageOfAttendance = useMutation(({employeeId, formData}) =>
+    trainingService.saveImageOfTraining(employeeId, formData), {
+    onSuccess: (data) => {
+      setFinishScanning(true);
+      toast({
+        title: "Success",
+        position: "bottom-right",
+        status: "success",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  })
 
   useEffect(() => {
     async function loadingModels() {
@@ -158,8 +161,19 @@ export default function TrainingFace() {
   useEffect(() => {
     if (capturedImages.length >= limitPictures) {
       setIsScaningPaused(true);
-      setFinishScanning(true);
-      console.log(capturedImages.length);
+      // setFinishScanning(true);
+
+      const handleSaveUploadImages = async () => {
+        const formData = new FormData();
+        for (var item of capturedImages) {
+          var file = await Helper.convertBase64ToFile(item, 'image.jpg')
+          console.log(file);
+          formData.append('images', file);
+        }
+        useSaveImageOfAttendance.mutate({employeeId, formData});
+        // setCapturedImages([]);
+      }
+      handleSaveUploadImages();
     }
   }, [capturedImages])
 

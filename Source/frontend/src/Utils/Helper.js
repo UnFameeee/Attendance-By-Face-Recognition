@@ -169,6 +169,17 @@ function isInSameMonth(value) {
   }
   return true;
 }
+
+const convertBase64ToFile = async (base64Data, fileName) => {
+  return fetch(base64Data)
+    .then(response => response.blob())
+    .then(blob => new File([blob], fileName, { type: 'image/jpeg' }));
+};
+
+const randomNumber = () => {
+  return Math.floor(Math.random() * 10) + 1;
+}
+
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -184,6 +195,8 @@ export const Helper = {
   splitUnderscoreStringToArray,
   matchingCodeColor,
   decodeWithCipher,
+  convertBase64ToFile,
+  randomNumber,
   convertToArraySelection,
   isInSameMonth,
 };
