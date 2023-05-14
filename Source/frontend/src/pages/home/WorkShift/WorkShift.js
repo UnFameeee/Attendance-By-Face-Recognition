@@ -726,30 +726,32 @@ function WorkShift() {
           </HStack>
         </HStack>
       </Flex>
-      <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end">
-        <Heading fontSize="xl" fontWeight="medium">
-          <Highlight
-            query={["Employee Filter:"]}
-            styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
-          >
-            Employee Filter:
-          </Highlight>
-        </Heading>
+      {userDecodeInfo.roleName != "employee" && (
+        <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end">
+          <Heading fontSize="xl" fontWeight="medium">
+            <Highlight
+              query={["Employee Filter:"]}
+              styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+            >
+              Employee Filter:
+            </Highlight>
+          </Heading>
 
-        <Formik initialValues={initialValuesOfEmployeeFilter}>
-          {(formik) => (
-            <Box w="150px">
-              <FormTextField
-                name="employeeFilter"
-                isSelectionField={true}
-                selectionArray={listEmployeeDataSelection}
-                placeholder="All"
-                selectionHandleOnChange={selectionHandleOnChange}
-              />
-            </Box>
-          )}
-        </Formik>
-      </HStack>
+          <Formik initialValues={initialValuesOfEmployeeFilter}>
+            {(formik) => (
+              <Box w="150px">
+                <FormTextField
+                  name="employeeFilter"
+                  isSelectionField={true}
+                  selectionArray={listEmployeeDataSelection}
+                  placeholder="All"
+                  selectionHandleOnChange={selectionHandleOnChange}
+                />
+              </Box>
+            )}
+          </Formik>
+        </HStack>
+      )}
       {showEventModal && (
         <EventModal
           listEmployee={listEmployeeOfDepartment?.result?.data}
