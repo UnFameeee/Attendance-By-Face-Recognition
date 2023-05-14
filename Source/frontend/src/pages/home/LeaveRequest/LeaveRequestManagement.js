@@ -123,18 +123,16 @@ function LeaveRequestManagement() {
   );
   const { data: listDepartmentData, isLoading: isLoadingListDepartment } =
     useGetListDepartment();
-  let listDepartmentArray = React.useMemo(() => {
-    if (listDepartmentData?.result?.data?.length > 0) {
-      let tempArray = [];
-      listDepartmentData?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.departmentName,
-          value: item.departmentId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listDepartmentArray, setListDepartmentArray] = useState([]);
+  useEffect(() => {
+    setListDepartmentArray(
+      Helper.convertToArraySelection(
+        listDepartmentData?.result?.data,
+        "departmentName",
+        "departmentId"
+      )
+    );
+  }, [listDepartmentData]);
   const useModifyLeaveType = useMutation(leaveRequestService.modifyLeaveType, {
     onSuccess: (data) => {
       const { message } = data;
@@ -295,7 +293,7 @@ function LeaveRequestManagement() {
   };
   const handleAcceptDelete = () => {
     // console.log(deleteSingleData);
-    useDeleteLeaveRequest.mutate(deleteSingleData.leaveRequestId)
+    useDeleteLeaveRequest.mutate(deleteSingleData.leaveRequestId);
     setDeleteSingleData({});
     onDeleteSingleClose();
   };

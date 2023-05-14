@@ -55,6 +55,7 @@ function WorkShift() {
     Helper.getUseDecodeInfor()
   );
   const [listWorkShiftDepartment, setListWorkShiftDepartment] = useState([]);
+  // console.log(listWorkShiftDepartment,"listWorkShiftDepartment")
   const [enableGetListEmployee, setEnableGetListEmployee] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(Helper.getMonth());
   const [toggleAddNewShiftType, setToggleAddNewShiftType] = useState(false);
@@ -92,6 +93,30 @@ function WorkShift() {
   };
   const { data: listEmployeeOfDepartment, isLoading: isLoadingListEmployee } =
     useGetListEmployeeOfDepartment(departmentId, enableGetListEmployee);
+  const [listEmployeeDataSelection, setListEmployeeDataSelection] = useState(
+    []
+  );
+  const [employeeFilterId, setEmployeeFilterId] = useState("");
+  useEffect(() => {
+    if (userDecodeInfo.roleName == "employee") {
+      setEmployeeFilterId(userDecodeInfo.id);
+    }
+  }, []);
+  useEffect(() => {
+    setListEmployeeDataSelection(
+      Helper.convertToArraySelection(
+        listEmployeeOfDepartment?.result?.data,
+        "fullname",
+        "id"
+      )
+    );
+  }, [listEmployeeOfDepartment]);
+  const initialValuesOfEmployeeFilter = {
+    employeeFilter: "",
+  };
+  const selectionHandleOnChange = (value) => {
+    setEmployeeFilterId(value);
+  };
   const useModifyWorkShift = useMutation(
     workShiftService.modifyWorkShiftService,
     {
@@ -106,7 +131,7 @@ function WorkShift() {
             duration: 5000,
           });
         } else {
-          refreshListWorkDepartment();
+          refreshListWork();
           toast({
             title: "Modify WorkShift successfully",
             position: "bottom-right",
@@ -208,7 +233,7 @@ function WorkShift() {
           });
         } else {
           queryClient.invalidateQueries("listShiftType");
-          refreshListWorkDepartment();
+          refreshListWork();
           toast({
             title: `${
               currentModifyShiftTypeId != "" ? "Modify" : "Create"
@@ -272,31 +297,33 @@ function WorkShift() {
   );
   // #endregion
   // #region functions
-  let listDepartmentArray = React.useMemo(() => {
-    if (listDepartmentData?.result?.data?.length > 0) {
-      let tempArray = [];
-      listDepartmentData?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.departmentName,
-          value: item.departmentId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listDepartmentArray, setListDepartmentArray] = useState([]);
+  useEffect(() => {
+    setListDepartmentArray(
+      Helper.convertToArraySelection(
+        listDepartmentData?.result?.data,
+        "departmentName",
+        "departmentId"
+      )
+    );
+  }, [listDepartmentData]);
   const modifyWorkShift = (eventObj) => {
     useModifyWorkShift.mutate(eventObj);
   };
-  const refreshListWorkDepartment = () => {
+  const refreshListWork = () => {
     if (departmentId) {
-      if (userDecodeInfo.roleName == "employee") {
-        let employeeId = userDecodeInfo.id;
+      if (employeeFilterId != "") {
+        let employeeId = employeeFilterId;
+        setListWorkShiftDepartment([]);
         useGetWorkShiftOfEmployee.mutate({ employeeId, monthIndex });
       } else {
         useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
       }
     }
   };
+  useEffect(() => {
+    refreshListWork();
+  }, [employeeFilterId]);
   const resetModal = () => {
     setCurrentModifyShiftTypeId("");
     setToggleAddNewShiftType(false);
@@ -317,13 +344,13 @@ function WorkShift() {
       let tempObject = {};
       if (listShiftType?.result?.data) {
         listShiftType?.result?.data.map((item) => {
-          tempObject[`startTime_${item.shiftTypeId}`] =
-            moment(item.startTime).format("hh:mm");
+          tempObject[`startTime_${item.shiftTypeId}`] = moment(
+            item.startTime
+          ).format("hh:mm");
           tempObject[`endTime_${item.shiftTypeId}`] = moment(
             item.endTime
           ).format("hh:mm");
-          tempObject[`shiftName_${item.shiftTypeId}`] =
-            item.shiftName;
+          tempObject[`shiftName_${item.shiftTypeId}`] = item.shiftName;
         });
       }
       return tempObject;
@@ -377,7 +404,8 @@ function WorkShift() {
               "is-after",
               "End time must be after start time",
               function (value) {
-                const {[`startTime_${splitArray[1]}`]: startTimeValue} = this.parent;
+                const { [`startTime_${splitArray[1]}`]: startTimeValue } =
+                  this.parent;
                 return moment(value, "hh:mm").isAfter(
                   moment(startTimeValue, "hh:mm")
                 );
@@ -392,7 +420,7 @@ function WorkShift() {
   }, [objectShiftType]);
   useEffect(() => {
     setCurrentMonth(Helper.getMonth(monthIndex));
-    refreshListWorkDepartment();
+    refreshListWork();
   }, [monthIndex]);
   useEffect(() => {
     setListWorkShiftDepartment([]);
@@ -649,7 +677,16 @@ function WorkShift() {
               onSubmit={(values, actions) => {
                 const departmentId = values.department;
                 setDepartmentId(departmentId);
-                if (departmentId) {
+                if (departmentId && userDecodeInfo.roleName == "employee") {
+                  let employeeId = employeeFilterId;
+                  useGetWorkShiftOfEmployee.mutate({
+                    employeeId,
+                    monthIndex,
+                  });
+                } else if (
+                  departmentId &&
+                  userDecodeInfo.roleName != "employee"
+                ) {
                   useGetWorkShiftDepartment.mutate({
                     departmentId,
                     monthIndex,
@@ -689,12 +726,36 @@ function WorkShift() {
           </HStack>
         </HStack>
       </Flex>
+      <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end">
+        <Heading fontSize="xl" fontWeight="medium">
+          <Highlight
+            query={["Employee Filter:"]}
+            styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+          >
+            Employee Filter:
+          </Highlight>
+        </Heading>
+
+        <Formik initialValues={initialValuesOfEmployeeFilter}>
+          {(formik) => (
+            <Box w="150px">
+              <FormTextField
+                name="employeeFilter"
+                isSelectionField={true}
+                selectionArray={listEmployeeDataSelection}
+                placeholder="All"
+                selectionHandleOnChange={selectionHandleOnChange}
+              />
+            </Box>
+          )}
+        </Formik>
+      </HStack>
       {showEventModal && (
         <EventModal
           listEmployee={listEmployeeOfDepartment?.result?.data}
           listShift={listShiftType?.result?.data}
           modifyEventHandler={modifyWorkShift}
-          refreshListWorkDepartment={refreshListWorkDepartment}
+          refreshListWork={refreshListWork}
           setListWorkShiftDepartment={setListWorkShiftDepartment}
           isReadOnly={userDecodeInfo?.roleName == "employee"}
         />
