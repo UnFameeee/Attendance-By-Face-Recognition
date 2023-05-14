@@ -142,12 +142,25 @@ const matchingCodeColor = (value, codeColorObj) => {
 
 // Function to decode a message using Cipher
 const decodeWithCipher = (encodedMessage) => {
-  console.log(encodedMessage)
-  var decodedData = (CryptoJS.enc.Base64.parse(encodedMessage)).toString(CryptoJS.enc.Utf8);
+  console.log(encodedMessage);
+  var decodedData = CryptoJS.enc.Base64.parse(encodedMessage).toString(
+    CryptoJS.enc.Utf8
+  );
   console.log(decodedData);
   return decodedData;
-}
-
+};
+const convertToArraySelection = (array, labelName,valueName) => {
+  if (array && array.length > 0) {
+    let tempArray = [];
+    array.map((item) => {
+      tempArray.push({
+        label: item[labelName],
+        value: item[valueName],
+      });
+    });
+    return tempArray;
+  }
+};
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -163,4 +176,5 @@ export const Helper = {
   splitUnderscoreStringToArray,
   matchingCodeColor,
   decodeWithCipher,
+  convertToArraySelection
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Divider,
@@ -105,18 +105,16 @@ function LeaveRequestPersonal() {
       },
     }
   );
-  let listLRLeaveType = React.useMemo(() => {
-    if (LRLeaveTypeData?.result?.data.length > 0) {
-      let tempArray = [];
-      LRLeaveTypeData?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.name,
-          value: item.leaveTypeId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listLRLeaveType, setListLRLeaveType] = useState([]);
+  useEffect(() => {
+    setListLRLeaveType(
+      Helper.convertToArraySelection(
+        LRLeaveTypeData?.result?.data,
+        "name",
+        "leaveTypeId"
+      )
+    );
+  }, [LRLeaveTypeData]);
   // #endregion
   // #region functions
   const DeleteRange = (data) => {

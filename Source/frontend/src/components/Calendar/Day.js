@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
 import { Helper } from "../../Utils/Helper";
 import moment from "moment";
-import { Badge, Box, Button } from "@chakra-ui/react";
+import { Badge, Box, Button,Text } from "@chakra-ui/react";
 export default function Day({ day, rowIdx, listWorkShift }) {
   const [dayEvents, setDayEvents] = useState([]);
   const {
@@ -22,13 +22,6 @@ export default function Day({ day, rowIdx, listWorkShift }) {
         day.format("DD-MM-YY") ===
         Helper.convertDateISOToDDMMYYY(item.shiftDate)
     );
-    if (isShiftDay.length > 0) {
-      // console.log("isShiftDay", isShiftDay);
-      // isShiftDay.map((item) => {
-      //   const date = Helper.getMomentDateFormat(item?.shiftDate);
-      //   console.log(date);
-      // });
-    }
   }
   const checkIfDayInSameMonth = () => {
     let realMonth = Math.floor(monthIndex) + 1;
@@ -91,30 +84,32 @@ export default function Day({ day, rowIdx, listWorkShift }) {
               <div
                 key={item?.shiftId}
                 onClick={() => setSelectedEvent(item)}
-                className={` p-1 mr-3 text-white bg-[#3182ce] text-sm rounded mb-1 truncate flex gap-[5px] flex-col ${
+                className={` p-1 mr-3 text-white ${
+                  item.absent ? "bg-yellow-600" : "bg-[#3182ce]"
+                }  text-sm rounded mb-1 truncate flex gap-[5px] flex-col ${
                   index === isShiftDay?.length - 1 ? "mb-[2rem]" : ""
                 } `}
               >
                 <span className=" overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[1rem]">
                   {item?.employee?.fullname ?? "Unknown"}
                 </span>
-                <div>
-                  <Badge >{item?.shiftType?.shiftName ?? ""}</Badge>
-                  <div className="flex gap-[2px]">
-                    <span className=" overflow-hidden text-ellipsis whitespace-nowrap">
-                      {item?.shiftType?.startTime
-                        ? moment(
-                            item?.shiftType?.startTime
-                          ).format("hh:mm A")
-                        : ""}{" "}
-                      To{" "}
-                      {item?.shiftType?.endTime
-                        ? moment(item?.shiftType?.endTime).format(
-                            "hh:mm A"
-                          )
-                        : ""}
-                    </span>
-                  </div>
+                <div className=" flex flex-col gap-[5px]">
+                  <Badge w='fit-content'>{item?.shiftType?.shiftName ?? ""}</Badge>
+                  {item.absent ? (
+                    <Text fontSize='lg'>Absent</Text>
+                  ) : (
+                    <div className="flex gap-[2px]">
+                      <span className=" overflow-hidden text-ellipsis whitespace-nowrap">
+                        {item?.shiftType?.startTime
+                          ? moment(item?.shiftType?.startTime).format("hh:mm A")
+                          : ""}{" "}
+                        To{" "}
+                        {item?.shiftType?.endTime
+                          ? moment(item?.shiftType?.endTime).format("hh:mm A")
+                          : ""}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             );

@@ -13,7 +13,7 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FormTextField from "../../../components/field/FormTextField";
 import { Formik } from "formik";
 import { AiOutlineMail } from "react-icons/ai";
@@ -24,6 +24,7 @@ import * as Yup from "yup";
 import ta_test from "../../../assets/ta.jpeg";
 import { useMutation } from "react-query";
 import { attendanceService } from "../../../services/attendance/attendance";
+import { Helper } from "../../../Utils/Helper";
 function ReportAttendanceException() {
   // #region declare variable
   const toast = useToast();
@@ -91,18 +92,10 @@ function ReportAttendanceException() {
     department: Yup.string().required("This field is required"),
   });
   const { data: listDepartment } = useGetListDepartment();
-  let listDepartmentArray = React.useMemo(() => {
-    if (listDepartment?.result?.data.length > 0) {
-      let tempArray = [];
-      listDepartment?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.departmentName,
-          value: item.departmentId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listDepartmentArray,setListDepartmentArray] = useState([])
+  useEffect(()=>{
+    setListDepartmentArray(Helper.convertToArraySelection(listDepartment?.result?.data,"departmentName","departmentId"))
+  },[listDepartment])
   // #endregion
   return (
     <Stack bgColor="gray.200" h="100vh">
