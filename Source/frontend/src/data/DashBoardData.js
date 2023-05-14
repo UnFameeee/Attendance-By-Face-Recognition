@@ -53,7 +53,6 @@ export const DashBoardDataBottom = [
     link: "/attendance/attendance-personal",
     linkTitle: "Your Attendance Stats",
     bgColor: "#626ebf",
-    roleCanAccess: ["manager", "admin"],
   },
   {
     title: "Setting",

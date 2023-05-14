@@ -403,7 +403,7 @@ function LeaveRequestManagement() {
       },
       {
         Header: "Email",
-        accessor: "email",
+        accessor: "employee.email",
         // haveFilter: {
         //   filterType: FilterType.Default,
         // },
@@ -411,7 +411,7 @@ function LeaveRequestManagement() {
 
       {
         Header: "Department",
-        accessor: "department",
+        accessor: "employee.department.departmentName",
         cellWidth: "150px",
         Cell: ({ value }) => <span>{value}</span>,
         // haveFilter: {
@@ -697,7 +697,7 @@ function LeaveRequestManagement() {
                       });
                       useModifyLeaveType.mutate(modifyLeaveTypeObject);
                     }
-                    onModifyLeaveTypeModalClose();
+                    // onModifyLeaveTypeModalClose();
                   }}
                 >
                   {(formik) => (

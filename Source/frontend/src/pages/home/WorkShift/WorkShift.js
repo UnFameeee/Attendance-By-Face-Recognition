@@ -356,16 +356,6 @@ function WorkShift() {
     );
   const [validationSchemaForModifyShift, setValidationSchemaForModifyShift] =
     useState();
-  // const validationSchemaForCreateShift = Yup.object().shape({
-  //   shiftName_New: Yup.string().required("This field is required"),
-  //   startTime_New: Yup.string().required("This field is required"),
-  //   endTime_New: Yup.string()
-  //     .test("is-after", "End time must be after start time", function (value) {
-  //       const { startTime_New } = this.parent;
-  //       return moment(value, "hh:mm").isAfter(moment(startTime_New, "hh:mm"));
-  //     })
-  //     .required("This field is required"),
-  // });
   const [currentModifyShiftTypeId, setCurrentModifyShiftTypeId] = useState("");
 
   // #endregion
@@ -497,7 +487,6 @@ function WorkShift() {
                         });
                         useModifyShiftType.mutate(modifyWorkShiftObject);
                       }
-                      onModifyShiftTypeModalClose();
                     }}
                   >
                     {(formik) => (
