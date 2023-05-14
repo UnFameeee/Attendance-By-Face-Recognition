@@ -39,7 +39,7 @@ export class FacialRecognitionRoute implements Routes {
 
     // api/facialRecognition/uploadingImagesAndTraining
     this.router.post(`${this.path}/uploadingImagesAndTraining`,
-      authMiddleware,
+      // authMiddleware,
       // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
       trainingImagesUpload,
       this.facialRecognitionController.uploadingImagesAndTraining

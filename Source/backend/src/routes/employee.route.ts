@@ -87,6 +87,27 @@ export class EmployeeRoute implements Routes {
       await authorizeRoute(PERMISSION.GRANT_PERMISSION, RESOURCE.EMPLOYEE_MANAGEMENT),
       this.employeeController.getListRoleOfEmployee
     );
+
+    // api/employee/getListImageOfEmployee
+    this.router.get(`${this.path}/getListImageOfEmployee/:employeeId`,
+      authMiddleware,
+      // await authorizeRoute(PERMISSION.GRANT_PERMISSION, RESOURCE.EMPLOYEE_MANAGEMENT),
+      this.employeeController.getListImageOfEmployee
+    );
+
+    // api/employee/retrain
+    this.router.post(`${this.path}/retrain/:employeeId`,
+      authMiddleware,
+      // await authorizeRoute(PERMISSION.GRANT_PERMISSION, RESOURCE.EMPLOYEE_MANAGEMENT),
+      this.employeeController.retrain
+    );
+
+    // api/employee/validateRetrain
+    this.router.get(`${this.path}/validateRetrain`,
+      authMiddleware,
+      // await authorizeRoute(PERMISSION.GRANT_PERMISSION, RESOURCE.EMPLOYEE_MANAGEMENT),
+      this.employeeController.validateRetrain
+    );
   }
 }
 

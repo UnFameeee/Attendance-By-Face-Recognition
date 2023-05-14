@@ -138,6 +138,8 @@ export class FacialRecognitionService {
     const response = new ResponseData<any>();
     const dataArray = [];
 
+    console.log(files.images);
+
     for (let i = 0, length = files.images.length; i < length; ++i) {
       let link = `${env.SERVER_URL}/public${(files.images[i].destination).split("public")[1]}/${files.images[i].filename}`;
 
@@ -151,6 +153,15 @@ export class FacialRecognitionService {
 
     const queryData = await prisma.faceTrainingImage.createMany({
       data: dataArray
+    })
+
+    await prisma.employee.update({
+      where: {
+        id: employeeId,
+      },
+      data: {
+        isTrain: true,
+      }
     })
 
     if (queryData) {

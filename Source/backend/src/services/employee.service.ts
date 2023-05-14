@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Employee, PrismaClient } from "@prisma/client";
 import { Page, Paging, paginate } from '../config/paginate.config';
 import { ResponseData } from "../config/responseData.config";
 import { EmployeeModel, EmployeeRole } from "../model/view-model/employee.model";
@@ -477,6 +477,81 @@ export class EmployeeService {
       },
     })
     response.result = queryData;
+    return response;
+  }
+
+  public getListImageOfEmployee = async (employeeId: string): Promise<ResponseData<any[]>> => {
+    const response = new ResponseData<any[]>;
+    const queryData = await prisma.faceTrainingImage.findMany({
+      where: {
+        employeeId: employeeId
+      },
+      select: {
+        imageId: true,
+        link: true,
+      },
+    })
+    response.result = queryData;
+    return response;
+  }
+
+  public retrain = async (employeeId: string): Promise<ResponseData<string>> => {
+    const response = new ResponseData<string>;
+
+    const queryCheckData = await prisma.employee.findFirst({
+      where: {
+        id: employeeId,
+        deleted: false,
+      }
+    })
+
+    if (!queryCheckData) {
+      response.message = "The employee doesn't exist";
+      return response;
+    }
+
+    const queryDeleteData = await prisma.faceTrainingImage.deleteMany({
+      where: {
+        employeeId: employeeId,
+      },
+    })
+
+    if (!queryDeleteData) {
+      response.message = "System Error";
+      return response;
+    }
+
+    const queryData = await prisma.employee.update({
+      where: {
+        id: employeeId,
+      },
+      data: {
+        isTrain: false,
+      }
+    })
+
+    if (!queryData) {
+      response.message = "System Error";
+      return response;
+    }
+
+    response.result = "Assign employee re-scan face sucessfully";
+    return response;
+  }
+
+  public validateRetrain = async (employeeId: string): Promise<ResponseData<any>> => {
+    const response = new ResponseData<boolean>;
+    const queryData = await prisma.employee.findFirst({
+      where: {
+        id: employeeId,
+        deleted: false
+      },
+      select: {
+        isTrain: true,
+      },
+    })
+
+    response.result = queryData.isTrain;
     return response;
   }
 }

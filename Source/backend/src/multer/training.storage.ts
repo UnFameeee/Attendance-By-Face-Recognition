@@ -8,16 +8,22 @@ const directory = path.join(__dirname, "../public/training");
 const trainingImagesStorage = multer.diskStorage({
   // Destination to store image     
   destination: async (req: RequestWithProfile, file, cb) => {
-    if (!fs.existsSync(`${directory}/${req.profile.id}`)) {
-      fs.mkdirSync(`${directory}/${req.profile.id}`)
+    const employeeId: string = (req.query.employeeId).toString();
+
+    if (!fs.existsSync(`${directory}/${employeeId}`)) {
+      fs.mkdirSync(`${directory}/${employeeId}`)
     }
-    console.log("MulterStorage: ", `${directory}\\${req.profile.id}`)
-    cb(null, `${directory}\\${req.profile.id}`)
+    console.log("MulterStorage: ", `${directory}\\${employeeId}`)
+    cb(null, `${directory}\\${employeeId}`)
   },
   filename: async (req: RequestWithProfile, file, cb) => {
+    const employeeId: string = (req.query.employeeId).toString();
+
     const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
 
-    cb(null, `${req.profile.id}_${arrayUpload.images.length}` + path.extname(file.originalname));
+    console.log(arrayUpload);
+
+    cb(null, `${employeeId}_${arrayUpload.images.length}` + path.extname(file.originalname));
   }
 });
 
