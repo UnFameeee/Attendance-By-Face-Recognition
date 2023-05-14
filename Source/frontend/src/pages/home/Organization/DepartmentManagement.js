@@ -6,7 +6,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FaRegUserCircle } from "react-icons/fa";
 import DynamicTable from "../../../components/table/DynamicTable";
@@ -24,6 +24,7 @@ import {
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionDepartmentManagement } from "../../../screen-permissions/permission";
 import { organizationService } from "../../../services/organization/organization";
+import { Helper } from "../../../Utils/Helper";
 function DepartmentManagement() {
   // #region declare variables
   const resultPermission = useGetPermission(
@@ -48,18 +49,16 @@ function DepartmentManagement() {
     retry: 3,
     enabled: dataListDepartment && Object.keys(dataListDepartment).length > 0,
   });
-  let listOrganizationArray = React.useMemo(() => {
-    if (dataListOrganization?.result?.length > 0) {
-      let tempArray = [];
-      dataListOrganization?.result?.map((item) => {
-        tempArray.push({
-          label: item.organizationName,
-          value: item.organizationId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listOrganizationArray, setListOrganizationArray] = useState([]);
+  useEffect(() => {
+    setListOrganizationArray(
+      Helper.convertToArraySelection(
+        dataListOrganization?.result?.data,
+        "organizationName",
+        "organizationId"
+      )
+    );
+  }, [dataListOrganization]);
   const useCreateDepartment = useMutation(
     departmentService.createDepartmentService,
     {

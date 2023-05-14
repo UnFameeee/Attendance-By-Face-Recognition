@@ -45,6 +45,7 @@ function FormTextField(props) {
     isTextAreaField,
     isGender,
     isSelectionField,
+    handleOnChange,
     isCustomSelectionField,
     isAddress,
     formik,
@@ -64,6 +65,14 @@ function FormTextField(props) {
   const handleShow = () => {
     setIsShow((prev) => !prev);
   };
+  const [filteredSelectionArray, setFilteredSelectionArray] =
+    useState(selectionArray);
+  const handleSearch = (value) => {
+    const filteredArray = selectionArray.filter((item) =>
+      item.label.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredSelectionArray(filteredArray);
+  };
   if (isDateField) {
     return (
       <FormControl
@@ -71,6 +80,11 @@ function FormTextField(props) {
         isRequired={isRequired}
         isDisabled={isDisabled}
         isInvalid={meta.error && meta.touched}
+        onChange={(e) => {
+          if (handleOnChange) {
+            handleOnChange(e.target.value);
+          }
+        }}
       >
         {label && <FormLabel>{label}</FormLabel>}
         <InputGroup>
@@ -142,23 +156,35 @@ function FormTextField(props) {
         isRequired={isRequired}
         isDisabled={isDisabled}
         isInvalid={meta.error && meta.touched}
+        onChange={(e) => {
+          if (handleOnChange) {
+            handleOnChange(e.target.value);
+          }
+        }}
       >
         {label && <FormLabel>{label}</FormLabel>}
         {isLoading ? (
           <Spinner />
         ) : (
-          <Select
-            pointerEvents={isReadOnly ? "none" : ""}
-            {...field}
-            placeholder={placeholder ?? ""}
-          >
-            {selectionArray &&
-              selectionArray.map((item, index) => (
-                <option key={index} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-          </Select>
+          <>
+            {/* <input
+              type="text"
+              placeholder="Search..."
+              onChange={(e) => handleSearch(e.target.value)}
+            /> */}
+            <Select
+              pointerEvents={isReadOnly ? "none" : ""}
+              {...field}
+              placeholder={placeholder ?? ""}
+            >
+              {selectionArray &&
+                selectionArray.map((item, index) => (
+                  <option key={index} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+            </Select>
+          </>
         )}
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>

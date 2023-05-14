@@ -296,18 +296,10 @@ function AttendanceExceptionManagement() {
   );
   // #endregion
   // #region form
-  let listDepartmentArray = React.useMemo(() => {
-    if (listDepartmentData?.result?.data?.length > 0) {
-      let tempArray = [];
-      listDepartmentData?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.departmentName,
-          value: item.departmentId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listDepartmentArray,setListDepartmentArray] = useState([])
+  useEffect(()=>{
+    setListDepartmentArray(Helper.convertToArraySelection(listDepartmentData?.result?.data,"departmentName","departmentId"))
+  },[listDepartmentData])
   const initialValuesForm = {
     dateSelect: "",
     departmentId: "",

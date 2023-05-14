@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionAssignDepartmentManagement } from "../../../screen-permissions/permission";
 import {
@@ -30,6 +30,7 @@ import { MdOutlineAlternateEmail } from "react-icons/md";
 import {
   departmentService,
 } from "../../../services/organization/department";
+import { Helper } from "../../../Utils/Helper";
 
 function AssignDepartmentManagement() {
   // #region declare variable
@@ -56,18 +57,16 @@ function AssignDepartmentManagement() {
     retry: 1,
     enabled: listEmployeeData && Object.keys(listEmployeeData).length > 0,
   });
-  let listDepartmentArray = React.useMemo(() => {
-    if (dataListDepartment?.result?.data.length > 0) {
-      let tempArray = [];
-      dataListDepartment?.result?.data.map((item) => {
-        tempArray.push({
-          label: item.departmentName,
-          value: item.departmentId,
-        });
-      });
-      return tempArray;
-    }
-  });
+  const [listDepartmentArray, setListDepartmentArray] = useState([]);
+  useEffect(() => {
+    setListDepartmentArray(
+      Helper.convertToArraySelection(
+        dataListDepartment?.result?.data,
+        "departmentName",
+        "departmentId"
+      )
+    );
+  }, [dataListDepartment]);
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -182,17 +181,6 @@ function AssignDepartmentManagement() {
   const closeDrawer = () => {
     onAddEditClose();
     setEditData({});
-  };
-  const matchingDepartmentName = (departmentId) => {
-    if (listDepartmentArray?.length > 0) {
-      let result = listDepartmentArray.find(
-        (item) => item.value == departmentId
-      );
-      if (result) {
-        return result.label;
-      }
-      return "";
-    }
   };
   const matchingRoleColor = (value) => {
     return roleCodeColor.find(

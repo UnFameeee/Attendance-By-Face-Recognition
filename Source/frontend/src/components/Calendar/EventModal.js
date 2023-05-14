@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
 import { RiDeleteBin6Fill, RiCloseCircleFill } from "react-icons/ri";
 import { BsCheckLg } from "react-icons/bs";
@@ -29,33 +29,25 @@ export default function EventModal(props) {
     modifyEventHandler,
     listEmployee,
     listShift,
-    refreshListWorkDepartment,
+    refreshListWork,
     setListWorkShiftDepartment,
     isReadOnly,
   } = props;
   const { setShowEventModal, daySelected, selectedEvent } =
     useContext(GlobalContext);
   const toast = useToast();
-  let arrayEmployee = React.useMemo(() => {
-    let tempArray = [];
-    listEmployee?.map((item, index) => {
-      tempArray.push({
-        label: item.fullname,
-        value: item.id,
-      });
-    });
-    return tempArray;
-  });
-  let arrayShift = React.useMemo(() => {
-    let tempArray = [];
-    listShift?.map((item) => {
-      tempArray.push({
-        label: item.shiftName,
-        value: item.shiftTypeId,
-      });
-    });
-    return tempArray;
-  });
+  const [arrayEmployee, setArrayEmployee] = useState([]);
+  useEffect(() => {
+    setArrayEmployee(
+      Helper.convertToArraySelection(listEmployee, "fullname", "id")
+    );
+  }, [listEmployee]);
+  const [arrayShift, setArrayShift] = useState([]);
+  useEffect(() => {
+    setArrayShift(
+      Helper.convertToArraySelection(listShift, "shiftName", "shiftTypeId")
+    );
+  }, [listShift]);
   // #endregion
   // #region hooks
   const useDeleteWorkShift = useMutation(
@@ -78,7 +70,7 @@ export default function EventModal(props) {
             );
             return removeSingleArray;
           });
-          refreshListWorkDepartment();
+          refreshListWork();
           toast({
             title: "Delete Shift Successfully",
             position: "bottom-right",
