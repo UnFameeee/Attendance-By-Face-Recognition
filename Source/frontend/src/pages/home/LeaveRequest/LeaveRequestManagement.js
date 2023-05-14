@@ -31,6 +31,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionLeaveRequestManagement } from "../../../screen-permissions/permission";
@@ -63,6 +64,7 @@ function LeaveRequestManagement() {
   const [currentModifyLeaveTypeId, setCurrentModifyLeaveTypeId] = useState("");
   const [toggleAddNewLeaveType, setToggleAddNewLeaveType] = useState(false);
   const [deleteLeaveTypeId, setDeleteLeaveTypeId] = useState("");
+  const [isFilterByDate, setIsFilterByDate] = useState();
 
   // #endregion
   // #region hooks
@@ -629,6 +631,39 @@ function LeaveRequestManagement() {
   }, []);
 
   // #endregion
+  const initialValuesForDateFilterSelection = {
+    dateFilter: "",
+  };
+  const validationSchemaForDateFilterSelection = Yup.object().shape({
+    dateFilter: Yup.date().test(
+      "is-same-month",
+      "The date must be in the same month",
+      function (value) {
+        if (value) {
+          const currentMonth = new Date().getMonth();
+          const selectedMonth = new Date(value).getMonth();
+          return currentMonth === selectedMonth;
+        }
+        return true;
+      }
+    ),
+  });
+  const handleOnChangeDateFilter = (value) => {
+    if (value != "" && Helper.isInSameMonth(value)) {
+      // setIsFilterByDate(value);
+      let filter = value;
+      useGetLeaveRequestOfDepartment.mutate({
+        departmentId,
+        currentDate,
+        filter,
+      });
+    } else if (value == "" && Helper.isInSameMonth(value)) {
+      useGetLeaveRequestOfDepartment.mutate({
+        departmentId,
+        currentDate,
+      });
+    }
+  };
   return (
     <Stack h="100%" spacing={4}>
       <Flex gap="10px">
@@ -891,6 +926,45 @@ function LeaveRequestManagement() {
           )}
         </Formik>
       </HStack>
+      {departmentId != "" && (
+        <Tooltip
+          placement="right"
+          hasArrow
+          label="Filter for start date of the leave request"
+        >
+          <HStack
+            w="fit-content"
+            bg="white"
+            rounded="md"
+            p="10px"
+            justifyContent="flex-end"
+          >
+            <Heading fontSize="xl" fontWeight="medium">
+              <Highlight
+                query={["Date Filter:"]}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+              >
+                Date Filter:
+              </Highlight>
+            </Heading>
+
+            <Formik
+              initialValues={initialValuesForDateFilterSelection}
+              validationSchema={validationSchemaForDateFilterSelection}
+            >
+              {(formik) => (
+                <Box w="150px">
+                  <FormTextField
+                    name="dateFilter"
+                    isDateField={true}
+                    handleOnChange={handleOnChangeDateFilter}
+                  />
+                </Box>
+              )}
+            </Formik>
+          </HStack>
+        </Tooltip>
+      )}
       <Box marginTop="10px">
         {false ? (
           <NoDataToDisplay h="450px" />

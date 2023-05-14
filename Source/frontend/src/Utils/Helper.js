@@ -149,7 +149,7 @@ const decodeWithCipher = (encodedMessage) => {
   console.log(decodedData);
   return decodedData;
 };
-const convertToArraySelection = (array, labelName,valueName) => {
+const convertToArraySelection = (array, labelName, valueName) => {
   if (array && array.length > 0) {
     let tempArray = [];
     array.map((item) => {
@@ -161,6 +161,14 @@ const convertToArraySelection = (array, labelName,valueName) => {
     return tempArray;
   }
 };
+function isInSameMonth(value) {
+  if (value) {
+    const currentMonth = new Date().getMonth();
+    const selectedMonth = new Date(value).getMonth();
+    return currentMonth === selectedMonth;
+  }
+  return true;
+}
 export const Helper = {
   isTokenExpired,
   isOdd,
@@ -176,5 +184,6 @@ export const Helper = {
   splitUnderscoreStringToArray,
   matchingCodeColor,
   decodeWithCipher,
-  convertToArraySelection
+  convertToArraySelection,
+  isInSameMonth,
 };

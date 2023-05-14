@@ -85,7 +85,6 @@ function DynamicTable(props) {
     hideButtons,
     noPaging,
   } = props;
-
   const {
     isOpen: isDeleteRangeOpen,
     onOpen: onDeleteRangeOpen,
@@ -304,39 +303,40 @@ function DynamicTable(props) {
           >
             {!hideButtons && (
               <HStack flex="1">
-                <Tooltip
-                  placement="top"
-                  hasArrow
-                  label="Add new record for table"
-                >
-                  <Button
-                    isDisabled={!permission?.create}
-                    colorScheme="blue"
-                    onClick={onAddEditOpen}
+                {permission?.create && (
+                  <Tooltip
+                    placement="top"
+                    hasArrow
+                    label="Add new record for table"
                   >
-                    Add New
-                  </Button>
-                </Tooltip>
+                    <Button
+                      colorScheme="blue"
+                      onClick={onAddEditOpen}
+                    >
+                      Add New
+                    </Button>
+                  </Tooltip>
+                )}
                 <Tooltip placement="top" hasArrow label="Reset table">
                   <Button colorScheme="blue" onClick={handleReset}>
                     Reset
                   </Button>
                 </Tooltip>
-                <Tooltip
-                  placement="top"
-                  hasArrow
-                  label="Delete a collection of record"
-                >
-                  <Button
-                    onClick={onDeleteRangeOpen}
-                    isDisabled={
-                      selectedFlatRows.length < 2 || !permission.delete
-                    }
-                    colorScheme="blue"
+                {permission?.delete && (
+                  <Tooltip
+                    placement="top"
+                    hasArrow
+                    label="Delete a collection of record"
                   >
-                    Delete Range
-                  </Button>
-                </Tooltip>
+                    <Button
+                      onClick={onDeleteRangeOpen}
+                      isDisabled={selectedFlatRows.length < 2}
+                      colorScheme="blue"
+                    >
+                      Delete Range
+                    </Button>
+                  </Tooltip>
+                )}
                 <ChakraAlertDialog
                   isOpen={isDeleteRangeOpen}
                   onClose={onDeleteRangeClose}
