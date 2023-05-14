@@ -45,7 +45,7 @@ function FormTextField(props) {
     isTextAreaField,
     isGender,
     isSelectionField,
-    selectionHandleOnChange,
+    handleOnChange,
     isCustomSelectionField,
     isAddress,
     formik,
@@ -80,6 +80,11 @@ function FormTextField(props) {
         isRequired={isRequired}
         isDisabled={isDisabled}
         isInvalid={meta.error && meta.touched}
+        onChange={(e) => {
+          if (handleOnChange) {
+            handleOnChange(e.target.value);
+          }
+        }}
       >
         {label && <FormLabel>{label}</FormLabel>}
         <InputGroup>
@@ -152,8 +157,8 @@ function FormTextField(props) {
         isDisabled={isDisabled}
         isInvalid={meta.error && meta.touched}
         onChange={(e) => {
-          if (selectionHandleOnChange) {
-            selectionHandleOnChange(e.target.value);
+          if (handleOnChange) {
+            handleOnChange(e.target.value);
           }
         }}
       >

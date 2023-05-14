@@ -28,8 +28,13 @@ import DynamicTable, {
   FilterType,
 } from "../../../components/table/DynamicTable";
 import { leaveRequestService } from "../../../services/leaveRequest/leaveRequest";
-import { selectionData, selectionVerifyData } from "../../../data/SelectionData";
+import {
+  selectionData,
+  selectionVerifyData,
+} from "../../../data/SelectionData";
 import { approvalCodeColor } from "../../../data/ColorData";
+import { Formik } from "formik";
+import FormTextField from "../../../components/field/FormTextField";
 function LeaveRequestPersonal() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -42,6 +47,8 @@ function LeaveRequestPersonal() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isFilterByDate, setIsFilterByDate] = useState();
+
   // #endregion
   // #region hooks
 
@@ -55,11 +62,15 @@ function LeaveRequestPersonal() {
     onOpen: onAddEditOpen,
     onClose: onAddEditClose,
   } = useDisclosure();
-  const { data: LREmployeeData, isLoading: isLoadingLREmployeeData } =
-    leaveRequestService.useGetLeaveRequestOfAnEmployee({
-      currentDate,
-      userInfo,
-    });
+  const {
+    data: LREmployeeData,
+    isLoading: isLoadingLREmployeeData,
+    refetch: refetchLREmployeeData,
+  } = leaveRequestService.useGetLeaveRequestOfAnEmployee({
+    currentDate,
+    userInfo,
+    filter: isFilterByDate,
+  });
   const { data: LRAnnualDetailData, isLoading: isLoadingLRAnnualDetailData } =
     leaveRequestService.useGetAnnualDetail();
   if (!isLoadingLREmployeeData) {
@@ -187,9 +198,15 @@ function LeaveRequestPersonal() {
         //   filterType: FilterType.Default,
         // },
         Cell: ({ value }) => (
-          <Badge p="5px" fontSize="lg"  colorScheme={
-            Object.values(Helper.matchingCodeColor(value, approvalCodeColor))[0]
-          }>
+          <Badge
+            p="5px"
+            fontSize="lg"
+            colorScheme={
+              Object.values(
+                Helper.matchingCodeColor(value, approvalCodeColor)
+              )[0]
+            }
+          >
             {value}
           </Badge>
         ),
@@ -258,8 +275,8 @@ function LeaveRequestPersonal() {
       name: "status",
       label: "Status",
       isReadOnly: true,
-      isSelectionField:true,
-      selectionArray:selectionData.verifyData
+      isSelectionField: true,
+      selectionArray: selectionData.verifyData,
     },
     {
       name: "leaveType",
@@ -321,6 +338,40 @@ function LeaveRequestPersonal() {
       .required("This field is required"),
   });
   // #endregion
+  const initialValuesForDateFilterSelection = {
+    dateFilter: "",
+  };
+  const validationSchemaForDateFilterSelection = Yup.object().shape({
+    dateFilter: Yup.date().test(
+      "is-same-month",
+      "The date must be in the same month",
+      function (value) {
+        if (value) {
+          const currentMonth = new Date().getMonth();
+          const selectedMonth = new Date(value).getMonth();
+          return currentMonth === selectedMonth;
+        }
+        return true;
+      }
+    ),
+  });
+  const handleOnChangeDateFilter = (value) => {
+    if (value != "") {
+      setIsFilterByDate(value);
+    } else {
+      setIsFilterByDate();
+    }
+  };
+  useEffect(() => {
+    let filter = isFilterByDate;
+    if (Helper.isInSameMonth(filter)) {
+      refetchLREmployeeData({
+        currentDate,
+        userInfo,
+        filter,
+      });
+    }
+  }, [isFilterByDate]);
   if (
     isLoadingLREmployeeData ||
     isLoadingLRLeaveTypeData ||
@@ -333,11 +384,16 @@ function LeaveRequestPersonal() {
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Personal</Heading>
       </Flex>
-      <HStack bg="white" rounded="md" p={5} spacing="10px">
+      <HStack bg="white" rounded="md" p={3} spacing="10px">
         <Flex alignItems="center" gap="5px">
           <Highlight
             query="Total Annual Leave:"
-            styles={{ p: "2", rounded: "5px", bg: "orange.100", fontWeight:'medium' }}
+            styles={{
+              p: "2",
+              rounded: "5px",
+              bg: "orange.100",
+              fontWeight: "medium",
+            }}
           >
             Total Annual Leave:
           </Highlight>
@@ -352,7 +408,12 @@ function LeaveRequestPersonal() {
         <Flex alignItems="center" gap="5px">
           <Highlight
             query="Annual Leave Used:"
-            styles={{ p: "2", rounded: "5px", bg: "orange.100" ,  fontWeight:'medium'}}
+            styles={{
+              p: "2",
+              rounded: "5px",
+              bg: "orange.100",
+              fontWeight: "medium",
+            }}
           >
             Annual Leave Used:
           </Highlight>
@@ -367,7 +428,12 @@ function LeaveRequestPersonal() {
         <Flex alignItems="center" gap="5px">
           <Highlight
             query="Annual Leave Remaining:"
-            styles={{ p: "2", rounded: "5px", bg: "orange.100",  fontWeight:'medium' }}
+            styles={{
+              p: "2",
+              rounded: "5px",
+              bg: "orange.100",
+              fontWeight: "medium",
+            }}
           >
             Annual Leave Remaining:
           </Highlight>
@@ -380,6 +446,37 @@ function LeaveRequestPersonal() {
           />
         </Flex>
       </HStack>
+      <Tooltip
+        placement="right"
+        hasArrow
+        label="Filter for start date of the leave request"
+      >
+        <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end">
+          <Heading fontSize="xl" fontWeight="medium">
+            <Highlight
+              query={["Date Filter:"]}
+              styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+            >
+              Date Filter:
+            </Highlight>
+          </Heading>
+
+          <Formik
+            initialValues={initialValuesForDateFilterSelection}
+            validationSchema={validationSchemaForDateFilterSelection}
+          >
+            {(formik) => (
+              <Box w="150px">
+                <FormTextField
+                  name="dateFilter"
+                  isDateField={true}
+                  handleOnChange={handleOnChangeDateFilter}
+                />
+              </Box>
+            )}
+          </Formik>
+        </HStack>
+      </Tooltip>
       <Box w="100%" mt="10px">
         <DynamicTable
           onAddEditOpen={onAddEditOpen}

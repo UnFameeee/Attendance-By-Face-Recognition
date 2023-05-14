@@ -745,7 +745,7 @@ function WorkShift() {
                   isSelectionField={true}
                   selectionArray={listEmployeeDataSelection}
                   placeholder="All"
-                  selectionHandleOnChange={selectionHandleOnChange}
+                  handleOnChange={selectionHandleOnChange}
                 />
               </Box>
             )}
