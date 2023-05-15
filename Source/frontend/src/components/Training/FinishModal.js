@@ -2,7 +2,7 @@ import { CheckCircleIcon } from '@chakra-ui/icons';
 import { Box, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react';
 import React from 'react'
 import { useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ModalBodyStyle = {
   width: "25rem",
@@ -59,11 +59,11 @@ export default function FinishModal({ openModal }) {
 
             <Text textAlign={"center"} fontSize={"1rem"} fontWeight={700}>You have finish the scanning</Text>
 
-            <Text textAlign={"justify"} fontSize={"0.9rem"} lineHeight={"1.5rem"} fontWeight={"bold"} color={"gray"}>Click the <b style={{ color: "green" }}>"Finish"</b> button to end this session</Text>
+            <Text textAlign={"justify"} fontSize={"0.9rem"} lineHeight={"1.5rem"} fontWeight={"bold"} color={"gray"}>Click the <b style={{ color: "green" }}>"Finish"</b> button to end this session and back to the sign-in page. Continue your work on your Laptop or PC.</Text>
           </ModalBody>
 
           <ModalFooter gap={5}>
-            <Button onClick={onClose} border={"1px solid gray"} fontSize={"1rem"} fontWeight={600} width={"8rem"} >Finish</Button>
+            <Button onClick={onCloseHandle} border={"1px solid gray"} fontSize={"1rem"} fontWeight={600} width={"8rem"} >Finish</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

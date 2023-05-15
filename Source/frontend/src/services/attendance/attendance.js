@@ -79,6 +79,7 @@ const getTodayAttendance = async (data) => {
   );
   return response.data;
 };
+
 const useGetTodayAttendance = (todayAttendanceObj) => {
   return useQuery({
     queryKey: "todayAttendanceData",
@@ -90,6 +91,7 @@ const useGetTodayAttendance = (todayAttendanceObj) => {
     retry: 1,
   });
 };
+
 const getAttendanceHistory = async (data) => {
   const { currentDate, userInfo } = data;
   let attendanceHistoryObj = {
@@ -102,6 +104,7 @@ const getAttendanceHistory = async (data) => {
   );
   return response.data;
 };
+
 const useGetAttendanceHistory = (attendanceHistoryObj) => {
   return useQuery({
     queryKey: "attendanceHistoryData",
@@ -113,12 +116,14 @@ const useGetAttendanceHistory = (attendanceHistoryObj) => {
     retry: 1,
   });
 };
+
 const getAttendanceDetail = async (attendanceId) => {
   const response = await axiosBase.get(
     `${endPointAttendance}/getAttendanceDetail/${attendanceId}`
   );
   return response.data;
 };
+
 const useGetAttendanceDetail = (attendanceId) => {
   return useQuery({
     queryKey: ["attendanceDetail", attendanceId],
@@ -130,6 +135,7 @@ const useGetAttendanceDetail = (attendanceId) => {
     retry: 1,
   });
 };
+
 const saveImageOfExceptionAttendance = async (data) => {
   const { email, checkType, image } = data;
   const headers = {
@@ -145,13 +151,30 @@ const saveImageOfExceptionAttendance = async (data) => {
   return response.data;
 };
 
+const saveImageOfAnonymousAttendance = async (formData) => {
+  const headers = {
+    "Content-Type": "multipart/form-data",
+  };
+  const response = await axiosBase.post(
+    `${endPointAttendanceException}/saveAnonymousImage`,
+    formData,
+    {
+      headers,
+    }
+  );
+  return response.data;
+};
+
 const submissionOfExceptionAttendance = async (submissionData) => {
+  console.log(submissionData);
+
   const response = await axiosBase.post(
     `${endPointAttendanceException}/submission?`,
     submissionData
   );
   return response.data;
 };
+
 const getListAttendanceException = async (data) => {
   let pagingData = {};
   pagingData = { page: 0, pageSize: 1000, extendData: { ...data } };
@@ -161,6 +184,7 @@ const getListAttendanceException = async (data) => {
   );
   return response.data;
 };
+
 const getAttendanceExceptionData = async (id) => {
   const response = await axiosBase.get(
     `${endPointAttendanceException}/getAttendanceExceptionData/${id}`
@@ -205,4 +229,5 @@ export const attendanceService = {
   useGetThisMonthAttendance,
   useGetTodayAttendance,
   useGetAttendanceDetail,
+  saveImageOfAnonymousAttendance,
 };

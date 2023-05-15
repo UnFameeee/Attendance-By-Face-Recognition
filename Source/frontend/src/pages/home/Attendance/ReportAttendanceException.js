@@ -21,22 +21,25 @@ import { BiUser } from "react-icons/bi";
 import ImagesUploading from "../../../components/ImagesUploading";
 import { useGetListDepartment } from "../../../services/organization/department";
 import * as Yup from "yup";
-import ta_test from "../../../assets/ta.jpeg";
 import { useMutation } from "react-query";
 import { attendanceService } from "../../../services/attendance/attendance";
 import { Helper } from "../../../Utils/Helper";
+import { useSelector } from "react-redux";
 function ReportAttendanceException() {
   // #region declare variable
   const toast = useToast();
   const [images, setImages] = React.useState([]);
   const [imageSrc, setImageSrc] = React.useState("");
+  const params = new URLSearchParams(window.location.search);
+  const urlImage = Helper.decodeWithCipher(params.get("session"));
   // #endregion
   // #region hooks
   useEffect(() => {
-    if (ta_test) {
-      setImageSrc(ta_test);
+    if (urlImage) {
+      setImageSrc(urlImage);
     }
   }, []);
+
   const useSubmissionOfExceptionAttendance = useMutation(
     attendanceService.submissionOfExceptionAttendance,
     {
@@ -92,10 +95,10 @@ function ReportAttendanceException() {
     department: Yup.string().required("This field is required"),
   });
   const { data: listDepartment } = useGetListDepartment();
-  const [listDepartmentArray,setListDepartmentArray] = useState([])
-  useEffect(()=>{
-    setListDepartmentArray(Helper.convertToArraySelection(listDepartment?.result?.data,"departmentName","departmentId"))
-  },[listDepartment])
+  const [listDepartmentArray, setListDepartmentArray] = useState([])
+  useEffect(() => {
+    setListDepartmentArray(Helper.convertToArraySelection(listDepartment?.result?.data, "departmentName", "departmentId"))
+  }, [listDepartment])
   // #endregion
   return (
     <Stack bgColor="gray.200" h="100vh">
@@ -115,15 +118,15 @@ function ReportAttendanceException() {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(values, action) => {
-              console.log(values, "values");
-              console.log("imageSrc", imageSrc);
+              // console.log(values, "values");
+              // console.log("imageSrc", imageSrc);
               let submissionObj = {};
               submissionObj["attendanceType"] = values.attendanceType;
-              submissionObj["image"] = imageSrc;
               submissionObj["departmentId"] = values.department;
               submissionObj["email"] = values.email;
               submissionObj["name"] = values.name;
-              // useSubmissionOfExceptionAttendance.mutate(submissionObj)
+              submissionObj["image"] = imageSrc;
+              useSubmissionOfExceptionAttendance.mutate(submissionObj)
             }}
           >
             {(formik) => (
@@ -140,7 +143,7 @@ function ReportAttendanceException() {
                     onChange={onChange}
                     noDescription={true}
                   /> */}
-                  <Image src={ta_test} objectFit="cover" boxSize="200px" />
+                  <Image src={imageSrc} objectFit="cover" boxSize="200px" />
                 </Flex>
                 <HStack>
                   <FormTextField

@@ -32,6 +32,16 @@ export class AttendanceExceptionController {
     }
   }
 
+  public saveAnonymousImage = async (req: MulterRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const files: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
+      const response = await this.attendanceExceptionService.saveAnonymousImage(files);
+      res.status(201).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public getListAttendanceException = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page: Page = req.body;
