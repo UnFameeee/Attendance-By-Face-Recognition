@@ -73,12 +73,6 @@ function LeaveRequestPersonal() {
   });
   const { data: LRAnnualDetailData, isLoading: isLoadingLRAnnualDetailData } =
     leaveRequestService.useGetAnnualDetail();
-  if (!isLoadingLREmployeeData) {
-    // console.log(LREmployeeData?.result?.data[0]?.startDate);
-    console.log(
-      new Date(LREmployeeData?.result?.data[0]?.startDate).toUTCString()
-    );
-  }
   const { data: LRLeaveTypeData, isLoading: isLoadingLRLeaveTypeData } =
     leaveRequestService.useGetAllLeaveType();
   const useCreateLeaveRequest = useMutation(
@@ -380,11 +374,18 @@ function LeaveRequestPersonal() {
     return <LoadingSpinner />;
   return (
     <VStack h="100%" alignItems="flex-start" spacing={3}>
-      <Flex gap="10px">
+      <Flex
+        gap="10px"
+        bg="white"
+        rounded="md"
+        p={2}
+        w="fit-content"
+        shadow="2xl"
+      >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Personal</Heading>
       </Flex>
-      <HStack bg="white" rounded="md" p={3} spacing="10px">
+      <HStack bg="white" rounded="md" p={3} spacing="10px" shadow="2xl">
         <Flex alignItems="center" gap="5px">
           <Highlight
             query="Total Annual Leave:"
@@ -451,7 +452,7 @@ function LeaveRequestPersonal() {
         hasArrow
         label="Filter for start date of the leave request"
       >
-        <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end">
+        <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end" shadow="2xl">
           <Heading fontSize="xl" fontWeight="medium">
             <Highlight
               query={["Date Filter:"]}

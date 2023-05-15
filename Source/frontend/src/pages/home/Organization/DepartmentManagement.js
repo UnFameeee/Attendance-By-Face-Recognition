@@ -353,12 +353,19 @@ function DepartmentManagement() {
   if (isFetchingListOrganization || isFetchingListDepartment)
     return <LoadingSpinner />;
   return (
-    <Stack h='100%' spacing={4}>
-      <Flex gap="10px">
+    <Stack h="100%" spacing={4}>
+      <Flex
+        gap="10px"
+        bg="white"
+        rounded="md"
+        p={2}
+        w="fit-content"
+        shadow="2xl"
+      >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
-      <Box marginTop="10px">
+      <Box marginTop="10px" >
         {dataListDepartment &&
         dataListDepartment.result.data != undefined &&
         dataListDepartment.result.data.length == 0 ? (

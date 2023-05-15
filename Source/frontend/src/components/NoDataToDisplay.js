@@ -11,6 +11,7 @@ function NoDataToDisplay({ height, ...props }) {
       display='flex'
       justifyContent="center"
       rounded="lg"
+      shadow='2xl'
       backgroundImage="https://static.vecteezy.com/system/resources/previews/019/520/922/non_2x/no-result-document-file-data-not-found-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-etc-vector.jpg"
       backgroundSize="contain"
       backgroundRepeat="no-repeat"

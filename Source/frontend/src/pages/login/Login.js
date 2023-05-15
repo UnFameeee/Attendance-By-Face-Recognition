@@ -79,9 +79,12 @@ export default function Login() {
       .min(6, "Password is too short"),
     email: Yup.string().email("Invalid Email").required("Email required"),
   });
+  useEffect(()=>{
+    toast.closeAll();
+  },[])
   return (
-    <Center minHeight="calc(100vh - 160px)" width="100vw" bgColor="gray.200">
-      <Box paddingX="5" paddingY="8" bgColor="whitesmoke" rounded="xl">
+    <Center minHeight="calc(100vh - 160px)" width="100vw" >
+      <Box paddingX="5" paddingY="8" bgColor="white" shadow='2xl' rounded="xl">
         <Stack spacing="5">
           <Flex gap="2" flexDirection="column" alignItems="center">
             <Heading fontSize="xl">Sign in to your Account</Heading>
@@ -96,7 +99,7 @@ export default function Login() {
                 password: values.password,
               };
               useLoginMutation.mutate(credential);
-              actions.resetForm();
+              // actions.resetForm();
             }}
           >
             {(formik) => (

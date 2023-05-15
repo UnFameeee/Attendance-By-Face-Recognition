@@ -51,15 +51,15 @@ export default function Day({ day, rowIdx, listWorkShift }) {
   }
   return (
     <div
-      className={`border border-gray-200 flex flex-col 
+      className={`border border-gray-300 flex flex-col 
     ${checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"}`}
     >
       <header className="flex flex-col items-center">
         {rowIdx === 0 && (
-          <p className="text-sm mt-1">{day.format("ddd").toUpperCase()}</p>
+          <p className="text-lg font-semibold mt-1">{day.format("ddd").toUpperCase()}</p>
         )}
         <p
-          className={`text-sm p-1 my-1 text-center  ${getCurrentDayClass()}  ${
+          className={`text-md font-semibold p-1 my-1 text-center  ${getCurrentDayClass()}  ${
             checkIfDayInSameMonth() ? "" : "text-gray-300"
           }`}
         >

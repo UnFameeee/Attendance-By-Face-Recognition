@@ -11,6 +11,7 @@ import {
 import React from "react";
 import "./NotFound.css";
 import { useNavigate } from "react-router-dom";
+import background from '../../assets/bg2.jpg';
 function NotFound() {
   const navigate = useNavigate();
   return (

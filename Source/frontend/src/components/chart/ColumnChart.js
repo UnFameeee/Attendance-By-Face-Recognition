@@ -38,7 +38,7 @@ function ColumnChart() {
     },
   };
   return (
-    <Box bg='white' shadow='lg' rounded='md' p={3} >
+    <Box bg='white' shadow='2xl' rounded='md' p={3} >
       <Column {...config} />
     </Box>
   );

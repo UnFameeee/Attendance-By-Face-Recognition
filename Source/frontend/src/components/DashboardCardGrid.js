@@ -32,7 +32,7 @@ function DashboardCardGrid({ dashboardData }) {
           if (item.roleCanAccess) {
             return (
               item.roleCanAccess.includes(userRole?.role) && (
-                <Card shadow="lg" key={index} bgColor={item.bgColor}>
+                <Card shadow="2xl" key={index} bgColor={item.bgColor} >
                   <CardBody color="white" paddingBottom={0}>
                     <Flex alignItems="center">
                       <Box display="flex" gap={2} flexDirection="column">
@@ -66,7 +66,7 @@ function DashboardCardGrid({ dashboardData }) {
             );
           } else {
             return (
-              <Card shadow="lg" key={index} bgColor={item.bgColor}>
+              <Card shadow="2xl" key={index} bgColor={item.bgColor}>
                 <CardBody color="white" paddingBottom={0}>
                   <Flex alignItems="center">
                     <Box display="flex" gap={2} flexDirection="column">

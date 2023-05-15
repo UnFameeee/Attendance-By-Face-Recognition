@@ -46,7 +46,7 @@ const createEmployeeService = async (employeeObj) => {
   return response.data;
 };
 
- const saveEmployeeService = async ({ id, employeeObj }) => {
+const saveEmployeeService = async ({ id, employeeObj }) => {
   const response = await axiosBase.post(
     `${endPoint}/updateEmployeeDetail/${id}`,
     employeeObj
@@ -61,10 +61,28 @@ const assignEmployeeToDepartmentService = async (assignObj) => {
   );
   return response.data;
 };
- const assignManagerToDepartmentService = async (assignObj) => {
+const assignManagerToDepartmentService = async (assignObj) => {
   const response = await axiosBase.post(
     `${endPoint}/assignManagerToDepartment`,
     assignObj
+  );
+  return response.data;
+};
+const getListImageOfEmployee = async (employeeId) => {
+  const response = await axiosBase.get(
+    `${endPoint}/getListImageOfEmployee/${employeeId}`
+  );
+  return response.data;
+};
+const retrainPhotos = async (employeeId) => {
+  const response = await axiosBase.post(
+    `${endPoint}/retrain/${employeeId}`,{}
+  );
+  return response.data;
+};
+const validateRetrain = async (employeeId) => {
+  const response = await axiosBase.get(
+    `${endPoint}/validateRetrain?employeeId=${employeeId}`
   );
   return response.data;
 };
@@ -84,4 +102,7 @@ export const employeeService = {
   saveEmployeeService,
   createEmployeeService,
   getListEmployeeOfDepartment,
+  getListImageOfEmployee,
+  retrainPhotos,
+  validateRetrain,
 };
