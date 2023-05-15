@@ -121,7 +121,7 @@ const getAttendanceDetail = async (attendanceId) => {
 };
 const useGetAttendanceDetail = (attendanceId) => {
   return useQuery({
-    queryKey: ["attendanceDetail",attendanceId],
+    queryKey: ["attendanceDetail", attendanceId],
     queryFn: async () => {
       const data = await getAttendanceDetail(attendanceId);
       return data.result;
@@ -176,14 +176,13 @@ const verifyExceptionAttendance = async (data) => {
   return response.data;
 };
 
-const saveImageOfAttendance = async (data) => {
-  const { employeeId, image } = data;
+const saveImageOfAttendance = async (employeeId, formData) => {
   const headers = {
     "Content-Type": "multipart/form-data",
   };
   const response = await axiosBase.post(
     `${endPointAttendance}/saveImage?employeeId=${employeeId}`,
-    image,
+    formData,
     { headers }
   );
   return response.data;

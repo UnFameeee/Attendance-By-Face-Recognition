@@ -98,7 +98,7 @@ export default function AttendanceModal() {
             <ModalCloseButton />
             <ModalBody style={ModalBodyStyle}>
               <Box display={"flex"} alignSelf={"center"} justifySelf={"center"}>
-                <Image src={employeeDetail?.employeeImages[0].link} style={ImageStyle} />
+                <Image src={employeeDetail?.image} style={ImageStyle} />
               </Box>
               <Box>
                 <Text textAlign={"center"} fontSize={"1.25rem"} fontWeight={"bold"} color={"red"}>Employee Information</Text>
