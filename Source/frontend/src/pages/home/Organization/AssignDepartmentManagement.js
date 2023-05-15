@@ -27,9 +27,7 @@ import { roleCodeColor } from "../../test/dumbTableData";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import {
-  departmentService,
-} from "../../../services/organization/department";
+import { departmentService } from "../../../services/organization/department";
 import { Helper } from "../../../Utils/Helper";
 
 function AssignDepartmentManagement() {
@@ -44,15 +42,13 @@ function AssignDepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const { 
-    data: listEmployeeData,
-    isFetching: isFetchingListEmployee,
-   } = useGetListEmployee();
+  const { data: listEmployeeData, isFetching: isFetchingListEmployee } =
+    useGetListEmployee();
   const {
     data: dataListDepartment,
     isLoading: isLoadingListDepartment,
     isFetching: isFetchingListDepartment,
-  } = useQuery("listDepartment",departmentService.getListDepartment, {
+  } = useQuery("listDepartment", departmentService.getListDepartment, {
     refetchOnWindowFocus: false,
     retry: 1,
     enabled: listEmployeeData && Object.keys(listEmployeeData).length > 0,
@@ -113,7 +109,7 @@ function AssignDepartmentManagement() {
     }
   );
   const useAssignManagerToDepartment = useMutation(
-   employeeService.assignEmployeeToDepartmentService,
+    employeeService.assignEmployeeToDepartmentService,
     {
       onSuccess: (data) => {
         const { message } = data;
@@ -237,7 +233,7 @@ function AssignDepartmentManagement() {
           <Badge
             colorScheme={Object.values(matchingRoleColor(value))[0]}
             fontSize="lg"
-            p='5px'
+            p="5px"
           >
             {value}
           </Badge>
@@ -309,15 +305,25 @@ function AssignDepartmentManagement() {
       : {}
   );
   // #endregion
-  if (isFetchingListDepartment || isFetchingListEmployee) return <LoadingSpinner />;
+  if (isFetchingListDepartment || isFetchingListEmployee)
+    return <LoadingSpinner />;
   return (
-    <Stack h='100%' spacing={4}>
-      <Flex gap="10px">
+    <Stack h="100%" spacing={4}>
+      <Flex
+        gap="10px"
+        bg="white"
+        rounded="md"
+        p={2}
+        w="fit-content"
+        shadow="2xl"
+      >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
       <Box marginTop="10px">
-        {listEmployeeData && listEmployeeData?.result?.data != undefined && listEmployeeData?.result?.data.length == 0 ? (
+        {listEmployeeData &&
+        listEmployeeData?.result?.data != undefined &&
+        listEmployeeData?.result?.data.length == 0 ? (
           <NoDataToDisplay h="450px" />
         ) : (
           <>

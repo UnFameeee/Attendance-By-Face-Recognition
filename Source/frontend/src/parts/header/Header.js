@@ -12,10 +12,10 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 function Header() {
   const location = useLocation();
   return (
-    <Box paddingX="5" paddingY="5" height="80px" bg="gray.200" width="100vw">
+    <Box paddingX="5" paddingY="5" height="80px"  width="100vw">
       <Flex alignItems="center">
         <Hide below="sm">
-          <Box>
+          <Box  bg='white' p='3' rounded='md'>
             <Heading fontSize="lg">Attendance By Face Recognition</Heading>
           </Box>
         </Hide>

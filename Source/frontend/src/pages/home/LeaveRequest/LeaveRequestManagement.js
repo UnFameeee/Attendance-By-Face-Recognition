@@ -666,11 +666,18 @@ function LeaveRequestManagement() {
   };
   return (
     <Stack h="100%" spacing={4}>
-      <Flex gap="10px">
+      <Flex
+        gap="10px"
+        bg="white"
+        rounded="md"
+        p={2}
+        w="fit-content"
+        shadow="2xl"
+      >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Management</Heading>
       </Flex>
-      <HStack w="fit-content" bg="white" rounded="md" p="3">
+      <HStack w="fit-content" bg="white" rounded="md" p="3" shadow='2xl'>
         {userInfo?.roleName == "admin" && (
           <>
             <Button colorScheme="teal" onClick={onModifyLeaveTypeModalOpen}>

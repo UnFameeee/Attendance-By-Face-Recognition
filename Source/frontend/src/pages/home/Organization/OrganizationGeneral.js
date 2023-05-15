@@ -130,7 +130,7 @@ function OrganizationGeneral() {
 
   if (isFetchingOrganizationDetail) return <LoadingSpinner />;
   return (
-    <Stack h='100%' spacing={3}>
+    <Stack h="100%" spacing={3}>
       {resultPermission?.read && (
         <Formik
           initialValues={initialValuesExisted}
@@ -158,7 +158,7 @@ function OrganizationGeneral() {
           }}
         >
           {(formik) => (
-            <Stack  as="form" onSubmit={formik.handleSubmit}>
+            <Stack as="form" onSubmit={formik.handleSubmit}>
               <Flex
                 justifyContent="space-between"
                 gap="10px"
@@ -168,15 +168,17 @@ function OrganizationGeneral() {
                 }}
               >
                 <Box>
-                  <Flex gap="10px">
+                  <Flex
+                    gap="10px"
+                    bg="white"
+                    rounded="md"
+                    p={2}
+                    w="fit-content"
+                    shadow="2xl"
+                  >
                     <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                     <Heading fontSize="3xl">Organization Details</Heading>
                   </Flex>
-                  <Hide below="sm">
-                    <Text>
-                      Update your organization and location details here.
-                    </Text>
-                  </Hide>
                 </Box>
                 <HStack>
                   <Tooltip
@@ -197,6 +199,7 @@ function OrganizationGeneral() {
                 </HStack>
               </Flex>
               <Flex
+                shadow="2xl"
                 gap={8}
                 flexDirection={{
                   base: "column",

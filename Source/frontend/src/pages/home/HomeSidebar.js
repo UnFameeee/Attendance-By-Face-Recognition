@@ -34,7 +34,7 @@ import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
-import AvatarWithPreview from "../../components/AvatarWithPreview";
+import background from '../../assets/bg2.jpg'
 function HomeSidebar() {
   var decoded = Helper.getUseDecodeInfor();
   const [userRole, setUserRole] = useState("");
@@ -447,6 +447,7 @@ function HomeSidebar() {
         minHeight="100vh"
         bgColor="mainBg"
         padding="2rem"
+        backgroundImage={background}
       >
         <Outlet />
       </Box>

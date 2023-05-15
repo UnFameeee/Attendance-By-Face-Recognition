@@ -4,10 +4,19 @@ import {
   Flex,
   Heading,
   HStack,
-  Icon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
   Stack,
   useDisclosure,
   useToast,
+  Button,
+  SimpleGrid,
+  Image,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import * as Yup from "yup";
@@ -37,6 +46,8 @@ import { useGetPermission } from "../../../hook/useGetPermission";
 import { passwordRegex } from "../../../Utils/ValidationRegExp";
 import { roleCodeColor } from "../../../data/ColorData";
 import { Helper } from "../../../Utils/Helper";
+import test_image from "../../../assets/ta.jpeg";
+import AvatarWithPreview from "../../../components/AvatarWithPreview";
 function EmployeesManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -47,6 +58,8 @@ function EmployeesManagement() {
   const queryClient = useQueryClient();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
+  const [listEmployeePhotos, setListEmployeePhotos] = useState([]);
+
   // #endregion
   // #region hook
   const { data: listEmployeeData, isFetching: isFetchingListEmployee } =
@@ -61,9 +74,12 @@ function EmployeesManagement() {
     onOpen: onAddEditOpen,
     onClose: onAddEditClose,
   } = useDisclosure();
-  const DeleteRange = (data) => {
-    console.log("handleDeleteRange", data);
-  };
+  const {
+    isOpen: isPhotoViewModalOpen,
+    onOpen: onPhotoViewModalOpen,
+    onClose: onPhotoViewModalClose,
+  } = useDisclosure();
+
   const useCreateEmployee = useMutation(employeeService.createEmployeeService, {
     onSuccess: (data) => {
       const { message } = data;
@@ -117,6 +133,23 @@ function EmployeesManagement() {
       });
     },
   });
+  const useGetEmployeePhotos = useMutation(
+    employeeService.getListImageOfEmployee,
+    {
+      onSuccess: (data) => {
+        setListEmployeePhotos(data?.result);
+      },
+      onError: (error) => {
+        toast({
+          title: error.response.data.message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      },
+    }
+  );
   // #endregion
   // #region function
   const handleEditEmployee = (values) => {
@@ -148,6 +181,15 @@ function EmployeesManagement() {
     setDeleteSingleData(row);
     onDeleteSingleOpen();
   };
+  const DeleteRange = (data) => {
+    console.log("handleDeleteRange", data);
+  };
+  const viewEmployeePhotos = (row, action) => {
+    useGetEmployeePhotos.mutate(row.id);
+    console.log(row);
+    setEditData(row);
+    onPhotoViewModalOpen();
+  };
 
   const handleAcceptDelete = () => {
     console.log(deleteSingleData);
@@ -165,6 +207,11 @@ function EmployeesManagement() {
       actionName: "Edit",
       func: editEmployee,
       isDisabled: resultPermission?.update,
+    },
+    {
+      actionName: "View Photos",
+      func: viewEmployeePhotos,
+      isDisabled: true,
     },
     {
       actionName: "Delete",
@@ -335,12 +382,6 @@ function EmployeesManagement() {
       placeholder: "Enter your Full Name",
       leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
     },
-    // {
-    //   name: "picture",
-    //   label: "Picture",
-    //   placeholder: "imageUrl.com",
-    //   leftIcon: <IoImageOutline color="#999" fontSize="1.5rem" />,
-    // },
     {
       name: "email",
       label: "Email",
@@ -402,15 +443,6 @@ function EmployeesManagement() {
       placeholder: "Enter your description",
       isTextAreaField: true,
     },
-    // {
-    //   isSelectionField: true,
-    //   selectionArray: roleArray,
-    //   name: "role",
-    //   label: "Role",
-    //   type: "text",
-    //   placeholder: "Chose your role",
-    //   leftIcon: <RiFolderUserLine color="#999" fontSize="1.5rem" />,
-    // },
     {
       name: "location",
       isAddress: true,
@@ -470,9 +502,16 @@ function EmployeesManagement() {
   // #endregion
   if (isFetchingListEmployee) return <LoadingSpinner />;
   return (
-    <Stack h='100%' spacing={4}>
+    <Stack h="100%" spacing={4}>
       <HStack>
-        <Flex gap="10px">
+        <Flex
+          gap="10px"
+          bg="white"
+          rounded="md"
+          p={2}
+          w="fit-content"
+          shadow="2xl"
+        >
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
           <Heading fontSize="3xl">Employees Overview</Heading>
         </Flex>
@@ -530,6 +569,58 @@ function EmployeesManagement() {
               onClose={onDeleteSingleClose}
               onAccept={handleAcceptDelete}
             />
+            <Modal
+              isOpen={isPhotoViewModalOpen}
+              onClose={() => {
+                onPhotoViewModalClose();
+                setEditData({});
+              }}
+              size="4xl"
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader textTransform="capitalize">
+                  {editData.fullname}'s Photos
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <SimpleGrid
+                    spacing={3}
+                    gridTemplateColumns="repeat(auto-fit, minmax(150px,1fr))"
+                  >
+                    {listEmployeePhotos.map((item, index) => (
+                      <Flex
+                        alignItems="center"
+                        key={index}
+                        boxSize="150px"
+                        bg="black"
+                      >
+                        {/* <Image src={test_image} /> */}
+                        <AvatarWithPreview
+                          src={item.url}
+                          altBoxSide="150px"
+                          altRounded="none"
+                          className="rounded-none"
+                          alt={`${editData.fullname}-training-photo`}
+                        />
+                      </Flex>
+                    ))}
+                  </SimpleGrid>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={() => {
+                      onPhotoViewModalClose();
+                      setEditData({});
+                    }}
+                  >
+                    Close
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
           </>
         )}
       </Box>

@@ -25,13 +25,13 @@ import {
 } from "@chakra-ui/react";
 import firstTimeLogin from "../../assets/firstTimeLogin.jpg";
 import Profile from "../home/Setting/Profile";
-
+import background from '../../assets/bg2.jpg'
 function FirstTimeLogin() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Stack bgColor="gray.200" h="100vh">
-        <Center m="auto" p={5} rounded="md" bg="white">
+      <Stack h="100vh" backgroundImage={background}>
+        <Center m="auto" p={5} rounded="md" bg="white" shadow='2xl'>
           <VStack spacing="15px">
             <Flex w="100%" gap="10px">
               <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -56,7 +56,7 @@ function FirstTimeLogin() {
       </Stack>
       <Modal size="6xl" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg='#ffffffb5'>
           <ModalHeader>
             <Highlight
               query="First Time Update Profile Information"
@@ -69,11 +69,7 @@ function FirstTimeLogin() {
           <ModalBody>
             <Profile />
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
