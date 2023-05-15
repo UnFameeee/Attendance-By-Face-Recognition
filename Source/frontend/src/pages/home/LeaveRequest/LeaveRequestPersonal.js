@@ -73,12 +73,6 @@ function LeaveRequestPersonal() {
   });
   const { data: LRAnnualDetailData, isLoading: isLoadingLRAnnualDetailData } =
     leaveRequestService.useGetAnnualDetail();
-  if (!isLoadingLREmployeeData) {
-    // console.log(LREmployeeData?.result?.data[0]?.startDate);
-    console.log(
-      new Date(LREmployeeData?.result?.data[0]?.startDate).toUTCString()
-    );
-  }
   const { data: LRLeaveTypeData, isLoading: isLoadingLRLeaveTypeData } =
     leaveRequestService.useGetAllLeaveType();
   const useCreateLeaveRequest = useMutation(

@@ -195,8 +195,8 @@ function AttendancePersonal() {
             spacing={4}
             gridTemplateColumns="repeat(auto-fit, minmax(240px,1fr))"
           >
-            <HStack bg="blue.500" rounded="xl" p="15px" shadow="lg">
-              <Center bg="blue.300" rounded="50%" boxSize="3rem">
+            <HStack bg="cyan.500" rounded="xl" p="15px" shadow="lg">
+              <Center bg="cyan.300" rounded="50%" boxSize="3rem">
                 <Icon color="white" boxSize="30px" as={AiFillCheckCircle} />
               </Center>
               <Box color="white">
@@ -206,8 +206,8 @@ function AttendancePersonal() {
                 <Text fontSize="xl">Total Attendance</Text>
               </Box>
             </HStack>
-            <HStack bg="green.500" rounded="xl" p="15px" shadow="lg">
-              <Center bg="green.300" rounded="50%" boxSize="3rem">
+            <HStack bg="blue.500" rounded="xl" p="15px" shadow="lg">
+              <Center bg="blue.300" rounded="50%" boxSize="3rem">
                 <Icon color="white" boxSize="30px" as={MdWorkHistory} />
               </Center>
               <Box color="white">
@@ -219,8 +219,8 @@ function AttendancePersonal() {
                 <Text fontSize="xl">Total Working Hours</Text>
               </Box>
             </HStack>
-            <HStack bg="pink.500" rounded="xl" p="15px" shadow="lg">
-              <Center bg="pink.300" rounded="50%" boxSize="3rem">
+            <HStack bg="yellow.500" rounded="xl" p="15px" shadow="lg">
+              <Center bg="yellow.300" rounded="50%" boxSize="3rem">
                 <Icon color="white" boxSize="30px" as={MdTimerOff} />
               </Center>
               <Box color="white">
@@ -269,59 +269,89 @@ function AttendancePersonal() {
             justifyContent="space-around"
           >
             <Box
-              bg="gray.500"
+              bg="blue.500"
               color="white"
               p={5}
               rounded="md"
               fontSize="xl"
               flex="1"
             >
-              <Text>{attendanceTodayData?.checkIn ?? "--:--"}</Text>
+              <Text>
+                {moment(attendanceTodayData?.totalWorkingHours).format(
+                  "hh:mm"
+                ) != "Invalid date"
+                  ? moment(attendanceTodayData?.totalWorkingHours).format(
+                      "hh:mm"
+                    )
+                  : "--:--"}
+              </Text>
+              <Text fontWeight="medium">Working Hours</Text>
+            </Box>
+            <Box
+              bg="green.500"
+              color="white"
+              p={5}
+              rounded="md"
+              fontSize="xl"
+              flex="1"
+            >
+              <Text>
+                {moment(attendanceTodayData?.checkIn).format("hh:mm") !=
+                "Invalid date"
+                  ? moment(attendanceTodayData?.checkIn).format("hh:mm")
+                  : "--:--"}
+              </Text>
               <Text fontWeight="medium">Check In</Text>
             </Box>
             <Box
-              bg="gray.500"
+              bg="purple.500"
               color="white"
               p={5}
               rounded="md"
               fontSize="xl"
               flex="1"
             >
-              <Text>{attendanceTodayData?.lateArrival ?? "--:--"}</Text>
-              <Text fontWeight="medium">Late Arrival</Text>
-            </Box>
-            <Box
-              bg="gray.500"
-              color="white"
-              p={5}
-              rounded="md"
-              fontSize="xl"
-              flex="1"
-            >
-              <Text>{attendanceTodayData?.checkOut ?? "--:--"}</Text>
+              <Text>
+                {moment(attendanceTodayData?.checkOut).format("hh:mm") !=
+                "Invalid date"
+                  ? moment(attendanceTodayData?.checkOut).format("hh:mm")
+                  : "--:--"}
+              </Text>
               <Text fontWeight="medium">Check Out</Text>
             </Box>
+
             <Box
-              bg="gray.500"
+              bg="yellow.500"
               color="white"
               p={5}
               rounded="md"
               fontSize="xl"
               flex="1"
             >
-              <Text>{attendanceTodayData?.earlyLeave ?? "--:--"}</Text>
-              <Text fontWeight="medium">Early Leave</Text>
+              <Text>
+                {moment(attendanceTodayData?.lateArrival).format("hh:mm") !=
+                "Invalid date"
+                  ? moment(attendanceTodayData?.lateArrival).format("hh:mm")
+                  : "--:--"}
+              </Text>
+              <Text fontWeight="medium">Late Arrival</Text>
             </Box>
+
             <Box
-              bg="gray.500"
+              bg="orange.500"
               color="white"
               p={5}
               rounded="md"
               fontSize="xl"
               flex="1"
             >
-              <Text>{attendanceTodayData?.totalWorkingHours ?? "--:--"}</Text>
-              <Text fontWeight="medium">Working Hours</Text>
+              <Text>
+                {moment(attendanceTodayData?.earlyLeave).format("hh:mm") !=
+                "Invalid date"
+                  ? moment(attendanceTodayData?.earlyLeave).format("hh:mm")
+                  : "--:--"}
+              </Text>
+              <Text fontWeight="medium">Early Leave</Text>
             </Box>
           </SimpleGrid>
           {/* <HStack
@@ -431,13 +461,13 @@ function AttendancePersonal() {
                 </Badge>
               </Flex>
               <Flex alignItems="center" gap="5px">
-                <Badge rounded="md" colorScheme="yellow" fontSize="md" p="5px">
+                <Badge rounded="md" colorScheme="orange" fontSize="md" p="5px">
                   E.L
                 </Badge>
                 <Text>
                   <FaEquals />{" "}
                 </Text>
-                <Badge rounded="md" colorScheme="yellow" fontSize="md" p="5px">
+                <Badge rounded="md" colorScheme="orange" fontSize="md" p="5px">
                   Early Leave
                 </Badge>
               </Flex>
@@ -497,7 +527,7 @@ function AttendancePersonal() {
                       {item?.earlyLeave && (
                         <Badge
                           rounded="md"
-                          colorScheme="yellow"
+                          colorScheme="orange"
                           fontSize="md"
                           p="5px"
                         >
@@ -609,7 +639,7 @@ function AttendancePersonal() {
                 </Box>
                 <VStack alignItems="center">
                   <AvatarWithPreview
-                    className="h-[150px] rounded-md"
+                    className="h-[300px] w-[300px] rounded-md"
                     src={attendanceDetailObj?.result?.checkinCapture}
                     alt="Check In Image"
                     altBoxSide="300px"
@@ -663,7 +693,7 @@ function AttendancePersonal() {
                 </Box>
                 <VStack alignItems="center">
                   <AvatarWithPreview
-                    className="h-[150px] rounded-md"
+                    className="h-[300px] w-[300px] rounded-md"
                     src={attendanceDetailObj?.result?.checkoutCapture}
                     alt="Check Out Image"
                     altBoxSide="300px"
