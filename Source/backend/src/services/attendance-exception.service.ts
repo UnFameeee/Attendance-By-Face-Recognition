@@ -70,6 +70,14 @@ export class AttendanceExceptionService {
     return response;
   }
 
+  public saveAnonymousImage = async (files: { [fieldname: string]: Express.Multer.File[] }) => {
+    const response = new ResponseData<string>;
+    let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
+
+    response.result = Helper.ConvertDoubleSlashURL(link);
+    return response;
+  }
+
   public getListAttendanceException = async (page: Page): Promise<ResponseData<Paging<any[]>>> => {
     //Chia theo checkin / checkout
     //Chia theo role, nếu role là manager thì coi dc trong phòng ban của mình, admin thì coi được tất cả

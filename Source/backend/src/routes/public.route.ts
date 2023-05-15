@@ -23,6 +23,10 @@ export class PublicRoute implements Routes {
       express.static(path.join(__dirname, '/../public/attendance/')),
     )
 
+    this.router.use(`${this.path}/attendance-exception/`,
+      express.static(path.join(__dirname, '/../public/attendance-exception/')),
+    )
+
     this.router.use(`${this.path}/models/`,
       express.static(path.join(__dirname, '/../public/models/')),
     )

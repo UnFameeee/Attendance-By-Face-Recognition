@@ -6,6 +6,7 @@ import { AttendanceExceptionController } from "../controllers/attendance-excepti
 import { attendanceImageUpload } from "../multer/attendance.storage";
 import { attendanceExceptionImageUpload } from "../multer/attendance-exception.storage";
 import { authMiddleware } from "../middlewares/authentication.middleware";
+import { anonymousAttendanceImageUpload } from "../multer/anonymous-attendance.storage";
 
 export class AttendanceExceptionRoute implements Routes {
   public path = "/attendance-exception";
@@ -32,6 +33,15 @@ export class AttendanceExceptionRoute implements Routes {
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       attendanceExceptionImageUpload,
       this.attendanceExceptionController.saveImage
+    )
+
+    // api/attendance-exception/saveImage
+    this.router.post(`${this.path}/saveAnonymousImage`,
+      // authMiddleware,
+      // zodValidate(submitAttendanceExceptionSchema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      anonymousAttendanceImageUpload,
+      this.attendanceExceptionController.saveAnonymousImage
     )
 
     // api/attendance-exception/saveImage

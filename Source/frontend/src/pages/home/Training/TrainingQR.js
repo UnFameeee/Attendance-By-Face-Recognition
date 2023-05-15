@@ -32,10 +32,6 @@ export default function TrainingQR() {
     refetch: urlGenerateRefetch,
   } = urlService.useGenerateURL({ urlType, employeeId });
 
-  console.log(urlGenerateData);
-  console.log(urlGenerateisFetching)
-
-
   useEffect(() => {
     urlGenerateRefetch();
     onOpen();

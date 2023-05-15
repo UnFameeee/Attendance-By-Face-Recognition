@@ -6,7 +6,7 @@ import moment from "moment";
 import { Helper } from "../utils/helper";
 
 export class URLService {
-  public generateURL = async (URLtype: string, employeeId?: string) => {
+  public generateURL = async (URLtype: string, employeeId: string, urlImage: string) => {
     const response = new ResponseData<string>();
     // Get the current date and time
     let datetime = new Date();
@@ -15,8 +15,8 @@ export class URLService {
     let URL: string;
 
     if (URLtype == "AttendanceException") {
-      URL = `${env.CLIENT_URL}/report-attendance-exception?session=${v4()}`
-    } else if(URLtype == "TrainingFace") {
+      URL = `${env.CLIENT_URL}/report-attendance-exception?session=${Helper.EncodeWithCipher(urlImage)}`
+    } else if (URLtype == "TrainingFace") {
       console.log(Helper.EncodeWithCipher(employeeId));
       URL = `${env.CLIENT_URL}/training-face?id=${Helper.EncodeWithCipher(employeeId)}&session=${v4()}`;
     }
@@ -39,7 +39,7 @@ export class URLService {
   public validateURL = async (URL: string) => {
     const response = new ResponseData<boolean>();
     const now = new Date();
-    const queryData = await prisma.urlmanagement.findUnique({
+    const queryData = await prisma.urlmanagement.findFirst({
       where: {
         URL: URL,
       }
@@ -68,7 +68,7 @@ export class URLService {
 
   public changeURLtoExpire = async (URL: string) => {
     const response = new ResponseData<boolean>();
-    const queryData = await prisma.urlmanagement.findUnique({
+    const queryData = await prisma.urlmanagement.findFirst({
       where: {
         URL: URL,
       }
@@ -79,7 +79,7 @@ export class URLService {
     }
     const queryUpdateData = await prisma.urlmanagement.update({
       where: {
-        URL: URL,
+        urlId: queryData.urlId,
       },
       data: {
         isExpired: true,

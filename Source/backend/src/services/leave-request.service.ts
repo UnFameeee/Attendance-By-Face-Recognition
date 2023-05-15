@@ -48,6 +48,9 @@ export class LeaveRequestService {
       var whereData: any;
       if (data.filter) {
         whereData = {
+          employee: {
+            departmentId: departmentId,
+          },
           deleted: false,
           startDate: {
             gte: dateFilter.startOf('day').toDate(),
@@ -59,6 +62,9 @@ export class LeaveRequestService {
         }
       } else {
         whereData = {
+          employee: {
+            departmentId: departmentId,
+          },
           deleted: false,
           startDate: {
             gte: startDate,
@@ -220,8 +226,26 @@ export class LeaveRequestService {
       endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
     }
 
-    const queryData = await prisma.leaveRequest.findMany({
-      where: {
+    if (data.filter) {
+      var now = new Date(data.filter);
+      var dateFilter = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    }
+
+    var whereData: any;
+    if (data.filter) {
+      whereData = {
+        deleted: false,
+        employeeId: employeeId,
+        startDate: {
+          gte: dateFilter.startOf('day').toDate(),
+          lte: dateFilter.endOf('day').toDate(),
+        },
+        endDate: {
+          lte: endDate,
+        }
+      }
+    } else {
+      whereData = {
         deleted: false,
         employeeId: employeeId,
         startDate: {
@@ -230,7 +254,12 @@ export class LeaveRequestService {
         endDate: {
           lte: endDate,
         }
-      },
+      }
+    }
+
+
+    const queryData = await prisma.leaveRequest.findMany({
+      where: whereData,
       select: {
         leaveRequestId: true,
         employee: {

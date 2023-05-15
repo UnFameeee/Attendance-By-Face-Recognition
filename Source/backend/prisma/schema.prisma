@@ -45,7 +45,7 @@ model Employee {
   workshifts            Workshift[]
   leaveRequests         LeaveRequest[]        @relation("LeaveRequests")
   leaveRequestApproveds LeaveRequest[]        @relation("LeaveRequestApproveds")
-  payrolls              Payroll[]
+  // payrolls              Payroll[]
   departmentManager     DepartmentManager[]
   attendanceException   AttendanceException[]
   faceTrainingImage     FaceTrainingImage[]
@@ -347,27 +347,27 @@ model LeaveType {
   @@map("leavetype")
 }
 
-model Payroll {
-  payrollId  String   @id @default(uuid())
-  // EmployeeId
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId String
+// model Payroll {
+//   payrollId  String   @id @default(uuid())
+//   // EmployeeId
+//   employee   Employee @relation(fields: [employeeId], references: [id])
+//   employeeId String
 
-  payDate        DateTime
-  payPeriodStart DateTime
-  payPeriodEnd   DateTime
-  hoursWorked    Float
-  hourlyRate     Float
-  GrossPay       Float
-  NetPay         Float
-  note           String
-  deleted        Boolean   @default(false)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
+//   payDate        DateTime
+//   payPeriodStart DateTime
+//   payPeriodEnd   DateTime
+//   hoursWorked    Float
+//   hourlyRate     Float
+//   GrossPay       Float
+//   NetPay         Float
+//   note           String
+//   deleted        Boolean   @default(false)
+//   createdAt      DateTime  @default(now())
+//   updatedAt      DateTime  @updatedAt
+//   deletedAt      DateTime?
 
-  @@map("payroll")
-}
+//   @@map("payroll")
+// }
 
 model AttendanceException {
   attendanceExceptionId String @id @default(uuid())
@@ -391,7 +391,8 @@ model AttendanceException {
 }
 
 model Urlmanagement {
-  URL         String   @id
+  urlId       String   @id @default(uuid())
+  URL         String   @db.Text
   expiredTime DateTime
   isExpired   Boolean
 

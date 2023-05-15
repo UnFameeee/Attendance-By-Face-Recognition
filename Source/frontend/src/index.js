@@ -33,7 +33,7 @@ import LeaveRequestPersonal from "./pages/home/LeaveRequest/LeaveRequestPersonal
 import WorkShift from "./pages/home/WorkShift/WorkShift";
 import ContextWrapper from "./pages/home/WorkShift/context/ContextWrapper";
 import AttendanceModal from "./components/Attendance/AttendanceModal";
-import ExceptionModel from "./components/Attendance/ExceptionModel";
+import ExceptionModal from "./components/Attendance/ExceptionModal";
 import AssignDepartmentManagement from "./pages/home/Organization/AssignDepartmentManagement";
 import LeaveRequestManagement from "./pages/home/LeaveRequest/LeaveRequestManagement";
 import AttendanceExceptionManagement from "./pages/home/Attendance/AttendanceExceptionManagement";
@@ -149,7 +149,7 @@ root.render(
                   <Route path="training-qr" element={<TrainingQR />} />
 
                   <Route path="test" element={<AttendanceModal />} />
-                  <Route path="test2" element={<ExceptionModel />} />
+                  <Route path="test2" element={<ExceptionModal />} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />
