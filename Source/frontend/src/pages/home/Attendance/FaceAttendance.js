@@ -32,13 +32,13 @@ export default function FaceAttendance() {
   const { imageCapture } = useSelector(state => state.attendanceStorage);
   const employeeId = useSelector(state => state.attendanceModal.employeeId);
 
-  const useSaveImageOfAttendance = useMutation((variable) =>
-    attendanceService.saveImageOfAttendance(variable), {
+  const useSaveImageOfAttendance = useMutation(({ employeeId, formData }) =>
+    attendanceService.saveImageOfAttendance(employeeId, formData), {
     onSuccess: (data) => {
       useTakeAttendance.mutate({
         employeeId: employeeId,
         attendanceType: "FACE",
-        image: data.result,
+        image: data?.result,
       });
     },
     onError: (error) => {
@@ -62,7 +62,7 @@ export default function FaceAttendance() {
 
       if (data.message) {
         toast({
-          title: 'Checkin',
+          title: 'Attendance',
           description: data.message,
           position: "top",
           status: "error",
@@ -260,10 +260,18 @@ export default function FaceAttendance() {
 
   useEffect(() => {
     if (isTakeAttendance) {
-      useSaveImageOfAttendance.mutate({
-        employeeId: employeeId,
-        image: imageCapture
-      });
+      const handleSaveUploadImages = async () => {
+        const formData = new FormData();
+        var file = await Helper.convertBase64ToFile(imageCapture, 'image.jpg')
+        formData.append('images', file);
+
+        useSaveImageOfAttendance.mutate({
+          employeeId: employeeId,
+          formData: formData
+        });
+      }
+
+      handleSaveUploadImages();
     }
   }, [isTakeAttendance]);
 

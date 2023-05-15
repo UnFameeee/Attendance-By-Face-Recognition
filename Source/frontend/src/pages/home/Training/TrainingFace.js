@@ -167,7 +167,6 @@ export default function TrainingFace() {
         const formData = new FormData();
         for (var item of capturedImages) {
           var file = await Helper.convertBase64ToFile(item, 'image.jpg')
-          console.log(file);
           formData.append('images', file);
         }
         useSaveImageOfAttendance.mutate({employeeId, formData});

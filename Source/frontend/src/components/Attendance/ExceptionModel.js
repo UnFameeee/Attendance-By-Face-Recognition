@@ -9,8 +9,8 @@ import QRCode from "react-qr-code";
 import { urlService } from '../../services/url/url';
 
 const ModalBodyStyle = {
-  width: "35rem",
-  height: "35rem",
+  width: "30rem",
+  height: "30rem",
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -36,7 +36,7 @@ export default function ExceptionModel() {
     isFetching: urlGenerateisFetching,
     error: urlGenerateError,
     refetch: urlGenerateRefetch,
-  } = urlService.useGenerateURL(urlType);
+  } = urlService.useGenerateURL({ urlType });
 
   useEffect(() => {
     if (isExceptionModalOpen) {
@@ -83,7 +83,7 @@ export default function ExceptionModel() {
         />
         <ModalContent style={ModalContentStyle}>
           <ModalHeader fontWeight={"bold"}>Attendance Failure Report</ModalHeader>
-          <ModalCloseButton />
+          {/* <ModalCloseButton /> */}
           {state == 0 &&
             <>
               <ModalBody style={ModalBodyStyle}>
