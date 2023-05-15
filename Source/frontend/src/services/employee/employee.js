@@ -74,6 +74,18 @@ const getListImageOfEmployee = async (employeeId) => {
   );
   return response.data;
 };
+const retrainPhotos = async (employeeId) => {
+  const response = await axiosBase.post(
+    `${endPoint}/retrain/${employeeId}`,{}
+  );
+  return response.data;
+};
+const validateRetrain = async (employeeId) => {
+  const response = await axiosBase.get(
+    `${endPoint}/validateRetrain?employeeId=${employeeId}`
+  );
+  return response.data;
+};
 // export const deleteEmployeeService = async (employeeId) => {
 //   const response = await axiosBase.post(
 //     `${endPoint}/createEmployee`,
@@ -91,4 +103,6 @@ export const employeeService = {
   createEmployeeService,
   getListEmployeeOfDepartment,
   getListImageOfEmployee,
+  retrainPhotos,
+  validateRetrain,
 };

@@ -58,6 +58,8 @@ function EmployeesManagement() {
   const queryClient = useQueryClient();
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
+  const [employeeRetrainId, setEmployeeRetrainId] = useState();
+
   const [listEmployeePhotos, setListEmployeePhotos] = useState([]);
 
   // #endregion
@@ -79,7 +81,11 @@ function EmployeesManagement() {
     onOpen: onPhotoViewModalOpen,
     onClose: onPhotoViewModalClose,
   } = useDisclosure();
-
+  const {
+    isOpen: isRetrainAlertOpen,
+    onOpen: onRetrainAlertOpen,
+    onClose: onRetrainAlertClose,
+  } = useDisclosure();
   const useCreateEmployee = useMutation(employeeService.createEmployeeService, {
     onSuccess: (data) => {
       const { message } = data;
@@ -114,14 +120,25 @@ function EmployeesManagement() {
   });
   const useSaveEmployee = useMutation(employeeService.saveEmployeeService, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries("listEmployee");
-      toast({
-        title: "Save Employee successfully",
-        position: "bottom-right",
-        status: "success",
-        isClosable: true,
-        duration: 5000,
-      });
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listEmployee");
+        toast({
+          title: "Save Employee successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
       toast({
@@ -150,6 +167,37 @@ function EmployeesManagement() {
       },
     }
   );
+  const useRetrainPhotos = useMutation(employeeService.retrainPhotos, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: "Request Employee To Retrain Photos Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   // #endregion
   // #region function
   const handleEditEmployee = (values) => {
@@ -186,11 +234,19 @@ function EmployeesManagement() {
   };
   const viewEmployeePhotos = (row, action) => {
     useGetEmployeePhotos.mutate(row.id);
-    console.log(row);
     setEditData(row);
     onPhotoViewModalOpen();
   };
-
+  const requestToRetrain = (row, action) => {
+    setEditData(row);
+    setEmployeeRetrainId(row.id);
+    onRetrainAlertOpen()
+  };
+  const handleAcceptRetrain = () => {
+    setEmployeeRetrainId();
+    useRetrainPhotos.mutate(employeeRetrainId)
+    onRetrainAlertClose();
+  };
   const handleAcceptDelete = () => {
     console.log(deleteSingleData);
     setDeleteSingleData({});
@@ -211,6 +267,11 @@ function EmployeesManagement() {
     {
       actionName: "View Photos",
       func: viewEmployeePhotos,
+      isDisabled: true,
+    },
+    {
+      actionName: "Request to retrain",
+      func: requestToRetrain,
       isDisabled: true,
     },
     {
@@ -568,6 +629,14 @@ function EmployeesManagement() {
               isOpen={isDeleteSingleOpen}
               onClose={onDeleteSingleClose}
               onAccept={handleAcceptDelete}
+            />
+            <ChakraAlertDialog
+              title="Require employee to retrain photos"
+              isOpen={isRetrainAlertOpen}
+              onClose={onRetrainAlertClose}
+              onAccept={handleAcceptRetrain}
+              acceptButtonLabel="Accept"
+              acceptButtonColor="blue"
             />
             <Modal
               isOpen={isPhotoViewModalOpen}
