@@ -125,9 +125,9 @@ function DynamicTable(props) {
           id: "action",
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <Flex gap="5px">
-              {permission?.delete && (
+              {/* {permission?.delete && (
                 <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-              )}
+              )} */}
               <Text color="white" fontWeight="600" fontSize="1.1rem">
                 Action
               </Text>
@@ -135,12 +135,12 @@ function DynamicTable(props) {
           ),
           Cell: ({ row }) => (
             <HStack>
-              {permission?.delete && (
+              {/* {permission?.delete && (
                 <IndeterminateCheckbox
                   {...row.getToggleRowSelectedProps()}
                   type="checkbox"
                 />
-              )}
+              )} */}
               <Box>
                 <Menu>
                   <Tooltip
@@ -309,17 +309,21 @@ function DynamicTable(props) {
                     hasArrow
                     label="Add new record for table"
                   >
-                    <Button colorScheme="blue" onClick={onAddEditOpen}>
+                    <Button
+                      shadow="2xl"
+                      colorScheme="blue"
+                      onClick={onAddEditOpen}
+                    >
                       Add New
                     </Button>
                   </Tooltip>
                 )}
                 <Tooltip placement="top" hasArrow label="Reset table">
-                  <Button colorScheme="blue" onClick={handleReset}>
+                  <Button shadow="2xl" colorScheme="blue" onClick={handleReset}>
                     Reset
                   </Button>
                 </Tooltip>
-                {permission?.delete && (
+                {/* {permission?.delete && (
                   <Tooltip
                     placement="top"
                     hasArrow
@@ -333,7 +337,7 @@ function DynamicTable(props) {
                       Delete Range
                     </Button>
                   </Tooltip>
-                )}
+                )} */}
                 <ChakraAlertDialog
                   isOpen={isDeleteRangeOpen}
                   onClose={onDeleteRangeClose}
@@ -366,6 +370,7 @@ function DynamicTable(props) {
                     colorScheme="blue"
                     onClick={() => gotoPage(0)}
                     isDisabled={!canPreviousPage}
+                    shadow="2xl"
                   >
                     <Icon as={MdSkipPrevious} />
                   </Button>
@@ -373,6 +378,7 @@ function DynamicTable(props) {
                     colorScheme="blue"
                     onClick={() => previousPage()}
                     isDisabled={!canPreviousPage}
+                    shadow="2xl"
                   >
                     Previous
                   </Button>
@@ -380,6 +386,7 @@ function DynamicTable(props) {
                     colorScheme="blue"
                     onClick={() => nextPage()}
                     isDisabled={!canNextPage}
+                    shadow="2xl"
                   >
                     Next
                   </Button>
@@ -387,6 +394,7 @@ function DynamicTable(props) {
                     colorScheme="blue"
                     onClick={() => gotoPage(pageCount - 1)}
                     isDisabled={!canNextPage}
+                    shadow="2xl"
                   >
                     <Icon as={MdSkipNext} />
                   </Button>
@@ -415,6 +423,7 @@ function DynamicTable(props) {
                         }}
                         defaultValue={pageIndex + 1}
                         min={1}
+                        shadow="2xl"
                       />
                     </Tooltip>
                   </Flex>
@@ -424,6 +433,7 @@ function DynamicTable(props) {
                     label="Number of showing items"
                   >
                     <Select
+                      shadow="2xl"
                       width="150px"
                       value={pageSize}
                       background="white"
@@ -445,7 +455,7 @@ function DynamicTable(props) {
               </HStack>
             )}
           </HStack>
-          <TableContainer rounded="lg" transform="rotateX(180deg)">
+          <TableContainer rounded="lg" transform="rotateX(180deg)" shadow="2xl">
             <Table
               minH="160px"
               transform="rotateX(180deg)"

@@ -208,11 +208,17 @@ export function Profile() {
           <Stack>
             <Flex justifyContent="space-between">
               <Box>
-                <Flex gap="10px">
+                <Flex
+                  gap="10px"
+                  bg="white"
+                  rounded="md"
+                  p={2}
+                  w="fit-content"
+                  shadow="2xl"
+                >
                   <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                   <Heading fontSize="3xl">Profile Details</Heading>
                 </Flex>
-                <Text>Update your photo and personal details here.</Text>
               </Box>
             </Flex>
             <Flex
@@ -259,6 +265,7 @@ export function Profile() {
                       rounded="lg"
                       as="form"
                       onSubmit={formik.handleSubmit}
+                      shadow="2xl"
                     >
                       <Flex p={4} px={8} pos="relative" alignItems="center">
                         <Heading flex="1" fontSize="xl">
@@ -404,6 +411,7 @@ export function Profile() {
                 flex="1"
                 border="0.5px solid #cfd3df"
                 rounded="lg"
+                shadow="2xl"
               >
                 <Box p={6} px={8}>
                   <Heading fontSize="xl">Your Photo</Heading>
@@ -463,15 +471,21 @@ export function Profile() {
           <Stack>
             <Flex justifyContent="space-between">
               <Box>
-                <Flex gap="10px">
+                <Flex
+                  gap="10px"
+                  bg="white"
+                  rounded="md"
+                  p={2}
+                  w="fit-content"
+                  shadow="2xl"
+                >
                   <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                   <Heading fontSize="3xl">Profile Details</Heading>
                 </Flex>
-                <Text>Update your photo and personal details here.</Text>
               </Box>
             </Flex>
             {isFirstTimeLogin && !isAlrUploadImage && (
-              <Box p="10px" bg="yellow.100" rounded="md">
+              <Box p="10px" bg="yellow.100" rounded="md" shadow="2xl">
                 <Heading fontSize="2xl" fontWeight="medium">
                   <Highlight
                     query={["Your Photo"]}
@@ -536,6 +550,7 @@ export function Profile() {
                         rounded="lg"
                         as="form"
                         onSubmit={formik.handleSubmit}
+                        shadow="2xl"
                       >
                         <Flex p={4} px={8} pos="relative" alignItems="center">
                           <Heading flex="1" fontSize="xl">
@@ -685,6 +700,7 @@ export function Profile() {
                 flex="1"
                 border="0.5px solid #cfd3df"
                 rounded="lg"
+                shadow="2xl"
               >
                 <Box p={6} px={8}>
                   <Heading fontSize="xl">Your Photo</Heading>
