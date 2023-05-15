@@ -87,10 +87,11 @@ function AttendancePersonal() {
         <VStack
           paddingX={5}
           paddingY={4}
-          bg="white"
+          bg="#ffffffdb"
           rounded="xl"
           alignItems="start"
           spacing="15px"
+          shadow='2xl'
         >
           <Flex gap="10px">
             <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -178,11 +179,12 @@ function AttendancePersonal() {
         <VStack
           paddingX={5}
           paddingY={4}
-          bg="white"
+          bg="#ffffffdb"
           rounded="xl"
           alignItems="start"
           justifyContent="center"
           spacing="15px"
+          shadow='2xl'
         >
           <Flex gap="10px">
             <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -250,11 +252,12 @@ function AttendancePersonal() {
         <VStack
           paddingX={5}
           paddingY={4}
-          bg="white"
+          bg="#ffffffdb"
           rounded="xl"
           alignItems="start"
           justifyContent="center"
           spacing="15px"
+          shadow='2xl'
         >
           <Flex gap="10px">
             <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -416,10 +419,11 @@ function AttendancePersonal() {
         <VStack
           paddingX={5}
           paddingY={4}
-          bg="white"
+          bg="#ffffffdb"
           rounded="xl"
           alignItems="start"
           spacing="15px"
+          shadow='2xl'
         >
           <Flex
             gap="10px"

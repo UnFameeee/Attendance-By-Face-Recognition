@@ -435,6 +435,7 @@ function HomeSidebar() {
                 onClose={onSignOutAlertClose}
                 onAccept={handleLogout}
                 acceptButtonLabel="Accept"
+                acceptButtonColor="blue"
               />
             </Menu>
           </Menu>
