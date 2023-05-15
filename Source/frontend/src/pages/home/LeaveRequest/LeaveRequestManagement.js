@@ -730,7 +730,7 @@ function LeaveRequestManagement() {
                       });
                       useModifyLeaveType.mutate(modifyLeaveTypeObject);
                     }
-                    // onModifyLeaveTypeModalClose();
+                    onModifyLeaveTypeModalClose();
                   }}
                 >
                   {(formik) => (

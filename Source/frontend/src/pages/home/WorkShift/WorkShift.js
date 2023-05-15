@@ -515,6 +515,7 @@ function WorkShift() {
                         });
                         useModifyShiftType.mutate(modifyWorkShiftObject);
                       }
+                      onModifyShiftTypeModalClose()
                     }}
                   >
                     {(formik) => (
@@ -560,6 +561,7 @@ function WorkShift() {
                                         variant="outline"
                                         colorScheme="red"
                                         onClick={() => {
+                                        //  console.log(formik.isValid);  
                                           onDeleteShiftTypeAlertOpen();
                                           setDeleteShiftTypeId(
                                             item.shiftTypeId
@@ -571,6 +573,7 @@ function WorkShift() {
                                       <Button
                                         colorScheme="blue"
                                         onClick={() => {
+                                          // console.log(formik.isValid);  
                                           setCurrentModifyShiftTypeId(
                                             item.shiftTypeId
                                           );
