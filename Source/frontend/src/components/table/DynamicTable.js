@@ -309,10 +309,7 @@ function DynamicTable(props) {
                     hasArrow
                     label="Add new record for table"
                   >
-                    <Button
-                      colorScheme="blue"
-                      onClick={onAddEditOpen}
-                    >
+                    <Button colorScheme="blue" onClick={onAddEditOpen}>
                       Add New
                     </Button>
                   </Tooltip>
@@ -644,9 +641,7 @@ function DynamicTable(props) {
                                   overflow="hidden"
                                 >
                                   <Text fontSize="1.05rem" fontWeight="medium">
-                                    {new Date(cell?.value)
-                                      .toISOString()
-                                      .substring(0, 10)}
+                                    {Helper.getMomentDateFormat(cell?.value)}
                                   </Text>
                                 </Box>
                               ) : (
