@@ -296,10 +296,16 @@ function AttendanceExceptionManagement() {
   );
   // #endregion
   // #region form
-  const [listDepartmentArray,setListDepartmentArray] = useState([])
-  useEffect(()=>{
-    setListDepartmentArray(Helper.convertToArraySelection(listDepartmentData?.result?.data,"departmentName","departmentId"))
-  },[listDepartmentData])
+  const [listDepartmentArray, setListDepartmentArray] = useState([]);
+  useEffect(() => {
+    setListDepartmentArray(
+      Helper.convertToArraySelection(
+        listDepartmentData?.result?.data,
+        "departmentName",
+        "departmentId"
+      )
+    );
+  }, [listDepartmentData]);
   const initialValuesForm = {
     dateSelect: "",
     departmentId: "",
@@ -347,12 +353,19 @@ function AttendanceExceptionManagement() {
   return (
     <VStack h="100%" alignItems="flex-start" spacing={3}>
       <VStack spacing="5">
-        <Flex gap="10px">
+        <Flex
+          gap="10px"
+          bg="white"
+          rounded="md"
+          p={2}
+          w="fit-content"
+          shadow="2xl"
+        >
           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
           <Heading fontSize="3xl">Attendance Exception Management</Heading>
         </Flex>
       </VStack>
-      <HStack bg="white" p={3} rounded="md">
+      <HStack bg="white" p={3} rounded="md" shadow="2xl">
         <Formik
           initialValues={initialValuesForm}
           validationSchema={validationSchemaForm}
@@ -417,6 +430,7 @@ function AttendanceExceptionManagement() {
               border="1px solid gray"
               rounded="md"
               onClick={() => handleChangeTab("CHECKIN")}
+              shadow="2xl"
             >
               <Text fontSize="xl" fontWeight="bold">
                 Check In
