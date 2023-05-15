@@ -75,9 +75,9 @@ function LeaveRequestPersonal() {
     leaveRequestService.useGetAnnualDetail();
   if (!isLoadingLREmployeeData) {
     // console.log(LREmployeeData?.result?.data[0]?.startDate);
-    // console.log(
-    //   new Date(LREmployeeData?.result?.data[0]?.startDate).toLocaleString()
-    // );
+    console.log(
+      new Date(LREmployeeData?.result?.data[0]?.startDate).toUTCString()
+    );
   }
   const { data: LRLeaveTypeData, isLoading: isLoadingLRLeaveTypeData } =
     leaveRequestService.useGetAllLeaveType();
@@ -152,7 +152,7 @@ function LeaveRequestPersonal() {
       reason: values.reason,
       note: values.note,
     };
-    // console.log("leaveRequestObj", leaveRequestObj);
+    console.log("leaveRequestObj.startDate", leaveRequestObj.startDate);
     useCreateLeaveRequest.mutate(leaveRequestObj);
     closeDrawer();
   };
