@@ -148,7 +148,9 @@ model Location {
 model Organization {
   organizationId    String @id @default(uuid())
   organizationName  String
-  yearlyAnnualLeave Int?
+  yearlyAnnualLeave Int    @default(12)
+  limitEarlyLeave   String @default("01:00")
+  limitLateArrival  String @default("01:00")
 
   // locationId
   location   Location @relation(fields: [locationId], references: [locationId])
@@ -239,12 +241,14 @@ model Workshift {
   shiftType   ShiftType? @relation(fields: [shiftTypeId], references: [shiftTypeId])
   shiftTypeId String?
 
-  absent    Boolean   @default(false)
-  shiftDate DateTime
-  deleted   Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  absent           Boolean   @default(false)
+  allowEarlyLeave  Boolean   @default(false)
+  allowLateArrival Boolean   @default(false)
+  shiftDate        DateTime
+  deleted          Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
 
   @@map("workshift")
 }

@@ -42,5 +42,5 @@ export const trainingImagesUpload = multer({
     }
   }
 }).fields([
-  { name: "images", maxCount: 30 }
+  { name: "images", maxCount: 50 }
 ])

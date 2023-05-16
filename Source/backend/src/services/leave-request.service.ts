@@ -504,6 +504,7 @@ export class LeaveRequestService {
             }
           })
 
+          //Tạo bên workshift
           if (!queryWorkshiftData) {
             await prisma.workshift.create({
               data: {
@@ -524,6 +525,18 @@ export class LeaveRequestService {
               }
             })
           }
+
+          //Tạo bên attendance
+          // //Tạo Attendance với totalHours = 08:00
+          // const queryCreateAttendance = await prisma.employee.findFirst({
+          //   where: {
+          //     id: employeeId,
+          //     deleted: false,
+          //   },
+          //   select: {
+          //     annualLeaveDays: true,
+          //   }
+          // })
         }
       } else {
         const dateInMonth = moment(`${leaveRequestYear + 1}-${leaveRequestMonthStart}-01`, "YYYY-MM-DD").daysInMonth();

@@ -8,6 +8,24 @@ export const createOrganizationSchema = z.object({
     })
     .trim()
     .min(1, 'Organization Name cannot be empty'),
+
+  limitEarlyLeave: z
+    .string({
+      required_error: 'Limit Early Leave is required',
+    })
+    .trim(),
+
+  limitLateArrival: z
+    .string({
+      required_error: 'Limit Late Arrival is required',
+    })
+    .trim(),
+
+  yearlyAnnualLeave: z
+    .number({
+      required_error: 'Yearly Annual Leave is required',
+    }),
+
   location: z.object({
     address: z
       .string({
@@ -45,6 +63,24 @@ export const updateOrganizationSchema = z.object({
     })
     .trim()
     .min(1, 'Organization Name cannot be empty'),
+
+  limitEarlyLeave: z
+    .string({
+      required_error: 'Limit Early Leave is required',
+    })
+    .trim(),
+
+  limitLateArrival: z
+    .string({
+      required_error: 'Limit Late Arrival is required',
+    })
+    .trim(),
+
+  yearlyAnnualLeave: z
+    .number({
+      required_error: 'Yearly Annual Leave is required',
+    }),
+
   location: z.object({
     address: z
       .string({

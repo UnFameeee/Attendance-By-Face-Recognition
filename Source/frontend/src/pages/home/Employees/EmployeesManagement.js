@@ -666,11 +666,11 @@ function EmployeesManagement() {
                       >
                         {/* <Image src={test_image} /> */}
                         <AvatarWithPreview
-                          src={item.url}
+                          src={item.link}
                           altBoxSide="150px"
                           altRounded="none"
                           className="rounded-none"
-                          alt={`${editData.fullname}-training-photo`}
+                          alt={`${item.imageId}-training-photo`}
                         />
                       </Flex>
                     ))}

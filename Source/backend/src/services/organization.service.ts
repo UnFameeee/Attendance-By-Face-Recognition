@@ -13,6 +13,9 @@ export class OrganizationService {
       select: {
         organizationId: true,
         organizationName: true,
+        limitEarlyLeave: true,
+        limitLateArrival: true,
+        yearlyAnnualLeave: true,
         location: {
           select: {
             address: true,
@@ -37,6 +40,9 @@ export class OrganizationService {
       select: {
         organizationId: true,
         organizationName: true,
+        limitEarlyLeave: true,
+        limitLateArrival: true,
+        yearlyAnnualLeave: true,
       }
     })
 
@@ -52,6 +58,9 @@ export class OrganizationService {
     const queryData = await prisma.organization.create({
       data: {
         organizationName: data.organizationName,
+        limitEarlyLeave: data.limitEarlyLeave,
+        limitLateArrival: data.limitLateArrival,
+        yearlyAnnualLeave: data.yearlyAnnualLeave,
         location: {
           create: {
             address: data.location.address,
@@ -87,6 +96,9 @@ export class OrganizationService {
       },
       data: {
         organizationName: data.organizationName,
+        limitEarlyLeave: data.limitEarlyLeave,
+        limitLateArrival: data.limitLateArrival,
+        yearlyAnnualLeave: data.yearlyAnnualLeave,
         location: {
           update: {
             address: data.location.address,
@@ -99,6 +111,9 @@ export class OrganizationService {
       select: {
         organizationId: true,
         organizationName: true,
+        limitEarlyLeave: true,
+        limitLateArrival: true,
+        yearlyAnnualLeave: true,
         location: {
           select: {
             address: true,

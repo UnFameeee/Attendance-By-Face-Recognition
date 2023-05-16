@@ -141,8 +141,8 @@ function DynamicTable(props) {
                   type="checkbox"
                 />
               )} */}
-              <Box>
-                <Menu>
+              <Box >
+                <Menu >
                   <Tooltip
                     placement="right"
                     label="Record Bulk Action"
@@ -156,7 +156,7 @@ function DynamicTable(props) {
                       <Icon as={FiMoreVertical} />
                     </MenuButton>
                   </Tooltip>
-                  <MenuList>
+                  <MenuList >
                     {tableRowAction.map((item) => {
                       return (
                         <MenuItem
@@ -457,7 +457,7 @@ function DynamicTable(props) {
           </HStack>
           <TableContainer rounded="lg" transform="rotateX(180deg)" shadow="2xl">
             <Table
-              minH="160px"
+              minH="300px"
               transform="rotateX(180deg)"
               variant="simple"
               {...getTableProps()}
