@@ -26,12 +26,13 @@ function AuthTextField({ ...props }) {
             {...field}
             type={!isShow ? "text" : "password"}
             placeholder={props.placeholder ?? ""}
-            autoComplete="on"
+            autoComplete="off"
           />
         ) : (
           <Input
             {...field}
             type={props.type}
+            autoComplete="off"
             placeholder={props.placeholder ?? ""}
           />
         )}

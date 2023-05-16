@@ -385,7 +385,17 @@ function LeaveRequestPersonal() {
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Personal</Heading>
       </Flex>
-      <HStack bg="white" rounded="md" p={3} spacing="10px" shadow="2xl">
+
+      <HStack
+        bg="white"
+        rounded="md"
+        p={3}
+        spacing="10px"
+        gap='10px'
+        shadow="2xl"
+        alignItems={{ base: "baseline", lg: "center" }}
+        flexDirection={{ base: "column", lg: "row" }}
+      >
         <Flex alignItems="center" gap="5px">
           <Highlight
             query="Total Annual Leave:"
@@ -446,38 +456,39 @@ function LeaveRequestPersonal() {
             value={LRAnnualDetailData?.result?.annualLeaveRemaining ?? 0}
           />
         </Flex>
-      </HStack>
-      <Tooltip
-        placement="right"
-        hasArrow
-        label="Filter for start date of the leave request"
-      >
-        <HStack bg="white" rounded="md" p="10px" justifyContent="flex-end" shadow="2xl">
-          <Heading fontSize="xl" fontWeight="medium">
-            <Highlight
-              query={["Date Filter:"]}
-              styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
-            >
-              Date Filter:
-            </Highlight>
-          </Heading>
+        <Tooltip
+          placement="right"
+          hasArrow
+          label="Filter for start date of the leave request"
+        >
+          <HStack>
+            <Heading fontSize="xl" fontWeight="medium">
+              <Highlight
+                query={["Date Filter:"]}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+              >
+                Date Filter:
+              </Highlight>
+            </Heading>
 
-          <Formik
-            initialValues={initialValuesForDateFilterSelection}
-            validationSchema={validationSchemaForDateFilterSelection}
-          >
-            {(formik) => (
-              <Box w="150px">
-                <FormTextField
-                  name="dateFilter"
-                  isDateField={true}
-                  handleOnChange={handleOnChangeDateFilter}
-                />
-              </Box>
-            )}
-          </Formik>
-        </HStack>
-      </Tooltip>
+            <Formik
+              initialValues={initialValuesForDateFilterSelection}
+              validationSchema={validationSchemaForDateFilterSelection}
+            >
+              {(formik) => (
+                <Box w="150px">
+                  <FormTextField
+                    name="dateFilter"
+                    isDateField={true}
+                    handleOnChange={handleOnChangeDateFilter}
+                  />
+                </Box>
+              )}
+            </Formik>
+          </HStack>
+        </Tooltip>
+      </HStack>
+
       <Box w="100%" mt="10px">
         <DynamicTable
           onAddEditOpen={onAddEditOpen}

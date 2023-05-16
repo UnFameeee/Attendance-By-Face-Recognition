@@ -460,10 +460,14 @@ function WorkShift() {
         </Flex>
       </Flex>
       <HStack
-        gap="5px"
-        flexDirection={{ base: "column", md: "row" }}
-        alignItems={{ base: "flex-start", md: "center" }}
-        bg="white" rounded="md" p={2} w="fit-content" shadow="2xl"
+        gap="10px"
+        flexDirection={{ base: "column", lg: "row" }}
+        alignItems={{ base: "baseline", lg: "center" }}
+        bg="white"
+        rounded="md"
+        p={2}
+        w='fit-content'
+        shadow="2xl"
       >
         {userDecodeInfo?.roleName == "admin" && (
           <>
@@ -672,7 +676,7 @@ function WorkShift() {
             />
           </>
         )}
-        <HStack>
+        <HStack alignItems={{ base: "baseline", sm: "center" }} gap="10px">
           <Heading fontSize="xl" fontWeight="medium">
             <Highlight
               query={["Department:"]}
@@ -705,9 +709,11 @@ function WorkShift() {
           >
             {(formik) => (
               <HStack
-                alignItems="center"
                 as="form"
                 onSubmit={formik.handleSubmit}
+                flexDirection={{ sm: "row", base: "column" }}
+                gap="5px"
+                alignItems={{ base: "baseline", sm: "center" }}
               >
                 <FormTextField
                   name="department"
@@ -723,7 +729,7 @@ function WorkShift() {
                 />
                 {userDecodeInfo?.roleName != "employee" &&
                   userDecodeInfo?.roleName != "manager" && (
-                    <div className=" mt-[6px]">
+                    <div>
                       <Button colorScheme="blue" type="submit" size="md">
                         Submit
                       </Button>
@@ -733,39 +739,37 @@ function WorkShift() {
             )}
           </Formik>
         </HStack>
+        {userDecodeInfo.roleName != "employee" && (
+          <HStack
+            w="fit-content"
+           
+            gap="10px"
+            alignItems={{ base: "baseline", sm: "center" }}
+          >
+            <Heading fontSize="xl" fontWeight="medium">
+              <Highlight
+                query={["Employee Filter:"]}
+                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+              >
+                Employee Filter:
+              </Highlight>
+            </Heading>
+            <Formik initialValues={initialValuesOfEmployeeFilter}>
+              {(formik) => (
+                <Box w="150px">
+                  <FormTextField
+                    name="employeeFilter"
+                    isSelectionField={true}
+                    selectionArray={listEmployeeDataSelection}
+                    placeholder="All"
+                    handleOnChange={selectionHandleOnChange}
+                  />
+                </Box>
+              )}
+            </Formik>
+          </HStack>
+        )}
       </HStack>
-      {userDecodeInfo.roleName != "employee" && (
-        <HStack
-          bg="white"
-          rounded="md"
-          p="10px"
-          w="fit-content"
-          justifyContent="flex-end"
-          shadow='2xl'
-        >
-          <Heading fontSize="xl" fontWeight="medium">
-            <Highlight
-              query={["Employee Filter:"]}
-              styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
-            >
-              Employee Filter:
-            </Highlight>
-          </Heading>
-          <Formik initialValues={initialValuesOfEmployeeFilter}>
-            {(formik) => (
-              <Box w="150px">
-                <FormTextField
-                  name="employeeFilter"
-                  isSelectionField={true}
-                  selectionArray={listEmployeeDataSelection}
-                  placeholder="All"
-                  handleOnChange={selectionHandleOnChange}
-                />
-              </Box>
-            )}
-          </Formik>
-        </HStack>
-      )}
       {showEventModal && (
         <EventModal
           listEmployee={listEmployeeOfDepartment?.result?.data}
@@ -789,7 +793,14 @@ function WorkShift() {
         </div>
       ) : (
         <>
-          <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md"  shadow='2xl'>
+          <Box
+            w="100%"
+            bg="yellow.100"
+            p="10px"
+            mb="10px"
+            rounded="md"
+            shadow="2xl"
+          >
             <Heading
               fontSize="2xl"
               fontWeight="medium"
@@ -817,9 +828,7 @@ function WorkShift() {
               </Highlight>
             </Heading>
           </Box>
-          <Box h="100%">
-           
-          </Box>
+          <Box h="100%"></Box>
         </>
       )}
     </Stack>
