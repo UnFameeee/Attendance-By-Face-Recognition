@@ -83,5 +83,13 @@ export class AttendanceRoute implements Routes {
       // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getAttendanceStatistic
     )
+
+    // api/attendance/getYearlyAttendanceStatistic/:employeeId
+    this.router.post(`${this.path}/getYearlyAttendanceStatistic/:employeeId`,
+      authMiddleware,
+      zodValidate(dateTimeV2Schema),
+      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      this.attendanceController.getYearlyAttendanceStatistic
+    )
   }
 }
