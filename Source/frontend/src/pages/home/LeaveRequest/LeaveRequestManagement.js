@@ -317,11 +317,6 @@ function LeaveRequestManagement() {
     onAddEditClose();
     setEditData({});
   };
-  const matchingRoleColor = (value) => {
-    return roleCodeColor.find(
-      (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
-    );
-  };
   const handleAcceptDeleteLeaveType = () => {
     onDeleteLeaveTypeAlertClose();
     setDeleteLeaveTypeId("");
@@ -664,6 +659,8 @@ function LeaveRequestManagement() {
       });
     }
   };
+  if (isLoadingListDepartment || isLoadingLRLeaveTypeData)
+    return <LoadingSpinner />;
   return (
     <Stack h="100%" spacing={4}>
       <Flex
@@ -677,7 +674,16 @@ function LeaveRequestManagement() {
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Management</Heading>
       </Flex>
-      <HStack w="fit-content" bg="white" rounded="md" p="3" shadow='2xl'>
+      <HStack
+        bg="white"
+        rounded="md"
+        p="3"
+        shadow="2xl"
+        gap="10px"
+        alignItems={{ base: "baseline", md: "center" }}
+        flexDirection={{ base: "column", md: "row" }}
+        w="fit-content"
+      >
         {userInfo?.roleName == "admin" && (
           <>
             <Button colorScheme="teal" onClick={onModifyLeaveTypeModalOpen}>
@@ -786,6 +792,7 @@ function LeaveRequestManagement() {
                                       onClick={() => {
                                         onDeleteLeaveTypeAlertOpen();
                                         setDeleteLeaveTypeId(item.leaveTypeId);
+                                        onModifyLeaveTypeModalClose()
                                       }}
                                     >
                                       Delete
@@ -886,125 +893,130 @@ function LeaveRequestManagement() {
             />
           </>
         )}
-        <Heading fontSize="xl" fontWeight="medium">
-          <Highlight
-            query={["Department:"]}
-            styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
-          >
-            Department:
-          </Highlight>
-        </Heading>
-        <Formik
-          initialValues={initialValuesSelectDepartment}
-          onSubmit={(values, actions) => {
-            const departmentId = values.department;
-            setDepartmentId(departmentId);
-            if (departmentId) {
-              useGetLeaveRequestOfDepartment.mutate({
-                departmentId,
-                currentDate,
-              });
-            }
-          }}
-        >
-          {(formik) => (
-            <HStack
-              alignItems="center"
-              as="form"
-              onSubmit={formik.handleSubmit}
+        <HStack alignItems={{ base: "baseline", sm: "center" }}>
+          <Heading fontSize="xl" fontWeight="medium">
+            <Highlight
+              query={["Department:"]}
+              styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
             >
-              <FormTextField
-                name="department"
-                placeholder="---"
-                isReadOnly={userInfo?.roleName == "manager"}
-                isSelectionField={true}
-                selectionArray={
-                  listDepartmentArray ? [...listDepartmentArray] : []
-                }
-              />
-              {userInfo?.roleName != "manager" && (
-                <div className=" mt-[6px]">
-                  <Button colorScheme="blue" type="submit" size="md">
-                    Submit
-                  </Button>
-                </div>
-              )}
-            </HStack>
-          )}
-        </Formik>
-      </HStack>
-      {departmentId != "" && (
-        <Tooltip
-          placement="right"
-          hasArrow
-          label="Filter for start date of the leave request"
-        >
-          <HStack
-            w="fit-content"
-            bg="white"
-            rounded="md"
-            p="10px"
-            justifyContent="flex-end"
+              Department:
+            </Highlight>
+          </Heading>
+          <Formik
+            initialValues={initialValuesSelectDepartment}
+            onSubmit={(values, actions) => {
+              const departmentId = values.department;
+              setDepartmentId(departmentId);
+              if (departmentId) {
+                useGetLeaveRequestOfDepartment.mutate({
+                  departmentId,
+                  currentDate,
+                });
+              } else {
+                setListLRDepartment([]);
+              }
+            }}
           >
-            <Heading fontSize="xl" fontWeight="medium">
-              <Highlight
-                query={["Date Filter:"]}
-                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+            {(formik) => (
+              <HStack
+                as="form"
+                onSubmit={formik.handleSubmit}
+                flexDirection={{ sm: "row", base: "column" }}
+                gap="10px"
+                alignItems={{ base: "baseline", sm: "end" }}
               >
-                Date Filter:
-              </Highlight>
-            </Heading>
+                <FormTextField
+                  name="department"
+                  placeholder="---"
+                  isReadOnly={userInfo?.roleName == "manager"}
+                  isSelectionField={true}
+                  selectionArray={
+                    listDepartmentArray ? [...listDepartmentArray] : []
+                  }
+                />
+                {userInfo?.roleName != "manager" && (
+                  <div className=" mt-[6px]">
+                    <Button colorScheme="blue" type="submit" size="md">
+                      Submit
+                    </Button>
+                  </div>
+                )}
+              </HStack>
+            )}
+          </Formik>
+        </HStack>
 
-            <Formik
-              initialValues={initialValuesForDateFilterSelection}
-              validationSchema={validationSchemaForDateFilterSelection}
+        {departmentId != "" && (
+          <Tooltip hasArrow label="Filter for start date of the leave request">
+            <HStack
+              w="fit-content"
+              bg="white"
+              rounded="md"
+              justifyContent="flex-end"
             >
-              {(formik) => (
-                <Box w="150px">
-                  <FormTextField
-                    name="dateFilter"
-                    isDateField={true}
-                    handleOnChange={handleOnChangeDateFilter}
-                  />
-                </Box>
-              )}
-            </Formik>
-          </HStack>
-        </Tooltip>
-      )}
-      <Box marginTop="10px">
-        {false ? (
-          <NoDataToDisplay h="450px" />
-        ) : (
-          <>
-            <DynamicTable
-              onAddEditOpen={onAddEditOpen}
-              handleDeleteRange={DeleteRange}
-              tableRowAction={tableRowAction}
-              columns={columns}
-              data={listLRDepartment}
-              permission={resultPermission}
-              noPaging={true}
-            />
-            <DynamicDrawer
-              handleEdit={handleApprovalLeaveRequest}
-              isAddEditOpen={isAddEditOpen}
-              onAddEditClose={onAddEditClose}
-              editData={editData}
-              setEditData={setEditData}
-              validationSchema={validationSchema}
-              initialValues={initialValues}
-              drawerFieldData={drawerFieldData}
-            />
-            <ChakraAlertDialog
-              title="Delete Single"
-              isOpen={isDeleteSingleOpen}
-              onClose={onDeleteSingleClose}
-              onAccept={handleAcceptDelete}
-            />
-          </>
+              <Heading fontSize="xl" fontWeight="medium">
+                <Highlight
+                  query={["Date Filter:"]}
+                  styles={{
+                    px: "2",
+                    py: "1",
+                    rounded: "full",
+                    bg: "purple.100",
+                  }}
+                >
+                  Date Filter:
+                </Highlight>
+              </Heading>
+
+              <Formik
+                initialValues={initialValuesForDateFilterSelection}
+                validationSchema={validationSchemaForDateFilterSelection}
+              >
+                {(formik) => (
+                  <Box w="150px">
+                    <FormTextField
+                      name="dateFilter"
+                      isDateField={true}
+                      handleOnChange={handleOnChangeDateFilter}
+                    />
+                  </Box>
+                )}
+              </Formik>
+            </HStack>
+          </Tooltip>
         )}
-      </Box>
+      </HStack>
+      {useGetLeaveRequestOfDepartment.isLoading || useModifyLeaveType.isLoading || useDeleteLeaveRequest.isLoading ||
+      useDeleteLeaveType.isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <Box marginTop="10px">
+          <DynamicTable
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={listLRDepartment}
+            permission={resultPermission}
+          />
+          <DynamicDrawer
+            handleEdit={handleApprovalLeaveRequest}
+            isAddEditOpen={isAddEditOpen}
+            onAddEditClose={onAddEditClose}
+            editData={editData}
+            setEditData={setEditData}
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            drawerFieldData={drawerFieldData}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+        </Box>
+      )}
     </Stack>
   );
 }

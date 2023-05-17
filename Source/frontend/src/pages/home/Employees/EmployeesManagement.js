@@ -64,7 +64,7 @@ function EmployeesManagement() {
 
   // #endregion
   // #region hook
-  const { data: listEmployeeData, isFetching: isFetchingListEmployee } =
+  const { data: listEmployeeData, isFetching: isFetchingListEmployee, isLoading: isLoadingListEmployee  } =
     useGetListEmployee();
   const {
     isOpen: isDeleteSingleOpen,
@@ -100,7 +100,7 @@ function EmployeesManagement() {
       } else {
         queryClient.invalidateQueries("listEmployee");
         toast({
-          title: "Create Employee successfully",
+          title: "Create Employee Successfully",
           position: "bottom-right",
           status: "success",
           isClosable: true,
@@ -132,7 +132,7 @@ function EmployeesManagement() {
       } else {
         queryClient.invalidateQueries("listEmployee");
         toast({
-          title: "Save Employee successfully",
+          title: "Save Employee Successfully",
           position: "bottom-right",
           status: "success",
           isClosable: true,
@@ -240,11 +240,11 @@ function EmployeesManagement() {
   const requestToRetrain = (row, action) => {
     setEditData(row);
     setEmployeeRetrainId(row.id);
-    onRetrainAlertOpen()
+    onRetrainAlertOpen();
   };
   const handleAcceptRetrain = () => {
     setEmployeeRetrainId();
-    useRetrainPhotos.mutate(employeeRetrainId)
+    useRetrainPhotos.mutate(employeeRetrainId);
     onRetrainAlertClose();
   };
   const handleAcceptDelete = () => {
@@ -561,7 +561,7 @@ function EmployeesManagement() {
         }
   );
   // #endregion
-  if (isFetchingListEmployee) return <LoadingSpinner />;
+  if (isLoadingListEmployee) return <LoadingSpinner />;
   return (
     <Stack h="100%" spacing={4}>
       <HStack>
@@ -599,100 +599,99 @@ function EmployeesManagement() {
           <ColumnChart />
         </Box>
       </Flex>
-      <Box marginTop="10px">
-        {listEmployeeData && listEmployeeData?.result?.data.length == 0 ? (
-          <NoDataToDisplay h="450px" />
-        ) : (
-          <>
-            <DynamicTable
-              onAddEditOpen={onAddEditOpen}
-              handleDeleteRange={DeleteRange}
-              tableRowAction={tableRowAction}
-              columns={columns}
-              data={listEmployeeData?.result?.data}
-              permission={resultPermission}
-              paging={listEmployeeData?.result?.page}
-            />
-            <DynamicDrawer
-              handleEdit={handleEditEmployee}
-              handleCreate={handleCreateEmployee}
-              isAddEditOpen={isAddEditOpen}
-              onAddEditClose={onAddEditClose}
-              editData={editData}
-              setEditData={setEditData}
-              validationSchema={validationSchema}
-              initialValues={initialValues}
-              drawerFieldData={drawerFieldData}
-            />
-            <ChakraAlertDialog
-              title="Delete Single"
-              isOpen={isDeleteSingleOpen}
-              onClose={onDeleteSingleClose}
-              onAccept={handleAcceptDelete}
-            />
-            <ChakraAlertDialog
-              title="Require employee to retrain photos"
-              isOpen={isRetrainAlertOpen}
-              onClose={onRetrainAlertClose}
-              onAccept={handleAcceptRetrain}
-              acceptButtonLabel="Accept"
-              acceptButtonColor="blue"
-            />
-            <Modal
-              isOpen={isPhotoViewModalOpen}
-              onClose={() => {
-                onPhotoViewModalClose();
-                setEditData({});
-              }}
-              size="4xl"
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader textTransform="capitalize">
-                  {editData.fullname}'s Photos
-                </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <SimpleGrid
-                    spacing={3}
-                    gridTemplateColumns="repeat(auto-fit, minmax(150px,1fr))"
-                  >
-                    {listEmployeePhotos.map((item, index) => (
-                      <Flex
-                        alignItems="center"
-                        key={index}
-                        boxSize="150px"
-                        bg="black"
-                      >
-                        {/* <Image src={test_image} /> */}
-                        <AvatarWithPreview
-                          src={item.link}
-                          altBoxSide="150px"
-                          altRounded="none"
-                          className="rounded-none"
-                          alt={`${item.imageId}-training-photo`}
-                        />
-                      </Flex>
-                    ))}
-                  </SimpleGrid>
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={() => {
-                      onPhotoViewModalClose();
-                      setEditData({});
-                    }}
-                  >
-                    Close
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          </>
-        )}
-      </Box>
+      {useCreateEmployee.isLoading ||
+      useSaveEmployee.isLoading ||
+      isFetchingListEmployee ? (
+        <LoadingSpinner />
+      ) : (
+        <Box marginTop="10px">
+          <DynamicTable
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={listEmployeeData?.result?.data}
+            permission={resultPermission}
+          />
+          <DynamicDrawer
+            handleEdit={handleEditEmployee}
+            handleCreate={handleCreateEmployee}
+            isAddEditOpen={isAddEditOpen}
+            onAddEditClose={onAddEditClose}
+            editData={editData}
+            setEditData={setEditData}
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            drawerFieldData={drawerFieldData}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+          <ChakraAlertDialog
+            title="Require employee to retrain photos"
+            isOpen={isRetrainAlertOpen}
+            onClose={onRetrainAlertClose}
+            onAccept={handleAcceptRetrain}
+            acceptButtonLabel="Accept"
+            acceptButtonColor="blue"
+          />
+          <Modal
+            isOpen={isPhotoViewModalOpen}
+            onClose={() => {
+              onPhotoViewModalClose();
+              setEditData({});
+            }}
+            size="4xl"
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader textTransform="capitalize">
+                {editData.fullname}'s Photos
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <SimpleGrid
+                  spacing={3}
+                  gridTemplateColumns="repeat(auto-fit, minmax(150px,1fr))"
+                >
+                  {listEmployeePhotos.map((item, index) => (
+                    <Flex
+                      alignItems="center"
+                      key={index}
+                      boxSize="150px"
+                      bg="black"
+                    >
+                      {/* <Image src={test_image} /> */}
+                      <AvatarWithPreview
+                        src={item.url}
+                        altBoxSide="150px"
+                        altRounded="none"
+                        className="rounded-none"
+                        alt={`${editData.fullname}-training-photo`}
+                      />
+                    </Flex>
+                  ))}
+                </SimpleGrid>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  colorScheme="blue"
+                  mr={3}
+                  onClick={() => {
+                    onPhotoViewModalClose();
+                    setEditData({});
+                  }}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Box>
+      )}
     </Stack>
   );
 }

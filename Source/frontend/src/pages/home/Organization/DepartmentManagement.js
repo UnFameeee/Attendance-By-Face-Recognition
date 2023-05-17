@@ -37,23 +37,24 @@ function DepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const { data: dataListDepartment, isFetching: isFetchingListDepartment } =
-    useGetListDepartment();
+  const {
+    data: dataListDepartment,
+    isFetching: isFetchingListDepartment,
+    isLoading: isLoadingListDepartment,
+  } = useGetListDepartment();
   const {
     data: dataListOrganization,
     isLoading: isLoadingListOrganization,
     isFetching: isFetchingListOrganization,
-    isFetched,
   } = useQuery("listOrganization", organizationService.getListOrganization, {
     refetchOnWindowFocus: false,
-    retry: 3,
-    enabled: dataListDepartment && Object.keys(dataListDepartment).length > 0,
+    retry: 1,
   });
   const [listOrganizationArray, setListOrganizationArray] = useState([]);
   useEffect(() => {
     setListOrganizationArray(
       Helper.convertToArraySelection(
-        dataListOrganization?.result?.data,
+        dataListOrganization?.result,
         "organizationName",
         "organizationId"
       )
@@ -184,17 +185,6 @@ function DepartmentManagement() {
   const closeDrawer = () => {
     onAddEditClose();
     setEditData({});
-  };
-  const matchingOrganizationName = (organizationId) => {
-    if (listOrganizationArray?.length > 0) {
-      let result = listOrganizationArray.find(
-        (item) => item.value == organizationId
-      );
-      if (result) {
-        return result.label;
-      }
-      return "";
-    }
   };
   // #endregion
   // #region table
@@ -350,7 +340,7 @@ function DepartmentManagement() {
     address: Yup.string().required("This field is required"),
   });
   // #endregion
-  if (isFetchingListOrganization || isFetchingListDepartment)
+  if (isLoadingListDepartment || isLoadingListOrganization)
     return <LoadingSpinner />;
   return (
     <Stack h="100%" spacing={4}>
@@ -365,41 +355,37 @@ function DepartmentManagement() {
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Department Management</Heading>
       </Flex>
-      <Box marginTop="10px" >
-        {dataListDepartment &&
-        dataListDepartment.result.data != undefined &&
-        dataListDepartment.result.data.length == 0 ? (
-          <NoDataToDisplay h="100%" />
-        ) : (
-          <>
-            <DynamicTable
-              onAddEditOpen={onAddEditOpen}
-              handleDeleteRange={DeleteRange}
-              tableRowAction={tableRowAction}
-              columns={columns}
-              data={dataListDepartment?.result?.data}
-              permission={resultPermission}
-            />
-            <DynamicDrawer
-              handleEdit={handleEditDepartment}
-              handleCreate={handleCreateDepartment}
-              isAddEditOpen={isAddEditOpen}
-              onAddEditClose={onAddEditClose}
-              editData={editData}
-              setEditData={setEditData}
-              validationSchema={validationSchema}
-              initialValues={initialValues}
-              drawerFieldData={drawerFieldData}
-            />
-            <ChakraAlertDialog
-              title="Delete Single"
-              isOpen={isDeleteSingleOpen}
-              onClose={onDeleteSingleClose}
-              onAccept={handleAcceptDelete}
-            />
-          </>
-        )}
-      </Box>
+      {useCreateDepartment.isLoading || useSaveDepartment.isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <Box marginTop="10px">
+          <DynamicTable
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={dataListDepartment?.result?.data}
+            permission={resultPermission}
+          />
+          <DynamicDrawer
+            handleEdit={handleEditDepartment}
+            handleCreate={handleCreateDepartment}
+            isAddEditOpen={isAddEditOpen}
+            onAddEditClose={onAddEditClose}
+            editData={editData}
+            setEditData={setEditData}
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            drawerFieldData={drawerFieldData}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+        </Box>
+      )}
     </Stack>
   );
 }

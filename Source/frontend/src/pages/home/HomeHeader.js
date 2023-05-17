@@ -53,7 +53,7 @@ function HomeHeader() {
       dispatch(setUser(null));
       navigate("/sign-in");
       toast({
-        title: "Sign out successfully",
+        title: "Sign Out Successfully",
         position: "bottom-right",
         status: "success",
         isClosable: true,

@@ -114,10 +114,7 @@ function DynamicTable(props) {
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 25 },
-      manualSortBy: true,
-      disableMultiSort: false,
-      manualPagination: false,
+      initialState: { pageIndex: 0, pageSize: 5 },
     },
     (hooks) => {
       hooks?.visibleColumns?.push((columns) => [
@@ -265,7 +262,7 @@ function DynamicTable(props) {
       },
       filterAndSorter: initialData,
     });
-    setPageSize(25);
+    setPageSize(pageSize);
     gotoPage(0);
   };
   useEffect(() => {
@@ -441,7 +438,7 @@ function DynamicTable(props) {
                         setPageSize(Number(e.target.value));
                       }}
                     >
-                      {[25, 50, 100].map((pageSize) => (
+                      {[5, 10, 15].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
                           Show {pageSize}
                         </option>
@@ -619,7 +616,7 @@ function DynamicTable(props) {
               </Thead>
               <Tbody width="100%" bgColor="white" {...getTableBodyProps()}>
                 {rows?.length > 0 &&
-                  rows?.map((row, index) => {
+                  page?.map((row, index) => {
                     prepareRow(row);
                     return (
                       <Tr

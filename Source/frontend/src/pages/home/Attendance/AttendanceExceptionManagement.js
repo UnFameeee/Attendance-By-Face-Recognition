@@ -66,6 +66,9 @@ function AttendanceExceptionManagement() {
     useState();
   const [checkType, setCheckType] = useState("CHECKIN");
   const [userRole, setUserRole] = useState(Helper.getUserRole());
+  const [departmentId, setDepartmentId] = useState(
+    Helper.getUseDecodeInfor().departmentId ?? ""
+  );
   // #endregion
   // #region hooks
   const {
@@ -307,12 +310,8 @@ function AttendanceExceptionManagement() {
     );
   }, [listDepartmentData]);
   const initialValuesForm = {
-    dateSelect: "",
-    departmentId: "",
+    departmentId: departmentId ?? "",
   };
-  const validationSchemaForm = Yup.object().shape({
-    departmentId: Yup.string().required("This field is required"),
-  });
   const [initialValuesModal, setInitialValuesModal] = useState();
   useEffect(() => {
     if (currentApprovalAttendanceException) {
@@ -349,6 +348,28 @@ function AttendanceExceptionManagement() {
       onAddEditOpen();
     }
   }, [initialValuesModal]);
+  const initialValuesForDateFilterSelection = {
+    dateFilter: "",
+  };
+  const handleOnChangeDateFilter = (value) => {
+    getListAttendanceException(value);
+  };
+  const getListAttendanceException = (filterValue = "") => {
+    let attendanceExceptionObj = {};
+    attendanceExceptionObj["attendanceType"] = checkType;
+    if (filterValue != "") {
+      attendanceExceptionObj["filter"] = filterValue;
+    }
+    attendanceExceptionObj["roleName"] = userRole.role;
+    attendanceExceptionObj["departmentId"] = departmentId;
+    setAttendanceExceptionGetListObj(attendanceExceptionObj);
+    useGetListAttendanceException.mutate(attendanceExceptionObj);
+  };
+  useEffect(() => {
+    if (userRole.role == "manager") {
+      getListAttendanceException();
+    }
+  }, []);
   // #endregion
   return (
     <VStack h="100%" alignItems="flex-start" spacing={3}>
@@ -365,55 +386,105 @@ function AttendanceExceptionManagement() {
           <Heading fontSize="3xl">Attendance Exception Management</Heading>
         </Flex>
       </VStack>
-      <HStack bg="white" p={3} rounded="md" shadow="2xl">
-        <Formik
-          initialValues={initialValuesForm}
-          validationSchema={validationSchemaForm}
-          onSubmit={(values, actions) => {
-            let attendanceExceptionListDataObj = {};
-            attendanceExceptionListDataObj["attendanceType"] = checkType;
-            if (values.dateSelect != "") {
-              attendanceExceptionListDataObj["filter"] = values.dateSelect;
-            }
-            attendanceExceptionListDataObj["roleName"] = userRole.role;
-            attendanceExceptionListDataObj["departmentId"] =
-              values.departmentId;
-            setAttendanceExceptionGetListObj(attendanceExceptionListDataObj);
-            useGetListAttendanceException.mutate(
-              attendanceExceptionListDataObj
-            );
-          }}
-        >
-          {(formik) => (
-            <HStack
-              // alignItems="end"
-              as="form"
-              onSubmit={formik.handleSubmit}
-              flexDirection={{ sm: "row", base: "column" }}
-              gap="10px"
-              alignItems={{ base: "baseline", sm: "end" }}
+      <HStack
+        bg="white"
+        p={3}
+        rounded="md"
+        shadow="2xl"
+        gap="10px"
+        w="fit-content"
+        alignItems={{ base: "baseline", md: "center" }}
+        flexDirection={{ base: "column", md: "row" }}
+      >
+        <HStack alignItems={{ base: "baseline", sm: "center" }}>
+          <Heading fontSize="xl" fontWeight="medium">
+            <Highlight
+              query={["Department:"]}
+              styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
             >
-              <FormTextField
-                label="Date"
-                name="dateSelect"
-                isDateField={true}
-              />
-              <FormTextField
-                label="Department"
-                name="departmentId"
-                isSelectionField={true}
-                placeholder="---"
-                selectionArray={listDepartmentArray}
-              />
+              Department:
+            </Highlight>
+          </Heading>
+          <Formik
+            initialValues={initialValuesForm}
+            onSubmit={(values, actions) => {
+              const departmentId = values.departmentId;
+              if (departmentId != "") {
+                setDepartmentId(departmentId);
+                let attendanceExceptionObj = {};
+                attendanceExceptionObj["attendanceType"] = checkType;
+                attendanceExceptionObj["roleName"] = userRole.role;
+                attendanceExceptionObj["departmentId"] = values.departmentId;
+                setAttendanceExceptionGetListObj(attendanceExceptionObj);
+                useGetListAttendanceException.mutate(attendanceExceptionObj);
+              } else {
+                setListAttendanceException([]);
+              }
+            }}
+          >
+            {(formik) => (
+              <HStack
+                // alignItems="end"
+                as="form"
+                onSubmit={formik.handleSubmit}
+                flexDirection={{ sm: "row", base: "column" }}
+                gap="10px"
+                alignItems={{ base: "baseline", sm: "end" }}
+              >
+                <FormTextField
+                  name="departmentId"
+                  isSelectionField={true}
+                  placeholder="---"
+                  isReadOnly={userRole?.role == "manager"}
+                  selectionArray={listDepartmentArray}
+                />
+                {userRole.role != "manager" && (
+                  <div className=" mt-[6px]">
+                    <Button colorScheme="blue" type="submit" size="md">
+                      Submit
+                    </Button>
+                  </div>
+                )}
+              </HStack>
+            )}
+          </Formik>
+        </HStack>
+        {departmentId != "" && (
+          <Tooltip hasArrow label="Filter for start date of the leave request">
+            <HStack
+              w="fit-content"
+              bg="white"
+              rounded="md"
+              justifyContent="flex-end"
+            >
+              <Heading fontSize="xl" fontWeight="medium">
+                <Highlight
+                  query={["Date Filter:"]}
+                  styles={{
+                    px: "2",
+                    py: "1",
+                    rounded: "full",
+                    bg: "purple.100",
+                  }}
+                >
+                  Date Filter:
+                </Highlight>
+              </Heading>
 
-              <div className=" mt-[6px]">
-                <Button colorScheme="blue" type="submit" size="md">
-                  Submit
-                </Button>
-              </div>
+              <Formik initialValues={initialValuesForDateFilterSelection}>
+                {(formik) => (
+                  <Box>
+                    <FormTextField
+                      name="dateFilter"
+                      isDateField={true}
+                      handleOnChange={handleOnChangeDateFilter}
+                    />
+                  </Box>
+                )}
+              </Formik>
             </HStack>
-          )}
-        </Formik>
+          </Tooltip>
+        )}
       </HStack>
       <Box w="100%">
         <Tabs
@@ -457,8 +528,6 @@ function AttendanceExceptionManagement() {
                     columns={columns}
                     data={listAttendanceException}
                     permission={resultPermission}
-                    noPaging={true}
-                    hideButtons={true}
                   />
                 </Box>
               ) : (
@@ -514,8 +583,6 @@ function AttendanceExceptionManagement() {
                     columns={columns}
                     data={listAttendanceException}
                     permission={resultPermission}
-                    noPaging={true}
-                    hideButtons={true}
                   />
                 </Box>
               ) : (
