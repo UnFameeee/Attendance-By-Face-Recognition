@@ -612,7 +612,6 @@ function EmployeesManagement() {
             columns={columns}
             data={listEmployeeData?.result?.data}
             permission={resultPermission}
-            paging={listEmployeeData?.result?.page}
           />
           <DynamicDrawer
             handleEdit={handleEditEmployee}

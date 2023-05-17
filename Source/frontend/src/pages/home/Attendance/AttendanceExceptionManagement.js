@@ -528,8 +528,6 @@ function AttendanceExceptionManagement() {
                     columns={columns}
                     data={listAttendanceException}
                     permission={resultPermission}
-                    noPaging={true}
-                    hideButtons={true}
                   />
                 </Box>
               ) : (
@@ -585,8 +583,6 @@ function AttendanceExceptionManagement() {
                     columns={columns}
                     data={listAttendanceException}
                     permission={resultPermission}
-                    noPaging={true}
-                    hideButtons={true}
                   />
                 </Box>
               ) : (

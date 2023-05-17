@@ -494,7 +494,7 @@ function LeaveRequestPersonal() {
           <LoadingSpinner />
         </Box>
       ) : (
-        <Box mt="10px">
+        <Box w='100%' mt="10px">
           <DynamicTable
             onAddEditOpen={onAddEditOpen}
             handleDeleteRange={DeleteRange}
@@ -502,7 +502,6 @@ function LeaveRequestPersonal() {
             columns={columns}
             data={LREmployeeData?.result?.data}
             permission={resultPermission}
-            noPaging={true}
           />
           <DynamicDrawer
             handleCreate={handleSubmitLeaveRequest}

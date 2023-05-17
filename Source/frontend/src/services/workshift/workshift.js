@@ -38,10 +38,7 @@ const calculateRealMonth = (monthIndex) => {
   return month;
 };
 const getListShiftType = async () => {
-  const paging = {
-    page: 0,
-    pageSize: 20,
-  };
+  const paging = pagingInstance
   const response = await axiosBase.post(
     `${endPointShiftType}/getAllShiftType`,
     paging

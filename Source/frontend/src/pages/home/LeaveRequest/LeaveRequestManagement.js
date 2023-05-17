@@ -998,7 +998,6 @@ function LeaveRequestManagement() {
             columns={columns}
             data={listLRDepartment}
             permission={resultPermission}
-            noPaging={true}
           />
           <DynamicDrawer
             handleEdit={handleApprovalLeaveRequest}
