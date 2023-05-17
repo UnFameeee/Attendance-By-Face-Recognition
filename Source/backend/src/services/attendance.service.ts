@@ -123,7 +123,7 @@ export class AttendanceService {
           checkinCapture: data.image,
           checkOut: null,
           lateArrival: lateArrival,
-          totalHours: 0,
+          totalHours: Helper.ConfigStaticDateTime("00:00"),
           absent: false,
           note: "",
         }
