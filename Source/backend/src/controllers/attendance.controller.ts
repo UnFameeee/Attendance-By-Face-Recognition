@@ -86,4 +86,15 @@ export class AttendanceController {
       next(err);
     }
   }
+
+  public getAttendanceStatistic = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const data: DateTimeV2DTO = req.body;
+      const employeeId: string = req.params.employeeId;
+      const response = await this.attendanceService.getAttendanceStatistic(employeeId, data);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

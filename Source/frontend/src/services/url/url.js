@@ -33,10 +33,6 @@ const generateURL = async (urlType, employeeId, urlImage) => {
 }
 
 const useGenerateURL = ({ urlType, employeeId, urlImage }) => {
-  console.log(urlType)
-  console.log(employeeId)
-  console.log(urlImage)
-
   return useQuery({
     queryKey: ['URL', 'generate', urlType, employeeId, urlImage],
     queryFn: async () => {

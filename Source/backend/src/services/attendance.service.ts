@@ -27,6 +27,8 @@ export class AttendanceService {
         employeeId: true,
         shiftDate: true,
         shiftTypeId: true,
+        allowEarlyLeave: true,
+        allowLateArrival: true,
         shiftType: {
           select: {
             shiftName: true,
@@ -55,6 +57,13 @@ export class AttendanceService {
     const shiftDate = workShift.shiftDate;
     const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
 
+    const queryOrganizationData = await prisma.organization.findFirst({
+      select: {
+        limitEarlyLeave: true,
+        limitLateArrival: true,
+      }
+    })
+
     //If there ISN'T attendance record, it is CHECKIN
     if (!checkAttendance) {
       //Get the time from shiftType - HH:mm
@@ -64,22 +73,31 @@ export class AttendanceService {
       //Convert both of startTime and shiftDate to Date value
       let startShift: Date = Helper.ConfigStaticDateTime(time, date);
 
-      //create a threshhold, which is the startTime +1 and -1 hour
-      let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
-      shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
+      //Nếu allowLateArrival == false => nhân viên được phép đi trễ
+      if (workShift.allowLateArrival == false) {
+        let baseStartTime = moment(startTime, 'HH:mm');
+        let baseLimitLateArrival = moment(queryOrganizationData.limitLateArrival, 'HH:mm');
+        let resultHour = moment(baseStartTime.clone().add(baseLimitLateArrival.hour(), 'hours').add(baseLimitLateArrival.minute(), 'minutes')).format("HH:mm");
 
-      let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
-      shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
+        let shiftThreshholdAfter = Helper.ConfigStaticDateTime(resultHour, date);
 
-      //the latest punch in is startTime + 1 hour
-      if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
-        response.message = "You are 1 hour late to checkin, please contact with the manager";
-        return response;
-      }
+        // //create a threshhold, which is the startTime +1 and -1 hour
+        // let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
+        // shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
 
-      if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
-        response.message = "You checkin so soon, comeback 1 hour before the shift start";
-        return response;
+        // let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
+        // shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
+
+        //the latest punch in is startTime + 1 hour
+        if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+          response.message = "You are 1 hour late to checkin, please contact with the manager";
+          return response;
+        }
+
+        // if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
+        //   response.message = "You checkin so soon, comeback 1 hour before the shift start";
+        //   return response;
+        // }
       }
 
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
@@ -125,24 +143,33 @@ export class AttendanceService {
       //Convert both of startTime and shiftDate to Date value
       let endShift: Date = Helper.ConfigStaticDateTime(time, date);
 
-      //create a threshhold, which is the startTime +1 and -1 hour
-      let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
-      shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
-
-      let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
-      shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
-
-      //the earliest punch out is endTime - 1 hour
-      if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
-        response.message = "You checkout too early, please contact with the manager";
-        return response;
+      //Nếu allowEarlyLeave == false => nhân viên được phép về sớm
+      if (workShift.allowLateArrival == false) {
+        let baseEndTime = moment(endTime, 'HH:mm');
+        let baseLimitEarlyLeave = moment(queryOrganizationData.limitLateArrival, 'HH:mm');
+        let resultHour = moment(baseEndTime.clone().subtract(baseLimitEarlyLeave.hour(), 'hours').add(baseLimitEarlyLeave.minute(), 'minutes')).format("HH:mm");
+  
+        let shiftThreshholdBefore = Helper.ConfigStaticDateTime(resultHour, date);
+  
+        // //create a threshhold, which is the startTime +1 and -1 hour
+        // let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
+        // shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
+  
+        // let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
+        // shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
+  
+        //the earliest punch out is endTime - 1 hour
+        if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
+          response.message = "You checkout too early, please contact with the manager";
+          return response;
+        }
+  
+        // if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+        //   response.message = "You checkout too late, please contact with the manager";
+        //   return response;
+        // }
       }
-
-      if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
-        response.message = "You checkout too late, please contact with the manager";
-        return response;
-      }
-
+      
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
       let diff = moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(endShift.getTime()), "HH:mm"));
 
@@ -166,6 +193,8 @@ export class AttendanceService {
         }
       })
 
+      const totalHours = Helper.MinusDate(queryShiftData.checkOut, queryShiftData.checkIn, true);
+
       let queryData = await prisma.attendance.update({
         where: {
           attendanceId: queryShiftData.attendanceId,
@@ -176,7 +205,7 @@ export class AttendanceService {
           checkOut: new Date(now.toISOString()),
           checkoutCapture: data.image,
           earlyLeave: earlyLeave,
-          totalHours: 0,
+          totalHours: Helper.ConfigStaticDateTime(totalHours),
         }
       })
       if (queryData) {
@@ -220,6 +249,19 @@ export class AttendanceService {
       }
     })
 
+    const queryLeaveData = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+        absent: true,
+      },
+    })
+
+
     const totalAttendance = await prisma.attendance.count({
       where: {
         employeeId: employeeId,
@@ -255,6 +297,7 @@ export class AttendanceService {
 
     const returnData = {
       totalAttendance: totalAttendance,
+      totalLeaveDays: queryLeaveData,
       totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
       totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
       totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
@@ -328,6 +371,7 @@ export class AttendanceService {
         checkOut: true,
         lateArrival: true,
         earlyLeave: true,
+        absent: true,
       }
     })
 
@@ -372,6 +416,55 @@ export class AttendanceService {
     }
 
     response.result = returnData;
+    return response;
+  }
+
+  public getAttendanceStatistic = async (employeeId: string, data: DateTimeV2DTO) => {
+    const response = new ResponseData<any>;
+
+    const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const queryAttendanceData = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+        totalHours: {
+          not: undefined,
+        }
+      }
+    })
+
+    const queryLeaveData = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        absent: true,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      }
+    })
+
+    var resultArray = [
+      {
+        type: "Attendance Day",
+        value: queryAttendanceData,
+      },
+      {
+        type: "Leave Day",
+        value: queryLeaveData,
+      },
+    ];
+
+    response.result = resultArray;
     return response;
   }
 }

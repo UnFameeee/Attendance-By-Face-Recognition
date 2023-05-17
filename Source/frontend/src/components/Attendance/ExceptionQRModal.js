@@ -15,7 +15,7 @@ export default function ExceptionQRModal({ urlImage }) {
 
   useEffect(() => {
     urlGenerateRefetch();
-  }, [])
+  }, [urlImage])
 
   if (urlGenerateisFetching) {
     return <></>

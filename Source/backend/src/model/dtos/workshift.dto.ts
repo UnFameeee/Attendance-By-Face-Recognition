@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, z } from "zod";
 
 // {
 // fromDate: ""
@@ -83,6 +83,14 @@ export const modifyWorkshiftSchema = z.object({
       invalid_type_error: "ShiftDate must be string"
     })
     .trim(),
+
+  allowEarlyLeave: z
+    .boolean()
+    .optional(),
+
+  allowLateArrival: z
+    .boolean()
+    .optional(),
 });
 export type ModifyWorkshiftDTO = z.infer<typeof modifyWorkshiftSchema>;
 
@@ -121,7 +129,18 @@ export const dateTimeSchema = z.object({
       required_error: 'Year is required',
       invalid_type_error: "Year must be number",
     })
-    .min(1, "Year must be positive number")
+    .min(1, "Year must be positive number"),
+
+  selection: z
+    .object({
+      work: z
+        .boolean()
+        .optional(),
+      leave: z
+        .boolean()
+        .optional(),
+    })
+    .optional()
 
 });
 export type DateTimeDTO = z.infer<typeof dateTimeSchema>;

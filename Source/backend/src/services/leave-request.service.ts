@@ -455,6 +455,22 @@ export class LeaveRequestService {
       where: {
         leaveRequestId: leaveRequestId,
         deleted: false,
+      },
+      select: {
+        leaveRequestId: true,
+        employeeId: true,
+        approverId: true,
+        leaveType: {
+          select: {
+            annualLeave: true,
+          }
+        },
+        requestDate: true,
+        startDate: true,
+        endDate: true,
+        status: true,
+        reason: true,
+        note: true,
       }
     })
 
@@ -504,6 +520,7 @@ export class LeaveRequestService {
             }
           })
 
+          //Tạo bên workshift
           if (!queryWorkshiftData) {
             await prisma.workshift.create({
               data: {
@@ -524,6 +541,30 @@ export class LeaveRequestService {
               }
             })
           }
+
+          // Nếu là nghỉ có phép
+          var totalHours;
+          if (queryData.leaveType.annualLeave == true) {
+            totalHours = Helper.ConfigStaticDateTime("08:00");
+          } else {
+            totalHours = Helper.ConfigStaticDateTime("00:00");
+          }
+
+          //Tạo Attendance với totalHours = 08:00
+          const queryCreateAttendance = await prisma.attendance.create({
+            data: {
+              employeeId: queryData.employeeId,
+              attendanceDate: date,
+              checkIn: date,
+              checkOut: date,
+              lateArrival: Helper.ConfigStaticDateTime("00:00"),
+              earlyLeave: Helper.ConfigStaticDateTime("00:00"),
+              totalHours: totalHours,
+              absent: true,
+              note: queryData.note,
+            }
+          })
+
         }
       } else {
         const dateInMonth = moment(`${leaveRequestYear + 1}-${leaveRequestMonthStart}-01`, "YYYY-MM-DD").daysInMonth();
@@ -559,6 +600,29 @@ export class LeaveRequestService {
               }
             })
           }
+
+          // Nếu là nghỉ có phép
+          var totalHours;
+          if (queryData.leaveType.annualLeave == true) {
+            totalHours = Helper.ConfigStaticDateTime("08:00");
+          } else {
+            totalHours = Helper.ConfigStaticDateTime("00:00");
+          }
+
+          //Tạo Attendance với totalHours = 08:00
+          const queryCreateAttendance = await prisma.attendance.create({
+            data: {
+              employeeId: queryData.employeeId,
+              attendanceDate: date,
+              checkIn: date,
+              checkOut: date,
+              lateArrival: Helper.ConfigStaticDateTime("00:00"),
+              earlyLeave: Helper.ConfigStaticDateTime("00:00"),
+              totalHours: totalHours,
+              absent: true,
+              note: queryData.note,
+            }
+          })
         }
         for (let i = 1; i <= leaveRequestDateEnd; ++i) {
           // Get the date in ISO 8601 format (e.g. "2023-04-01")
@@ -592,6 +656,29 @@ export class LeaveRequestService {
               }
             })
           }
+
+          // Nếu là nghỉ có phép
+          var totalHours;
+          if (queryData.leaveType.annualLeave == true) {
+            totalHours = Helper.ConfigStaticDateTime("08:00");
+          } else {
+            totalHours = Helper.ConfigStaticDateTime("00:00");
+          }
+
+          //Tạo Attendance với totalHours = 08:00
+          const queryCreateAttendance = await prisma.attendance.create({
+            data: {
+              employeeId: queryData.employeeId,
+              attendanceDate: date,
+              checkIn: date,
+              checkOut: date,
+              lateArrival: Helper.ConfigStaticDateTime("00:00"),
+              earlyLeave: Helper.ConfigStaticDateTime("00:00"),
+              totalHours: totalHours,
+              absent: true,
+              note: queryData.note,
+            }
+          })
         }
       }
     }

@@ -7,6 +7,7 @@ import { ROLE } from "../constant/database.constant";
 import { prisma } from "../database/prisma.singleton";
 import { GetAttendanceExceptionDataDTO, SubmitAttendanceExceptionDTO } from "../model/dtos/attendance-exception.dto";
 import { Helper } from "../utils/helper";
+import { DateTimeV2DTO } from "../model/dtos/workshift.dto";
 
 export class AttendanceExceptionService {
   public submitAttendanceException = async (data: SubmitAttendanceExceptionDTO) => {
@@ -427,6 +428,8 @@ export class AttendanceExceptionService {
           }
         })
 
+        const totalHours = Helper.MinusDate(queryShiftData.checkOut, queryShiftData.checkIn, true);
+
         let queryData = await prisma.attendance.update({
           where: {
             attendanceId: queryShiftData.attendanceId,
@@ -436,7 +439,7 @@ export class AttendanceExceptionService {
             attendanceDate: modifyDate,
             checkOut: dateException,
             earlyLeave: earlyLeave,
-            totalHours: 0,
+            totalHours: Helper.ConfigStaticDateTime(totalHours),
           }
         })
       }

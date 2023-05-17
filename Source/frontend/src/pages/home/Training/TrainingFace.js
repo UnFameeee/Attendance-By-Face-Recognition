@@ -13,7 +13,7 @@ import { useMutation } from 'react-query';
 import { trainingService } from '../../../services/training/training';
 
 let streamTrainingObj;
-const limitPictures = 2;
+const limitPictures = 40;
 export default function TrainingFace() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const videoRef = useRef(null);
@@ -107,6 +107,8 @@ export default function TrainingFace() {
     async function addEvent() {
       // const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
+        const videoImageCap = videoRef.current.video;
+
         const detections = await faceapi
           // .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
           .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
@@ -141,7 +143,7 @@ export default function TrainingFace() {
           }
         }
       }
-      intervalRef.current = setInterval(realtimeFaceRegconition, 1000);
+      intervalRef.current = setInterval(realtimeFaceRegconition, 500);
     }
     addEvent();
 
