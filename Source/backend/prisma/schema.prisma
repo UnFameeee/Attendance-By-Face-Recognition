@@ -219,7 +219,7 @@ model Attendance {
   checkoutCapture String?
   lateArrival     DateTime?
   earlyLeave      DateTime?
-  totalHours      Float
+  totalHours      DateTime?
   absent          Boolean
   note            String
   deleted         Boolean   @default(false)

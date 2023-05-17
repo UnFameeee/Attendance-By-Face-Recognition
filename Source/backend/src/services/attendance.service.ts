@@ -193,6 +193,8 @@ export class AttendanceService {
         }
       })
 
+      const totalHours = Helper.MinusDate(queryShiftData.checkOut, queryShiftData.checkIn, true);
+
       let queryData = await prisma.attendance.update({
         where: {
           attendanceId: queryShiftData.attendanceId,
@@ -203,7 +205,7 @@ export class AttendanceService {
           checkOut: new Date(now.toISOString()),
           checkoutCapture: data.image,
           earlyLeave: earlyLeave,
-          totalHours: 0,
+          totalHours: Helper.ConfigStaticDateTime(totalHours),
         }
       })
       if (queryData) {
@@ -247,6 +249,19 @@ export class AttendanceService {
       }
     })
 
+    const queryLeaveData = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+        absent: true,
+      },
+    })
+
+
     const totalAttendance = await prisma.attendance.count({
       where: {
         employeeId: employeeId,
@@ -282,6 +297,7 @@ export class AttendanceService {
 
     const returnData = {
       totalAttendance: totalAttendance,
+      totalLeaveDays: queryLeaveData,
       totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
       totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
       totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
@@ -400,6 +416,55 @@ export class AttendanceService {
     }
 
     response.result = returnData;
+    return response;
+  }
+
+  public getAttendanceStatistic = async (employeeId: string, data: DateTimeV2DTO) => {
+    const response = new ResponseData<any>;
+
+    const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
+
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const queryAttendanceData = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+        totalHours: {
+          not: undefined,
+        }
+      }
+    })
+
+    const queryLeaveData = await prisma.attendance.count({
+      where: {
+        employeeId: employeeId,
+        absent: true,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+        deleted: false,
+      }
+    })
+
+    var resultArray = [
+      {
+        type: "Attendance Day",
+        value: queryAttendanceData,
+      },
+      {
+        type: "Leave Day",
+        value: queryLeaveData,
+      },
+    ];
+
+    response.result = resultArray;
     return response;
   }
 }
