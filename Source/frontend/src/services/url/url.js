@@ -22,27 +22,33 @@ const useValidateURL = ({ url }) => {
   })
 }
 
-const generateURL = async ({ urlType, employeeId }) => {
+const generateURL = async (urlType, employeeId, urlImage) => {
   var response;
   if (employeeId) {
     response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
-  } else {
-    response = await axiosBase.get(`${endPoint}/qr?type=${urlType}`);
+  } else if (urlImage) {
+    response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&url=${urlImage}`);
   }
   return response.data;
 }
 
-const useGenerateURL = ({ urlType, employeeId }) => {
-  console.log(employeeId);
+const useGenerateURL = ({ urlType, employeeId, urlImage }) => {
   return useQuery({
-    queryKey: ['URL', 'generate', `${urlType}`, employeeId],
+    queryKey: ['URL', 'generate', urlType, employeeId, urlImage],
     queryFn: async () => {
       var response;
+      // if (employeeId != null) {
+      //   console.log(urlImage);
+      //   response = await generateURL(urlType, employeeId, null);
+      // } else if (urlImage != null) {
+      //   console.log(urlImage);
+      // }
       if (employeeId) {
-        response = await generateURL({ urlType, employeeId });
-      } else {
-        response = await generateURL({ urlType });
+        response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
+      } else if (urlImage) {
+        response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&url=${urlImage}`);
       }
+      response = await generateURL(urlType, employeeId, urlImage);
       return response;
     },
     enabled: false,

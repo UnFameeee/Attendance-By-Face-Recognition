@@ -7,6 +7,7 @@ import { ROLE } from "../constant/database.constant";
 import { prisma } from "../database/prisma.singleton";
 import { GetAttendanceExceptionDataDTO, SubmitAttendanceExceptionDTO } from "../model/dtos/attendance-exception.dto";
 import { Helper } from "../utils/helper";
+import { DateTimeV2DTO } from "../model/dtos/workshift.dto";
 
 export class AttendanceExceptionService {
   public submitAttendanceException = async (data: SubmitAttendanceExceptionDTO) => {
@@ -65,6 +66,14 @@ export class AttendanceExceptionService {
       response.message = "The email isn't exist";
       return response;
     }
+
+    response.result = Helper.ConvertDoubleSlashURL(link);
+    return response;
+  }
+
+  public saveAnonymousImage = async (files: { [fieldname: string]: Express.Multer.File[] }) => {
+    const response = new ResponseData<string>;
+    let link = `${env.SERVER_URL}/public${(files.images[0].destination).split("public")[1]}/${files.images[0].filename}`
 
     response.result = Helper.ConvertDoubleSlashURL(link);
     return response;
@@ -419,6 +428,8 @@ export class AttendanceExceptionService {
           }
         })
 
+        const totalHours = Helper.MinusDate(queryShiftData.checkOut, queryShiftData.checkIn, true);
+
         let queryData = await prisma.attendance.update({
           where: {
             attendanceId: queryShiftData.attendanceId,
@@ -428,7 +439,7 @@ export class AttendanceExceptionService {
             attendanceDate: modifyDate,
             checkOut: dateException,
             earlyLeave: earlyLeave,
-            totalHours: 0,
+            totalHours: Helper.ConfigStaticDateTime(totalHours),
           }
         })
       }

@@ -10,6 +10,10 @@ export class WorkshiftService {
     const response = new ResponseData<WorkshiftModel[]>;
     var daysInPreviousmonth;
     var daysInNextmonth;
+    const selection: {
+      work?: boolean,
+      leave?: boolean,
+    } = data.selection;
 
     //Get last 7 days of the previous month and first 7 days of the next month 
     daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
@@ -27,8 +31,59 @@ export class WorkshiftService {
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
     const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
 
-    const queryData = await prisma.workshift.findMany({
-      where: {
+    var whereData;
+    if (selection) {
+      if (selection.work == true && selection.leave == true) {
+        //Select bình thường
+        whereData = {
+          deleted: false,
+          employee: {
+            department: {
+              departmentId: departmentId,
+            }
+          },
+          shiftDate: {
+            gte: startDate,
+            lte: endDate,
+          }
+        }
+      } else if (selection.work == true && selection.leave == false) {
+        //Lấy mỗi ngày đi làm
+        whereData = {
+          deleted: false,
+          absent: false,
+          employee: {
+            department: {
+              departmentId: departmentId,
+            }
+          },
+          shiftDate: {
+            gte: startDate,
+            lte: endDate,
+          }
+        }
+      } else if (selection.work == false && selection.leave == true) {
+        //Lấy mỗi ngày nghỉ
+        whereData = {
+          deleted: false,
+          absent: true,
+          employee: {
+            department: {
+              departmentId: departmentId,
+            }
+          },
+          shiftDate: {
+            gte: startDate,
+            lte: endDate,
+          }
+        }
+      } else if (selection.work == false && selection.leave == false) {
+        //Không lấy gì cả
+        response.result = [];
+        return response;
+      }
+    } else {
+      whereData = {
         deleted: false,
         employee: {
           department: {
@@ -39,7 +94,11 @@ export class WorkshiftService {
           gte: startDate,
           lte: endDate,
         }
-      },
+      }
+    }
+
+    const queryData = await prisma.workshift.findMany({
+      where: whereData,
       select: {
         shiftId: true,
         employee: {
@@ -72,6 +131,10 @@ export class WorkshiftService {
     const response = new ResponseData<WorkshiftModel[]>;
     var daysInPreviousmonth;
     var daysInNextmonth;
+    const selection: {
+      work?: boolean,
+      leave?: boolean,
+    } = data.selection;
 
     //Get last 7 days of the previous month and first 7 days of the next month 
     daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
@@ -89,15 +152,58 @@ export class WorkshiftService {
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
     const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
 
-    const queryData = await prisma.workshift.findMany({
-      where: {
+    var whereData;
+    if (selection) {
+      if (selection.work == true && selection.leave == true) {
+        //Select bình thường
+        whereData = {
+          deleted: false,
+          employeeId: employeeId,
+          shiftDate: {
+            gte: startDate,
+            lte: endDate,
+          }
+        }
+      } else if (selection.work == true && selection.leave == false) {
+        //Lấy mỗi ngày đi làm
+        whereData = {
+          deleted: false,
+          absent: false,
+          employeeId: employeeId,
+          shiftDate: {
+            gte: startDate,
+            lte: endDate,
+          }
+        }
+      } else if (selection.work == false && selection.leave == true) {
+        //Lấy mỗi ngày nghỉ
+        whereData = {
+          deleted: false,
+          absent: true,
+          employeeId: employeeId,
+          shiftDate: {
+            gte: startDate,
+            lte: endDate,
+          }
+        }
+      } else if (selection.work == false && selection.leave == false) {
+        //Không lấy gì cả
+        response.result = [];
+        return response;
+      }
+    } else {
+      whereData = {
         deleted: false,
         employeeId: employeeId,
         shiftDate: {
           gte: startDate,
           lte: endDate,
         }
-      },
+      }
+    }
+
+    const queryData = await prisma.workshift.findMany({
+      where: whereData,
       select: {
         shiftId: true,
         absent: true,
@@ -238,13 +344,32 @@ export class WorkshiftService {
           response.message = "The employee that you moved the shift for, has their own workshift for today";
           return response;
         }
+
+        //Nếu đổi ca thì set lai allowEarlyLeave và allowLateArrival thành false.
+        const queryModifyData = await prisma.workshift.update({
+          data: {
+            employeeId: data.employeeId,
+            shiftTypeId: data.shiftTypeId,
+            shiftDate: modifyDate,
+            allowEarlyLeave: false,
+            allowLateArrival: false,
+          },
+          where: {
+            shiftId: data.shiftId
+          }
+        })
+        if (queryModifyData) {
+          response.result = "Update workshift successfully";
+          return response;
+        }
       }
 
       const queryModifyData = await prisma.workshift.update({
         data: {
-          employeeId: data.employeeId,
           shiftTypeId: data.shiftTypeId,
           shiftDate: modifyDate,
+          allowEarlyLeave: data.allowEarlyLeave,
+          allowLateArrival: data.allowLateArrival,
         },
         where: {
           shiftId: data.shiftId

@@ -32,9 +32,9 @@ function Dashboard() {
     if (data.result) {
       toast({
         title: (
-          <Box cursor='pointer' onClick={() => {navigate('/employees/employees-management'); toast.closeAll()}}>
+          <Box cursor='pointer' onClick={() => {navigate('training-qr'); toast.closeAll()}}>
             <Text>
-             Requesting to re-scan photos!
+             Requesting to re-scan your face!
             </Text>
             <Text>
              Click here to perform the action!

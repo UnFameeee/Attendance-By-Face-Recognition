@@ -83,7 +83,7 @@ export function Profile() {
         queryClient.invalidateQueries(["profileDetail", userDecodeData.id]);
         if (isFirstTimeLogin) {
           localStorage.setItem("isFirstTimeLogin", false);
-          navigate("/dashboard");
+          navigate("/training-qr");
         }
         toast({
           title: "Save Profile Detail Successfully",

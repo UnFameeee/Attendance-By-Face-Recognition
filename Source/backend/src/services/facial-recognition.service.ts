@@ -48,16 +48,21 @@ export class FacialRecognitionService {
         const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
 
         // Resize the image
-        const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
+        // const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
 
-        console.log(resizedImage)
+        console.log(image)
 
-        const detection = await faceapi.detectSingleFace(resizedImage, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+        const detection = await faceapi.detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
           .withFaceLandmarks(false)
           .withAgeAndGender()
           .withFaceExpressions()
           .withFaceDescriptor();
-        descriptors.push(detection.descriptor);
+
+        if (detection) {
+          descriptors.push(detection.descriptor);
+        } else {
+          console.log("undefined");
+        }
       }
       labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
     }
@@ -112,7 +117,12 @@ export class FacialRecognitionService {
         .withAgeAndGender()
         .withFaceExpressions()
         .withFaceDescriptor();
-      descriptors.push(detection.descriptor);
+
+      if (detection) {
+        descriptors.push(detection.descriptor);
+      } else {
+        console.log("undefined");
+      }
     }
 
     //find whether the employeeId is trained or not, if the trained data already exist, delete it

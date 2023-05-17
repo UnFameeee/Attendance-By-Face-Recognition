@@ -14,10 +14,10 @@ import AttendanceModal from '../../../components/Attendance/AttendanceModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAttendanceModalProps } from '../../../store/Slice/AttendanceSlice/attendanceModalSlice';
 import { setIsScaningPaused, setIsTakeAttendance } from '../../../store/Slice/AttendanceSlice/takeAttendanceSlice';
-import ExceptionModel from './../../../components/Attendance/ExceptionModel';
+import ExceptionModel from '../../../components/Attendance/ExceptionModal';
 import Webcam from 'react-webcam'
 import { resetFailedCount, setExceptionModalOpen } from '../../../store/Slice/AttendanceSlice/exceptionModalSlice';
-import { setImageCapture } from '../../../store/Slice/AttendanceSlice/attendanceStorageSlice';
+import { setImageCapture, setImageExceptionCapture } from '../../../store/Slice/AttendanceSlice/attendanceStorageSlice';
 // const WebcamComponent = () => <Webcam />
 
 let streamObj;
@@ -29,7 +29,7 @@ export default function FaceAttendance() {
   const toast = useToast();
   const dispatch = useDispatch();
   const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
-  const { imageCapture } = useSelector(state => state.attendanceStorage);
+  const imageCapture = useSelector(state => state.attendanceStorage.imageCapture);
   const employeeId = useSelector(state => state.attendanceModal.employeeId);
 
   const useSaveImageOfAttendance = useMutation(({ employeeId, formData }) =>
@@ -202,8 +202,8 @@ export default function FaceAttendance() {
                   //remove the data in the detection array
                   faceDetectArray.splice(0, faceDetectArray.length);
 
-                  dispatch(setImageCapture({
-                    imageCapture: videoRef.current.getScreenshot(),
+                  dispatch(setImageExceptionCapture({
+                    imageExceptionCapture: videoRef.current.getScreenshot(),
                   }))
 
                   unknownCount = 0;
@@ -237,9 +237,9 @@ export default function FaceAttendance() {
                     imageCapture: videoRef.current.getScreenshot(),
                   }))
 
-                  const imageSrc = videoRef.current.getScreenshot();
-                  const IMG = document.getElementById("captureImage");
-                  IMG.src = imageSrc;
+                  dispatch(setImageExceptionCapture({
+                    imageExceptionCapture: videoRef.current.getScreenshot(),
+                  }))
                 }
 
                 faceDetectArray.splice(0, faceDetectArray.length);
