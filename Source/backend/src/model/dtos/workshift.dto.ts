@@ -161,14 +161,16 @@ export const dateTimeV2Schema = z.object({
       invalid_type_error: "Month must be number",
     })
     .min(1, "Month must be more than or equal to 1")
-    .max(13, "Month must be less than or equal to 12"),
+    .max(13, "Month must be less than or equal to 12")
+    .optional(),
 
   year: z
     .number({
       required_error: 'Year is required',
       invalid_type_error: "Year must be number",
     })
-    .min(1, "Year must be positive number"),
+    .min(1, "Year must be positive number")
+    .optional(),
 
   filter: z
     .string({

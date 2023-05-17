@@ -97,4 +97,15 @@ export class AttendanceController {
       next(err);
     }
   }
+
+  public getYearlyAttendanceStatistic = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const data: DateTimeV2DTO = req.body;
+      const employeeId: string = req.params.employeeId;
+      const response = await this.attendanceService.getYearlyAttendanceStatistic(employeeId, data);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
