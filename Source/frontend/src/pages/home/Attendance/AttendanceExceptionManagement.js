@@ -310,7 +310,7 @@ function AttendanceExceptionManagement() {
     );
   }, [listDepartmentData]);
   const initialValuesForm = {
-    departmentId: "",
+    departmentId: departmentId ?? "",
   };
   const [initialValuesModal, setInitialValuesModal] = useState();
   useEffect(() => {
@@ -352,16 +352,24 @@ function AttendanceExceptionManagement() {
     dateFilter: "",
   };
   const handleOnChangeDateFilter = (value) => {
-    let attendanceExceptionListDataObj = {};
-    attendanceExceptionListDataObj["attendanceType"] = checkType;
-    if (value != "") {
-      attendanceExceptionListDataObj["filter"] = value;
-    }
-    attendanceExceptionListDataObj["roleName"] = userRole.role;
-    attendanceExceptionListDataObj["departmentId"] = departmentId;
-    setAttendanceExceptionGetListObj(attendanceExceptionListDataObj);
-    useGetListAttendanceException.mutate(attendanceExceptionListDataObj);
+    getListAttendanceException(value);
   };
+  const getListAttendanceException = (filterValue = "") => {
+    let attendanceExceptionObj = {};
+    attendanceExceptionObj["attendanceType"] = checkType;
+    if (filterValue != "") {
+      attendanceExceptionObj["filter"] = filterValue;
+    }
+    attendanceExceptionObj["roleName"] = userRole.role;
+    attendanceExceptionObj["departmentId"] = departmentId;
+    setAttendanceExceptionGetListObj(attendanceExceptionObj);
+    useGetListAttendanceException.mutate(attendanceExceptionObj);
+  };
+  useEffect(() => {
+    if (userRole.role == "manager") {
+      getListAttendanceException();
+    }
+  }, []);
   // #endregion
   return (
     <VStack h="100%" alignItems="flex-start" spacing={3}>
@@ -383,8 +391,8 @@ function AttendanceExceptionManagement() {
         p={3}
         rounded="md"
         shadow="2xl"
-        gap='10px'
-        w='fit-content'
+        gap="10px"
+        w="fit-content"
         alignItems={{ base: "baseline", md: "center" }}
         flexDirection={{ base: "column", md: "row" }}
       >
@@ -403,17 +411,12 @@ function AttendanceExceptionManagement() {
               const departmentId = values.departmentId;
               if (departmentId != "") {
                 setDepartmentId(departmentId);
-                let attendanceExceptionListDataObj = {};
-                attendanceExceptionListDataObj["attendanceType"] = checkType;
-                attendanceExceptionListDataObj["roleName"] = userRole.role;
-                attendanceExceptionListDataObj["departmentId"] =
-                  values.departmentId;
-                setAttendanceExceptionGetListObj(
-                  attendanceExceptionListDataObj
-                );
-                useGetListAttendanceException.mutate(
-                  attendanceExceptionListDataObj
-                );
+                let attendanceExceptionObj = {};
+                attendanceExceptionObj["attendanceType"] = checkType;
+                attendanceExceptionObj["roleName"] = userRole.role;
+                attendanceExceptionObj["departmentId"] = values.departmentId;
+                setAttendanceExceptionGetListObj(attendanceExceptionObj);
+                useGetListAttendanceException.mutate(attendanceExceptionObj);
               } else {
                 setListAttendanceException([]);
               }
@@ -432,14 +435,16 @@ function AttendanceExceptionManagement() {
                   name="departmentId"
                   isSelectionField={true}
                   placeholder="---"
+                  isReadOnly={userRole?.role == "manager"}
                   selectionArray={listDepartmentArray}
                 />
-
-                <div className=" mt-[6px]">
-                  <Button colorScheme="blue" type="submit" size="md">
-                    Submit
-                  </Button>
-                </div>
+                {userRole.role != "manager" && (
+                  <div className=" mt-[6px]">
+                    <Button colorScheme="blue" type="submit" size="md">
+                      Submit
+                    </Button>
+                  </div>
+                )}
               </HStack>
             )}
           </Formik>
@@ -451,7 +456,6 @@ function AttendanceExceptionManagement() {
               bg="white"
               rounded="md"
               justifyContent="flex-end"
-              
             >
               <Heading fontSize="xl" fontWeight="medium">
                 <Highlight
@@ -469,7 +473,7 @@ function AttendanceExceptionManagement() {
 
               <Formik initialValues={initialValuesForDateFilterSelection}>
                 {(formik) => (
-                  <Box >
+                  <Box>
                     <FormTextField
                       name="dateFilter"
                       isDateField={true}

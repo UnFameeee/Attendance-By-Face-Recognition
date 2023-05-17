@@ -317,11 +317,6 @@ function LeaveRequestManagement() {
     onAddEditClose();
     setEditData({});
   };
-  const matchingRoleColor = (value) => {
-    return roleCodeColor.find(
-      (item) => Object.keys(item)[0].toLowerCase() === value.toLowerCase()
-    );
-  };
   const handleAcceptDeleteLeaveType = () => {
     onDeleteLeaveTypeAlertClose();
     setDeleteLeaveTypeId("");
@@ -664,6 +659,8 @@ function LeaveRequestManagement() {
       });
     }
   };
+  if (isLoadingListDepartment || isLoadingLRLeaveTypeData)
+    return <LoadingSpinner />;
   return (
     <Stack h="100%" spacing={4}>
       <Flex
@@ -685,7 +682,7 @@ function LeaveRequestManagement() {
         gap="10px"
         alignItems={{ base: "baseline", md: "center" }}
         flexDirection={{ base: "column", md: "row" }}
-        w='fit-content'
+        w="fit-content"
       >
         {userInfo?.roleName == "admin" && (
           <>
@@ -795,6 +792,7 @@ function LeaveRequestManagement() {
                                       onClick={() => {
                                         onDeleteLeaveTypeAlertOpen();
                                         setDeleteLeaveTypeId(item.leaveTypeId);
+                                        onModifyLeaveTypeModalClose()
                                       }}
                                     >
                                       Delete
@@ -988,34 +986,38 @@ function LeaveRequestManagement() {
           </Tooltip>
         )}
       </HStack>
-
-      <Box marginTop="10px">
-        <DynamicTable
-          onAddEditOpen={onAddEditOpen}
-          handleDeleteRange={DeleteRange}
-          tableRowAction={tableRowAction}
-          columns={columns}
-          data={listLRDepartment}
-          permission={resultPermission}
-          noPaging={true}
-        />
-        <DynamicDrawer
-          handleEdit={handleApprovalLeaveRequest}
-          isAddEditOpen={isAddEditOpen}
-          onAddEditClose={onAddEditClose}
-          editData={editData}
-          setEditData={setEditData}
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          drawerFieldData={drawerFieldData}
-        />
-        <ChakraAlertDialog
-          title="Delete Single"
-          isOpen={isDeleteSingleOpen}
-          onClose={onDeleteSingleClose}
-          onAccept={handleAcceptDelete}
-        />
-      </Box>
+      {useGetLeaveRequestOfDepartment.isLoading || useModifyLeaveType.isLoading || useDeleteLeaveRequest.isLoading ||
+      useDeleteLeaveType.isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <Box marginTop="10px">
+          <DynamicTable
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={listLRDepartment}
+            permission={resultPermission}
+            noPaging={true}
+          />
+          <DynamicDrawer
+            handleEdit={handleApprovalLeaveRequest}
+            isAddEditOpen={isAddEditOpen}
+            onAddEditClose={onAddEditClose}
+            editData={editData}
+            setEditData={setEditData}
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            drawerFieldData={drawerFieldData}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+        </Box>
+      )}
     </Stack>
   );
 }

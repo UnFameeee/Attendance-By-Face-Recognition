@@ -36,7 +36,7 @@ function OrganizationGeneral() {
   // #region hooks
   const {
     data: organizationDetailData,
-    isLoading,
+    isLoading: isLoadingOrganizationDetailData,
     isFetching: isFetchingOrganizationDetail,
   } = useGetOrganizationDetail();
   const useCreateOrganizationDetail = useMutation(
@@ -128,7 +128,7 @@ function OrganizationGeneral() {
   });
   // #endregion
 
-  if (isFetchingOrganizationDetail) return <LoadingSpinner />;
+  if (isLoadingOrganizationDetailData) return <LoadingSpinner />;
   return (
     <Stack h="100%" spacing={3}>
       {resultPermission?.read && (
@@ -159,95 +159,104 @@ function OrganizationGeneral() {
         >
           {(formik) => (
             <Stack as="form" onSubmit={formik.handleSubmit}>
-              <Flex
-                justifyContent="space-between"
-                gap="10px"
-                flexDirection={{
-                  base: "column",
-                  sm: "row",
-                }}
-              >
-                <Box>
+              {useSaveOrganizationDetail.isLoading ||
+              useCreateOrganizationDetail.isLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <>
                   <Flex
+                    justifyContent="space-between"
                     gap="10px"
-                    bg="white"
-                    rounded="md"
-                    p={2}
-                    w="fit-content"
-                    shadow="2xl"
+                    flexDirection={{
+                      base: "column",
+                      sm: "row",
+                    }}
                   >
-                    <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                    <Heading fontSize="3xl">Organization Details</Heading>
-                  </Flex>
-                </Box>
-                <HStack>
-                  <Tooltip
-                    placement="left"
-                    hasArrow
-                    label="Save Your Organization Information"
-                  >
-                    <Button
-                      isLoading={isLoading}
-                      type="submit"
-                      size="lg"
-                      colorScheme="blue"
-                      isDisabled={!resultPermission?.update}
-                    >
-                      Save
-                    </Button>
-                  </Tooltip>
-                </HStack>
-              </Flex>
-              <Flex
-                shadow="2xl"
-                gap={8}
-                flexDirection={{
-                  base: "column",
-                  sm: "column",
-                  md: "column",
-                  lg: "column",
-                  xl: "row",
-                }}
-              >
-                <Stack
-                  bgColor="white"
-                  flex="1"
-                  border="0.5px solid #cfd3df"
-                  rounded="lg"
-                >
-                  <>
-                    <Box p={4} px={8}>
-                      <Heading fontSize="xl">Organization Information</Heading>
+                    <Box>
+                      <Flex
+                        gap="10px"
+                        bg="white"
+                        rounded="md"
+                        p={2}
+                        w="fit-content"
+                        shadow="2xl"
+                      >
+                        <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                        <Heading fontSize="3xl">Organization Details</Heading>
+                      </Flex>
                     </Box>
-                    <Divider />
-                    <Stack spacing={3} p={4} px={8}>
-                      <FormTextField
-                        name="organizationName"
-                        label="Organization Name"
-                        placeholder="Enter your Organization Name"
-                        leftIcon={
-                          <SlOrganization color="#999" fontSize="1.5rem" />
-                        }
-                        isDisabled={!resultPermission?.update}
-                      />
-                      <FormTextField
-                        name="megaAddress"
-                        isAddress={true}
-                        formik={formik}
-                        isDisabled={!resultPermission?.update}
-                      />
-                      <FormTextField
-                        name="address"
-                        label="Address"
-                        isTextAreaField={true}
-                        type="text"
-                        placeholder="Enter your Address"
-                        isDisabled={!resultPermission?.update}
-                      />
+                    <HStack>
+                      <Tooltip
+                        placement="left"
+                        hasArrow
+                        label="Save Your Organization Information"
+                      >
+                        <Button
+                          isLoading={isLoadingOrganizationDetailData}
+                          type="submit"
+                          size="lg"
+                          colorScheme="blue"
+                          isDisabled={!resultPermission?.update}
+                        >
+                          Save
+                        </Button>
+                      </Tooltip>
+                    </HStack>
+                  </Flex>
+                  <Flex
+                    shadow="2xl"
+                    gap={8}
+                    flexDirection={{
+                      base: "column",
+                      sm: "column",
+                      md: "column",
+                      lg: "column",
+                      xl: "row",
+                    }}
+                  >
+                    <Stack
+                      bgColor="white"
+                      flex="1"
+                      border="0.5px solid #cfd3df"
+                      rounded="lg"
+                    >
+                      <>
+                        <Box p={4} px={8}>
+                          <Heading fontSize="xl">
+                            Organization Information
+                          </Heading>
+                        </Box>
+                        <Divider />
+                        <Stack spacing={3} p={4} px={8}>
+                          <FormTextField
+                            name="organizationName"
+                            label="Organization Name"
+                            placeholder="Enter your Organization Name"
+                            leftIcon={
+                              <SlOrganization color="#999" fontSize="1.5rem" />
+                            }
+                            isDisabled={!resultPermission?.update}
+                          />
+                          <FormTextField
+                            name="megaAddress"
+                            isAddress={true}
+                            formik={formik}
+                            isDisabled={!resultPermission?.update}
+                          />
+                          <FormTextField
+                            name="address"
+                            label="Address"
+                            isTextAreaField={true}
+                            type="text"
+                            placeholder="Enter your Address"
+                            isDisabled={!resultPermission?.update}
+                          />
+                        </Stack>
+                      </>
                     </Stack>
-                  </>
-                </Stack>
-              </Flex>
+                  </Flex>
+                </>
+              )}
             </Stack>
           )}
         </Formik>

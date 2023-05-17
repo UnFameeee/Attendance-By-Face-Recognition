@@ -29,7 +29,7 @@ function Register() {
   const useRegisterMutation = useMutation(authService.register, {
     onSuccess: (data) => {
       toast({
-        title: "Sign up successfully",
+        title: "Sign Up Successfully",
         position: "bottom-right",
         status: "success",
         isClosable: true,

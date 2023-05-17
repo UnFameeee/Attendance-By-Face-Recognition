@@ -89,11 +89,11 @@ export const SideBarData = [
     url: "work-shift",
     icon: <BsCalendar3 fontSize={iconSize} />,
   },
-  {
-    title: "Notification",
-    url: "notification",
-    icon: <IoNotifications fontSize={iconSize} />,
-  },
+  // {
+  //   title: "Notification",
+  //   url: "notification",
+  //   icon: <IoNotifications fontSize={iconSize} />,
+  // },
   // {
   //   title: "Report",
   //   url: "report",
@@ -123,11 +123,11 @@ export const SideBarData = [
     url: "attendance",
     icon: <MdAvTimer fontSize={iconSize} />,
     children: [
-      {
-        title: "Face Attendance",
-        url: "face-attendance",
-        icon: <TbFaceId fontSize={iconSize} />,
-      },
+      // {
+      //   title: "Face Attendance",
+      //   url: "face-attendance",
+      //   icon: <TbFaceId fontSize={iconSize} />,
+      // },
       {
         title: "Attendance",
         url: "attendance-personal",

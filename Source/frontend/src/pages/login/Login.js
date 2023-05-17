@@ -43,7 +43,7 @@ export default function Login() {
       localStorage.setItem("accessToken", JSON.stringify(access));
       const decodeData = jwtDecode(access);
       queryClient.setQueryData(["userDecodeData"], decodeData);
-
+      await permissionService.getPermission()
       const isFirstTimeLogin = await profileService.validateFirstTimeLogin();
       if (isFirstTimeLogin && isFirstTimeLogin.result) {
         navigate("/first-time-login");
@@ -53,13 +53,13 @@ export default function Login() {
         localStorage.setItem("isFirstTimeLogin", false);
       }
       toast({
-        title: "Sign in successfully",
+        title: "Sign In Successfully",
         position: "bottom-right",
         status: "success",
         isClosable: true,
         duration: 5000,
       });
-      getUserPermission.mutate();
+      
     },
     onError: (error) => {
       console.log(error);

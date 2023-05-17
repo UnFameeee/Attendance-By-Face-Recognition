@@ -108,7 +108,7 @@ root.render(
                       <Route path="payslip" element={<Test />} />
                     </Route> */}
                     <Route path="work-shift" element={<WorkShift />} />
-                    <Route path="notification" element={<Test />} />
+                    {/* <Route path="notification" element={<Test />} /> */}
                     {/* <Route path="report" element={<Test />} /> */}
                     <Route path="leave-request">
                       <Route

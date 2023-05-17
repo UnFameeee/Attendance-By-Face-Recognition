@@ -65,6 +65,7 @@ function LeaveRequestPersonal() {
   const {
     data: LREmployeeData,
     isLoading: isLoadingLREmployeeData,
+    isFetching: isFetchingLREmployeeData,
     refetch: refetchLREmployeeData,
   } = leaveRequestService.useGetLeaveRequestOfAnEmployee({
     currentDate,
@@ -373,7 +374,7 @@ function LeaveRequestPersonal() {
   )
     return <LoadingSpinner />;
   return (
-    <VStack h="100%" alignItems="flex-start" spacing={3}>
+    <Stack h="100%" alignItems="flex-start" spacing={3}>
       <Flex
         gap="10px"
         bg="white"
@@ -391,7 +392,7 @@ function LeaveRequestPersonal() {
         rounded="md"
         p={3}
         spacing="10px"
-        gap='10px'
+        gap="10px"
         shadow="2xl"
         alignItems={{ base: "baseline", lg: "center" }}
         flexDirection={{ base: "column", lg: "row" }}
@@ -488,37 +489,42 @@ function LeaveRequestPersonal() {
           </HStack>
         </Tooltip>
       </HStack>
-
-      <Box w="100%" mt="10px">
-        <DynamicTable
-          onAddEditOpen={onAddEditOpen}
-          handleDeleteRange={DeleteRange}
-          tableRowAction={tableRowAction}
-          columns={columns}
-          data={LREmployeeData?.result?.data}
-          permission={resultPermission}
-          noPaging={true}
-        />
-        <DynamicDrawer
-          handleCreate={handleSubmitLeaveRequest}
-          isAddEditOpen={isAddEditOpen}
-          onAddEditClose={onAddEditClose}
-          editData={editData}
-          setEditData={setEditData}
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-          drawerFieldData={drawerFieldData}
-          titleArray={["View", "Create"]}
-          disableSubmit={Object.keys(editData).length === 0 ? false : true}
-        />
-        <ChakraAlertDialog
-          title="Delete Single"
-          isOpen={isDeleteSingleOpen}
-          onClose={onDeleteSingleClose}
-          onAccept={handleAcceptDelete}
-        />
-      </Box>
-    </VStack>
+      {isFetchingLREmployeeData ? (
+        <Box w='100%'>
+          <LoadingSpinner />
+        </Box>
+      ) : (
+        <Box mt="10px">
+          <DynamicTable
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={LREmployeeData?.result?.data}
+            permission={resultPermission}
+            noPaging={true}
+          />
+          <DynamicDrawer
+            handleCreate={handleSubmitLeaveRequest}
+            isAddEditOpen={isAddEditOpen}
+            onAddEditClose={onAddEditClose}
+            editData={editData}
+            setEditData={setEditData}
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            drawerFieldData={drawerFieldData}
+            titleArray={["View", "Create"]}
+            disableSubmit={Object.keys(editData).length === 0 ? false : true}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+        </Box>
+      )}
+    </Stack>
   );
 }
 

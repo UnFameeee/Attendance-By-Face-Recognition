@@ -37,7 +37,7 @@ import dayjs from "dayjs";
 import background from '../../assets/bg2.jpg'
 function HomeSidebar() {
   var decoded = Helper.getUseDecodeInfor();
-  const [userRole, setUserRole] = useState("");
+  const [userRole, setUserRole] = useState(Helper.getUserRole());
   const [userAvatar, setUserAvatar] = useState();
   const { collapseSidebar, collapsed } = useProSidebar();
   const toast = useToast();
@@ -56,7 +56,7 @@ function HomeSidebar() {
       dispatch(setUser(null));
       navigate("/sign-in");
       toast({
-        title: "Sign out successfully",
+        title: "Sign Out Successfully",
         position: "bottom-right",
         status: "success",
         isClosable: true,
@@ -71,9 +71,6 @@ function HomeSidebar() {
     useLogoutMutation.mutate();
   };
 
-  useEffect(() => {
-    setUserRole(Helper.getUserRole());
-  }, []);
   useEffect(() => {
     if (profileDetailData?.result?.image) {
       setUserAvatar(profileDetailData?.result?.image + "?" + dayjs());

@@ -133,7 +133,7 @@ function WorkShift() {
         } else {
           refreshListWork();
           toast({
-            title: "Modify WorkShift successfully",
+            title: "Modify WorkShift Successfully",
             position: "bottom-right",
             status: "success",
             isClosable: true,

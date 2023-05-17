@@ -42,8 +42,11 @@ function AssignDepartmentManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   // #endregion
   // #region hooks
-  const { data: listEmployeeData, isFetching: isFetchingListEmployee } =
-    useGetListEmployee();
+  const {
+    data: listEmployeeData,
+    isFetching: isFetchingListEmployee,
+    isLoading: isLoadingListEmployee,
+  } = useGetListEmployee();
   const {
     data: dataListDepartment,
     isLoading: isLoadingListDepartment,
@@ -51,7 +54,6 @@ function AssignDepartmentManagement() {
   } = useQuery("listDepartment", departmentService.getListDepartment, {
     refetchOnWindowFocus: false,
     retry: 1,
-    enabled: listEmployeeData && Object.keys(listEmployeeData).length > 0,
   });
   const [listDepartmentArray, setListDepartmentArray] = useState([]);
   useEffect(() => {
@@ -109,7 +111,7 @@ function AssignDepartmentManagement() {
     }
   );
   const useAssignManagerToDepartment = useMutation(
-    employeeService.assignEmployeeToDepartmentService,
+    employeeService.assignManagerToDepartmentService,
     {
       onSuccess: (data) => {
         const { message } = data;
@@ -187,14 +189,9 @@ function AssignDepartmentManagement() {
   // #region table
   const tableRowAction = [
     {
-      actionName: "Edit",
+      actionName: "Assign",
       func: Edit,
       isDisabled: resultPermission?.update,
-    },
-    {
-      actionName: "Delete",
-      func: Delete,
-      isDisabled: resultPermission?.delete,
     },
   ];
   const columns = React.useMemo(
@@ -305,7 +302,7 @@ function AssignDepartmentManagement() {
       : {}
   );
   // #endregion
-  if (isFetchingListDepartment || isFetchingListEmployee)
+  if (isLoadingListDepartment || isLoadingListEmployee)
     return <LoadingSpinner />;
   return (
     <Stack h="100%" spacing={4}>
@@ -320,40 +317,38 @@ function AssignDepartmentManagement() {
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
-      <Box marginTop="10px">
-        {listEmployeeData &&
-        listEmployeeData?.result?.data != undefined &&
-        listEmployeeData?.result?.data.length == 0 ? (
-          <NoDataToDisplay h="450px" />
-        ) : (
-          <>
-            <DynamicTable
-              onAddEditOpen={onAddEditOpen}
-              handleDeleteRange={DeleteRange}
-              tableRowAction={tableRowAction}
-              columns={columns}
-              data={listEmployeeData?.result?.data}
-              permission={resultPermission}
-            />
-            <DynamicDrawer
-              handleEdit={handleAssignDepartment}
-              isAddEditOpen={isAddEditOpen}
-              onAddEditClose={onAddEditClose}
-              editData={editData}
-              setEditData={setEditData}
-              validationSchema={validationSchema}
-              initialValues={initialValues}
-              drawerFieldData={drawerFieldData}
-            />
-            <ChakraAlertDialog
-              title="Delete Single"
-              isOpen={isDeleteSingleOpen}
-              onClose={onDeleteSingleClose}
-              onAccept={handleAcceptDelete}
-            />
-          </>
-        )}
-      </Box>
+      {useAssignEmployeeToDepartment.isLoading ||
+      useAssignManagerToDepartment.isLoading ||
+      isFetchingListEmployee ? (
+        <LoadingSpinner />
+      ) : (
+        <Box marginTop="10px">
+          <DynamicTable
+            onAddEditOpen={onAddEditOpen}
+            handleDeleteRange={DeleteRange}
+            tableRowAction={tableRowAction}
+            columns={columns}
+            data={listEmployeeData?.result?.data}
+            permission={resultPermission}
+          />
+          <DynamicDrawer
+            handleEdit={handleAssignDepartment}
+            isAddEditOpen={isAddEditOpen}
+            onAddEditClose={onAddEditClose}
+            editData={editData}
+            setEditData={setEditData}
+            validationSchema={validationSchema}
+            initialValues={initialValues}
+            drawerFieldData={drawerFieldData}
+          />
+          <ChakraAlertDialog
+            title="Delete Single"
+            isOpen={isDeleteSingleOpen}
+            onClose={onDeleteSingleClose}
+            onAccept={handleAcceptDelete}
+          />
+        </Box>
+      )}
     </Stack>
   );
 }
