@@ -543,7 +543,7 @@ function AttendancePersonal() {
                       <VStack alignItems="start">
                         <Text fontSize="xl">Check in</Text>
                         <Text fontSize="2xl" fontWeight="bold">
-                          {moment(new Date(new Date(item?.checkIn).toISOString())).format("hh:mm") !=
+                          {moment(item?.checkIn).format("hh:mm") !=
                           "Invalid date"
                             ? moment(item?.checkIn).format("hh:mm")
                             : "--:--"}
