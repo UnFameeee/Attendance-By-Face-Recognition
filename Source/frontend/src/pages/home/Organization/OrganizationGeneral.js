@@ -24,6 +24,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { permissionOrganizationManagement } from "../../../screen-permissions/permission";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import ModifyShiftTypeModal from "../../../components/ModifyShiftTypeModal";
+import ModifyLeaveTypeModal from "../../../components/ModifyLeaveTypeModal";
 function OrganizationGeneral() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -140,6 +141,9 @@ function OrganizationGeneral() {
             onSubmit={(values, actions) => {
               const organizationDetail = {
                 organizationName: values.organizationName,
+                yearlyAnnualLeave: values.annualLeave,
+                limitEarlyLeave: values.limitEarlyLeave,
+                limitLateArrival: values.limitLateArrival,
                 location: {
                   address: values.address,
                   city: values.megaAddress?.city ?? "",
@@ -186,9 +190,10 @@ function OrganizationGeneral() {
                           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                           <Heading fontSize="3xl">Organization Details</Heading>
                         </Flex>
-                        <Box>
+                        <Flex gap='10px'>
                           <ModifyShiftTypeModal />
-                        </Box>
+                          <ModifyLeaveTypeModal />
+                        </Flex>
                       </VStack>
                       <HStack></HStack>
                     </Flex>
