@@ -330,6 +330,7 @@ export class AttendanceService {
         checkOut: true,
         lateArrival: true,
         earlyLeave: true,
+        totalHours: true,
       }
     })
 
@@ -338,18 +339,18 @@ export class AttendanceService {
       return response;
     }
 
-    var totalWorkingHours;
-    if (queryData.checkOut != null) {
-      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
-    } else {
-      totalWorkingHours = null;
-    }
-    const returnData = {
-      totalWorkingHours,
-      ...queryData
-    }
+    // var totalWorkingHours;
+    // if (queryData.checkOut != null) {
+    //   totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
+    // } else {
+    //   totalWorkingHours = null;
+    // }
+    // const returnData = {
+    //   totalWorkingHours,
+    //   ...queryData
+    // }
 
-    response.result = returnData;
+    response.result = queryData;
     return response;
   }
 
