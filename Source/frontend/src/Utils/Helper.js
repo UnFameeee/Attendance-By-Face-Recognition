@@ -39,7 +39,22 @@ const convertDateISOToDDMMYYY = (dateISO) => {
   const year = dateObj.getFullYear().toString().substring(2);
   return `${day}-${month}-${year}`;
 };
-
+const convertDateISOToHHmm = (dateISO) => {
+  if (dateISO) {
+    if (moment(dateISO).format("HH:mm") != "Invalid date") {
+      return moment(dateISO).format("HH:mm");
+    }
+  }
+  return "--:--";
+};
+const convertDateISOToDDMMyyyy = (dateISO) => {
+  if (dateISO) {
+    if (moment(dateISO).format("DD/MM/yyyy") != "Invalid date") {
+      return moment(dateISO).format("DD/MM/yyyy");
+    }
+  }
+  return "--/--/----";
+};
 const getUseDecodeInfor = () => {
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
@@ -172,13 +187,13 @@ function isInSameMonth(value) {
 
 const convertBase64ToFile = async (base64Data, fileName) => {
   return fetch(base64Data)
-    .then(response => response.blob())
-    .then(blob => new File([blob], fileName, { type: 'image/jpeg' }));
+    .then((response) => response.blob())
+    .then((blob) => new File([blob], fileName, { type: "image/jpeg" }));
 };
 
 const randomNumber = () => {
   return Math.floor(Math.random() * 10) + 1;
-}
+};
 
 export const Helper = {
   isTokenExpired,
@@ -186,6 +201,8 @@ export const Helper = {
   getMonth,
   findMostDuplicatedValue,
   convertDateISOToDDMMYYY,
+  convertDateISOToHHmm,
+  convertDateISOToDDMMyyyy,
   getUseDecodeInfor,
   isFirstTimeLogin,
   getMomentDateFormat,

@@ -41,14 +41,17 @@ function FormTextField(props) {
     placeholder,
     selectionArray,
     arrayGender,
+    handleOnChange,
+    formik,
+    size,
+    rows,
+    defaultValue,
     isDateField,
     isTextAreaField,
     isGender,
     isSelectionField,
-    handleOnChange,
     isCustomSelectionField,
     isAddress,
-    formik,
     isResize,
     isReadOnly,
     height,
@@ -56,8 +59,6 @@ function FormTextField(props) {
     isLoading,
     isPassword,
     isMenu,
-    size,
-    rows,
     isTimeField,
   } = props;
   const [field, meta] = useField(props);
@@ -88,7 +89,7 @@ function FormTextField(props) {
       >
         {label && <FormLabel>{label}</FormLabel>}
         <InputGroup>
-          <Input {...field} type={type ?? "date"} />
+          <Input {...field} type={type ?? "date"}  />
         </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
@@ -103,7 +104,7 @@ function FormTextField(props) {
       >
         {label && <FormLabel>{label}</FormLabel>}
         <InputGroup>
-          <Input {...field} type={type ?? "time"} />
+          <Input {...field} type={type ?? "time"}  />
         </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>

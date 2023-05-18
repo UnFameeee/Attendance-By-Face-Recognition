@@ -32,7 +32,7 @@ axiosBase.interceptors.response.use(
     const cookies = new Cookies();
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const refreshToken = cookies.get("jwt_authentication");

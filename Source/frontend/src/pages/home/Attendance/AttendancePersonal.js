@@ -91,7 +91,7 @@ function AttendancePersonal() {
           rounded="xl"
           alignItems="start"
           spacing="15px"
-          shadow='2xl'
+          shadow="2xl"
         >
           <Flex gap="10px">
             <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -184,7 +184,7 @@ function AttendancePersonal() {
           alignItems="start"
           justifyContent="center"
           spacing="15px"
-          shadow='2xl'
+          shadow="2xl"
         >
           <Flex gap="10px">
             <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -257,7 +257,7 @@ function AttendancePersonal() {
           alignItems="start"
           justifyContent="center"
           spacing="15px"
-          shadow='2xl'
+          shadow="2xl"
         >
           <Flex gap="10px">
             <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
@@ -279,15 +279,7 @@ function AttendancePersonal() {
               fontSize="xl"
               flex="1"
             >
-              <Text>
-                {moment(attendanceTodayData?.totalWorkingHours).format(
-                  "hh:mm"
-                ) != "Invalid date"
-                  ? moment(attendanceTodayData?.totalWorkingHours).format(
-                      "hh:mm"
-                    )
-                  : "--:--"}
-              </Text>
+              <Text>{attendanceTodayData?.totalHours}</Text>
               <Text fontWeight="medium">Working Hours</Text>
             </Box>
             <Box
@@ -299,10 +291,7 @@ function AttendancePersonal() {
               flex="1"
             >
               <Text>
-                {moment(attendanceTodayData?.checkIn).format("hh:mm") !=
-                "Invalid date"
-                  ? moment(attendanceTodayData?.checkIn).format("hh:mm")
-                  : "--:--"}
+                {Helper.convertDateISOToHHmm(attendanceTodayData?.checkIn)}
               </Text>
               <Text fontWeight="medium">Check In</Text>
             </Box>
@@ -315,10 +304,7 @@ function AttendancePersonal() {
               flex="1"
             >
               <Text>
-                {moment(attendanceTodayData?.checkOut).format("hh:mm") !=
-                "Invalid date"
-                  ? moment(attendanceTodayData?.checkOut).format("hh:mm")
-                  : "--:--"}
+                {Helper.convertDateISOToHHmm(attendanceTodayData?.checkOut)}
               </Text>
               <Text fontWeight="medium">Check Out</Text>
             </Box>
@@ -332,10 +318,7 @@ function AttendancePersonal() {
               flex="1"
             >
               <Text>
-                {moment(attendanceTodayData?.lateArrival).format("hh:mm") !=
-                "Invalid date"
-                  ? moment(attendanceTodayData?.lateArrival).format("hh:mm")
-                  : "--:--"}
+                {Helper.convertDateISOToHHmm(attendanceTodayData?.lateArrival)}
               </Text>
               <Text fontWeight="medium">Late Arrival</Text>
             </Box>
@@ -349,10 +332,7 @@ function AttendancePersonal() {
               flex="1"
             >
               <Text>
-                {moment(attendanceTodayData?.earlyLeave).format("hh:mm") !=
-                "Invalid date"
-                  ? moment(attendanceTodayData?.earlyLeave).format("hh:mm")
-                  : "--:--"}
+                {Helper.convertDateISOToHHmm(attendanceTodayData?.earlyLeave)}
               </Text>
               <Text fontWeight="medium">Early Leave</Text>
             </Box>
@@ -423,7 +403,7 @@ function AttendancePersonal() {
           rounded="xl"
           alignItems="start"
           spacing="15px"
-          shadow='2xl'
+          shadow="2xl"
         >
           <Flex
             gap="10px"
@@ -502,10 +482,9 @@ function AttendancePersonal() {
                       <HStack w="100%" flex="1" spacing="5px">
                         <Icon as={AiFillClockCircle} />
                         <Text fontSize="xl" fontWeight="bold">
-                          {moment(item?.attendanceDate).format("DD/MM/yyyy") !=
-                          "Invalid date"
-                            ? moment(item?.attendanceDate).format("DD/MM/yyyy")
-                            : "--:--"}
+                          {Helper.convertDateISOToDDMMyyyy(
+                            item?.attendanceDate
+                          )}
                         </Text>
                       </HStack>
                       {!item?.earlyLeave && !item?.lateArrival && (
@@ -543,19 +522,13 @@ function AttendancePersonal() {
                       <VStack alignItems="start">
                         <Text fontSize="xl">Check in</Text>
                         <Text fontSize="2xl" fontWeight="bold">
-                          {moment(item?.checkIn).format("hh:mm") !=
-                          "Invalid date"
-                            ? moment(item?.checkIn).format("hh:mm")
-                            : "--:--"}
+                          {Helper.convertDateISOToHHmm(item?.checkIn)}
                         </Text>
                       </VStack>
                       <VStack alignItems="start">
                         <Text fontSize="xl">Check out</Text>
                         <Text fontSize="2xl" fontWeight="bold">
-                          {moment(item?.checkOut).format("hh:mm") !=
-                          "Invalid date"
-                            ? moment(item?.checkOut).format("hh:mm")
-                            : "--:--"}
+                          {Helper.convertDateISOToHHmm(item?.checkOut)}
                         </Text>
                       </VStack>
                     </HStack>
@@ -630,13 +603,9 @@ function AttendancePersonal() {
                   <Flex alignItems="center" gap="5px">
                     <AiFillClockCircle />
                     <Text>
-                      {moment(
+                      {Helper.convertDateISOToDDMMyyyy(
                         attendanceDetailObj?.result?.attendanceDate
-                      ).format("DD/MM/yyyy") != "Invalid date"
-                        ? moment(
-                            attendanceDetailObj?.result?.attendanceDate
-                          ).format("DD/MM/yyyy")
-                        : "--:--"}
+                      )}
                     </Text>
                   </Flex>
                   <Text>Date</Text>
@@ -651,24 +620,16 @@ function AttendancePersonal() {
                   />
                   <Box fontSize="1.1rem" fontWeight="medium">
                     <Text color="green.600">
-                      Check In:{" "}
-                      {moment(attendanceDetailObj?.result?.checkIn).format(
-                        "hh:mm"
-                      ) != "Invalid date"
-                        ? moment(attendanceDetailObj?.result?.checkIn).format(
-                            "hh:mm"
-                          )
-                        : "--:--"}
+                      Check In:
+                      {Helper.convertDateISOToHHmm(
+                        attendanceDetailObj?.result?.checkIn
+                      )}
                     </Text>
                     <Text color="orange.400">
                       Late Arrival:{" "}
-                      {moment(attendanceDetailObj?.result?.lateArrival).format(
-                        "hh:mm"
-                      ) != "Invalid date"
-                        ? moment(
-                            attendanceDetailObj?.result?.lateArrival
-                          ).format("hh:mm")
-                        : "--:--"}
+                      {Helper.convertDateISOToHHmm(
+                        attendanceDetailObj?.result?.lateArrival
+                      )}
                     </Text>
                   </Box>
                 </VStack>
@@ -684,13 +645,7 @@ function AttendancePersonal() {
                   <Flex gap="5px" alignItems="center">
                     <MdWorkHistory />
                     <Text>
-                      {moment(
-                        attendanceDetailObj?.result?.totalWorkingHours
-                      ).format("hh:mm") != "Invalid date"
-                        ? moment(
-                            attendanceDetailObj?.result?.totalWorkingHours
-                          ).format("hh:mm")
-                        : "--:--"}
+                      {attendanceDetailObj?.result?.totalHours}
                     </Text>
                   </Flex>
                   <Text>Total working hours</Text>
@@ -706,23 +661,15 @@ function AttendancePersonal() {
                   <Box fontSize="1.1rem" fontWeight="medium">
                     <Text color="pink.600">
                       Check Out:{" "}
-                      {moment(attendanceDetailObj?.result?.checkOut).format(
-                        "hh:mm"
-                      ) != "Invalid date"
-                        ? moment(attendanceDetailObj?.result?.checkOut).format(
-                            "hh:mm"
-                          )
-                        : "--:--"}
+                      {Helper.convertDateISOToHHmm(
+                        attendanceDetailObj?.result?.checkOut
+                      )}
                     </Text>
                     <Text color="orange.400">
-                      Early Leave:{" "}
-                      {moment(attendanceDetailObj?.result?.earlyLeave).format(
-                        "hh:mm"
-                      ) != "Invalid date"
-                        ? moment(
-                            attendanceDetailObj?.result?.earlyLeave
-                          ).format("hh:mm")
-                        : "--:--"}
+                      Early Leave:
+                      {Helper.convertDateISOToHHmm(
+                        attendanceDetailObj?.result?.earlyLeave
+                      )}
                     </Text>
                   </Box>
                 </VStack>
