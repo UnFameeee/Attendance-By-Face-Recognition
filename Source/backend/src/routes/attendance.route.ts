@@ -21,25 +21,17 @@ export class AttendanceRoute implements Routes {
   private async initializeRoutes() {
     // api/attendance/takeAttendance
     this.router.post(`${this.path}/takeAttendance`,
-      // authMiddleware,
       zodValidate(takeAttendanceSchema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.takeAttendance
     )
 
     // api/attendance/takeAttendance
     this.router.get(`${this.path}/getEmployeeDetailById/:employeeId`,
-      // authMiddleware,
-      // zodValidate(takeAttendanceSchema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getEmployeeDetailById
     )
 
     // api/attendance/saveImage
     this.router.post(`${this.path}/saveImage`,
-      // authMiddleware,
-      // zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       attendanceImageUpload,
       this.attendanceController.saveImage
     )
@@ -48,7 +40,7 @@ export class AttendanceRoute implements Routes {
     this.router.post(`${this.path}/getThisMonthAttendance`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getThisMonthAttendance
     )
 
@@ -56,7 +48,7 @@ export class AttendanceRoute implements Routes {
     this.router.post(`${this.path}/getTodayAttendance`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getTodayAttendance
     )
 
@@ -64,15 +56,14 @@ export class AttendanceRoute implements Routes {
     this.router.post(`${this.path}/getAttendanceHistory/:employeeId`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getAttendanceHistory
     )
 
     // api/attendance/getAttendanceDetail
     this.router.get(`${this.path}/getAttendanceDetail/:attendanceId`,
       authMiddleware,
-      // zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getAttendanceDetail
     )
 
@@ -80,7 +71,7 @@ export class AttendanceRoute implements Routes {
     this.router.post(`${this.path}/getAttendanceStatistic/:employeeId`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getAttendanceStatistic
     )
 
@@ -88,7 +79,7 @@ export class AttendanceRoute implements Routes {
     this.router.post(`${this.path}/getYearlyAttendanceStatistic/:employeeId`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.ATTENDANCE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getYearlyAttendanceStatistic
     )
   }

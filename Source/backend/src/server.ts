@@ -1,5 +1,4 @@
 import App from "./app";
-import IndexRoute from './routes/index.route';
 import { AuthenticationRoute } from "./routes/auth.route";
 import { OrganizationRoute } from "./routes/organization.route";
 import { DepartmentRoute } from "./routes/department.route";
@@ -17,7 +16,6 @@ import { LeavetypeRoute } from "./routes/leavetype.route";
 
 // validateEnv();
 const app = new App([
-    new IndexRoute(),
     new AuthenticationRoute(),
     new ProfileRoute(),
     new EmployeeRoute(),

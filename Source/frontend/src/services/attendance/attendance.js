@@ -204,6 +204,7 @@ const saveImageOfAttendance = async (employeeId, formData) => {
   const headers = {
     "Content-Type": "multipart/form-data",
   };
+
   const response = await axiosBase.post(
     `${endPointAttendance}/saveImage?employeeId=${employeeId}`,
     formData,

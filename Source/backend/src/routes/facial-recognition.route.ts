@@ -25,15 +25,15 @@ export class FacialRecognitionRoute implements Routes {
   private async initializeRoutes() {
     // api/facialRecognition/trainModel/:employeeId
     this.router.post(`${this.path}/trainModel/:employeeId`,
-      // authMiddleware,
-      // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
+      authMiddleware,
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.FACIAL_REGCONITION),
       this.facialRecognitionController.trainModel
     )
 
     // api/facialRecognition/trainAllModel
     this.router.post(`${this.path}/trainAllModel`,
-      // authMiddleware,
-      // await authorizeRoute(PERMISSION.READ, RESOURCE.FACIAL)
+      authMiddleware,
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.FACIAL_REGCONITION),
       this.facialRecognitionController.trainAllModel
     )
 

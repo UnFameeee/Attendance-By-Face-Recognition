@@ -6,6 +6,7 @@ import { EmployeeService } from "../services/employee.service";
 import { HttpException } from "../config/httpException";
 import moment from "moment";
 import { DateTimeV2DTO } from "../model/dtos/workshift.dto";
+import { ResponseData } from "../config/responseData.config";
 
 export class AttendanceController {
   public attendanceService = new AttendanceService();
@@ -34,7 +35,10 @@ export class AttendanceController {
   public saveImage = async (req: MulterRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (req.error) {
-        throw new HttpException(400, req.error);
+        console.log(req.error)
+        const response = new ResponseData<string>;
+        response.message = req.error;
+        res.status(201).json(response);
       }
       const files: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
       const response = await this.attendanceService.saveImage(files);

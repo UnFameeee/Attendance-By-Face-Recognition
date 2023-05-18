@@ -47,12 +47,14 @@ export const application_admin_account = [
     fullname: "admin",
     email: "admin@unfame.tech",
     password: "admin123!!!",
-    roleName: "admin"
+    roleName: "admin",
+    annualLeaveDays: 12,
   },
   {
     fullname: "junrante",
     email: "junrante@gmail.com",
     password: "741123963",
-    roleName: "admin"
+    roleName: "admin",
+    annualLeaveDays: 12,
   },
 ]

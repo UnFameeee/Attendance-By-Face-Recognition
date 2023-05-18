@@ -22,14 +22,14 @@ export class LeavetypeRoute {
     this.router.post(`${this.path}/getAllLeaveType`,
       authMiddleware,
       zodValidate(pageSchema),
-      // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.LEAVETYPE_MANAGEMENT),
       this.leavetypeController.getAllLeaveType
     );
 
     //api/leavetype/getListLeaveType
     this.router.get(`${this.path}/getListLeaveType`,
       authMiddleware,
-      // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.LEAVETYPE_MANAGEMENT),
       this.leavetypeController.getListLeaveType
     );
 
@@ -37,14 +37,15 @@ export class LeavetypeRoute {
     this.router.post(`${this.path}/modifyLeaveType`,
       authMiddleware,
       zodValidate(modifyLeavetypeSchema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.CREATE, RESOURCE.LEAVETYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.LEAVETYPE_MANAGEMENT),
       this.leavetypeController.modifyLeaveType
     );
 
     //api/leavetype/deleteShiftType
     this.router.delete(`${this.path}/deleteLeaveType/:leaveTypeId`,
       authMiddleware,
-      // await authorizeRoute(PERMISSION.DELETE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.DELETE, RESOURCE.LEAVETYPE_MANAGEMENT),
       this.leavetypeController.deleteLeaveType
     );
   }

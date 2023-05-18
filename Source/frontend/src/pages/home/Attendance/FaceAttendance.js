@@ -35,20 +35,34 @@ export default function FaceAttendance() {
   const useSaveImageOfAttendance = useMutation(({ employeeId, formData }) =>
     attendanceService.saveImageOfAttendance(employeeId, formData), {
     onSuccess: (data) => {
-      useTakeAttendance.mutate({
-        employeeId: employeeId,
-        attendanceType: "FACE",
-        image: data?.result,
-      });
+      console.log(data);
+      if (data.result) {
+        useTakeAttendance.mutate({
+          employeeId: employeeId,
+          attendanceType: "FACE",
+          image: data?.result,
+        });
+      } else {
+        dispatch(setIsTakeAttendance({
+          isTakeAttendance: false,
+        }))
+      }
     },
     onError: (error) => {
       console.log(error);
       toast({
-        title: error.response.data.message,
-        position: "bottom-right",
+        title: 'Attendance Result',
+        description: error.response.data.message,
+        position: "top",
         status: "error",
-        isClosable: true,
+        variant: 'subtle',
         duration: 5000,
+        containerStyle: {
+          width: "30vw",
+          padding: "0.3rem",
+          fontSize: "1.25rem",
+          textAlign: "center",
+        },
       });
     },
   })
@@ -62,23 +76,33 @@ export default function FaceAttendance() {
 
       if (data.message) {
         toast({
-          title: 'Attendance',
+          title: 'Attendance Result',
           description: data.message,
           position: "top",
           status: "error",
           variant: 'subtle',
-          isClosable: true,
           duration: 5000,
+          containerStyle: {
+            width: "30vw",
+            padding: "0.3rem",
+            fontSize: "1.25rem",
+            textAlign: "center",
+          },
         });
       } else {
         toast({
-          title: 'Checkin',
+          title: 'Attendance Result',
           description: data.result,
           position: "top",
           status: "success",
           variant: 'subtle',
-          isClosable: true,
           duration: 5000,
+          containerStyle: {
+            width: "30vw",
+            padding: "0.3rem",
+            fontSize: "1.25rem",
+            textAlign: "center",
+          },
         });
       }
 
@@ -96,7 +120,7 @@ export default function FaceAttendance() {
       console.log(error);
       toast({
         title: error.response.data.message,
-        position: "bottom-right",
+        position: "top",
         status: "error",
         isClosable: true,
         duration: 5000,
@@ -114,11 +138,16 @@ export default function FaceAttendance() {
         ]).then(async () => {
           setModelsLoaded(true);
           toast({
-            title: "Finish load the model!",
-            position: "bottom-right",
+            title: "Loading the data...",
+            position: "top",
             status: "info",
-            isClosable: true,
             duration: 5000,
+            containerStyle: {
+              width: "18vw",
+              padding: "0.25rem",
+              fontSize: "1.25rem",
+              textAlign: "center",
+            },
           });
         });
       }
@@ -198,7 +227,7 @@ export default function FaceAttendance() {
                 // setUnknownCount((prevValue) => prevValue + 1);
                 unknownCount++;
                 console.log(unknownCount)
-                if (unknownCount == 15) {
+                if (unknownCount === 15) {
                   //remove the data in the detection array
                   faceDetectArray.splice(0, faceDetectArray.length);
 
@@ -264,13 +293,11 @@ export default function FaceAttendance() {
         const formData = new FormData();
         var file = await Helper.convertBase64ToFile(imageCapture, 'image.jpg')
         formData.append('images', file);
-
         useSaveImageOfAttendance.mutate({
           employeeId: employeeId,
           formData: formData
         });
       }
-
       handleSaveUploadImages();
     }
   }, [isTakeAttendance]);
