@@ -13,18 +13,21 @@ export const createOrganizationSchema = z.object({
     .string({
       required_error: 'Limit Early Leave is required',
     })
-    .trim(),
+    .trim()
+    .optional(),
 
   limitLateArrival: z
     .string({
       required_error: 'Limit Late Arrival is required',
     })
-    .trim(),
+    .trim()
+    .optional(),
 
   yearlyAnnualLeave: z
     .number({
       required_error: 'Yearly Annual Leave is required',
-    }),
+    })
+    .optional(),
 
   location: z.object({
     address: z
@@ -68,18 +71,21 @@ export const updateOrganizationSchema = z.object({
     .string({
       required_error: 'Limit Early Leave is required',
     })
-    .trim(),
+    .trim()
+    .optional(),
 
   limitLateArrival: z
     .string({
       required_error: 'Limit Late Arrival is required',
     })
-    .trim(),
+    .trim()
+    .optional(),
 
   yearlyAnnualLeave: z
     .number({
       required_error: 'Yearly Annual Leave is required',
-    }),
+    })
+    .optional(),
 
   location: z.object({
     address: z

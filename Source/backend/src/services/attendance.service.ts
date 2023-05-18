@@ -234,6 +234,7 @@ export class AttendanceService {
 
     const queryData = await prisma.attendance.findMany({
       where: {
+        // absent: false,
         employeeId: employeeId,
         attendanceDate: {
           gte: startDate,
@@ -246,6 +247,7 @@ export class AttendanceService {
         checkOut: true,
         lateArrival: true,
         earlyLeave: true,
+        totalHours: true,
       }
     })
 
@@ -264,6 +266,7 @@ export class AttendanceService {
 
     const totalAttendance = await prisma.attendance.count({
       where: {
+        absent: false,
         employeeId: employeeId,
         checkOut: {
           not: null,
@@ -282,7 +285,9 @@ export class AttendanceService {
 
     for (var attendance of queryData) {
       if (attendance.checkOut != null) {
-        totalWorkingHours += Helper.MinusDate(attendance.checkOut, attendance.checkIn, false);
+        // totalWorkingHours += Helper.MinusDate(attendance.checkOut, attendance.checkIn, false);
+        
+        totalWorkingHours += moment.duration(moment(attendance.totalHours, "HH:mm").format("HH:mm")).asMilliseconds();
 
         totalLateArrival += moment.duration(moment(attendance.lateArrival, "HH:mm").format("HH:mm")).asMilliseconds();
 
@@ -325,6 +330,7 @@ export class AttendanceService {
         checkOut: true,
         lateArrival: true,
         earlyLeave: true,
+        totalHours: true,
       }
     })
 
@@ -333,18 +339,18 @@ export class AttendanceService {
       return response;
     }
 
-    var totalWorkingHours;
-    if (queryData.checkOut != null) {
-      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
-    } else {
-      totalWorkingHours = null;
-    }
-    const returnData = {
-      totalWorkingHours,
-      ...queryData
-    }
+    // var totalWorkingHours;
+    // if (queryData.checkOut != null) {
+    //   totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
+    // } else {
+    //   totalWorkingHours = null;
+    // }
+    // const returnData = {
+    //   totalWorkingHours,
+    //   ...queryData
+    // }
 
-    response.result = returnData;
+    response.result = queryData;
     return response;
   }
 
@@ -396,6 +402,7 @@ export class AttendanceService {
         checkoutCapture: true,
         lateArrival: true,
         earlyLeave: true,
+        totalHours: true,
       }
     })
 
@@ -404,18 +411,19 @@ export class AttendanceService {
       return response;
     }
 
-    var totalWorkingHours;
-    if (queryData.checkOut != null) {
-      totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
-    } else {
-      totalWorkingHours = null;
-    }
-    const returnData = {
-      totalWorkingHours,
-      ...queryData
-    }
+    // var totalWorkingHours;
+    // if (queryData.checkOut != null) {
+    //   // totalWorkingHours = Helper.MinusDate(queryData.checkOut, queryData.checkIn, true);
+    //   totalWorkingHours
+    // } else {
+    //   totalWorkingHours = null;
+    // }
+    // const returnData = {
+    //   totalWorkingHours,
+    //   ...queryData
+    // }
 
-    response.result = returnData;
+    response.result = queryData;
     return response;
   }
 
@@ -429,6 +437,7 @@ export class AttendanceService {
 
     const queryAttendanceData = await prisma.attendance.count({
       where: {
+        absent: false,
         employeeId: employeeId,
         attendanceDate: {
           gte: startDate,
@@ -481,6 +490,7 @@ export class AttendanceService {
 
       const queryAttendanceData = await prisma.attendance.count({
         where: {
+          absent: false,
           employeeId: employeeId,
           attendanceDate: {
             gte: startDate,

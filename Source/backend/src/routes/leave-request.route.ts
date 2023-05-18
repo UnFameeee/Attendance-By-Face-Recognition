@@ -22,16 +22,15 @@ export class LeaveRequestRoute {
     this.router.post(`${this.path}/getLeaveRequestOfDepartment/:departmentId`,
       authMiddleware,
       zodValidate(pageSchema),
-      // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.LEAVE_REQUEST_MANAGEMENT),
       this.leaveRequestController.getLeaveRequestOfDepartment
       );
       
       //api/leaverequest/getLeaveRequestOfEmployee
       this.router.post(`${this.path}/getLeaveRequestOfEmployee/:employeeId`,
       authMiddleware,
-      // zodValidate(dateTimeV2Schema),
       zodValidate(pageSchema),
-      // await authorizeRoute(PERMISSION.READ, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.LEAVE_REQUEST_MANAGEMENT),
       this.leaveRequestController.getLeaveRequestOfEmployee
     );
 
@@ -39,14 +38,14 @@ export class LeaveRequestRoute {
     this.router.post(`${this.path}/createLeaveRequest`,
       authMiddleware,
       zodValidate(createLeaveRequestSchema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.CREATE, RESOURCE.LEAVE_REQUEST_PERSONAL),
       this.leaveRequestController.createLeaveRequest
     );
 
     //api/leaverequest/getAnnualDetail
     this.router.get(`${this.path}/getAnnualDetail`,
       authMiddleware,
-      // await authorizeRoute(PERMISSION.DELETE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.READ, RESOURCE.LEAVE_REQUEST_PERSONAL),
       this.leaveRequestController.getAnnualDetail
     );
 
@@ -54,7 +53,7 @@ export class LeaveRequestRoute {
     this.router.post(`${this.path}/verifyLeaveRequest/:leaveRequestId`,
       authMiddleware,
       // zodValidate(createLeaveRequestSchema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.LEAVE_REQUEST_MANAGEMENT),
       this.leaveRequestController.verifyLeaveRequest
     );
 
@@ -62,7 +61,7 @@ export class LeaveRequestRoute {
     this.router.delete(`${this.path}/deleteLeaveRequest/:leaveRequestId`,
       authMiddleware,
       // zodValidate(createLeaveRequestSchema),
-      // await authorizeRoute(PERMISSION.CREATE, RESOURCE.SHIFTTYPE_MANAGEMENT),
+      await authorizeRoute(PERMISSION.DELETE, RESOURCE.LEAVE_REQUEST_MANAGEMENT),
       this.leaveRequestController.deleteLeaveRequest
     );
   }

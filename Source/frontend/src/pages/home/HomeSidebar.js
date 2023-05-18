@@ -446,6 +446,8 @@ function HomeSidebar() {
         bgColor="mainBg"
         padding="2rem"
         backgroundImage={background}
+        backgroundPosition='bottom'
+        backgroundSize='auto'
       >
         <Outlet />
       </Box>

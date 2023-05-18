@@ -1,6 +1,10 @@
 import { Employee } from "@prisma/client";
 import { Request } from "express";
 
+export interface RequestWithMulter extends Request {
+  error?: string;
+}
+
 export interface RequestWithProfile extends Request {
   profile: Employee;
   error?: string;
