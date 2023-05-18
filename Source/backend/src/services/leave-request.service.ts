@@ -425,6 +425,8 @@ export class LeaveRequestService {
 
     const queryCountAnnualLeaveData = await prisma.leaveRequest.count({
       where: {
+        employeeId: employeeId,
+        status: leaveRequestStatus.approve,
         startDate: {
           gte: startYearDate
         },
@@ -549,6 +551,9 @@ export class LeaveRequestService {
           } else {
             totalHours = Helper.ConfigStaticDateTime("00:00");
           }
+
+          console.log(queryData.leaveType.annualLeave == true);
+          console.log(totalHours);
 
           //Tạo Attendance với totalHours = 08:00
           const queryCreateAttendance = await prisma.attendance.create({
@@ -688,6 +693,7 @@ export class LeaveRequestService {
         leaveRequestId: leaveRequestId,
       },
       data: {
+        approverId: approverId,
         status: statusUpdate,
       }
     })
