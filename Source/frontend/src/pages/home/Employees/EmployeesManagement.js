@@ -541,7 +541,7 @@ function EmployeesManagement() {
   const validationSchema = Yup.object().shape(
     Object.keys(editData).length === 0
       ? {
-          fullname: Yup.string().required("This field is required"),
+          fullname: Yup.string().min(8,"Full name must be more than 8 characters").required("This field is required"),
           email: Yup.string().required("This field is required"),
           displayName: Yup.string().required("This field is required"),
           password: Yup.string()

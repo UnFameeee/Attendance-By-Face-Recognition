@@ -91,6 +91,7 @@ function LeaveRequestPersonal() {
           });
         } else {
           queryClient.invalidateQueries("listLeaveRequestOfAnEmployee");
+          queryClient.invalidateQueries("AnnualLeaveRequestData");
           toast({
             title: "Create Leave Request Successfully",
             position: "bottom-right",
@@ -490,11 +491,11 @@ function LeaveRequestPersonal() {
         </Tooltip>
       </HStack>
       {isFetchingLREmployeeData ? (
-        <Box w='100%'>
+        <Box w="100%">
           <LoadingSpinner />
         </Box>
       ) : (
-        <Box w='100%' mt="10px">
+        <Box w="100%" mt="10px">
           <DynamicTable
             onAddEditOpen={onAddEditOpen}
             handleDeleteRange={DeleteRange}
