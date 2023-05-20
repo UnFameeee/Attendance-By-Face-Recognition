@@ -14,9 +14,7 @@ import Month from "../../../components/Calendar/Month";
 import GlobalContext from "./context/GlobalContext";
 import EventModal from "../../../components/Calendar/EventModal";
 import { Helper } from "../../../Utils/Helper";
-import {
-  employeeService,
-} from "../../../services/employee/employee";
+import { employeeService } from "../../../services/employee/employee";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import {
   useGetListShiftType,
@@ -43,6 +41,14 @@ function WorkShift() {
   const [departmentId, setDepartmentId] = useState(
     Helper.getUseDecodeInfor().departmentId ?? ""
   );
+  const [workShiftType, setWorkShiftType] = useState({
+    work: true,
+    leave: false,
+  });
+  // console.log(first)
+  const [isWork, setIsWork] = useState(true);
+  const [isLeave, setIsLeave] = useState(false);
+
   const { monthIndex, showEventModal } = useContext(GlobalContext);
   // #endregion
   // #region hooks
@@ -209,15 +215,33 @@ function WorkShift() {
       if (employeeFilterId != "") {
         let employeeId = employeeFilterId;
         setListWorkShiftDepartment([]);
-        useGetWorkShiftOfEmployee.mutate({ employeeId, monthIndex });
+        useGetWorkShiftOfEmployee.mutate({
+          employeeId,
+          monthIndex,
+          workShiftType,
+        });
       } else {
-        useGetWorkShiftDepartment.mutate({ departmentId, monthIndex });
+        setListWorkShiftDepartment([]);
+        useGetWorkShiftDepartment.mutate({
+          departmentId,
+          monthIndex,
+          workShiftType,
+        });
       }
     }
   };
   useEffect(() => {
     refreshListWork();
-  }, [employeeFilterId]);
+  }, [employeeFilterId, workShiftType]);
+  useEffect(() => {
+    setWorkShiftType(() => {
+      let selection = {
+        work: isWork,
+        leave: isLeave,
+      };
+      return selection;
+    });
+  }, [isLeave, isWork]);
   // #endregion
   // #region form & modal declare
   const initialValuesSelectDepartment = {
@@ -236,8 +260,7 @@ function WorkShift() {
     }
   }, [departmentId]);
   // #endregion
-  if (userDecodeInfo?.roleName == "employee") {
-  } else if (
+  if (
     isLoadingListEmployee &&
     isLoadingListShiftType &&
     isLoadingListDepartment
@@ -296,6 +319,7 @@ function WorkShift() {
                 useGetWorkShiftOfEmployee.mutate({
                   employeeId,
                   monthIndex,
+                  workShiftType,
                 });
               } else if (
                 departmentId &&
@@ -304,6 +328,7 @@ function WorkShift() {
                 useGetWorkShiftDepartment.mutate({
                   departmentId,
                   monthIndex,
+                  workShiftType,
                 });
               }
             }}
@@ -369,6 +394,41 @@ function WorkShift() {
             </Formik>
           </HStack>
         )}
+        <HStack alignItems="flex-end">
+          <Heading fontSize="xl" fontWeight="medium" mb="6px">
+            <Highlight
+              query={["Type Filter:"]}
+              styles={{
+                px: "2",
+                py: "1",
+                rounded: "full",
+                bg: "purple.100",
+              }}
+            >
+              Type Filter:
+            </Highlight>
+          </Heading>
+          <Box>
+            <Button
+              onClick={() => {
+                setIsWork(prev => !prev);
+              }}
+              colorScheme={isWork ? "blue" : "gray"}
+            >
+              Work
+            </Button>
+          </Box>
+          <Box>
+            <Button
+              onClick={() => {
+                setIsLeave(prev => !prev);
+              }}
+              colorScheme={isLeave ? "blue" : "gray"}
+            >
+              Leave
+            </Button>
+          </Box>
+        </HStack>
       </HStack>
       {showEventModal && (
         <EventModal

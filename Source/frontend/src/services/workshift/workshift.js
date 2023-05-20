@@ -38,7 +38,7 @@ const calculateRealMonth = (monthIndex) => {
   return month;
 };
 const getListShiftType = async () => {
-  const paging = pagingInstance
+  const paging = pagingInstance;
   const response = await axiosBase.post(
     `${endPointShiftType}/getAllShiftType`,
     paging
@@ -59,11 +59,18 @@ const modifyWorkShiftService = async (workShiftObj) => {
   return response.data;
 };
 const getWorkShiftOfEmployee = async (data) => {
-  const { employeeId, monthIndex } = data;
-  let month = calculateRealMonth(monthIndex);
+  const { employeeId, monthIndex, workShiftType } = data;
+  let monthAndYear = calculateRealMonth(monthIndex);
+  let getWorkShiftObj = {
+    ...monthAndYear,
+    selection: {
+      work: workShiftType.work,
+      leave: workShiftType.leave,
+    },
+  };
   const response = await axiosBase.post(
     `${endPointWorkShift}/getWorkshiftOfEmployee/${employeeId}`,
-    month
+    getWorkShiftObj
   );
   return response.data;
 };
@@ -79,11 +86,18 @@ export const useGetWorkShiftEmployee = (monthIndex) => {
   );
 };
 const getWorkShiftOfDepartment = async (data) => {
-  const { departmentId, monthIndex } = data;
-  let month = calculateRealMonth(monthIndex);
+  const { departmentId, monthIndex, workShiftType } = data;
+  let monthAndYear = calculateRealMonth(monthIndex);
+  let getWorkShiftObj = {
+    ...monthAndYear,
+    selection: {
+      work: workShiftType.work,
+      leave: workShiftType.leave,
+    },
+  };
   const response = await axiosBase.post(
     `${endPointWorkShift}/getWorkshiftOfDepartment/${departmentId}`,
-    month
+    getWorkShiftObj
   );
   return response.data;
 };
