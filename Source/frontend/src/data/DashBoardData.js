@@ -43,6 +43,22 @@ export const DashBoardDataTop = [
     linkTitle: "Manage Work Shift",
     bgColor: "#da4c3b",
   },
+  {
+    title: "Attendance",
+    content: "0 Entries Last Week",
+    icon: <MdAvTimer style={{ fontSize: iconFontSize }} />,
+    link: "/attendance/attendance-personal",
+    linkTitle: "Your Attendance Stats",
+    bgColor: "#626ebf",
+  },
+  {
+    title: "Setting",
+    content: "Setting profile",
+    icon: <FaUserCog style={{ fontSize: iconFontSize }} />,
+    link: "/setting/profile",
+    linkTitle: "Manage Setting",
+    bgColor: "#6aa7ad",
+  },
 ];
 
 export const DashBoardDataBottom = [

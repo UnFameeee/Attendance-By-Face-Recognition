@@ -23,6 +23,7 @@ import {
   Select,
   useDisclosure,
   Tooltip,
+  Portal,
 } from "@chakra-ui/react";
 import { FiMoreVertical } from "react-icons/fi";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
@@ -138,8 +139,8 @@ function DynamicTable(props) {
                   type="checkbox"
                 />
               )} */}
-              <Box >
-                <Menu >
+              <Box>
+                <Menu isLazy>
                   <Tooltip
                     placement="right"
                     label="Record Bulk Action"
@@ -153,22 +154,24 @@ function DynamicTable(props) {
                       <Icon as={FiMoreVertical} />
                     </MenuButton>
                   </Tooltip>
-                  <MenuList >
-                    {tableRowAction.map((item) => {
-                      return (
-                        <MenuItem
-                          isDisabled={!item?.isDisabled}
-                          key={item.actionName}
-                          onClick={() => {
-                            item.func(row?.values, item.actionName);
-                            // console.log("row", row);
-                          }}
-                        >
-                          {item.actionName}
-                        </MenuItem>
-                      );
-                    })}
-                  </MenuList>
+                  <Portal>
+                    <MenuList>
+                      {tableRowAction.map((item) => {
+                        return (
+                          <MenuItem
+                            isDisabled={!item?.isDisabled}
+                            key={item.actionName}
+                            onClick={() => {
+                              item.func(row?.values, item.actionName);
+                              // console.log("row", row);
+                            }}
+                          >
+                            {item.actionName}
+                          </MenuItem>
+                        );
+                      })}
+                    </MenuList>
+                  </Portal>
                 </Menu>
               </Box>
             </HStack>
@@ -454,7 +457,6 @@ function DynamicTable(props) {
           </HStack>
           <TableContainer rounded="lg" transform="rotateX(180deg)" shadow="2xl">
             <Table
-              minH="300px"
               transform="rotateX(180deg)"
               variant="simple"
               {...getTableProps()}
