@@ -235,6 +235,7 @@ export class AttendanceService {
     const queryData = await prisma.attendance.findMany({
       where: {
         // absent: false,
+        isValid: true,
         employeeId: employeeId,
         attendanceDate: {
           gte: startDate,
@@ -253,13 +254,13 @@ export class AttendanceService {
 
     const queryLeaveData = await prisma.attendance.count({
       where: {
+        absent: true,
         employeeId: employeeId,
         attendanceDate: {
           gte: startDate,
           lte: endDate,
         },
         deleted: false,
-        absent: true,
       },
     })
 
@@ -267,6 +268,7 @@ export class AttendanceService {
     const totalAttendance = await prisma.attendance.count({
       where: {
         absent: false,
+        isValid: true,
         employeeId: employeeId,
         checkOut: {
           not: null,
@@ -286,7 +288,7 @@ export class AttendanceService {
     for (var attendance of queryData) {
       if (attendance.checkOut != null) {
         // totalWorkingHours += Helper.MinusDate(attendance.checkOut, attendance.checkIn, false);
-        
+
         totalWorkingHours += moment.duration(moment(attendance.totalHours, "HH:mm").format("HH:mm")).asMilliseconds();
 
         totalLateArrival += moment.duration(moment(attendance.lateArrival, "HH:mm").format("HH:mm")).asMilliseconds();
@@ -378,6 +380,8 @@ export class AttendanceService {
         lateArrival: true,
         earlyLeave: true,
         absent: true,
+        isValid: true,
+        note: true,
       }
     })
 
@@ -403,6 +407,9 @@ export class AttendanceService {
         lateArrival: true,
         earlyLeave: true,
         totalHours: true,
+        isValid: true,
+        absent: true,
+        note: true,
       }
     })
 
@@ -438,6 +445,7 @@ export class AttendanceService {
     const queryAttendanceData = await prisma.attendance.count({
       where: {
         absent: false,
+        isValid: true,
         employeeId: employeeId,
         attendanceDate: {
           gte: startDate,
@@ -491,6 +499,7 @@ export class AttendanceService {
       const queryAttendanceData = await prisma.attendance.count({
         where: {
           absent: false,
+          isValid: true,
           employeeId: employeeId,
           attendanceDate: {
             gte: startDate,
@@ -510,6 +519,49 @@ export class AttendanceService {
     }
 
     response.result = resultArray;
+    return response;
+  }
+
+  public validateAttendance = async (attendanceId: string, data: {
+    isValid: boolean,
+    note: string,
+  }) => {
+    const response = new ResponseData<string>;
+
+    const queryCheckData = await prisma.attendance.findFirst({
+      where: {
+        attendanceId: attendanceId,
+        deleted: false,
+      },
+      select:{
+        absent: true,
+      }
+    })
+
+    if(!queryCheckData) {
+      response.message = "Attendance doesn't exist";
+      return response;
+    } else if(queryCheckData.absent == true){
+      response.message = "This is employee approved leave request day";
+      return response;
+    }
+
+    const queryData = await prisma.attendance.update({
+      where: {
+        attendanceId: attendanceId,
+
+      },
+      data: {
+        isValid: data.isValid,
+        note: data.note,
+      }
+    })
+    if (!queryData) {
+      response.message = "System Error!";
+      return response;
+    }
+
+    response.result = "Validate attendance successfully";
     return response;
   }
 }

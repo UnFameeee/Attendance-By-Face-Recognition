@@ -37,7 +37,7 @@ export class AttendanceRoute implements Routes {
     )
 
     // api/attendance/getThisMonthAttendance
-    this.router.post(`${this.path}/getThisMonthAttendance`,
+    this.router.post(`${this.path}/getThisMonthAttendance/:employeeId`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
       await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
@@ -45,7 +45,7 @@ export class AttendanceRoute implements Routes {
     )
 
     // api/attendance/getTodayAttendance
-    this.router.post(`${this.path}/getTodayAttendance`,
+    this.router.post(`${this.path}/getTodayAttendance/:employeeId`,
       authMiddleware,
       zodValidate(dateTimeV2Schema),
       await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
@@ -76,10 +76,10 @@ export class AttendanceRoute implements Routes {
     )
 
     // api/attendance/getYearlyAttendanceStatistic/:employeeId
-    this.router.post(`${this.path}/getYearlyAttendanceStatistic/:employeeId`,
+    this.router.post(`${this.path}/getYearlyAttendanceStatistic/:attendanceId`,
       authMiddleware,
-      zodValidate(dateTimeV2Schema),
-      await authorizeRoute(PERMISSION.READ, RESOURCE.ATTENDANCE_MANAGEMENT),
+      // zodValidate(dateTimeV2Schema),
+      await authorizeRoute(PERMISSION.UPDATE, RESOURCE.ATTENDANCE_MANAGEMENT),
       this.attendanceController.getYearlyAttendanceStatistic
     )
   }

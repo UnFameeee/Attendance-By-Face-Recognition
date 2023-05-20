@@ -220,6 +220,7 @@ model Attendance {
   lateArrival     DateTime?
   earlyLeave      DateTime?
   totalHours      DateTime?
+  isValid         Boolean   @default(true)
   absent          Boolean
   note            String
   deleted         Boolean   @default(false)
