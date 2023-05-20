@@ -48,10 +48,10 @@ export class AttendanceController {
     }
   }
 
-  public getThisMonthAttendance = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  public getThisMonthAttendance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: DateTimeV2DTO = req.body;
-      const employeeId: string = req.profile.id;
+      const employeeId: string = req.params.employeeId;
       const response = await this.attendanceService.getThisMonthAttendance(employeeId, data);
       res.status(200).json(response);
     } catch (err) {
@@ -59,10 +59,10 @@ export class AttendanceController {
     }
   }
 
-  public getTodayAttendance = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+  public getTodayAttendance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: DateTimeV2DTO = req.body;
-      const employeeId: string = req.profile.id;
+      const employeeId: string = req.params.employeeId;
       const response = await this.attendanceService.getTodayAttendance(employeeId, data);
       res.status(200).json(response);
     } catch (err) {
@@ -107,6 +107,20 @@ export class AttendanceController {
       const data: DateTimeV2DTO = req.body;
       const employeeId: string = req.params.employeeId;
       const response = await this.attendanceService.getYearlyAttendanceStatistic(employeeId, data);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public validateAttendance = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const data: {
+        isValid: boolean,
+        note: string,
+      } = req.body;
+      const attendanceId: string = req.params.attendanceId;
+      const response = await this.attendanceService.validateAttendance(attendanceId, data);
       res.status(200).json(response);
     } catch (err) {
       next(err);
