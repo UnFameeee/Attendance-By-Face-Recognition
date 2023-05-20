@@ -43,6 +43,20 @@ export default function FaceAttendance() {
           image: data?.result,
         });
       } else {
+        toast({
+          title: 'Attendance Result',
+          description: data.message,
+          position: "top",
+          status: "error",
+          variant: 'subtle',
+          duration: 5000,
+          containerStyle: {
+            width: "30vw",
+            padding: "0.3rem",
+            fontSize: "1.25rem",
+            textAlign: "center",
+          },
+        });
         dispatch(setIsTakeAttendance({
           isTakeAttendance: false,
         }))
@@ -314,7 +328,14 @@ export default function FaceAttendance() {
     <>
       <div className="template">
         {/* <video id="video" ref={videoRef} autoPlay={true} playsInline muted></video> */}
-        <Webcam id='video' ref={videoRef} audio={false} screenshotFormat="image/jpeg" ></Webcam>
+        <Webcam id='video' ref={videoRef} audio={false} screenshotFormat="image/jpeg" style={{
+          height: "99.8vh",
+          width: "100%",
+          objectFit: "cover",
+          transform: "rotateY(180deg)",
+          WebkitTransform: "rotateY(180deg)",
+          MozTransform: "rotateY(180deg)",
+        }}></Webcam>
       </div>
       <div>
         <Img style={{ border: "1px solid red" }} id='captureImage' src={null} />

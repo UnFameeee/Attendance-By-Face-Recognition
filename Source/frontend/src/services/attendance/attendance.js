@@ -22,8 +22,11 @@ const takeAttendance = async (data) => {
 
 const getEmployeeDetailById = async (id) => {
   if (id) {
-    const response = await axiosBase.get(
-      `${endPointAttendance}/getEmployeeDetailById/${id}`
+    const time = new Date();
+    const response = await axiosBase.post(
+      `${endPointAttendance}/getEmployeeDetailById/${id}`, {
+      date: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+    }
     );
     return response.data;
   }

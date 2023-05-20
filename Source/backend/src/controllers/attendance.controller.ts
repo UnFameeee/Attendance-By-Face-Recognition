@@ -25,7 +25,8 @@ export class AttendanceController {
   public getEmployeeDetailById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const employeeId: string = req.params.employeeId;
-      const response = await this.employeeService.getEmployeeById(employeeId);
+      const date: string = req.body.date;
+      const response = await this.attendanceService.getEmployeeById(employeeId, date);
       res.status(200).json(response);
     } catch (err) {
       next(err);

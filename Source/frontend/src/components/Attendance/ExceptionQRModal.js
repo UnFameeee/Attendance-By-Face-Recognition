@@ -31,7 +31,7 @@ export default function ExceptionQRModal({ urlImage }) {
             value={urlGenerateData.result}
             viewBox={`0 0 256 256`}
           />
-          <Text textAlign={"center"} fontSize={"1rem"} fontWeight={"bold"} color={"gray"} padding={"0px 24px"}>Use your phone and scan this QR code to go to the <b style={{ color: "red" }}>Report Attendance</b> website and fill all the information</Text>
+          <Text textAlign={"center"} fontSize={"1rem"} fontWeight={"bold"} color={"gray"} padding={"0px 24px"}>Use your phone and scan this QR code to go to the <b style={{ color: "red" }}>Report Attendance</b> website, close this and fill all the information</Text>
         </Box>
       </Box>
     }

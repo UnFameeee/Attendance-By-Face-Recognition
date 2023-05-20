@@ -6,6 +6,7 @@ import { Helper } from '../utils/helper';
 import { env } from '../config/env.config';
 import { TakeAttendanceDTO } from '../model/dtos/attendance.dto';
 import { DateTimeV2DTO } from '../model/dtos/workshift.dto';
+import { attendance } from '../constant/attendance-exception.constant';
 
 export class AttendanceService {
 
@@ -215,6 +216,74 @@ export class AttendanceService {
       }
       return response;
     }
+  }
+
+  public getEmployeeById = async (employeeId: string, date: string): Promise<ResponseData<any>> => {
+    const response = new ResponseData<any>;
+    const queryData = await prisma.employee.findFirst({
+      where: {
+        id: employeeId,
+        deleted: false
+      },
+      select: {
+        id: true,
+        fullname: true,
+        image: true,
+        role: {
+          select: {
+            displayName: true,
+          }
+        },
+        email: true,
+        gender: true,
+        dateOfBirth: true,
+        phoneNumber: true,
+        description: true,
+        department: {
+          select: {
+            departmentName: true,
+          }
+        },
+        location: {
+          select: {
+            address: true,
+            city: true,
+            country: true,
+            state: true
+          },
+        },
+      },
+    })
+
+    const dateFilter = moment(date, "YYYY-MM-DD")
+    const queryAttendanceData = await prisma.attendance.findFirst({
+      where: {
+        employeeId: employeeId,
+        attendanceDate: {
+          gte: dateFilter.startOf('day').toDate(),
+          lte: dateFilter.endOf('day').toDate(),
+        }
+      }
+    })
+
+    var attendanceType: string;
+    if (!queryAttendanceData) {
+      attendanceType = attendance.checkin;
+    } else if(queryAttendanceData.checkIn){
+      attendanceType = attendance.checkin;
+    }
+
+    const resData = {
+      attendanceType,
+      ...queryData
+    }
+
+    if (queryData) {
+      response.result = resData;
+    } else {
+      response.message = "Employee isn't exist";
+    }
+    return response;
   }
 
   public saveImage = async (files: { [fieldname: string]: Express.Multer.File[] }) => {
@@ -535,15 +604,15 @@ export class AttendanceService {
         attendanceId: attendanceId,
         deleted: false,
       },
-      select:{
+      select: {
         absent: true,
       }
     })
 
-    if(!queryCheckData) {
+    if (!queryCheckData) {
       response.message = "Attendance doesn't exist";
       return response;
-    } else if(queryCheckData.absent == true){
+    } else if (queryCheckData.absent == true) {
       response.message = "This is employee approved leave request day";
       return response;
     }
