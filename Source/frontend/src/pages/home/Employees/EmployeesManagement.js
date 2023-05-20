@@ -588,7 +588,7 @@ function EmployeesManagement() {
           xl: "row",
         }}
       >
-        <Box
+        {/* <Box
           width={{ base: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" }}
         >
           <PieChart />
@@ -597,7 +597,7 @@ function EmployeesManagement() {
           width={{ base: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" }}
         >
           <ColumnChart />
-        </Box>
+        </Box> */}
       </Flex>
       {useCreateEmployee.isLoading ||
       useSaveEmployee.isLoading ||

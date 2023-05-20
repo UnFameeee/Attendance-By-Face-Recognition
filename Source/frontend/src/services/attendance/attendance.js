@@ -33,59 +33,101 @@ const useGetEmployeeDetailById = (id) => {
   return useQuery({
     queryKey: ["employeeDetail", id],
     queryFn: async () => {
-      const data = await getEmployeeDetailById(id);
-      return data.result;
-    },
-    refetchOnWindowFocus: false,
-    retry: 3,
-  });
-};
-
-const getThisMonthAttendance = async (data) => {
-  const { currentDate } = data;
-  let thisMonthAttendanceObj = {
-    month: parseInt(moment(currentDate).format("M")),
-    year: parseInt(moment(currentDate).format("yyyy")),
-  };
-  const response = await axiosBase.post(
-    `${endPointAttendance}/getThisMonthAttendance`,
-    thisMonthAttendanceObj
-  );
-  return response.data;
-};
-
-const useGetThisMonthAttendance = (thisMonthAttendanceObj) => {
-  return useQuery({
-    queryKey: "thisMonthAttendanceData",
-    queryFn: async () => {
-      const data = await getThisMonthAttendance(thisMonthAttendanceObj);
-      return data.result;
+      if (id) {
+        const data = await getEmployeeDetailById(id);
+        return data.result;
+      }
     },
     refetchOnWindowFocus: false,
     retry: 1,
   });
 };
 
-const getTodayAttendance = async (data) => {
-  const { currentDate } = data;
-  let todayAttendanceObj = {
-    date: parseInt(moment(currentDate).format("D")),
-    month: parseInt(moment(currentDate).format("M")),
-    year: parseInt(moment(currentDate).format("yyyy")),
+const getThisMonthAttendance = async (id) => {
+  let thisMonthAttendanceObj = {
+    month: parseInt(moment(new Date().toISOString()).format("M")),
+    year: parseInt(moment(new Date().toISOString()).format("yyyy")),
   };
   const response = await axiosBase.post(
-    `${endPointAttendance}/getTodayAttendance`,
+    `${endPointAttendance}/getThisMonthAttendance/${id}`,
+    thisMonthAttendanceObj
+  );
+  return response.data;
+};
+const getAttendanceStatistic = async (employeeId) => {
+  const response = await axiosBase.post(
+    `${endPointAttendance}/getAttendanceStatistic/${employeeId}`,
+    {}
+  );
+  return response.data;
+};
+const useGetAttendanceStatistic = (id) => {
+  return useQuery({
+    queryKey: ["employeeAttendanceStatistic", id],
+    queryFn: async () => {
+      if (id) {
+        const data = await getAttendanceStatistic(id);
+        return data.result;
+      }
+    },
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+};
+const getYearlyAttendanceStatistic = async (employeeId) => {
+  let year = new Date().getFullYear();
+  const response = await axiosBase.post(
+    `${endPointAttendance}/getYearlyAttendanceStatistic/${employeeId}`,
+    { year: year }
+  );
+  return response.data;
+};
+const useGetYearlyAttendanceStatistic = (id) => {
+  return useQuery({
+    queryKey: ["employeeYearlyAttendanceStatistic", id],
+    queryFn: async () => {
+      const data = await getYearlyAttendanceStatistic(id);
+      return data.result;
+    },
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+};
+const useGetThisMonthAttendance = (id) => {
+  return useQuery({
+    queryKey: ["thisMonthAttendanceData", id],
+    queryFn: async () => {
+      if (id) {
+        const data = await getThisMonthAttendance(id);
+        return data.result;
+      }
+    },
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+};
+
+const getTodayAttendance = async (id) => {
+  let todayAttendanceObj = {
+    date: parseInt(moment(new Date().toISOString()).format("D")),
+    month: parseInt(moment(new Date().toISOString()).format("M")),
+    year: parseInt(moment(new Date().toISOString()).format("yyyy")),
+  };
+  const response = await axiosBase.post(
+    `${endPointAttendance}/getTodayAttendance/${id}`,
     todayAttendanceObj
   );
   return response.data;
 };
 
-const useGetTodayAttendance = (todayAttendanceObj) => {
+const useGetTodayAttendance = (id) => {
   return useQuery({
-    queryKey: "todayAttendanceData",
+    queryKey: ["todayAttendanceData", id],
     queryFn: async () => {
-      const data = await getTodayAttendance(todayAttendanceObj);
-      return data.result;
+      if (id) {
+        const data = await getTodayAttendance(id);
+        return data.result;
+      }
     },
     refetchOnWindowFocus: false,
     retry: 1,
@@ -93,13 +135,14 @@ const useGetTodayAttendance = (todayAttendanceObj) => {
 };
 
 const getAttendanceHistory = async (data) => {
-  const { currentDate, userInfo } = data;
+  const { month, year, id, isValid } = data;
   let attendanceHistoryObj = {
-    month: parseInt(moment(currentDate).format("M")),
-    year: parseInt(moment(currentDate).format("yyyy")),
+    month: month,
+    year: year,
+    isValid: isValid ?? true,
   };
   const response = await axiosBase.post(
-    `${endPointAttendance}/getAttendanceHistory/${userInfo.id}`,
+    `${endPointAttendance}/getAttendanceHistory/${id}`,
     attendanceHistoryObj
   );
   return response.data;
@@ -107,10 +150,12 @@ const getAttendanceHistory = async (data) => {
 
 const useGetAttendanceHistory = (attendanceHistoryObj) => {
   return useQuery({
-    queryKey: "attendanceHistoryData",
+    queryKey: ["attendanceHistoryData", attendanceHistoryObj.id],
     queryFn: async () => {
-      const data = await getAttendanceHistory(attendanceHistoryObj);
-      return data.result;
+      if (attendanceHistoryObj.id) {
+        const data = await getAttendanceHistory(attendanceHistoryObj);
+        return data.result;
+      }
     },
     refetchOnWindowFocus: false,
     retry: 1,
@@ -226,9 +271,13 @@ export const attendanceService = {
   getAttendanceHistory,
   getTodayAttendance,
   getThisMonthAttendance,
+  getYearlyAttendanceStatistic,
+  getAttendanceStatistic,
   useGetAttendanceHistory,
   useGetThisMonthAttendance,
   useGetTodayAttendance,
   useGetAttendanceDetail,
+  useGetAttendanceStatistic,
+  useGetYearlyAttendanceStatistic,
   saveImageOfAnonymousAttendance,
 };
