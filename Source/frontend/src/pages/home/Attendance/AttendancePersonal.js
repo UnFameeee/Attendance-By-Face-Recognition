@@ -250,16 +250,18 @@ function AttendancePersonal() {
           >
             Personal
           </Tab>
-          <Tab
-            fontSize="2xl"
-            fontWeight="bold"
-            border="1px solid gray"
-            onClick={() => {
-              handleChangeTab("management");
-            }}
-          >
-            Management
-          </Tab>
+          {userInfo.roleName != "employee" && (
+            <Tab
+              fontSize="2xl"
+              fontWeight="bold"
+              border="1px solid gray"
+              onClick={() => {
+                handleChangeTab("management");
+              }}
+            >
+              Management
+            </Tab>
+          )}
         </TabList>
         <TabPanels>
           <TabPanel>

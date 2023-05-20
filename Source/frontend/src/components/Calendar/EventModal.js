@@ -23,6 +23,7 @@ import moment from "moment";
 import { useMutation } from "react-query";
 import { workShiftService } from "../../services/workshift/workshift";
 import ChakraAlertDialog from "../ChakraAlertDialog";
+import { selectionData } from "../../data/SelectionData";
 export default function EventModal(props) {
   // #region declare variable
   const {
@@ -109,12 +110,29 @@ export default function EventModal(props) {
     shiftTypeId: selectedEvent?.shiftTypeId ?? "",
     shiftDate: selectedEvent?.shiftDate ?? "",
     employeeId: selectedEvent?.employee?.id ?? "",
+    allowLate: false,
   };
   const validationSchema = Yup.object().shape({
     shiftTypeId: Yup.string().required("This field is required"),
     employeeId: Yup.string().required("This field is required"),
   });
   // #endregion
+  function isDayPassed() {
+    if (selectedEvent) {
+      if (selectedEvent.absent) {
+        return true;
+      }
+      let currentDate = new Date().toLocaleDateString("en-GB");
+      const formattedDate = new Date(
+        selectedEvent?.shiftDate
+      ).toLocaleDateString("en-GB");
+      return currentDate > formattedDate;
+    } else {
+      let currentDate = new Date().toLocaleDateString("en-GB");
+      return currentDate > daySelected.format("DD/MM/YYYY");
+    }
+  }
+  if (isDayPassed() && !selectedEvent) return <></>;
   return (
     <>
       <Formik
@@ -138,7 +156,7 @@ export default function EventModal(props) {
             <Box
               as="form"
               onSubmit={formik.handleSubmit}
-              className="h-screen w-full fixed left-0 top-0 flex justify-center items-center"
+              className="h-screen w-full fixed left-0 top-0 flex justify-center items-center z-10"
             >
               <div className="bg-white rounded-lg shadow-2xl w-96">
                 <header className="bg-[#3182ce] px-4 py-2 flex justify-between items-center">
@@ -172,7 +190,7 @@ export default function EventModal(props) {
                         isSelectionField={true}
                         placeholder="---"
                         selectionArray={arrayShift}
-                        isReadOnly={isReadOnly}
+                        isReadOnly={isReadOnly || isDayPassed()}
                       />
                     </Box>
                     <Box alignItems="center">
@@ -213,11 +231,21 @@ export default function EventModal(props) {
                       isSelectionField={true}
                       formik={formik}
                       selectionArray={arrayEmployee}
-                      isReadOnly={isReadOnly}
+                      isReadOnly={isReadOnly || isDayPassed()}
                     />
+                    {selectedEvent && !selectedEvent.absent && (
+                      <FormTextField
+                        name="allowLate"
+                        label="Allow Late"
+                        isSelectionField={true}
+                        formik={formik}
+                        selectionArray={selectionData.boolean}
+                        isReadOnly={isReadOnly || isDayPassed()}
+                      />
+                    )}
                   </div>
                 </div>
-                {!isReadOnly && (
+                {!isReadOnly && !isDayPassed() && (
                   <footer className="flex justify-end border-t p-3 mt-5">
                     <Button
                       type="submit"

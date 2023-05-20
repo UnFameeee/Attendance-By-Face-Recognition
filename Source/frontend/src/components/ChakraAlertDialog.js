@@ -10,8 +10,18 @@ import {
 } from "@chakra-ui/react";
 
 function ChakraAlertDialog(props) {
-  const { isOpen, onClose, onAccept, message, type, title, acceptButtonLabel, acceptButtonColor } =
-    props;
+  const {
+    isOpen,
+    onClose,
+    onAccept,
+    message,
+    type,
+    title,
+    acceptButtonLabel,
+    acceptButtonColor,
+    closeOnOverlayClick,
+    isNoCancel,
+  } = props;
   const cancelRef = React.useRef();
 
   return (
@@ -19,6 +29,7 @@ function ChakraAlertDialog(props) {
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={onClose}
+      closeOnOverlayClick={closeOnOverlayClick}
       isCentered
     >
       <AlertDialogOverlay>
@@ -31,9 +42,11 @@ function ChakraAlertDialog(props) {
             {message || "Are you sure? You can't undo this action afterwards."}
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
-              Cancel
-            </Button>
+            {!isNoCancel && (
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+            )}
             <Button
               type={type ?? "none"}
               colorScheme={acceptButtonColor ?? "red"}
