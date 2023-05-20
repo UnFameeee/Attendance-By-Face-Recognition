@@ -135,10 +135,11 @@ const useGetTodayAttendance = (id) => {
 };
 
 const getAttendanceHistory = async (data) => {
-  const { month, year, id } = data;
+  const { month, year, id, isValid } = data;
   let attendanceHistoryObj = {
     month: month,
     year: year,
+    isValid: isValid ?? true,
   };
   const response = await axiosBase.post(
     `${endPointAttendance}/getAttendanceHistory/${id}`,

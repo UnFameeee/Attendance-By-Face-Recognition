@@ -70,6 +70,7 @@ function AttendancePersonal() {
   const [yearManagement, setYearManagement] = useState(
     new Date().getFullYear()
   );
+  const [isValid, setIsValid] = useState(true);
   useEffect(() => {
     if (userInfo.roleName == "employee") {
       setEmployeeFilterId(userInfo.id);
@@ -137,6 +138,7 @@ function AttendancePersonal() {
     month: monthManagement,
     year: yearManagement,
     id: employeeFilterId,
+    isValid: isValid,
   });
   const { data: listDepartmentData, isLoading: isLoadingListDepartment } =
     useGetListDepartment();
@@ -229,7 +231,7 @@ function AttendancePersonal() {
   }, [monthPersonal, yearPersonal]);
   useEffect(() => {
     refetchAttendanceHistoryFilterData();
-  }, [monthManagement, yearManagement]);
+  }, [monthManagement, yearManagement, isValid]);
   // #endregion
   return (
     <>
@@ -823,13 +825,6 @@ function AttendancePersonal() {
                     onSubmit={(values, actions) => {
                       const departmentId = values.department;
                       setDepartmentId(departmentId);
-                      // if (departmentId && userInfo.roleName == "employee") {
-                      //   let employeeId = employeeFilterId;
-                      // } else if (
-                      //   departmentId &&
-                      //   userInfo.roleName != "employee"
-                      // ) {
-                      // }
                     }}
                   >
                     {(formik) => (
@@ -1025,7 +1020,6 @@ function AttendancePersonal() {
                             This Month Attendance Detail
                           </Heading>
                         </Flex>
-
                         <SimpleGrid
                           w="100%"
                           spacing={4}
@@ -1343,6 +1337,41 @@ function AttendancePersonal() {
                             </Flex>
                           </Flex>
                         </Flex>
+                        <HStack>
+                          <Heading fontSize="xl" fontWeight="medium" mb="6px">
+                            <Highlight
+                              query={["Type Filter:"]}
+                              styles={{
+                                px: "2",
+                                py: "1",
+                                rounded: "full",
+                                bg: "purple.100",
+                              }}
+                            >
+                              Type Filter:
+                            </Highlight>
+                          </Heading>
+                          <Box>
+                            <Button
+                              onClick={() => {
+                                setIsValid(true);
+                              }}
+                              colorScheme={isValid ? "blue" : "gray"}
+                            >
+                              Valid
+                            </Button>
+                          </Box>
+                          <Box>
+                            <Button
+                              onClick={() => {
+                                setIsValid(false);
+                              }}
+                              colorScheme={!isValid ? "blue" : "gray"}
+                            >
+                              Invalid
+                            </Button>
+                          </Box>
+                        </HStack>
                         <HStack
                           w="fit-content"
                           justifyContent="flex-end"
@@ -1515,7 +1544,17 @@ function AttendancePersonal() {
                   Detail
                 </Heading>
               </Flex>
-              <Box>
+              <Flex gap="5px">
+                {isValid && currentTab == "management" && (
+                  <Badge rounded="md" colorScheme="blue" fontSize="md" p="5px">
+                    Valid
+                  </Badge>
+                )}
+                {!isValid && currentTab == "management" && (
+                  <Badge rounded="md" colorScheme="red" fontSize="md" p="5px">
+                    Invalid
+                  </Badge>
+                )}
                 {!attendanceDetailObj?.result?.earlyLeave &&
                   !attendanceDetailObj?.result?.lateArrival && (
                     <Badge
@@ -1540,14 +1579,14 @@ function AttendancePersonal() {
                 {attendanceDetailObj?.result?.earlyLeave && (
                   <Badge
                     rounded="md"
-                    colorScheme="yellow"
+                    colorScheme="orange"
                     fontSize="md"
                     p="5px"
                   >
                     Early Leave
                   </Badge>
                 )}
-              </Box>
+              </Flex>
             </Flex>
           </ModalHeader>
           <ModalCloseButton />
