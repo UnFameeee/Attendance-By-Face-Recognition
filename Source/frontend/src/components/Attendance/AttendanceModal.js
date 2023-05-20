@@ -31,10 +31,12 @@ export default function AttendanceModal() {
     isFetching: employeeDetailIsFetching,
     onError: employeeDetailOnError,
     error: employeeDetailError,
+    refetch: employeeDetailRefetch,
   } = attendanceService.useGetEmployeeDetailById(employeeId);
 
   useEffect(() => {
     if (isAttendanceModalOpen) {
+      employeeDetailRefetch();
       onOpen();
     }
   }, [isAttendanceModalOpen]);

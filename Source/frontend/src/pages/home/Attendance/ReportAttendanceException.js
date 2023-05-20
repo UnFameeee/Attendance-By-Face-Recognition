@@ -25,9 +25,11 @@ import { useMutation } from "react-query";
 import { attendanceService } from "../../../services/attendance/attendance";
 import { Helper } from "../../../Utils/Helper";
 import { useSelector } from "react-redux";
+import FinishModal from "../../../components/Training/FinishModal";
 function ReportAttendanceException() {
   // #region declare variable
   const toast = useToast();
+  const [isFinish, setIsFinish] = React.useState(false);
   const [images, setImages] = React.useState([]);
   const [imageSrc, setImageSrc] = React.useState("");
   const params = new URLSearchParams(window.location.search);
@@ -54,13 +56,15 @@ function ReportAttendanceException() {
             duration: 5000,
           });
         } else {
-          toast({
-            title: "Submit Attendance Exception Successfully",
-            position: "bottom-right",
-            status: "success",
-            isClosable: true,
-            duration: 5000,
-          });
+          // toast({
+          //   title: "Submit Attendance Exception Successfully",
+          //   position: "bottom-right",
+          //   status: "success",
+          //   isClosable: true,
+          //   duration: 5000,
+          // });
+
+          setIsFinish(true);
         }
       },
       onError: (error) => {
@@ -177,6 +181,7 @@ function ReportAttendanceException() {
           </Formik>
         </VStack>
       </Center>
+      <FinishModal openModal={isFinish} />
     </Stack>
   );
 }

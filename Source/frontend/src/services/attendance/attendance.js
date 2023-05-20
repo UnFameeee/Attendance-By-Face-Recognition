@@ -43,6 +43,7 @@ const useGetEmployeeDetailById = (id) => {
     },
     refetchOnWindowFocus: false,
     retry: 1,
+    enabled: false,
   });
 };
 

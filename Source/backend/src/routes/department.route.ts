@@ -20,9 +20,9 @@ export class DepartmentRoute implements Routes {
   private async initializeRoutes() {
     // api/department/listDepartment
     this.router.post(`${this.path}/listDepartment`,
-      authMiddleware,
+      // authMiddleware,
       zodValidate(pageSchema),
-      await authorizeRoute(PERMISSION.READ, RESOURCE.DEPARTMENT_MANAGEMENT),
+      // await authorizeRoute(PERMISSION.READ, RESOURCE.DEPARTMENT_MANAGEMENT),
       this.departmentController.getAllDepartmentPaging
     );
 

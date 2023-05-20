@@ -91,7 +91,7 @@ export class AttendanceService {
 
         //the latest punch in is startTime + 1 hour
         if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
-          response.message = "You are 1 hour late to checkin, please contact with the manager";
+          response.message = "You are too late to checkin, please contact with the manager";
           return response;
         }
 
@@ -145,10 +145,10 @@ export class AttendanceService {
       let endShift: Date = Helper.ConfigStaticDateTime(time, date);
 
       //Nếu allowEarlyLeave == false => nhân viên được phép về sớm
-      if (workShift.allowLateArrival == false) {
+      if (workShift.allowEarlyLeave == false) {
         let baseEndTime = moment(endTime, 'HH:mm');
         let baseLimitEarlyLeave = moment(queryOrganizationData.limitLateArrival, 'HH:mm');
-        let resultHour = moment(baseEndTime.clone().subtract(baseLimitEarlyLeave.hour(), 'hours').add(baseLimitEarlyLeave.minute(), 'minutes')).format("HH:mm");
+        let resultHour = moment(baseEndTime.clone().subtract(baseLimitEarlyLeave.hour(), 'hours').subtract(baseLimitEarlyLeave.minute(), 'minutes')).format("HH:mm");
 
         let shiftThreshholdBefore = Helper.ConfigStaticDateTime(resultHour, date);
 
@@ -194,7 +194,7 @@ export class AttendanceService {
         }
       })
 
-      const totalHours = Helper.MinusDate(queryShiftData.checkOut, queryShiftData.checkIn, true);
+      const totalHours = Helper.MinusDate(new Date(now.toISOString()), queryShiftData.checkIn, true);
 
       let queryData = await prisma.attendance.update({
         where: {
@@ -270,7 +270,7 @@ export class AttendanceService {
     if (!queryAttendanceData) {
       attendanceType = attendance.checkin;
     } else if(queryAttendanceData.checkIn){
-      attendanceType = attendance.checkin;
+      attendanceType = attendance.checkout;
     }
 
     const resData = {

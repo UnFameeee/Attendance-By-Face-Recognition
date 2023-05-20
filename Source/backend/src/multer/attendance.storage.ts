@@ -56,27 +56,27 @@ const attendanceImageStorage = multer.diskStorage({
         let error: HttpException = new HttpException(201, "This is your leave request day, you don't have a schedule for today");
         cb(error, null);
       } else {
-        const queryAttendanceCheckinData = await prisma.attendance.findFirst({
-          where: {
-            employeeId: employeeId,
-            attendanceDate: {
-              gte: targetDate.startOf('day').toDate(),
-              lte: targetDate.endOf('day').toDate(),
-            },
-            checkIn: {
-              not: null
-            },
-            checkOut: null,
-            deleted: false,
-          }
-        })
+        // const queryAttendanceCheckinData = await prisma.attendance.findFirst({
+        //   where: {
+        //     employeeId: employeeId,
+        //     attendanceDate: {
+        //       gte: targetDate.startOf('day').toDate(),
+        //       lte: targetDate.endOf('day').toDate(),
+        //     },
+        //     checkIn: {
+        //       not: null
+        //     },
+        //     checkOut: null,
+        //     deleted: false,
+        //   }
+        // })
 
-        if (queryAttendanceCheckinData) {
-          errorFlag = true;
-          req.error = "You have already checkin, please check again";
-          let error: HttpException = new HttpException(201, "You have already checkin, please check again");
-          cb(error, null);
-        } else {
+        // if (queryAttendanceCheckinData) {
+        //   errorFlag = true;
+        //   req.error = "You have already checkin, please check again";
+        //   let error: HttpException = new HttpException(201, "You have already checkin, please check again");
+        //   cb(error, null);
+        // } else {
           const queryAttendanceCheckoutData = await prisma.attendance.findFirst({
             where: {
               employeeId: employeeId,
@@ -99,7 +99,7 @@ const attendanceImageStorage = multer.diskStorage({
             let error: HttpException = new HttpException(201, "You have already checkout, please check again");
             cb(error, null);
           }
-        }
+        // }
 
         if (!errorFlag) {
           //Check EmpID folder
@@ -157,4 +157,4 @@ export const attendanceImageUpload = multer({
   }
 }).fields([
   { name: "images", maxCount: 1 }
-])
+])  
