@@ -358,6 +358,7 @@ export class AttendanceService {
 
   public getAttendanceHistory = async (employeeId: string, data: DateTimeV2DTO) => {
     const response = new ResponseData<any>();
+    const isValid = data.isValid;
     const daysInMonth = moment(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
@@ -365,6 +366,7 @@ export class AttendanceService {
 
     const queryData = await prisma.attendance.findMany({
       where: {
+        isValid: isValid,
         employeeId: employeeId,
         attendanceDate: {
           gte: startDate,
