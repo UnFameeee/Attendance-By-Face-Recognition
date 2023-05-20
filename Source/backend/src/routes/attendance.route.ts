@@ -26,7 +26,7 @@ export class AttendanceRoute implements Routes {
     )
 
     // api/attendance/takeAttendance
-    this.router.get(`${this.path}/getEmployeeDetailById/:employeeId`,
+    this.router.post(`${this.path}/getEmployeeDetailById/:employeeId`,
       this.attendanceController.getEmployeeDetailById
     )
 

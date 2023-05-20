@@ -4,6 +4,7 @@ import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFoo
 import QRCode from 'react-qr-code';
 import { useEffect } from 'react';
 import { Helper } from '../../../Utils/Helper';
+import { useNavigate } from 'react-router-dom';
 
 const ModalBodyStyle = {
   width: "25rem",
@@ -22,6 +23,7 @@ const ModalContentStyle = {
 
 export default function TrainingQR() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
   const employeeId = Helper.getUseDecodeInfor().id;
   const urlType = "TrainingFace";
   const {
@@ -36,6 +38,11 @@ export default function TrainingQR() {
     urlGenerateRefetch();
     onOpen();
   }, [])
+
+  const onCloseHandle = () => {
+    onClose();
+    navigate("/sign-in")
+  }
 
   if (urlGenerateisFetching) {
     return <></>
@@ -72,7 +79,7 @@ export default function TrainingQR() {
             </Box>
 
             <ModalFooter gap={5}>
-              <Button onClick={onClose} border={"1px solid gray"}>Finish</Button>
+              <Button onClick={onCloseHandle} border={"1px solid gray"}>Finish</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

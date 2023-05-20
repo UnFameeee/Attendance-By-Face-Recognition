@@ -122,4 +122,10 @@ export const application_permission = {
     `${ROLE.MANAGER}-${PERMISSION.UPDATE}`,
     `${ROLE.MANAGER}-${PERMISSION.DELETE}`,
   ],
+  "facial-recognition": [
+    `${ROLE.ADMIN}-${PERMISSION.CREATE}`,
+    `${ROLE.ADMIN}-${PERMISSION.READ}`,
+    `${ROLE.ADMIN}-${PERMISSION.UPDATE}`,
+    `${ROLE.ADMIN}-${PERMISSION.DELETE}`,
+  ]
 }

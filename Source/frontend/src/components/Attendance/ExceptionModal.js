@@ -82,9 +82,9 @@ export default function ExceptionModal() {
           backdropFilter='blur(10px) hue-rotate(90deg)'
         />
         <ModalContent style={ModalContentStyle}>
-          <ModalHeader fontWeight={"bold"}>Attendance Failure Report</ModalHeader>
+          <ModalHeader fontWeight={"bold"} >Attendance Failure Report</ModalHeader>
           {/* <ModalCloseButton /> */}
-          {state == 0 &&
+          {state === 0 &&
             <>
               <ModalBody style={ModalBodyStyle}>
                 <WarningTwoIcon width={"6rem"} height={"6rem"} color={"red"} />

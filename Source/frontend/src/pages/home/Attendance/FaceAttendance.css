@@ -9,11 +9,11 @@
   text-align: center;
 }
 
-#video {
+/* #video {
   display: flex;
   width: 1244px;
   height: 100vh;
-}
+} */
 
 #canvas {
   position: absolute;

@@ -31,10 +31,12 @@ export default function AttendanceModal() {
     isFetching: employeeDetailIsFetching,
     onError: employeeDetailOnError,
     error: employeeDetailError,
+    refetch: employeeDetailRefetch,
   } = attendanceService.useGetEmployeeDetailById(employeeId);
 
   useEffect(() => {
     if (isAttendanceModalOpen) {
+      employeeDetailRefetch();
       onOpen();
     }
   }, [isAttendanceModalOpen]);
@@ -54,7 +56,7 @@ export default function AttendanceModal() {
       dispatch(setExceptionModalOpen({
         isExceptionModalOpen: true,
       }))
-    } 
+    }
     else {
       dispatch(setIsScaningPaused({
         isScaningPaused: false,
@@ -94,14 +96,29 @@ export default function AttendanceModal() {
             backdropFilter='blur(10px) hue-rotate(90deg)'
           />
           <ModalContent>
-            <ModalHeader fontWeight={"bold"}>Take Attendance</ModalHeader>
-            <ModalCloseButton />
+            <ModalHeader fontWeight={"bold"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"} gap={"5px"}>
+              <p style={{
+                color: '#7F5D93',
+                fontWeight: "bold",
+                fontSize: "1.5rem",
+              }}>
+                Record Attendance
+              </p>
+              <p style={{
+                background: "#C6F5D5",
+                color: "#22543D",
+                padding: "5px 10px 5px 10px"
+              }}>
+                {employeeDetail?.attendanceType}
+              </p>
+            </ModalHeader>
+            {/* <ModalCloseButton /> */}
             <ModalBody style={ModalBodyStyle}>
               <Box display={"flex"} alignSelf={"center"} justifySelf={"center"}>
                 <Image src={employeeDetail?.image} style={ImageStyle} />
               </Box>
               <Box>
-                <Text textAlign={"center"} fontSize={"1.25rem"} fontWeight={"bold"} color={"red"}>Employee Information</Text>
+                <Text textAlign={"center"} fontSize={"1.25rem"} fontWeight={"bold"} color={"#000000"}>Employee Information</Text>
                 <Text><b>Name: </b>{employeeDetail?.fullname}</Text>
                 <Text><b>ID: </b>{employeeDetail?.id}</Text>
                 <Text><b>Gender: </b>{employeeDetail?.gender}</Text>
