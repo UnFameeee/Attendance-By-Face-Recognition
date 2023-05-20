@@ -1,26 +1,23 @@
 import React from "react";
 import { Pie } from "@ant-design/plots";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
+import NoDataToDisplay from "../NoDataToDisplay";
 
-function PieChart() {
-  const data = [
-    {
-      type: "Check In",
-      value: 27,
-    },
-    {
-      type: "Check Out",
-      value: 25,
-    },
-    {
-      type: "Not Started",
-      value: 15,
-    },
-  ];
-
-  const checkInColor = "#61daab";
-  const checkOutColor = "#6395f9 ";
-  const notStartedColor = "#657798 ";
+function PieChart(props) {
+  // const data = [
+  //   {
+  //     type: "Attendance Day",
+  //     value: 20,
+  //   },
+  //   {
+  //     type: "Leave Day",
+  //     value: 2,
+  //   },
+  // ];
+  const { data } = props;
+  const color1 = "#61daab";
+  const color2 = "#6395f9 ";
+  const color3 = "#657798 ";
 
   const config = {
     appendPadding: 10,
@@ -29,13 +26,13 @@ function PieChart() {
     colorField: "type",
     radius: 0.8,
     color: ({ type }) => {
-      if (type === "Check In") {
-        return checkInColor;
+      if (type === "Attendance Day") {
+        return color2;
       }
-      if (type === "Check Out") {
-        return checkOutColor;
+      if (type === "Leave Day") {
+        return color3;
       }
-      return notStartedColor;
+      return color3;
     },
     label: {
       type: "outer",
@@ -51,8 +48,15 @@ function PieChart() {
     ],
   };
   return (
-    <Box bg='white' shadow='2xl' rounded='md' p={3}>
-      <Pie {...config} />
+    <Box bg="white" shadow="2xl" rounded="md" p={3}>
+      {data ? (
+        <Pie {...config} />
+      ) : (
+        <Box h="350px" position='relative'>
+          <Text position='absolute' fontSize='1.5rem' fontWeight='bold'>Pie Chart</Text>
+          <NoDataToDisplay />
+        </Box>
+      )}
     </Box>
   );
 }

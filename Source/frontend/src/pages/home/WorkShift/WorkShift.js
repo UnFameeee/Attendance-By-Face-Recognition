@@ -340,7 +340,7 @@ function WorkShift() {
             )}
           </Formik>
         </HStack>
-        {userDecodeInfo.roleName != "employee" && (
+        {userDecodeInfo.roleName != "employee" && departmentId && (
           <HStack
             w="fit-content"
             gap="10px"

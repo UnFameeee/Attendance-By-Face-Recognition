@@ -18,18 +18,7 @@ import {
   Highlight,
   Button,
   HStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
+
   Tooltip,
 } from "@chakra-ui/react";
 import { useGetPermission } from "../../../hook/useGetPermission";
