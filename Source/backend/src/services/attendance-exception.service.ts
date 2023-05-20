@@ -7,7 +7,6 @@ import { ROLE } from "../constant/database.constant";
 import { prisma } from "../database/prisma.singleton";
 import { GetAttendanceExceptionDataDTO, SubmitAttendanceExceptionDTO } from "../model/dtos/attendance-exception.dto";
 import { Helper } from "../utils/helper";
-import { DateTimeV2DTO } from "../model/dtos/workshift.dto";
 
 export class AttendanceExceptionService {
   public submitAttendanceException = async (data: SubmitAttendanceExceptionDTO) => {

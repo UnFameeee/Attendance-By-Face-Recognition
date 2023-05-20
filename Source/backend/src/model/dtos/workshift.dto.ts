@@ -177,6 +177,10 @@ export const dateTimeV2Schema = z.object({
       invalid_type_error: 'Filter must be string',
     })
     .trim()
+    .optional(),
+
+  isValid: z
+    .boolean()
     .optional()
 });
 export type DateTimeV2DTO = z.infer<typeof dateTimeV2Schema>;
