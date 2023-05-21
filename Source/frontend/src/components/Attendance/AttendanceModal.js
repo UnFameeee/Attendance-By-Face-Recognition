@@ -1,5 +1,5 @@
 import { Box, Button, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react'
-import React, { useEffect, } from 'react'
+import React, { useEffect, useState, } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { setAttendanceModalOpen } from '../../store/Slice/AttendanceSlice/attendanceModalSlice';
 import { setIsScaningPaused, setIsTakeAttendance } from '../../store/Slice/AttendanceSlice/takeAttendanceSlice';
@@ -74,7 +74,16 @@ export default function AttendanceModal() {
     dispatch(setIsTakeAttendance({
       isTakeAttendance: true,
     }))
-    closeModal();
+
+    dispatch(setAttendanceModalOpen({
+      isAttendanceModalOpen: false,
+    }))
+
+    dispatch(setIsScaningPaused({
+      isScaningPaused: false,
+    }))
+
+    onClose();
   }
 
   if (employeeDetailIsFetching) {
