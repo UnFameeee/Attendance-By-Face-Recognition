@@ -101,6 +101,8 @@ export class WorkshiftService {
       where: whereData,
       select: {
         shiftId: true,
+        allowEarlyLeave: true,
+        allowLateArrival: true,
         employee: {
           select: {
             id: true,
@@ -207,6 +209,8 @@ export class WorkshiftService {
       select: {
         shiftId: true,
         absent: true,
+        allowEarlyLeave: true,
+        allowLateArrival: true,
         employee: {
           select: {
             id: true,
