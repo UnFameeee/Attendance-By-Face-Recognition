@@ -70,6 +70,8 @@ function AttendancePersonal() {
     new Date().getFullYear()
   );
   const [isValid, setIsValid] = useState(true);
+  const [isValidPersonal, setIsValidPersonal] = useState(true);
+
   useEffect(() => {
     if (userInfo.roleName == "employee") {
       setEmployeeFilterId(userInfo.id);
@@ -102,6 +104,7 @@ function AttendancePersonal() {
     month: monthPersonal,
     year: yearPersonal,
     id: userId,
+    isValid: isValidPersonal
   });
   const { data: attendanceMonthData, isFetching: isFetchingMonthData } =
     attendanceService.useGetThisMonthAttendance(userId);
@@ -230,7 +233,7 @@ function AttendancePersonal() {
   });
   useEffect(() => {
     refetchAttendanceHistoryData();
-  }, [monthPersonal, yearPersonal]);
+  }, [monthPersonal, yearPersonal, isValidPersonal]);
   useEffect(() => {
     refetchAttendanceHistoryFilterData();
   }, [monthManagement, yearManagement, isValid]);
@@ -654,6 +657,41 @@ function AttendancePersonal() {
                       </Flex>
                     </Flex>
                   </Flex>
+                  <HStack>
+                    <Heading fontSize="xl" fontWeight="medium" mb="6px">
+                      <Highlight
+                        query={["Type Filter:"]}
+                        styles={{
+                          px: "2",
+                          py: "1",
+                          rounded: "full",
+                          bg: "purple.100",
+                        }}
+                      >
+                        Type Filter:
+                      </Highlight>
+                    </Heading>
+                    <Box>
+                      <Button
+                        onClick={() => {
+                          setIsValidPersonal(true);
+                        }}
+                        colorScheme={isValidPersonal ? "blue" : "gray"}
+                      >
+                        Valid
+                      </Button>
+                    </Box>
+                    <Box>
+                      <Button
+                        onClick={() => {
+                          setIsValidPersonal(false);
+                        }}
+                        colorScheme={!isValidPersonal ? "blue" : "gray"}
+                      >
+                        Invalid
+                      </Button>
+                    </Box>
+                  </HStack>
                   <HStack
                     w="fit-content"
                     justifyContent="flex-end"
