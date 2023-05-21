@@ -1690,7 +1690,11 @@ function AttendancePersonal() {
                 >
                   <Flex gap="5px" alignItems="center">
                     <MdWorkHistory />
-                    <Text>{attendanceDetailObj?.result?.totalHours}</Text>
+                    <Text>
+                      {Helper.convertDateISOToHHmm(
+                        attendanceDetailObj?.result?.totalHours
+                      )}
+                    </Text>
                   </Flex>
                   <Text>Total working hours</Text>
                 </Box>
