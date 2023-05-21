@@ -8,18 +8,13 @@ import {
   InputRightElement,
   InputRightAddon,
   Input,
-  RadioGroup,
-  Stack,
-  Radio,
   Select,
   Spinner,
-  Box,
-  Menu,
-  MenuButton,
-  Button,
-  MenuList,
-  MenuItem,
-  Image,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
@@ -30,6 +25,7 @@ import SearchAndSelectAddressField from "../field/SearchAndSelectAddressField";
 import RadioGenderField from "../field/RadioGenderField";
 import AddressSelection from "./AddressSelection";
 import CustomSelection from "./CustomSelection";
+import NumberField from "./NumberField";
 function FormTextField(props) {
   const {
     leftIcon,
@@ -46,6 +42,7 @@ function FormTextField(props) {
     size,
     rows,
     defaultValue,
+    isNumber,
     isDateField,
     isTextAreaField,
     isGender,
@@ -89,7 +86,7 @@ function FormTextField(props) {
       >
         {label && <FormLabel>{label}</FormLabel>}
         <InputGroup>
-          <Input {...field} type={type ?? "date"}  />
+          <Input {...field} type={type ?? "date"} />
         </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
@@ -104,7 +101,7 @@ function FormTextField(props) {
       >
         {label && <FormLabel>{label}</FormLabel>}
         <InputGroup>
-          <Input {...field} type={type ?? "time"}  />
+          <Input {...field} type={type ?? "time"} />
         </InputGroup>
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
@@ -249,6 +246,22 @@ function FormTextField(props) {
             placeholder={placeholder ?? ""}
           />
         </InputGroup>
+        <FormErrorMessage>{meta.error}</FormErrorMessage>
+      </FormControl>
+    );
+  } else if (isNumber) {
+    
+    return (
+      <FormControl
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+        isDisabled={isDisabled}
+        isInvalid={meta.error && meta.touched}
+      >
+        <FormLabel>{label}</FormLabel>
+
+        <Field {...field} formik={formik} as={NumberField} />
+
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );

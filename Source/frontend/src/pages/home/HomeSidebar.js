@@ -34,7 +34,8 @@ import { Helper } from "../../Utils/Helper";
 import ChakraAlertDialog from "../../components/ChakraAlertDialog";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
-import background from '../../assets/bg2.jpg'
+import background from "../../assets/bg2.jpg";
+import LoadingSpinner from "../../components/LoadingSpinner";
 function HomeSidebar() {
   var decoded = Helper.getUseDecodeInfor();
   const [userRole, setUserRole] = useState(Helper.getUserRole());
@@ -76,6 +77,12 @@ function HomeSidebar() {
       setUserAvatar(profileDetailData?.result?.image + "?" + dayjs());
     }
   }, [isFetchingProfileDetailData]);
+  if (useLogoutMutation.isLoading)
+    return (
+      <Box h='100vh' w='100vw' backgroundImage={background} >
+        <LoadingSpinner />
+      </Box>
+    );
   return (
     <div
       style={{
@@ -446,8 +453,8 @@ function HomeSidebar() {
         bgColor="mainBg"
         padding="2rem"
         backgroundImage={background}
-        backgroundPosition='bottom'
-        backgroundSize='auto'
+        backgroundPosition="bottom"
+        backgroundSize="auto"
       >
         <Outlet />
       </Box>

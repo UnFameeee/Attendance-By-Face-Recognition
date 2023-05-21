@@ -10,6 +10,7 @@ import {
   useToast,
   Tooltip,
   VStack,
+  Input,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -112,11 +113,30 @@ function OrganizationGeneral() {
   );
   // #endregion
   // #region form
+  function convertToHour(value) {
+    const [hoursString, minutesString] = value.split(":");
+    const hours = parseInt(hoursString, 10);
+    return hours;
+  }
+  function convertToMinute(value) {
+    const [hoursString, minutesString] = value.split(":");
+    const minutes = parseInt(minutesString, 10);
+    return minutes;
+  }
   var initialValues = {
     organizationName: organizationDetailData?.result?.organizationName ?? "",
-    limitEarlyLeave: organizationDetailData?.result?.limitEarlyLeave ?? "18:00",
-    limitLateArrival:
-      organizationDetailData?.result?.limitLateArrival ?? "09:00",
+    limitEarlyLeaveHour: organizationDetailData?.result?.limitEarlyLeave
+      ? convertToHour(organizationDetailData?.result?.limitEarlyLeave)
+      : 1,
+    limitEarlyLeaveMinute: organizationDetailData?.result?.limitEarlyLeave
+      ? convertToMinute(organizationDetailData?.result?.limitEarlyLeave)
+      : 30,
+    limitLateArrivalHour: organizationDetailData?.result?.limitLateArrival
+      ? convertToHour(organizationDetailData?.result?.limitLateArrival)
+      : 1,
+    limitLateArrivalMinute: organizationDetailData?.result?.limitLateArrival
+      ? convertToMinute(organizationDetailData?.result?.limitLateArrival)
+      : 30,
     annualLeave: organizationDetailData?.result?.yearlyAnnualLeave ?? "12",
     megaAddress: {
       country: organizationDetailData?.result?.location?.country ?? "",
@@ -127,8 +147,21 @@ function OrganizationGeneral() {
   };
   const validationSchema = Yup.object().shape({
     organizationName: Yup.string().required("This field is required"),
+    limitEarlyLeaveHour: Yup.number()
+      .moreThan(-1, "Invalid value")
+      .lessThan(25, "Invalid value"),
+    limitLateArrivalHour: Yup.number()
+      .moreThan(-1, "Invalid value")
+      .lessThan(25, "Invalid value"),
+    limitEarlyLeaveMinute: Yup.number()
+      .moreThan(-1, "Invalid value")
+      .lessThan(61, "Invalid value"),
+    limitLateArrivalMinute: Yup.number()
+      .moreThan(-1, "Invalid value")
+      .lessThan(61, "Invalid value"),
     // address: Yup.string().required("This field is required"),
   });
+  // console.log("initialValues", initialValues);
   // #endregion
   if (isLoadingOrganizationDetailData) return <LoadingSpinner />;
   return (
@@ -139,11 +172,12 @@ function OrganizationGeneral() {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
+              debugger;
               const organizationDetail = {
                 organizationName: values.organizationName,
                 yearlyAnnualLeave: values.annualLeave,
-                limitEarlyLeave: values.limitEarlyLeave,
-                limitLateArrival: values.limitLateArrival,
+                limitEarlyLeave: `${values.limitEarlyLeaveHour}:${values.limitEarlyLeaveMinute}`,
+                limitLateArrival: `${values.limitLateArrivalHour}:${values.limitLateArrivalMinute}`,
                 location: {
                   address: values.address,
                   city: values.megaAddress?.city ?? "",
@@ -190,7 +224,7 @@ function OrganizationGeneral() {
                           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                           <Heading fontSize="3xl">Organization Details</Heading>
                         </Flex>
-                        <Flex gap='10px'>
+                        <Flex gap="10px">
                           <ModifyShiftTypeModal />
                           <ModifyLeaveTypeModal />
                         </Flex>
@@ -251,18 +285,42 @@ function OrganizationGeneral() {
                               }
                               isDisabled={!resultPermission?.update}
                             />
-                            <FormTextField
-                              name="limitEarlyLeave"
-                              label="Early Leave"
-                              isTimeField={true}
-                              isDisabled={!resultPermission?.update}
-                            />
-                            <FormTextField
-                              name="limitLateArrival"
-                              label="Late Arrival"
-                              isTimeField={true}
-                              isDisabled={!resultPermission?.update}
-                            />
+                            <Flex gap={5}>
+                              <Box w="fit-content">
+                                <FormTextField
+                                  name="limitLateArrivalHour"
+                                  label="Late Arrival Hour"
+                                  type="number"
+                                  isDisabled={!resultPermission?.update}
+                                />
+                              </Box>
+                              <Box w="fit-content">
+                                <FormTextField
+                                  name="limitLateArrivalMinute"
+                                  label="Late Arrival Minute"
+                                  type="number"
+                                  isDisabled={!resultPermission?.update}
+                                />
+                              </Box>
+                            </Flex>
+                            <Flex gap={5}>
+                              <Box w="fit-content">
+                                <FormTextField
+                                  name="limitEarlyLeaveHour"
+                                  label="Early Leave Hour"
+                                  type="number"
+                                  isDisabled={!resultPermission?.update}
+                                />
+                              </Box>
+                              <Box w="fit-content">
+                                <FormTextField
+                                  name="limitEarlyLeaveMinute"
+                                  label="Early Leave Minute"
+                                  type="number"
+                                  isDisabled={!resultPermission?.update}
+                                />
+                              </Box>
+                            </Flex>
                             <FormTextField
                               name="annualLeave"
                               label="Annual Leave"
