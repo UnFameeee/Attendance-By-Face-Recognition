@@ -24,9 +24,10 @@ const getEmployeeDetailById = async (id) => {
   if (id) {
     const time = new Date();
     const response = await axiosBase.post(
-      `${endPointAttendance}/getEmployeeDetailById/${id}`, {
-      date: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
-    }
+      `${endPointAttendance}/getEmployeeDetailById/${id}`,
+      {
+        date: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`,
+      }
     );
     return response.data;
   }
@@ -171,7 +172,6 @@ const getAttendanceDetail = async (attendanceId) => {
   );
   return response.data;
 };
-
 const useGetAttendanceDetail = (attendanceId) => {
   return useQuery({
     queryKey: ["attendanceDetail", attendanceId],
@@ -182,6 +182,17 @@ const useGetAttendanceDetail = (attendanceId) => {
     refetchOnWindowFocus: false,
     retry: 1,
   });
+}
+const validateAttendance = async (data) => {
+  const { note, isValid, id } = data;
+  const response = await axiosBase.post(
+    `${endPointAttendance}/validateAttendance/${id}`,
+    {
+      isValid: isValid,
+      note: note,
+    }
+  );
+  return response.data;
 };
 
 const saveImageOfExceptionAttendance = async (data) => {
@@ -276,6 +287,7 @@ export const attendanceService = {
   getThisMonthAttendance,
   getYearlyAttendanceStatistic,
   getAttendanceStatistic,
+  validateAttendance,
   useGetAttendanceHistory,
   useGetThisMonthAttendance,
   useGetTodayAttendance,

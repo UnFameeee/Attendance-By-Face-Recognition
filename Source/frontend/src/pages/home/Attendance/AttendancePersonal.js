@@ -27,6 +27,7 @@ import {
   TabPanel,
   Highlight,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import FormTextField from "../../../components/field/FormTextField";
 import { Formik } from "formik";
@@ -39,7 +40,7 @@ import { RiUserVoiceFill } from "react-icons/ri";
 import { attendanceService } from "../../../services/attendance/attendance";
 import { Helper } from "../../../Utils/Helper";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import moment from "moment";
 import { employeeService } from "../../../services/employee/employee";
 import { useGetListDepartment } from "../../../services/organization/department";
@@ -47,6 +48,8 @@ import * as Yup from "yup";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function AttendancePersonal() {
   // #region declare variable
+  const toast = useToast();
+  const queryClient = useQueryClient();
   const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
   const [userId, setUserId] = useState(Helper.getUseDecodeInfor().id);
   const [currentTab, setCurrentTab] = useState("personal");
@@ -71,6 +74,7 @@ function AttendancePersonal() {
   );
   const [isValid, setIsValid] = useState(true);
   const [isValidPersonal, setIsValidPersonal] = useState(true);
+  const [reportInvalidId, setReportInvalidId] = useState();
 
   useEffect(() => {
     if (userInfo.roleName == "employee") {
@@ -91,6 +95,11 @@ function AttendancePersonal() {
     onClose: onCloseAttendanceDetailModal,
   } = useDisclosure();
   const {
+    isOpen: isOpenReportInvalidModal,
+    onOpen: onOpenReportInvalidModal,
+    onClose: onCloseReportInvalidModal,
+  } = useDisclosure();
+  const {
     data: employeeData,
     isLoading: isLoadingEmployeeData,
     isFetching: isFetchingEmployeeData,
@@ -104,7 +113,7 @@ function AttendancePersonal() {
     month: monthPersonal,
     year: yearPersonal,
     id: userId,
-    isValid: isValidPersonal
+    isValid: isValidPersonal,
   });
   const { data: attendanceMonthData, isFetching: isFetchingMonthData } =
     attendanceService.useGetThisMonthAttendance(userId);
@@ -118,6 +127,46 @@ function AttendancePersonal() {
       },
     }
   );
+
+  const useReportInvalid = useMutation(attendanceService.validateAttendance, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        if (currentTab == "management") {
+          queryClient.invalidateQueries([
+            "attendanceHistoryData",
+            employeeFilterId,
+          ]);
+        } else {
+          queryClient.invalidateQueries(["attendanceHistoryData", userId]);
+        }
+        toast({
+          title: "Report Invalid Attendance Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   const {
     data: employeeFilterData,
     isFetching: isFetchingFilterEmployeeData,
@@ -165,6 +214,10 @@ function AttendancePersonal() {
   const handleOpenAttendanceDetail = (attendanceId) => {
     useGetAttendanceDetail.mutate(attendanceId);
     onOpenAttendanceDetailModal();
+  };
+  const handleOnClickReportInvalid = (id) => {
+    onOpenReportInvalidModal();
+    setReportInvalidId(id);
   };
   const selectionHandleOnChange = (value) => {
     setEmployeeFilterId(value);
@@ -218,6 +271,9 @@ function AttendancePersonal() {
   const initialValuesSelectDepartment = {
     department: departmentId,
   };
+  const initialValuesReportInvalid = {
+    note: "",
+  };
   const initialValuesForDateFilterSelection = {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
@@ -237,6 +293,7 @@ function AttendancePersonal() {
   useEffect(() => {
     refetchAttendanceHistoryFilterData();
   }, [monthManagement, yearManagement, isValid]);
+
   // #endregion
   return (
     <>
@@ -1639,8 +1696,19 @@ function AttendancePersonal() {
                     Invalid
                   </Badge>
                 )}
+                {attendanceDetailObj?.result?.absent && (
+                  <Badge
+                    rounded="md"
+                    colorScheme="yellow"
+                    fontSize="md"
+                    p="5px"
+                  >
+                    Leave Day
+                  </Badge>
+                )}
                 {!attendanceDetailObj?.result?.earlyLeave &&
-                  !attendanceDetailObj?.result?.lateArrival && (
+                  !attendanceDetailObj?.result?.lateArrival &&
+                  !attendanceDetailObj?.result?.absent && (
                     <Badge
                       rounded="md"
                       colorScheme="green"
@@ -1650,25 +1718,40 @@ function AttendancePersonal() {
                       On Time
                     </Badge>
                   )}
-                {attendanceDetailObj?.result?.lateArrival && (
-                  <Badge
-                    rounded="md"
-                    colorScheme="yellow"
-                    fontSize="md"
-                    p="5px"
+                {attendanceDetailObj?.result?.lateArrival &&
+                  !attendanceDetailObj?.result?.absent && (
+                    <Badge
+                      rounded="md"
+                      colorScheme="yellow"
+                      fontSize="md"
+                      p="5px"
+                    >
+                      Late Arrival
+                    </Badge>
+                  )}
+                {attendanceDetailObj?.result?.earlyLeave &&
+                  !attendanceDetailObj?.result?.absent && (
+                    <Badge
+                      rounded="md"
+                      colorScheme="orange"
+                      fontSize="md"
+                      p="5px"
+                    >
+                      Early Leave
+                    </Badge>
+                  )}
+                {currentTab == "management" && (
+                  <Button
+                    ml="10px"
+                    colorScheme="red"
+                    onClick={() => {
+                      handleOnClickReportInvalid(
+                        attendanceDetailObj.result?.attendanceId
+                      );
+                    }}
                   >
-                    Late Arrival
-                  </Badge>
-                )}
-                {attendanceDetailObj?.result?.earlyLeave && (
-                  <Badge
-                    rounded="md"
-                    colorScheme="orange"
-                    fontSize="md"
-                    p="5px"
-                  >
-                    Early Leave
-                  </Badge>
+                    Report Invalid
+                  </Button>
                 )}
               </Flex>
             </Flex>
@@ -1762,6 +1845,48 @@ function AttendancePersonal() {
               </VStack>
             </HStack>
           </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isOpenReportInvalidModal}
+        onClose={onCloseReportInvalidModal}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Report Invalid Attendance</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Formik
+              initialValues={initialValuesReportInvalid}
+              onSubmit={(values, actions) => {
+                let reportInvalidObj = {
+                  id: reportInvalidId,
+                  isValid: true,
+                  note: values.note,
+                };
+                useReportInvalid.mutate(reportInvalidObj);
+                onCloseReportInvalidModal();
+                setReportInvalidId();
+                actions.reset();
+              }}
+            >
+              {(formik) => (
+                <Stack>
+                  <FormTextField
+                    label="Note"
+                    name="note"
+                    isTextAreaField={true}
+                  />
+                  <Button onClick={formik.handleSubmit} colorScheme="blue">
+                    Submit
+                  </Button>
+                </Stack>
+              )}
+            </Formik>
+          </ModalBody>
+
           <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
