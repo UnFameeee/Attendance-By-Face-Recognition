@@ -57,7 +57,7 @@ export default function FinishModal({ openModal }) {
           <ModalBody style={ModalBodyStyle}>
             <CheckCircleIcon width={"6rem"} height={"6rem"} color={"green"} />
 
-            <Text textAlign={"center"} fontSize={"1rem"} fontWeight={700}>You have finish the scanning</Text>
+            <Text textAlign={"center"} fontSize={"1rem"} fontWeight={700}>You have finished the process</Text>
 
             <Text textAlign={"justify"} fontSize={"0.9rem"} lineHeight={"1.5rem"} fontWeight={"bold"} color={"gray"}>Click the <b style={{ color: "green" }}>"Finish"</b> button to end this session and back to the sign-in page. Continue your work on your Laptop or PC.</Text>
           </ModalBody>

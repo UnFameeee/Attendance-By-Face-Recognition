@@ -175,7 +175,13 @@ export class FacialRecognitionService {
     })
 
     if (queryData) {
-      await this.trainModel(employeeId);
+      const pathToFaceDescriptors: string = path.join(__dirname, "/../public/train-model");
+      const JSONparseFaceMatcher = JSON.parse(fs.readFileSync(`${pathToFaceDescriptors}/FaceMatcher.json`).toString());
+      if (JSONparseFaceMatcher.labeledDescriptors.length != 0) {
+        await this.trainModel(employeeId);
+      } else {
+        await this.trainAllModel();
+      }
     }
     response.result = true;
     return response;
