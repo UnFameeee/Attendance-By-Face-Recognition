@@ -328,9 +328,9 @@ function AttendancePersonal() {
         <TabPanels>
           <TabPanel>
             {isFetchingHistoryData ||
-            isFetchingMonthData ||
-            isFetchingTodayData ||
-            isFetchingEmployeeData ? (
+              isFetchingMonthData ||
+              isFetchingTodayData ||
+              isFetchingEmployeeData ? (
               <LoadingSpinner />
             ) : (
               <Stack spacing={5} h="100%">
@@ -1042,9 +1042,9 @@ function AttendancePersonal() {
               {employeeFilterId && (
                 <>
                   {isFetchingFilterEmployeeData ||
-                  isLoadingHistoryFilterData ||
-                  isFetchingTodayFilterData ||
-                  isFetchingMonthFilterData ? (
+                    isLoadingHistoryFilterData ||
+                    isFetchingTodayFilterData ||
+                    isFetchingMonthFilterData ? (
                     <LoadingSpinner />
                   ) : (
                     <>
@@ -1222,7 +1222,7 @@ function AttendancePersonal() {
                             <Box color="white">
                               <Heading fontSize="2xl">
                                 {attendanceMonthFilterData?.totalWorkingHours ==
-                                "00:00"
+                                  "00:00"
                                   ? "--:--"
                                   : attendanceMonthFilterData?.totalWorkingHours}
                               </Heading>
@@ -1250,7 +1250,7 @@ function AttendancePersonal() {
                             <Box color="white">
                               <Heading fontSize="2xl">
                                 {attendanceMonthFilterData?.totalLateArrival ==
-                                "00:00"
+                                  "00:00"
                                   ? "--:--"
                                   : attendanceMonthFilterData?.totalLateArrival}
                               </Heading>
@@ -1273,7 +1273,7 @@ function AttendancePersonal() {
                             <Box color="white">
                               <Heading fontSize="2xl">
                                 {attendanceMonthFilterData?.totalEarlyLeave ==
-                                "00:00"
+                                  "00:00"
                                   ? "--:--"
                                   : attendanceMonthFilterData?.totalEarlyLeave}
                               </Heading>
@@ -1743,18 +1743,23 @@ function AttendancePersonal() {
                 {currentTab == "management" && (
                   <Button
                     ml="10px"
-                    colorScheme="red"
+                    colorScheme={isValid ? 'red' : 'teal'}
                     onClick={() => {
                       handleOnClickReportInvalid(
                         attendanceDetailObj.result?.attendanceId
                       );
                     }}
                   >
-                    Report Invalid
+                    {isValid ? 'Report Invalid' : 'Convert To Valid'}
                   </Button>
                 )}
               </Flex>
             </Flex>
+            {
+              !isValid && <Flex margin='20px 0px 0px 0px'>
+                <Text fontSize='1.15rem' fontWeight='semibold'>Report Note: <b style={{ fontWeight: "normal" }}>{attendanceDetailObj?.result?.note}</b></Text>
+              </Flex>
+            }
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -1855,7 +1860,7 @@ function AttendancePersonal() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Report Invalid Attendance</ModalHeader>
+          <ModalHeader>{isValid ? 'Report Invalid Attendance' : 'Convert To Valid Attendance'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Formik
@@ -1863,11 +1868,12 @@ function AttendancePersonal() {
               onSubmit={(values, actions) => {
                 let reportInvalidObj = {
                   id: reportInvalidId,
-                  isValid: true,
+                  isValid: !isValid,
                   note: values.note,
                 };
                 useReportInvalid.mutate(reportInvalidObj);
                 onCloseReportInvalidModal();
+                onCloseAttendanceDetailModal();
                 setReportInvalidId();
                 actions.reset();
               }}
