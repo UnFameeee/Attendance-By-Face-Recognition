@@ -44,10 +44,9 @@ import moment from "moment";
 import { employeeService } from "../../../services/employee/employee";
 import { useGetListDepartment } from "../../../services/organization/department";
 import * as Yup from "yup";
-
+import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function AttendancePersonal() {
   // #region declare variable
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString());
   const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
   const [userId, setUserId] = useState(Helper.getUseDecodeInfor().id);
   const [currentTab, setCurrentTab] = useState("personal");
@@ -89,8 +88,11 @@ function AttendancePersonal() {
     onOpen: onOpenAttendanceDetailModal,
     onClose: onCloseAttendanceDetailModal,
   } = useDisclosure();
-  const { data: employeeData, isFetching: isFetchingEmployeeData } =
-    attendanceService.useGetEmployeeDetailById(userId);
+  const {
+    data: employeeData,
+    isLoading: isLoadingEmployeeData,
+    isFetching: isFetchingEmployeeData,
+  } = attendanceService.useGetEmployeeDetailById(userId);
   const {
     data: attendanceHistoryData,
     isFetching: isFetchingHistoryData,
@@ -265,7 +267,7 @@ function AttendancePersonal() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            {isLoadingHistoryData ||
+            {isFetchingHistoryData ||
             isFetchingMonthData ||
             isFetchingTodayData ||
             isFetchingEmployeeData ? (
@@ -900,6 +902,48 @@ function AttendancePersonal() {
                   </HStack>
                 )}
               </HStack>
+              {!employeeFilterId && (
+                <Stack>
+                  <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
+                    <Heading
+                      fontSize="2xl"
+                      fontWeight="medium"
+                      textAlign="center"
+                      lineHeight="tall"
+                    >
+                      <Highlight
+                        query={["Department"]}
+                        styles={{
+                          px: "2",
+                          py: "1",
+                          rounded: "2xl",
+                          bg: "purple.100",
+                          color: "black",
+                          fontSize: "xl",
+                        }}
+                      >
+                        Please at least choose your Department
+                      </Highlight>{" "}
+                      <Highlight
+                        query={["Employee"]}
+                        styles={{
+                          px: "2",
+                          py: "1",
+                          rounded: "2xl",
+                          bg: "purple.100",
+                          color: "black",
+                          fontSize: "xl",
+                        }}
+                      >
+                        and Employee to see the information
+                      </Highlight>
+                    </Heading>
+                  </Box>
+                  <Box h="500px">
+                    <NoDataToDisplay />
+                  </Box>
+                </Stack>
+              )}
               {employeeFilterId && (
                 <>
                   {isFetchingFilterEmployeeData ||

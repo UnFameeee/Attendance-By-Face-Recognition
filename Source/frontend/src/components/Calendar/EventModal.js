@@ -110,7 +110,8 @@ export default function EventModal(props) {
     shiftTypeId: selectedEvent?.shiftTypeId ?? "",
     shiftDate: selectedEvent?.shiftDate ?? "",
     employeeId: selectedEvent?.employee?.id ?? "",
-    allowLate: false,
+    allowLateArrival: selectedEvent?.allowLateArrival ?? false,
+    allowEarlyLeave: selectedEvent?.allowEarlyLeave ?? false,
   };
   const validationSchema = Yup.object().shape({
     shiftTypeId: Yup.string().required("This field is required"),
@@ -132,6 +133,7 @@ export default function EventModal(props) {
       return currentDate > daySelected.format("DD/MM/YYYY");
     }
   }
+  // console.log(selectedEvent);
   if (isDayPassed() && !selectedEvent) return <></>;
   return (
     <>
@@ -143,6 +145,8 @@ export default function EventModal(props) {
             shiftDate: Helper.getMomentDateFormat(daySelected.valueOf()),
             shiftTypeId: values.shiftTypeId,
             employeeId: values.employeeId,
+            allowEarlyLeave: values.allowEarlyLeave == "true" ? true : false,
+            allowLateArrival: values.allowLateArrival == "true" ? true : false,
           };
           if (selectedEvent) {
             eventObj["shiftId"] = selectedEvent?.shiftId;
@@ -235,8 +239,18 @@ export default function EventModal(props) {
                     />
                     {selectedEvent && !selectedEvent.absent && (
                       <FormTextField
-                        name="allowLate"
-                        label="Allow Late"
+                        name="allowLateArrival"
+                        label="Allow Late Arrival"
+                        isSelectionField={true}
+                        formik={formik}
+                        selectionArray={selectionData.boolean}
+                        isReadOnly={isReadOnly || isDayPassed()}
+                      />
+                    )}
+                    {selectedEvent && !selectedEvent.absent && (
+                      <FormTextField
+                        name="allowEarlyLeave"
+                        label="Allow Early Leave"
                         isSelectionField={true}
                         formik={formik}
                         selectionArray={selectionData.boolean}

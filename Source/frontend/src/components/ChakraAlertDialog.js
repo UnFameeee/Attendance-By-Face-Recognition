@@ -21,6 +21,7 @@ function ChakraAlertDialog(props) {
     acceptButtonColor,
     closeOnOverlayClick,
     isNoCancel,
+    isLoading,
   } = props;
   const cancelRef = React.useRef();
 
