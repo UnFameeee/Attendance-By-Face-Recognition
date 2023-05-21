@@ -215,7 +215,14 @@ function FormTextField(props) {
         isInvalid={meta.error && meta.touched}
       >
         {label && <FormLabel>{label}</FormLabel>}
-        <Field {...field} formik={formik} as={AddressSelection} />
+        <Field
+          {...field}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          isRequired={isRequired}
+          formik={formik}
+          as={AddressSelection}
+        />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
@@ -250,7 +257,6 @@ function FormTextField(props) {
       </FormControl>
     );
   } else if (isNumber) {
-    
     return (
       <FormControl
         isReadOnly={isReadOnly}

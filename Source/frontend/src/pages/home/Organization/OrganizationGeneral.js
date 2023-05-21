@@ -26,6 +26,7 @@ import { permissionOrganizationManagement } from "../../../screen-permissions/pe
 import { useGetPermission } from "../../../hook/useGetPermission";
 import ModifyShiftTypeModal from "../../../components/ModifyShiftTypeModal";
 import ModifyLeaveTypeModal from "../../../components/ModifyLeaveTypeModal";
+import { Helper } from "../../../Utils/Helper";
 function OrganizationGeneral() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -34,6 +35,7 @@ function OrganizationGeneral() {
   );
   const toast = useToast();
   const queryClient = useQueryClient();
+  const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
   // #endregion
   // #region hooks
   const {
@@ -224,10 +226,12 @@ function OrganizationGeneral() {
                           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                           <Heading fontSize="3xl">Organization Details</Heading>
                         </Flex>
-                        <Flex gap="10px">
-                          <ModifyShiftTypeModal />
-                          <ModifyLeaveTypeModal />
-                        </Flex>
+                        {userInfo.roleName == "admin" && (
+                          <Flex gap="10px">
+                            <ModifyShiftTypeModal />
+                            <ModifyLeaveTypeModal />
+                          </Flex>
+                        )}
                       </VStack>
                       <HStack></HStack>
                     </Flex>
@@ -255,21 +259,23 @@ function OrganizationGeneral() {
                                 Organization Information
                               </Heading>
                             </Box>
-                            <Tooltip
-                              placement="left"
-                              hasArrow
-                              label="Save Your Organization Information"
-                            >
-                              <Button
-                                isLoading={isLoadingOrganizationDetailData}
-                                type="submit"
-                                size="lg"
-                                colorScheme="blue"
-                                isDisabled={!resultPermission?.update}
+                            {userInfo.roleName == "admin" && (
+                              <Tooltip
+                                placement="left"
+                                hasArrow
+                                label="Save Your Organization Information"
                               >
-                                Save
-                              </Button>
-                            </Tooltip>
+                                <Button
+                                  isLoading={isLoadingOrganizationDetailData}
+                                  type="submit"
+                                  size="lg"
+                                  colorScheme="blue"
+                                  isDisabled={!resultPermission?.update}
+                                >
+                                  Save
+                                </Button>
+                              </Tooltip>
+                            )}
                           </Flex>
                           <Divider />
                           <Stack spacing={3} p={4} px={8}>
@@ -283,7 +289,7 @@ function OrganizationGeneral() {
                                   fontSize="1.5rem"
                                 />
                               }
-                              isDisabled={!resultPermission?.update}
+                              isReadOnly={!resultPermission?.update}
                             />
                             <Flex gap={5}>
                               <Box w="fit-content">
@@ -291,7 +297,7 @@ function OrganizationGeneral() {
                                   name="limitLateArrivalHour"
                                   label="Late Arrival Hour"
                                   type="number"
-                                  isDisabled={!resultPermission?.update}
+                                  isReadOnly={!resultPermission?.update}
                                 />
                               </Box>
                               <Box w="fit-content">
@@ -299,7 +305,7 @@ function OrganizationGeneral() {
                                   name="limitLateArrivalMinute"
                                   label="Late Arrival Minute"
                                   type="number"
-                                  isDisabled={!resultPermission?.update}
+                                  isReadOnly={!resultPermission?.update}
                                 />
                               </Box>
                             </Flex>
@@ -309,7 +315,7 @@ function OrganizationGeneral() {
                                   name="limitEarlyLeaveHour"
                                   label="Early Leave Hour"
                                   type="number"
-                                  isDisabled={!resultPermission?.update}
+                                  isReadOnly={!resultPermission?.update}
                                 />
                               </Box>
                               <Box w="fit-content">
@@ -317,7 +323,7 @@ function OrganizationGeneral() {
                                   name="limitEarlyLeaveMinute"
                                   label="Early Leave Minute"
                                   type="number"
-                                  isDisabled={!resultPermission?.update}
+                                  isReadOnly={!resultPermission?.update}
                                 />
                               </Box>
                             </Flex>
@@ -325,13 +331,13 @@ function OrganizationGeneral() {
                               name="annualLeave"
                               label="Annual Leave"
                               type="number"
-                              isDisabled={!resultPermission?.update}
+                              isReadOnly={!resultPermission?.update}
                             />
                             <FormTextField
                               name="megaAddress"
                               isAddress={true}
                               formik={formik}
-                              isDisabled={!resultPermission?.update}
+                              isReadOnly={!resultPermission?.update}
                             />
                             <FormTextField
                               name="address"
@@ -339,7 +345,7 @@ function OrganizationGeneral() {
                               isTextAreaField={true}
                               type="text"
                               placeholder="Enter your Address"
-                              isDisabled={!resultPermission?.update}
+                              isReadOnly={!resultPermission?.update}
                             />
                           </Stack>
                         </>
