@@ -265,7 +265,7 @@ function EmployeesManagement() {
       isDisabled: resultPermission?.update,
     },
     {
-      actionName: "View Photos",
+      actionName: "View Face Data Photos",
       func: viewEmployeePhotos,
       isDisabled: true,
     },

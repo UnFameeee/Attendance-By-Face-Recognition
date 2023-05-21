@@ -17,7 +17,6 @@ export class URLService {
     if (URLtype == "AttendanceException") {
       URL = `${env.CLIENT_URL}/report-attendance-exception?session=${Helper.EncodeWithCipher(urlImage)}`
     } else if (URLtype == "TrainingFace") {
-      console.log(Helper.EncodeWithCipher(employeeId));
       URL = `${env.CLIENT_URL}/training-face?id=${Helper.EncodeWithCipher(employeeId)}&session=${v4()}`;
     }
 

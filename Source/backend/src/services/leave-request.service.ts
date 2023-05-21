@@ -551,10 +551,7 @@ export class LeaveRequestService {
           } else {
             totalHours = Helper.ConfigStaticDateTime("00:00");
           }
-
-          console.log(queryData.leaveType.annualLeave == true);
-          console.log(totalHours);
-
+          
           //Tạo Attendance với totalHours = 08:00
           const queryCreateAttendance = await prisma.attendance.create({
             data: {
