@@ -47,15 +47,22 @@ function AddressSelection({ formik, ...props }) {
   useEffect(() => {
     formik?.setFieldValue(props?.name, megaAddress);
   }, [megaAddress]);
+  // console.log(props);
   return (
     <VStack name={props.name} spacing="10px">
       <VStack w="100%" alignItems="start">
-        <Text fontSize="md" fontWeight="medium">
+        <Text
+          fontSize="md"
+          fontWeight="medium"
+          color={props.isDisabled ? "#acafb3" : "none"}
+        >
           Country
         </Text>
         <Select
           defaultValue={megaAddress?.country}
           name="country"
+          isDisabled={props.isReadOnly}
+          isRequired={props.isRequired}
           onChange={(e) => {
             handleOnchangeMegaAddress(e);
             setListState(() => [
@@ -72,12 +79,18 @@ function AddressSelection({ formik, ...props }) {
         </Select>
       </VStack>
       <VStack w="100%" alignItems="start">
-        <Text fontSize="md" fontWeight="medium">
+        <Text
+          fontSize="md"
+          fontWeight="medium"
+          color={props.isDisabled ? "#acafb3" : "none"}
+        >
           State
         </Text>
         <Select
           defaultValue={megaAddress?.state}
           name="state"
+          isDisabled={props.isReadOnly}
+          isRequired={props.isRequired}
           onChange={(e) => {
             handleOnchangeMegaAddress(e);
             setListCity(() => [
@@ -98,12 +111,18 @@ function AddressSelection({ formik, ...props }) {
         </Select>
       </VStack>
       <VStack w="100%" alignItems="start">
-        <Text fontSize="md" fontWeight="medium">
+        <Text
+          fontSize="md"
+          fontWeight="medium"
+          color={props.isDisabled ? "#acafb3" : "none"}
+        >
           City
         </Text>
         <Select
           defaultValue={megaAddress?.city}
           name="city"
+          isDisabled={props.isReadOnly}
+          isRequired={props.isRequired}
           onChange={(e) => {
             handleOnchangeMegaAddress(e);
           }}

@@ -31,13 +31,11 @@ export const SideBarData = [
     title: "Organization ",
     url: "organization",
     icon: <SlOrganization fontSize={iconSize} />,
-    roleCanAccess: ["manager", "admin"],
     children: [
       {
         title: "Management",
         url: "general-organization",
         icon: <SiMagento fontSize={iconSize} />,
-        roleCanAccess: ["admin"],
       },
       {
         title: "Department",
