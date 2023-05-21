@@ -12,7 +12,8 @@ class EmployeeController {
   public getListEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const page: Page = req.body;
-      const response = await this.employeeService.getListEmployee(page);
+      const employee: Employee = req.profile;
+      const response = await this.employeeService.getListEmployee(employee, page);
       res.status(200).json(response);
     } catch (err) {
       next(err);
@@ -23,7 +24,8 @@ class EmployeeController {
     try {
       const departmentId: string = req.params.departmentId;
       const page: Page = req.body;
-      const response = await this.employeeService.getEmpListInDepartment(departmentId, page);
+      const employee: Employee = req.profile;
+      const response = await this.employeeService.getEmpListInDepartment(employee, departmentId, page);
       res.status(200).json(response);
     } catch (err) {
       next(err);

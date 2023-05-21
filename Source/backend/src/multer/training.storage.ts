@@ -21,7 +21,7 @@ const trainingImagesStorage = multer.diskStorage({
 
     const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
 
-    console.log(arrayUpload);
+    // console.log(arrayUpload);
 
     cb(null, `${employeeId}_${arrayUpload.images.length}` + path.extname(file.originalname));
   }

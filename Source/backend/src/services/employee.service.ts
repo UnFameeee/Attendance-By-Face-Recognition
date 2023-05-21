@@ -9,19 +9,39 @@ const prisma = new PrismaClient();
 
 export class EmployeeService {
 
-  public getListEmployee = async (page: Page): Promise<ResponseData<Paging<EmployeeModel[]>>> => {
+  public getListEmployee = async (employee: Employee, page: Page): Promise<ResponseData<Paging<EmployeeModel[]>>> => {
     const response = new ResponseData<Paging<EmployeeModel[]>>;
     const pageResponse = new Paging<EmployeeModel[]>
 
-    const queryData = await prisma.employee.findMany({
+    const queryCheckRoleData = await prisma.role.findFirst({
       where: {
+        roleId: employee.roleId,
+      }
+    })
+
+    var whereData: {};
+    if (queryCheckRoleData.roleName == ROLE.ADMIN) {
+      whereData = {
         deleted: false,
         role: {
           roleName: {
             not: ROLE.ADMIN
           }
         }
-      },
+      }
+    } else if (queryCheckRoleData.roleName == ROLE.MANAGER) {
+      whereData = {
+        deleted: false,
+        role: {
+          roleName: {
+            notIn: [ROLE.ADMIN, ROLE.MANAGER]
+          }
+        }
+      }
+    }
+
+    const queryData = await prisma.employee.findMany({
+      where: whereData,
       select: {
         id: true,
         fullname: true,
@@ -73,14 +93,48 @@ export class EmployeeService {
     return response;
   }
 
-  public getEmpListInDepartment = async (departmentId: string, page: Page): Promise<ResponseData<Paging<EmployeeModel[]>>> => {
+  public getEmpListInDepartment = async (employee: Employee, departmentId: string, page: Page): Promise<ResponseData<Paging<EmployeeModel[]>>> => {
     const response = new ResponseData<Paging<EmployeeModel[]>>;
     const pageResponse = new Paging<EmployeeModel[]>
+
+    // const queryCheckRoleData = await prisma.role.findFirst({
+    //   where: {
+    //     roleId: employee.roleId,
+    //   }
+    // })
+
+    // var whereData: {};
+    // if (queryCheckRoleData.roleName == ROLE.ADMIN) {
+    //   whereData = {
+    // departmentId: departmentId,
+    // deleted: false,
+    // role: {
+    //   roleName: {
+    //     not: ROLE.ADMIN
+    //   }
+    // }
+    //   }
+    // } else if (queryCheckRoleData.roleName == ROLE.MANAGER) {
+    //   whereData = {
+    //     departmentId: departmentId,
+    //     deleted: false,
+    //     role: {
+    //       roleName: {
+    //         notIn: [ROLE.ADMIN, ROLE.MANAGER]
+    //       }
+    //     }
+    //   }
+    // }
 
     const queryData = await prisma.employee.findMany({
       where: {
         departmentId: departmentId,
-        deleted: false
+        deleted: false,
+        role: {
+          roleName: {
+            not: ROLE.ADMIN
+          }
+        }
       },
       select: {
         id: true,
