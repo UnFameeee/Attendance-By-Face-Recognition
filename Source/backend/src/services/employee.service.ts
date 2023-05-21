@@ -31,6 +31,7 @@ export class EmployeeService {
       }
     } else if (queryCheckRoleData.roleName == ROLE.MANAGER) {
       whereData = {
+        departmentId: employee.departmentId,
         deleted: false,
         role: {
           roleName: {
@@ -77,14 +78,7 @@ export class EmployeeService {
     })
 
     const totalElement = await prisma.employee.count({
-      where: {
-        deleted: false,
-        role: {
-          roleName: {
-            not: ROLE.ADMIN
-          }
-        }
-      },
+      where: whereData,
     })
     pageResponse.data = queryData;
     pageResponse.page = page;
