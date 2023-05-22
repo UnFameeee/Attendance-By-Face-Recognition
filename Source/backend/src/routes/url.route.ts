@@ -19,5 +19,9 @@ export class URLRoute implements Routes {
     this.router.post(`${this.path}/qr/validate`,
       this.urlController.validateURL
     )
+    
+    this.router.post(`${this.path}/qr/changeURLtoExpire`,
+      this.urlController.changeURLtoExpire
+    )
   }
 }

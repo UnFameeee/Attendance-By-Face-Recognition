@@ -26,4 +26,14 @@ export class URLController {
       next(err);
     }
   }
+
+  public changeURLtoExpire = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const URL: string = req.body.URL;
+      const response = await this.urlService.changeURLtoExpire(URL);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

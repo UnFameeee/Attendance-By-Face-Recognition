@@ -17,10 +17,10 @@ export default function URLValidationRoute() {
     return <Outlet />
   }
 
-  // if (urlValidateData.result == false) {
-  //   // return <Navigate to="notfound" />;
-  //   return <NotFound />;
-  // }
+  if (urlValidateData.result == false) {
+    // return <Navigate to="notfound" />;
+    return <NotFound />;
+  }
 
   return (
     <Outlet />

@@ -55,7 +55,13 @@ const useGenerateURL = ({ urlType, employeeId, urlImage }) => {
   })
 }
 
+const changeURLtoExpire = async (url) => {
+  const response = await axiosBase.post(`${endPoint}/qr/changeURLtoExpire`, url);
+  return response.data;
+}
+
 export const urlService = {
   useValidateURL,
   useGenerateURL,
+  changeURLtoExpire,
 };

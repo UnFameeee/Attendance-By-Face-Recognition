@@ -3,6 +3,8 @@ import { Box, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, 
 import React from 'react'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { urlService } from '../../services/url/url';
+import { useMutation } from 'react-query';
 
 const ModalBodyStyle = {
   width: "25rem",
@@ -23,9 +25,20 @@ const ModalContentStyle = {
 export default function FinishModal({ openModal }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+  const useSaveImageOfAttendance = useMutation(({ url }) =>
+    urlService.changeURLtoExpire(url), {
+    onSuccess: (data) => {
+
+    },
+    onError: (error) => {
+
+    },
+  })
 
   useEffect(() => {
     if (openModal) {
+      const url = window.location.href;
+      useSaveImageOfAttendance.mutate({ url });
       onOpen();
     } else {
       onClose();
