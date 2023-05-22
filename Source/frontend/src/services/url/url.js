@@ -56,7 +56,7 @@ const useGenerateURL = ({ urlType, employeeId, urlImage }) => {
 }
 
 const changeURLtoExpire = async (url) => {
-  const response = await axiosBase.post(`${endPoint}/qr/changeURLtoExpire`, url);
+  const response = await axiosBase.post(`${endPoint}/qr/changeURLtoExpire`, { URL: url });
   return response.data;
 }
 
