@@ -14,7 +14,7 @@ export default function URLValidationRoute() {
   } = urlService.useValidateURL(dataQuery);
   
   if (urlValidateisFetching) {
-    return <Outlet />
+    return null;
   }
 
   if (urlValidateData.result == false) {
