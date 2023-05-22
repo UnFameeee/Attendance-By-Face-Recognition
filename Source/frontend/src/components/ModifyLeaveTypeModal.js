@@ -47,6 +47,11 @@ function ModifyLeaveTypeModal() {
     onOpen: onDeleteLeaveTypeAlertOpen,
     onClose: onDeleteLeaveTypeAlertClose,
   } = useDisclosure();
+  const {
+    isOpen: isSaveLeaveTypeAlertOpen,
+    onOpen: onSaveLeaveTypeAlertOpen,
+    onClose: onSaveLeaveTypeAlertClose,
+  } = useDisclosure();
   const { data: LRLeaveTypeData, isLoading: isLoadingLRLeaveTypeData } =
     leaveRequestService.useGetAllLeaveType();
   const useModifyLeaveType = useMutation(leaveRequestService.modifyLeaveType, {
@@ -62,7 +67,7 @@ function ModifyLeaveTypeModal() {
         });
       } else {
         queryClient.invalidateQueries("listLeaveType");
-         toast({
+        toast({
           title: `${
             currentModifyLeaveTypeId != "" ? "Modify" : "Create"
           } Leave Type Successfully`,
@@ -235,6 +240,7 @@ function ModifyLeaveTypeModal() {
                 });
                 useModifyLeaveType.mutate(modifyLeaveTypeObject);
               }
+              onSaveLeaveTypeAlertClose();
               onModifyLeaveTypeModalClose();
             }}
           >
@@ -284,7 +290,6 @@ function ModifyLeaveTypeModal() {
                                 onClick={() => {
                                   onDeleteLeaveTypeAlertOpen();
                                   setDeleteLeaveTypeId(item.leaveTypeId);
-                                  onModifyLeaveTypeModalClose();
                                 }}
                               >
                                 Delete
@@ -293,7 +298,7 @@ function ModifyLeaveTypeModal() {
                                 colorScheme="blue"
                                 onClick={() => {
                                   setCurrentModifyLeaveTypeId(item.leaveTypeId);
-                                  formik.handleSubmit();
+                                  onSaveLeaveTypeAlertOpen()
                                 }}
                               >
                                 Save
@@ -302,6 +307,14 @@ function ModifyLeaveTypeModal() {
                           </AccordionPanel>
                         </AccordionItem>
                       ))}
+                    <ChakraAlertDialog
+                      isOpen={isSaveLeaveTypeAlertOpen}
+                      onClose={onSaveLeaveTypeAlertClose}
+                      onAccept={formik.handleSubmit}
+                      title="Save Leave Type"
+                      acceptButtonColor="blue"
+                      acceptButtonLabel="Accept"
+                    />
                     {toggleAddNewLeaveType && (
                       <AccordionItem key="newShiftType">
                         <h2>

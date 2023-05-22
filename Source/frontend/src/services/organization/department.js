@@ -35,8 +35,16 @@ const saveDepartmentService = async ({ id, departmentObj }) => {
   return response.data;
 };
 
+const deleteDepartments = async ( id ) => {
+  const response = await axiosBase.delete(
+    `${endPoint}/deleteDepartments/${id}`
+  );
+  return response.data;
+};
+
 export const departmentService = {
   getListDepartment,
   createDepartmentService,
   saveDepartmentService,
+  deleteDepartments,
 };
