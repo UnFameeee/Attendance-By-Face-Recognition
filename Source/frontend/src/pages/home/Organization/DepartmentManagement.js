@@ -95,6 +95,38 @@ function DepartmentManagement() {
       },
     }
   );
+  const useDeleteDepartment = useMutation(departmentService.deleteDepartments, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listDepartment");
+        toast({
+          title: "Delete Department Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   const useSaveDepartment = useMutation(
     departmentService.saveDepartmentService,
     {
@@ -146,11 +178,12 @@ function DepartmentManagement() {
     console.log("handleDeleteRange", data);
   };
   const Delete = (row, action) => {
-    setDeleteSingleData(row);
+    setDeleteSingleData(row.departmentId);
     onDeleteSingleOpen();
   };
   const handleAcceptDelete = () => {
-    console.log(deleteSingleData);
+    // console.log(deleteSingleData);
+    useDeleteDepartment.mutate(deleteSingleData);
     setDeleteSingleData({});
     onDeleteSingleClose();
   };

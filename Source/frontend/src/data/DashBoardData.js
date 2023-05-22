@@ -25,7 +25,6 @@ export const DashBoardDataTop = [
     link: "/organization/general-organization",
     linkTitle: "Manage Organization",
     bgColor: "#29a65a",
-    roleCanAccess: ["admin"],
   },
   {
     title: "Leave Request",

@@ -10,7 +10,7 @@ import {
   useToast,
   Tooltip,
   VStack,
-  Input,
+  useDisclosure
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -27,6 +27,7 @@ import { useGetPermission } from "../../../hook/useGetPermission";
 import ModifyShiftTypeModal from "../../../components/ModifyShiftTypeModal";
 import ModifyLeaveTypeModal from "../../../components/ModifyLeaveTypeModal";
 import { Helper } from "../../../Utils/Helper";
+import ChakraAlertDialog from "../../../components/ChakraAlertDialog";
 function OrganizationGeneral() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -38,6 +39,11 @@ function OrganizationGeneral() {
   const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
   // #endregion
   // #region hooks
+  const {
+    isOpen: isSaveAlertOpen,
+    onOpen: onSaveAlertOpen,
+    onClose: onSaveAlertClose,
+  } = useDisclosure();
   const {
     data: organizationDetailData,
     isLoading: isLoadingOrganizationDetailData,
@@ -115,6 +121,7 @@ function OrganizationGeneral() {
   );
   // #endregion
   // #region form
+  function handleAcceptSaveAlert() {}
   function convertToHour(value) {
     const [hoursString, minutesString] = value.split(":");
     const hours = parseInt(hoursString, 10);
@@ -196,6 +203,7 @@ function OrganizationGeneral() {
                 };
                 useSaveOrganizationDetail.mutate(saveOrganizationDetailObj);
               }
+              onSaveAlertClose();
               //actions.resetForm();
             }}
           >
@@ -267,7 +275,7 @@ function OrganizationGeneral() {
                               >
                                 <Button
                                   isLoading={isLoadingOrganizationDetailData}
-                                  type="submit"
+                                  onClick={onSaveAlertOpen}
                                   size="lg"
                                   colorScheme="blue"
                                   isDisabled={!resultPermission?.update}
@@ -276,6 +284,14 @@ function OrganizationGeneral() {
                                 </Button>
                               </Tooltip>
                             )}
+                            <ChakraAlertDialog
+                              title="Save Organization Details"
+                              isOpen={isSaveAlertOpen}
+                              onClose={onSaveAlertClose}
+                              onAccept={formik.handleSubmit}
+                              acceptButtonColor="blue"
+                              acceptButtonLabel="Accept"
+                            />
                           </Flex>
                           <Divider />
                           <Stack spacing={3} p={4} px={8}>

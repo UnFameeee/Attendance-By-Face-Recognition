@@ -49,6 +49,11 @@ function ModifyShiftTypeModal(props) {
     onClose: onDeleteShiftTypeAlertClose,
   } = useDisclosure();
   const {
+    isOpen: isSaveShiftTypeAlertOpen,
+    onOpen: onSaveShiftTypeAlertOpen,
+    onClose: onSaveShiftTypeAlertClose,
+  } = useDisclosure();
+  const {
     isOpen: isModifyShiftTypeModalOpen,
     onOpen: onModifyShiftTypeModalOpen,
     onClose: onModifyShiftTypeModalClose,
@@ -162,11 +167,16 @@ function ModifyShiftTypeModal(props) {
       endTime_New: "",
     });
   function resetModal() {
-    onModifyShiftTypeModalClose()
+    onModifyShiftTypeModalClose();
     setCurrentModifyShiftTypeId("");
     setToggleAddNewShiftType(false);
   }
   const handleAcceptDeleteShiftType = () => {
+    onDeleteShiftTypeAlertClose();
+    setDeleteShiftTypeId("");
+    useDeleteShiftType.mutate(deleteShiftTypeId);
+  };
+  const handleAcceptSaveShiftType = () => {
     onDeleteShiftTypeAlertClose();
     setDeleteShiftTypeId("");
     useDeleteShiftType.mutate(deleteShiftTypeId);
@@ -227,7 +237,7 @@ function ModifyShiftTypeModal(props) {
         w="fit-content"
         onClick={onModifyShiftTypeModalOpen}
       >
-        Modify ShiftType
+        Modify Shift Type
       </Button>
       <Modal
         isOpen={isModifyShiftTypeModalOpen}
@@ -280,11 +290,12 @@ function ModifyShiftTypeModal(props) {
                 useModifyShiftType.mutate(modifyWorkShiftObject);
               }
               onModifyShiftTypeModalClose();
+              onSaveShiftTypeAlertClose();
             }}
           >
             {(formik) => (
               <>
-                <ModalHeader>Modify ShiftType</ModalHeader>
+                <ModalHeader>Modify Shift Type</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <Accordion allowToggle>
@@ -337,7 +348,8 @@ function ModifyShiftTypeModal(props) {
                                 onClick={() => {
                                   // console.log(formik.isValid);
                                   setCurrentModifyShiftTypeId(item.shiftTypeId);
-                                  formik.handleSubmit();
+                                  // formik.handleSubmit();
+                                  onSaveShiftTypeAlertOpen();
                                 }}
                               >
                                 Save
@@ -346,6 +358,14 @@ function ModifyShiftTypeModal(props) {
                           </AccordionPanel>
                         </AccordionItem>
                       ))}
+                    <ChakraAlertDialog
+                      isOpen={isSaveShiftTypeAlertOpen}
+                      onClose={onSaveShiftTypeAlertClose}
+                      onAccept={formik.handleSubmit}
+                      title="Save Shift Type"
+                      acceptButtonColor="blue"
+                      acceptButtonLabel="Accept"
+                    />
                     {toggleAddNewShiftType && (
                       <AccordionItem key="newShiftType">
                         <h2>
