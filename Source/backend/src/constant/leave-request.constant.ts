@@ -4,4 +4,5 @@ export const leaveRequestStatus: LeaveRequestType = {
   waiting: "WAITING",
   approve: "APPROVE",
   reject: "REJECT",
+  overdate: "OVERDATE",
 }

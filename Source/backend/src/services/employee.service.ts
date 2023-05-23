@@ -360,6 +360,34 @@ export class EmployeeService {
     return response;
   }
 
+  public deleteEmployee = async (employeeId: string) => {
+    const response = new ResponseData<String>;
+
+    const queryData = await prisma.employee.update({
+      where: {
+        id: employeeId,
+      },
+      data: {
+        deleted: true,
+        deletedAt: new Date(new Date().toISOString()),
+        location: {
+          update: {
+            deleted: true,
+            deletedAt: new Date(new Date().toISOString()),
+          },
+        }
+      }
+    })
+
+    if (queryData) {
+      response.result = "Delete employee successfully";
+    } else {
+      response.message = "Server Error - Delete unsuccessfully";
+    }
+    return response;
+  }
+
+
   public assignEmployeeToDepartment = async (data: AssignEmployeeDepartmentDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
 
