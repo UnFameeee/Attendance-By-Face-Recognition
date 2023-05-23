@@ -40,7 +40,8 @@ export class WorkshiftService {
           employee: {
             department: {
               departmentId: departmentId,
-            }
+            },
+            deleted: false,
           },
           shiftDate: {
             gte: startDate,
@@ -55,7 +56,8 @@ export class WorkshiftService {
           employee: {
             department: {
               departmentId: departmentId,
-            }
+            },
+            deleted: false,
           },
           shiftDate: {
             gte: startDate,
@@ -70,7 +72,8 @@ export class WorkshiftService {
           employee: {
             department: {
               departmentId: departmentId,
-            }
+            },
+            deleted: false,
           },
           shiftDate: {
             gte: startDate,
@@ -88,7 +91,8 @@ export class WorkshiftService {
         employee: {
           department: {
             departmentId: departmentId,
-          }
+          },
+          deleted: false,
         },
         shiftDate: {
           gte: startDate,

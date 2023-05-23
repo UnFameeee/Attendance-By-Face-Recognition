@@ -136,7 +136,10 @@ export class AttendanceExceptionService {
             }
           },
           status: true,
-        }
+        },
+        orderBy: {
+          datetime: "desc",
+        },
       })
 
       totalElement = await prisma.attendanceException.count({
@@ -176,7 +179,10 @@ export class AttendanceExceptionService {
             }
           },
           status: true,
-        }
+        },
+        orderBy: {
+          datetime: "desc",
+        },
       })
       totalElement = await prisma.attendanceException.count({
         where: whereQuery,
@@ -219,7 +225,6 @@ export class AttendanceExceptionService {
     const querySystemData = await prisma.employee.findFirst({
       where: {
         email: queryEmployeeData.email,
-        deleted: false,
       },
       select: {
         id: true,
@@ -231,6 +236,7 @@ export class AttendanceExceptionService {
             departmentName: true,
           }
         },
+        deleted: true,
       }
     })
 
@@ -321,11 +327,17 @@ export class AttendanceExceptionService {
       const queryEmployeeAttendanceExceptionData = await prisma.employee.findFirst({
         where: {
           email: queryAttendanceException.email,
+          deleted: false,
         },
         select: {
           id: true,
         }
       })
+
+      if (!queryEmployeeAttendanceExceptionData) {
+        response.result = "Attendance recorded";
+        return response;
+      }
 
       const dateException = queryAttendanceException.datetime;
 

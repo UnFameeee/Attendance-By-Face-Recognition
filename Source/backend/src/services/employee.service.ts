@@ -122,7 +122,10 @@ export class EmployeeService {
 
     const queryData = await prisma.employee.findMany({
       where: {
-        departmentId: departmentId,
+        department: {
+          departmentId: departmentId,
+          deleted: false,
+        },
         deleted: false,
         role: {
           roleName: {
@@ -425,6 +428,61 @@ export class EmployeeService {
       return response;
     }
 
+    const queryRoleEmployee = await prisma.role.findFirst({
+      where: {
+        roleId: isValidEmployee.roleId,
+        deleted: false,
+      }
+    })
+    if (queryRoleEmployee.roleName != ROLE.MANAGER) {
+      response.message = `Employee must be manager`;
+      return response;
+    }
+
+    //Remove logic employee can be manager of MULTI department
+    const multiDepartment = await prisma.departmentManager.findFirst({
+      where: {
+        managerId: data.employeeId
+      }
+    });
+
+    if (multiDepartment) {
+      await prisma.departmentManager.delete({
+        where: {
+          managerId_departmentId: {
+            departmentId: multiDepartment.departmentId,
+            managerId: data.employeeId
+          }
+        }
+      })
+    }
+
+    //Remove logic department can have MULTI manager 
+    const multiManager = await prisma.departmentManager.findFirst({
+      where: {
+        departmentId: data.departmentId
+      }
+    });
+
+    if (multiManager) {
+      await prisma.departmentManager.delete({
+        where: {
+          managerId_departmentId: {
+            departmentId: data.departmentId,
+            managerId: multiManager.managerId,
+          }
+        }
+      })
+      await prisma.employee.update({
+        where: {
+          id: multiManager.managerId,
+        },
+        data: {
+          departmentId: null,
+        }
+      })
+    }
+
     const previousManagerOfDepartment = await prisma.departmentManager.findFirst({
       where: {
         departmentId: data.departmentId,
@@ -434,18 +492,26 @@ export class EmployeeService {
 
     //the previous manager is exsit
     if (previousManagerOfDepartment) {
-      await prisma.departmentManager.update({
+      // await prisma.departmentManager.update({
+      //   where: {
+      //     managerId_departmentId: {
+      //       departmentId: data.departmentId,
+      //       managerId: data.employeeId
+      //     }
+      //   },
+      //   data: {
+      //     deleted: false,
+      //     deletedAt: new Date(new Date().toISOString())
+      //   }
+      // });
+      await prisma.departmentManager.delete({
         where: {
           managerId_departmentId: {
             departmentId: data.departmentId,
             managerId: data.employeeId
           }
-        },
-        data: {
-          deleted: false,
-          deletedAt: new Date(new Date().toISOString())
         }
-      });
+      })
     }
 
     await prisma.departmentManager.create({
