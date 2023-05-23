@@ -50,6 +50,7 @@ export class LeaveRequestService {
         whereData = {
           employee: {
             departmentId: departmentId,
+            deleted: false,
           },
           deleted: false,
           startDate: {
@@ -64,6 +65,7 @@ export class LeaveRequestService {
         whereData = {
           employee: {
             departmentId: departmentId,
+            deleted: false,
           },
           deleted: false,
           startDate: {
@@ -129,7 +131,8 @@ export class LeaveRequestService {
             },
             id: {
               not: employee.id
-            }
+            },
+            deleted: false,
           },
           startDate: {
             gte: dateFilter.startOf('day').toDate(),
@@ -145,7 +148,8 @@ export class LeaveRequestService {
             },
             id: {
               not: employee.id
-            }
+            },
+            deleted: false,
           },
           startDate: {
             gte: startDate,
