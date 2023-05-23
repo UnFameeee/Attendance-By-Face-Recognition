@@ -63,6 +63,17 @@ class EmployeeController {
     }
   }
 
+  public deleteEmployee = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employeeId: string = req.params.employeeId;
+      const response = await this.employeeService.deleteEmployee(employeeId);
+      res.status(200).json(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
   public assignEmployeeToDepartment = async (req: RequestWithProfile, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: AssignEmployeeDepartmentDTO = req.body;

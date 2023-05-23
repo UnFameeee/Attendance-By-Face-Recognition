@@ -57,6 +57,13 @@ export class EmployeeRoute implements Routes {
       this.employeeController.updateEmployeeDetail
     );
 
+    // api/employee/deleteEmployee/:employeeId
+    this.router.delete(`${this.path}/deleteEmployee/:employeeId`,
+      authMiddleware,
+      await authorizeRoute(PERMISSION.DELETE, RESOURCE.EMPLOYEE_MANAGEMENT),
+      this.employeeController.deleteEmployee
+    );
+
     // api/employee/assignEmployeeToDepartment
     this.router.post(`${this.path}/assignEmployeeToDepartment`,
       authMiddleware,
