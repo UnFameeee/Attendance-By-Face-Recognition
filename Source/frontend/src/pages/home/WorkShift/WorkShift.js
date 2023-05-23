@@ -237,11 +237,11 @@ function WorkShift() {
     setWorkShiftType(() => {
       let selection = {
         work: isWork,
-        leave: isLeave,
+        leave: !isWork,
       };
       return selection;
     });
-  }, [isLeave, isWork]);
+  }, [isWork]);
   // #endregion
   // #region form & modal declare
   const initialValuesSelectDepartment = {
@@ -291,8 +291,8 @@ function WorkShift() {
       </Flex>
       <HStack
         gap="10px"
-        flexDirection={{ base: "column", lg: "row" }}
-        alignItems={{ base: "baseline", lg: "center" }}
+        flexDirection={{ base: "column", md: "row" }}
+        alignItems={{ base: "baseline", md: "center" }}
         bg="white"
         rounded="md"
         p={2}
@@ -365,6 +365,17 @@ function WorkShift() {
             )}
           </Formik>
         </HStack>
+      </HStack>
+      <HStack
+        gap="10px"
+        flexDirection={{ base: "column", md: "row" }}
+        alignItems={{ base: "baseline", md: "center" }}
+        bg="white"
+        rounded="md"
+        p={2}
+        w="fit-content"
+        shadow="2xl"
+      >
         {userDecodeInfo.roleName != "employee" && departmentId && (
           <HStack
             w="fit-content"
@@ -374,7 +385,12 @@ function WorkShift() {
             <Heading fontSize="xl" fontWeight="medium">
               <Highlight
                 query={["Employee Filter:"]}
-                styles={{ px: "2", py: "1", rounded: "full", bg: "purple.100" }}
+                styles={{
+                  px: "2",
+                  py: "1",
+                  rounded: "full",
+                  bg: "purple.100",
+                }}
               >
                 Employee Filter:
               </Highlight>
@@ -397,7 +413,7 @@ function WorkShift() {
         <HStack alignItems="flex-end">
           <Heading fontSize="xl" fontWeight="medium" mb="6px">
             <Highlight
-              query={["Type Filter:"]}
+              query={["Date Type Filter:"]}
               styles={{
                 px: "2",
                 py: "1",
@@ -405,13 +421,13 @@ function WorkShift() {
                 bg: "purple.100",
               }}
             >
-              Type Filter:
+              Date Type Filter:
             </Highlight>
           </Heading>
           <Box>
             <Button
               onClick={() => {
-                setIsWork(prev => !prev);
+                setIsWork((prev) => !prev);
               }}
               colorScheme={isWork ? "blue" : "gray"}
             >
@@ -421,9 +437,9 @@ function WorkShift() {
           <Box>
             <Button
               onClick={() => {
-                setIsLeave(prev => !prev);
+                setIsWork((prev) => !prev);
               }}
-              colorScheme={isLeave ? "blue" : "gray"}
+              colorScheme={!isWork ? "blue" : "gray"}
             >
               Leave
             </Button>
