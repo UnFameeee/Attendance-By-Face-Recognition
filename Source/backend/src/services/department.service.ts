@@ -164,8 +164,8 @@ export class DepartmentService {
     return response;
   }
 
-  public deleteDepartment = async (departmentId: string): Promise<ResponseData<Boolean>> => {
-    const response = new ResponseData<Boolean>;
+  public deleteDepartment = async (departmentId: string): Promise<ResponseData<string>> => {
+    const response = new ResponseData<string>;
 
     const isValidDepartment = await prisma.department.findFirst({
       where: {
@@ -250,7 +250,7 @@ export class DepartmentService {
     })
 
     if (queryData) {
-      response.result = true;
+      response.result = "Delete employee successfully";
     } else {
       response.message = "Server Error - Delete unsuccessfully";
     }
