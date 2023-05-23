@@ -18,7 +18,6 @@ import {
   Highlight,
   Button,
   HStack,
-
   Tooltip,
 } from "@chakra-ui/react";
 import { useGetPermission } from "../../../hook/useGetPermission";
@@ -49,6 +48,7 @@ function LeaveRequestManagement() {
   const [departmentId, setDepartmentId] = useState(
     Helper.getUseDecodeInfor().departmentId ?? ""
   );
+  const [isVerifyOverDate, setIsVerifyOverDate] = useState(false);
   const [listLRDepartment, setListLRDepartment] = useState([]);
 
   // #endregion
@@ -164,13 +164,24 @@ function LeaveRequestManagement() {
             departmentId,
             currentDate,
           });
-          toast({
-            title: "Verify Leave Request Successfully",
-            position: "bottom-right",
-            status: "success",
-            isClosable: true,
-            duration: 5000,
-          });
+          if (isVerifyOverDate) {
+            toast({
+              title: "This leave request is overdate and cannot be approve or reject",
+              position: "bottom-right",
+              status: 'warning',
+              isClosable: true,
+              duration: 5000,
+            });
+          } else {
+            toast({
+              title: "Verify Leave Request Successfully",
+              position: "bottom-right",
+              status: "success",
+              isClosable: true,
+              duration: 5000,
+            });
+          }
+          setIsVerifyOverDate(false);
         }
       },
       onError: (error) => {
@@ -199,6 +210,11 @@ function LeaveRequestManagement() {
     setDeleteSingleData({});
     onDeleteSingleClose();
   };
+  function isOverDate(value) {
+    let formatDate = new Date(value).toISOString().split("T")[0];
+    let currentDate = new Date().toISOString().split("T")[0];
+    return currentDate > formatDate;
+  }
   const Edit = (row, action) => {
     onAddEditOpen();
     setEditData(row);
@@ -206,12 +222,22 @@ function LeaveRequestManagement() {
   const handleApprovalLeaveRequest = (values) => {
     let leaveRequestId = editData.leaveRequestId;
     let status = values.status;
-    let leaveRequestObj = {
-      leaveRequestId,
-      status,
-    };
-    closeDrawer();
-    if (status != "WAITING") useVerifyLeaveRequest.mutate(leaveRequestObj);
+    if (!isOverDate(editData.startDate)) {
+      let leaveRequestObj = {
+        leaveRequestId,
+        status,
+      };
+      closeDrawer();
+      if (status != "WAITING") useVerifyLeaveRequest.mutate(leaveRequestObj);
+    } else {
+      status = "OVERDATE";
+      let leaveRequestObj = {
+        leaveRequestId,
+        status,
+      };
+      useVerifyLeaveRequest.mutate(leaveRequestObj);
+      setIsVerifyOverDate(true);
+    }
   };
   const closeDrawer = () => {
     onAddEditClose();
