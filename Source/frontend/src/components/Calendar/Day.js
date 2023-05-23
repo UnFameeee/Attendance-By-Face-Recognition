@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import GlobalContext from "../../pages/home/WorkShift/context/GlobalContext";
 import { Helper } from "../../Utils/Helper";
 import moment from "moment";
-import { Badge, Box, Button,Text } from "@chakra-ui/react";
+import { Badge, Box, Button, Text } from "@chakra-ui/react";
 export default function Day({ day, rowIdx, listWorkShift }) {
   const [dayEvents, setDayEvents] = useState([]);
   const {
@@ -49,6 +49,13 @@ export default function Day({ day, rowIdx, listWorkShift }) {
       ? "bg-blue-600 text-white rounded-full w-7"
       : "";
   }
+  function isDayPassed() {
+    if(isShiftDay.length >0){
+      return false
+    }
+    let currentDate = new Date().toISOString().split("T")[0];
+    return currentDate > day.format("YYYY-MM-DD");
+  }
   return (
     <div
       className={`border border-gray-300 flex flex-col 
@@ -56,7 +63,9 @@ export default function Day({ day, rowIdx, listWorkShift }) {
     >
       <header className="flex flex-col items-center">
         {rowIdx === 0 && (
-          <p className="text-lg font-semibold mt-1">{day.format("ddd").toUpperCase()}</p>
+          <p className="text-lg font-semibold mt-1">
+            {day.format("ddd").toUpperCase()}
+          </p>
         )}
         <p
           className={`text-md font-semibold p-1 my-1 text-center  ${getCurrentDayClass()}  ${
@@ -68,7 +77,7 @@ export default function Day({ day, rowIdx, listWorkShift }) {
       </header>
       <div
         className={`flex-1 ${
-          checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"
+          checkIfDayInSameMonth() && !isDayPassed() ? "cursor-pointer" : "cursor-not-allowed"
         } `}
         onClick={() => {
           if (checkIfDayInSameMonth()) {
@@ -94,9 +103,11 @@ export default function Day({ day, rowIdx, listWorkShift }) {
                   {item?.employee?.fullname ?? "Unknown"}
                 </span>
                 <div className=" flex flex-col gap-[5px]">
-                  <Badge w='fit-content'>{item?.shiftType?.shiftName ?? ""}</Badge>
+                  <Badge w="fit-content">
+                    {item?.shiftType?.shiftName ?? ""}
+                  </Badge>
                   {item.absent ? (
-                    <Text fontSize='lg'>Absent</Text>
+                    <Text fontSize="lg">Absent</Text>
                   ) : (
                     <div className="flex gap-[2px]">
                       <span className=" overflow-hidden text-ellipsis whitespace-nowrap">

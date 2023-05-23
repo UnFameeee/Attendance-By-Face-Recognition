@@ -150,6 +150,38 @@ function EmployeesManagement() {
       });
     },
   });
+  const useDeleteEmployee = useMutation(employeeService.deleteEmployeeService, {
+    onSuccess: (data) => {
+      const { message } = data;
+      if (message) {
+        toast({
+          title: message,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      } else {
+        queryClient.invalidateQueries("listEmployee");
+        toast({
+          title: "Delete Employee Successfully",
+          position: "bottom-right",
+          status: "success",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: error.response.data.message,
+        position: "bottom-right",
+        status: "error",
+        isClosable: true,
+        duration: 5000,
+      });
+    },
+  });
   const useGetEmployeePhotos = useMutation(
     employeeService.getListImageOfEmployee,
     {
@@ -249,6 +281,7 @@ function EmployeesManagement() {
   };
   const handleAcceptDelete = () => {
     console.log(deleteSingleData);
+    useDeleteEmployee.mutate(deleteSingleData.id)
     setDeleteSingleData({});
     onDeleteSingleClose();
   };
@@ -600,7 +633,7 @@ function EmployeesManagement() {
         </Box> */}
       </Flex>
       {useCreateEmployee.isLoading ||
-      useSaveEmployee.isLoading ||
+      useSaveEmployee.isLoading || useDeleteEmployee.isLoading || 
       isFetchingListEmployee ? (
         <LoadingSpinner />
       ) : (

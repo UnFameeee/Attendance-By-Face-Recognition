@@ -327,7 +327,7 @@ function AttendancePersonal() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            {isFetchingHistoryData ||
+            { isLoadingHistoryData ||
               isFetchingMonthData ||
               isFetchingTodayData ||
               isFetchingEmployeeData ? (
