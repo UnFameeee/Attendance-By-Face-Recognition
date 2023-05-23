@@ -86,13 +86,12 @@ const validateRetrain = async (employeeId) => {
   );
   return response.data;
 };
-// export const deleteEmployeeService = async (employeeId) => {
-//   const response = await axiosBase.post(
-//     `${endPoint}/createEmployee`,
-//     employeeObj
-//   );
-//   return response.data;
-// };
+ const deleteEmployeeService = async (employeeId) => {
+  const response = await axiosBase.delete(
+    `${endPoint}/deleteEmployee/${employeeId}`
+  );
+  return response.data;
+};
 
 export const employeeService = {
   getListEmployee,
@@ -101,6 +100,7 @@ export const employeeService = {
   assignEmployeeToDepartmentService,
   saveEmployeeService,
   createEmployeeService,
+  deleteEmployeeService,
   getListEmployeeOfDepartment,
   getListImageOfEmployee,
   retrainPhotos,

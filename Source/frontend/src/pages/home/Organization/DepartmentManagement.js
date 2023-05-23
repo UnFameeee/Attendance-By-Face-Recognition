@@ -95,7 +95,7 @@ function DepartmentManagement() {
       },
     }
   );
-  const useDeleteDepartment = useMutation(departmentService.deleteDepartments, {
+  const useDeleteDepartment = useMutation(departmentService.deleteDepartment, {
     onSuccess: (data) => {
       const { message } = data;
       if (message) {
