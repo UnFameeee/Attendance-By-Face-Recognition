@@ -214,7 +214,7 @@ export default function FaceAttendance() {
         if (!useTakeAttendance.isLoading) {
           const detections = await faceapi
             // .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
-            .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+            .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.85, maxResults: 1 }))
             .withFaceLandmarks()
             .withFaceDescriptors()
 
@@ -229,6 +229,7 @@ export default function FaceAttendance() {
 
           for (const detection of resizedDetections) {
             let faceDetected = faceMatcher.findBestMatch(detection.descriptor);
+            console.log(faceDetected.distance);
             // const box = detection.detection.box;
             // const drawBox = new faceapi.draw.DrawBox(box, {
             //   label: faceDetected

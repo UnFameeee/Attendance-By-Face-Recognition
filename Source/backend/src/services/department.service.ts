@@ -179,6 +179,60 @@ export class DepartmentService {
       return response;
     }
 
+    //remove department manager
+    // const queryManagerDepartment = await prisma.departmentManager.updateMany({
+    //   where: {
+    //     departmentId: departmentId,
+    //   },
+    //   data: {
+    //     deleted: true,
+    //     deletedAt: new Date(new Date().toISOString()),
+    //   }
+    // })
+
+    const queryManagerDepartment = await prisma.departmentManager.findFirst({
+      where: {
+        departmentId: departmentId,
+        deleted: false,
+      },
+    })
+
+    await prisma.departmentManager.delete({
+      where: {
+        managerId_departmentId: {
+          departmentId: departmentId,
+          managerId: queryManagerDepartment.managerId
+        }
+      }
+    })
+
+    //remove departmentId of emplyoee
+    const queryEmployeeDepartment = await prisma.employee.findMany({
+      where: {
+        departmentId: departmentId,
+        deleted: false,
+      },
+      select: {
+        id: true,
+      }
+    })
+
+    const arrayEmpId = [];
+    for (var employee of queryEmployeeDepartment) {
+      arrayEmpId.push(employee.id);
+    }
+
+    const queryDeleteEmployeeDepartment = await prisma.employee.updateMany({
+      where: {
+        id: {
+          in: arrayEmpId,
+        }
+      },
+      data: {
+        departmentId: null,
+      }
+    })
+
     const queryData = await prisma.department.update({
       where: {
         departmentId: departmentId,
