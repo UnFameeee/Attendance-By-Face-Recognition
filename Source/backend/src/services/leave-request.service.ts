@@ -456,6 +456,14 @@ export class LeaveRequestService {
   //verify leave request
   public verifyLeaveRequest = async (leaveRequestId: string, approverId: string, status: string) => {
     const response = new ResponseData<any>;
+    var statusUpdate: string;
+    if (status == "APPROVE") {
+      statusUpdate = leaveRequestStatus.approve;
+    } else if (status == "REJECT") {
+      statusUpdate = leaveRequestStatus.reject;
+    } else if (status == "OVERDATE") {
+      statusUpdate = leaveRequestStatus.overdate;
+    }
 
     const queryData = await prisma.leaveRequest.findFirst({
       where: {
@@ -485,21 +493,27 @@ export class LeaveRequestService {
       return response;
     }
 
+    //if it is over date
+    if (new Date(queryData.startDate) <= new Date() && statusUpdate == leaveRequestStatus.overdate) {
+      const queryUpdateLeaveRequest = await prisma.leaveRequest.update({
+        where: {
+          leaveRequestId: leaveRequestId,
+        },
+        data: {
+          approverId: approverId,
+          status: statusUpdate,
+        }
+      })
+
+      response.result = "Update Status successfully";
+      return response;
+      // response.message = "This leave request is overdate and cannot be approve or reject";
+      // return response;
+    }
+
     if (queryData.status != leaveRequestStatus.waiting) {
       response.message = `This leave request is already ${queryData.status}`;
       return response;
-    }
-
-    if (new Date(queryData.startDate) <= new Date()) {
-      response.message = "This leave request is overdate and cannot be approve or reject";
-      return response;
-    }
-
-    var statusUpdate: string;
-    if (status == "APPROVE") {
-      statusUpdate = leaveRequestStatus.approve;
-    } else {
-      statusUpdate = leaveRequestStatus.reject;
     }
 
     if (status == "APPROVE") {
@@ -555,7 +569,7 @@ export class LeaveRequestService {
           } else {
             totalHours = Helper.ConfigStaticDateTime("00:00");
           }
-          
+
           //Tạo Attendance với totalHours = 08:00
           const queryCreateAttendance = await prisma.attendance.create({
             data: {
