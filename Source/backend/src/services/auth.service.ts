@@ -99,9 +99,10 @@ class AuthenticationService {
   }
 
   public async login(loginData: LoginDTO): Promise<ResponseToken> {
-    const findEmployee: Employee = await prisma.employee.findUnique({
+    const findEmployee: Employee = await prisma.employee.findFirst({
       where: {
-        email: loginData.email
+        email: loginData.email,
+        deleted: false,
       }
     })
     if (!findEmployee) throw new HttpException(409, `This email ${loginData.email} was not found`);

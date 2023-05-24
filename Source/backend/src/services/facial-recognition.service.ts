@@ -38,33 +38,49 @@ export class FacialRecognitionService {
     const folderName = fs.readdirSync(path.join(__dirname, pathToImage));
     const labelsArray = folderName;
 
+    const queryData = await prisma.employee.findMany({
+      where: {
+        deleted: true,
+      },
+      select: {
+        id: true,
+      }
+    })
+
+    const arrayDeletedEmpId = [];
+    for (var employee of queryData) {
+      arrayDeletedEmpId.push(employee.id);
+    }
+
     const labeledDescriptors = []
     for (const label of labelsArray) {
-      // if(label == )
-      const imageList = fs.readdirSync(path.join(__dirname, pathToImage, `/${label}`));
-      const descriptors: any[] = [];
-      for (let i = 0, imageListLength = imageList.length; i < imageListLength; ++i) {
-        // Load the image
-        const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
+      if (!arrayDeletedEmpId.includes(label)) {
 
-        // Resize the image
-        // const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
+        const imageList = fs.readdirSync(path.join(__dirname, pathToImage, `/${label}`));
+        const descriptors: any[] = [];
+        for (let i = 0, imageListLength = imageList.length; i < imageListLength; ++i) {
+          // Load the image
+          const image = await canvas.loadImage(path.join(__dirname, pathToImage, `/${label}/${imageList[i]}`));
 
-        console.log(image)
+          // Resize the image
+          // const resizedImage = faceapi.resizeResults(image, { width: 512, height: 512 });
 
-        const detection = await faceapi.detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
-          .withFaceLandmarks(false)
-          .withAgeAndGender()
-          .withFaceExpressions()
-          .withFaceDescriptor();
+          console.log(image)
 
-        if (detection) {
-          descriptors.push(detection.descriptor);
-        } else {
-          console.log("undefined");
+          const detection = await faceapi.detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.75, maxResults: 1 }))
+            .withFaceLandmarks(false)
+            .withAgeAndGender()
+            .withFaceExpressions()
+            .withFaceDescriptor();
+
+          if (detection) {
+            descriptors.push(detection.descriptor);
+          } else {
+            console.log("undefined");
+          }
         }
+        labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
       }
-      labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
     }
 
     // create a FaceMatcher object
