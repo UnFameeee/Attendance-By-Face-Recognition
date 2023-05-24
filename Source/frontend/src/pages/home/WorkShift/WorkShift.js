@@ -237,11 +237,11 @@ function WorkShift() {
     setWorkShiftType(() => {
       let selection = {
         work: isWork,
-        leave: !isWork,
+        leave: isLeave,
       };
       return selection;
     });
-  }, [isWork]);
+  }, [isWork,isLeave]);
   // #endregion
   // #region form & modal declare
   const initialValuesSelectDepartment = {
@@ -437,9 +437,9 @@ function WorkShift() {
           <Box>
             <Button
               onClick={() => {
-                setIsWork((prev) => !prev);
+                setIsLeave((prev) => !prev);
               }}
-              colorScheme={!isWork ? "blue" : "gray"}
+              colorScheme={isLeave ? "blue" : "gray"}
             >
               Leave
             </Button>
