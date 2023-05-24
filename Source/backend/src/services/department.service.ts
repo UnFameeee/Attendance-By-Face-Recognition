@@ -197,14 +197,16 @@ export class DepartmentService {
       },
     })
 
-    await prisma.departmentManager.delete({
-      where: {
-        managerId_departmentId: {
-          departmentId: departmentId,
-          managerId: queryManagerDepartment.managerId
+    if (queryManagerDepartment) {
+      await prisma.departmentManager.delete({
+        where: {
+          managerId_departmentId: {
+            departmentId: departmentId,
+            managerId: queryManagerDepartment.managerId
+          }
         }
-      }
-    })
+      })
+    }
 
     //remove departmentId of emplyoee
     const queryEmployeeDepartment = await prisma.employee.findMany({
@@ -217,21 +219,23 @@ export class DepartmentService {
       }
     })
 
-    const arrayEmpId = [];
-    for (var employee of queryEmployeeDepartment) {
-      arrayEmpId.push(employee.id);
-    }
-
-    const queryDeleteEmployeeDepartment = await prisma.employee.updateMany({
-      where: {
-        id: {
-          in: arrayEmpId,
-        }
-      },
-      data: {
-        departmentId: null,
+    if(queryEmployeeDepartment.length > 0){
+      const arrayEmpId = [];
+      for (var employee of queryEmployeeDepartment) {
+        arrayEmpId.push(employee.id);
       }
-    })
+  
+      const queryDeleteEmployeeDepartment = await prisma.employee.updateMany({
+        where: {
+          id: {
+            in: arrayEmpId,
+          }
+        },
+        data: {
+          departmentId: null,
+        }
+      })  
+    }
 
     const queryData = await prisma.department.update({
       where: {
