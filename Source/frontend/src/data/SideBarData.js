@@ -47,7 +47,7 @@ export const SideBarData = [
         title: "Assigning",
         url: "assign-department",
         icon: <MdAssignmentInd fontSize={iconSize} />,
-        roleCanAccess: ["manager", "admin"],
+        roleCanAccess: ["admin"],
       },
     ],
   },
