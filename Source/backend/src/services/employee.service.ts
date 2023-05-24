@@ -1,14 +1,16 @@
-import { Employee, PrismaClient } from "@prisma/client";
+import * as bcrypt from 'bcrypt';
+import * as faceapi from '@vladmandic/face-api';
+import path from "path";
+import fs from 'fs';
+import { Employee } from "@prisma/client";
 import { Page, Paging, paginate } from '../config/paginate.config';
 import { ResponseData } from "../config/responseData.config";
 import { EmployeeModel, EmployeeRole } from "../model/view-model/employee.model";
 import { UpdateEmployeeDTO, AssignEmployeeDepartmentDTO, AssignManagerDepartmentDTO, ChangeRoleDTO, CreateEmployeeDTO } from '../model/dtos/employee.dto';
-import * as bcrypt from 'bcrypt';
 import { ROLE } from "../constant/database.constant";
-const prisma = new PrismaClient();
+import { prisma } from "../database/prisma.singleton";
 
 export class EmployeeService {
-
   public getListEmployee = async (employee: Employee, page: Page): Promise<ResponseData<Paging<EmployeeModel[]>>> => {
     const response = new ResponseData<Paging<EmployeeModel[]>>;
     const pageResponse = new Paging<EmployeeModel[]>
@@ -362,6 +364,17 @@ export class EmployeeService {
 
   public deleteEmployee = async (employeeId: string) => {
     const response = new ResponseData<String>;
+    const queryCheckEmployeeData = await prisma.employee.findFirst({
+      where: {
+        id: employeeId,
+        deleted: false,
+      }
+    })
+
+    if (!queryCheckEmployeeData) {
+      response.message = "The employee doesn't exist";
+      return response;
+    }
 
     const queryData = await prisma.employee.update({
       where: {
@@ -380,6 +393,18 @@ export class EmployeeService {
     })
 
     if (queryData) {
+      //remove employee data out of FaceMatcher.json
+      const pathToFaceDescriptors: string = path.join(__dirname, "/../public/train-model");
+      const JSONparseFaceMatcher = JSON.parse(fs.readFileSync(`${pathToFaceDescriptors}/FaceMatcher.json`).toString());
+      const FaceMatcherFromJSON: faceapi.FaceMatcher = faceapi.FaceMatcher.fromJSON(JSONparseFaceMatcher);
+
+      const newLabeledDescriptors = FaceMatcherFromJSON.labeledDescriptors.filter(obj => obj.label !== employeeId);
+
+      const faceMatcher = new faceapi.FaceMatcher(newLabeledDescriptors, 0.4);
+      const modelJSON = faceMatcher.toJSON();
+      const modelName = "FaceMatcher.json";
+      fs.writeFileSync(path.join(__dirname, `/../public/train-model/${modelName}`), JSON.stringify(faceMatcher));
+
       response.result = "Delete employee successfully";
     } else {
       response.message = "Server Error - Delete unsuccessfully";
