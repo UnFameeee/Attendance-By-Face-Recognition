@@ -124,16 +124,16 @@ export default function EventModal(props) {
         return true;
       }
       let currentDate = new Date().toISOString().split('T')[0];
-      const formattedDate = new Date(
+      const formattedDate = moment(
         selectedEvent?.shiftDate
-      ).toISOString().split('T')[0];
+      ).format("YYYY-MM-DD")
       return currentDate > formattedDate;
     } else {
       let currentDate = new Date().toISOString().split('T')[0];
       return currentDate > daySelected.format("YYYY-MM-DD");
     }
   }
-  console.log(isDayPassed());
+  // console.log(isDayPassed());
   if (isDayPassed() && !selectedEvent) return <></>;
   return (
     <>

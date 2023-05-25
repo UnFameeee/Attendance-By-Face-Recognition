@@ -108,6 +108,7 @@ export class LeaveRequestService {
           leaveType: {
             select: {
               name: true,
+              description:true,
             }
           }
         },
@@ -191,6 +192,7 @@ export class LeaveRequestService {
           leaveType: {
             select: {
               name: true,
+              description:true,
             }
           }
         },

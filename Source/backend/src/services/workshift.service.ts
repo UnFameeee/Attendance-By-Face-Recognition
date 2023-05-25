@@ -309,6 +309,7 @@ export class WorkshiftService {
         where: {
           employeeId: data.employeeId,
           shiftDate: modifyDate,
+          deleted: false,
         }
       })
 

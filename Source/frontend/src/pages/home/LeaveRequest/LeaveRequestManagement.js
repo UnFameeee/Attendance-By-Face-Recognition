@@ -33,6 +33,7 @@ import { leaveRequestService } from "../../../services/leaveRequest/leaveRequest
 import { selectionData } from "../../../data/SelectionData";
 import { approvalCodeColor } from "../../../data/ColorData";
 import ModifyLeaveTypeModal from "../../../components/ModifyLeaveTypeModal";
+import moment from "moment";
 function LeaveRequestManagement() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -166,9 +167,10 @@ function LeaveRequestManagement() {
           });
           if (isVerifyOverDate) {
             toast({
-              title: "This leave request is overdate and cannot be approve or reject",
+              title:
+                "This leave request is overdate and cannot be approve or reject",
               position: "bottom-right",
-              status: 'warning',
+              status: "warning",
               isClosable: true,
               duration: 5000,
             });
@@ -211,7 +213,7 @@ function LeaveRequestManagement() {
     onDeleteSingleClose();
   };
   function isOverDate(value) {
-    let formatDate = new Date(value).toISOString().split("T")[0];
+    let formatDate = moment(new Date(value).toISOString()).format("YYYY-MM-DD");
     let currentDate = new Date().toISOString().split("T")[0];
     return currentDate > formatDate;
   }
@@ -277,6 +279,15 @@ function LeaveRequestManagement() {
       {
         Header: "Id",
         accessor: "leaveRequestId",
+        // haveFilter: {
+        //   filterType: FilterType.Text,
+        // },
+        cellWidth: "150px",
+        hidden: true,
+      },
+      {
+        Header: "Leave Type Description",
+        accessor: "leaveType.description",
         // haveFilter: {
         //   filterType: FilterType.Text,
         // },
@@ -427,18 +438,22 @@ function LeaveRequestManagement() {
       isReadOnly: true,
     },
     {
+      name: "leaveTypeDescription",
+      label: "Leave Type Description",
+      isReadOnly: true,
+      isTextAreaField: true,
+    },
+    {
       name: "reason",
       label: "Reason",
       isReadOnly: true,
       isTextAreaField: true,
-      placeholder: "---",
     },
     {
       name: "note",
       label: "Note",
       isReadOnly: true,
       isTextAreaField: true,
-      placeholder: "---",
     },
     {
       name: "requestDate",
@@ -468,6 +483,8 @@ function LeaveRequestManagement() {
     department: editData?.department ?? "",
 
     leaveType: editData["leaveType.name"] ?? "",
+    leaveTypeDescription: editData["leaveType.description"] ?? "",
+
     requestDate: editData?.requestDate
       ? Helper.getMomentDateFormat(editData?.requestDate)
       : "",

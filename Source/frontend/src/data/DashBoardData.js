@@ -11,7 +11,7 @@ const iconFontSize = "80px";
 export const DashBoardDataTop = [
   {
     title: "People",
-    content: "34 Employees",
+    content: "",
     icon: <HiUserGroup style={{ fontSize: iconFontSize }} />,
     link: "/employees/employees-management",
     linkTitle: "Manage Employees",
@@ -20,7 +20,7 @@ export const DashBoardDataTop = [
   },
   {
     title: "Organization",
-    content: "4 Department",
+    content: "",
     icon: <SlOrganization style={{ fontSize: iconFontSize }} />,
     link: "/organization/general-organization",
     linkTitle: "Manage Organization",
@@ -28,15 +28,25 @@ export const DashBoardDataTop = [
   },
   {
     title: "Leave Request",
-    content: "Request",
+    content: "",
     icon: <RiUserVoiceFill style={{ fontSize: iconFontSize }} />,
     link: "/leave-request/leave-request-personal",
     linkTitle: "Manage Leave Request",
     bgColor: "#da8909",
+    roleCanAccess: ["employee"],
+  },
+  {
+    title: "Leave Request",
+    content: "",
+    icon: <RiUserVoiceFill style={{ fontSize: iconFontSize }} />,
+    link: "/leave-request/leave-request-management",
+    linkTitle: "Manage Leave Request",
+    bgColor: "#da8909",
+    roleCanAccess: ["manager", "admin"],
   },
   {
     title: "Work Shift",
-    content: "Management",
+    content: "",
     icon: <MdWork style={{ fontSize: iconFontSize }} />,
     link: "/work-shift",
     linkTitle: "Manage Work Shift",
@@ -44,7 +54,7 @@ export const DashBoardDataTop = [
   },
   {
     title: "Attendance",
-    content: "0 Entries Last Week",
+    content: "",
     icon: <MdAvTimer style={{ fontSize: iconFontSize }} />,
     link: "/attendance/attendance-personal",
     linkTitle: "Your Attendance Stats",
@@ -52,7 +62,7 @@ export const DashBoardDataTop = [
   },
   {
     title: "Setting",
-    content: "Setting profile",
+    content: "",
     icon: <FaUserCog style={{ fontSize: iconFontSize }} />,
     link: "/setting/profile",
     linkTitle: "Manage Setting",
@@ -63,7 +73,7 @@ export const DashBoardDataTop = [
 export const DashBoardDataBottom = [
   {
     title: "Attendance",
-    content: "0 Entries Last Week",
+    content: "",
     icon: <MdAvTimer style={{ fontSize: iconFontSize }} />,
     link: "/attendance/attendance-personal",
     linkTitle: "Your Attendance Stats",
@@ -71,7 +81,7 @@ export const DashBoardDataBottom = [
   },
   {
     title: "Setting",
-    content: "Setting profile",
+    content: "",
     icon: <FaUserCog style={{ fontSize: iconFontSize }} />,
     link: "/setting/profile",
     linkTitle: "Manage Setting",
