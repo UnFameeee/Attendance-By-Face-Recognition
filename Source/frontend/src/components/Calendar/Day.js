@@ -58,8 +58,7 @@ export default function Day({ day, rowIdx, listWorkShift }) {
   }
   return (
     <div
-      className={`border border-gray-300 flex flex-col 
-    ${checkIfDayInSameMonth() ? "cursor-pointer" : "cursor-not-allowed"}`}
+      className={`border border-gray-300 flex flex-col`}
     >
       <header className="flex flex-col items-center">
         {rowIdx === 0 && (

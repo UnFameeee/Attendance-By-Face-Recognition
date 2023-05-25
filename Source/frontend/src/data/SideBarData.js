@@ -33,7 +33,7 @@ export const SideBarData = [
     icon: <SlOrganization fontSize={iconSize} />,
     children: [
       {
-        title: "Management",
+        title: "Details",
         url: "general-organization",
         icon: <SiMagento fontSize={iconSize} />,
       },
