@@ -75,9 +75,9 @@ export default function Login() {
   const initialValues = { email: "", password: "" };
   const validationSchema = Yup.object().shape({
     password: Yup.string()
-      .required("Password required")
+      .required("Password is required")
       .min(6, "Password is too short"),
-    email: Yup.string().email("Invalid Email").required("Email required"),
+    email: Yup.string().email("Invalid Email").required("Email is required"),
   });
   useEffect(()=>{
     toast.closeAll();
