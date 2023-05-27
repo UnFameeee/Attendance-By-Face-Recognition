@@ -458,6 +458,8 @@ function LeaveRequestPersonal() {
             value={LRAnnualDetailData?.result?.annualLeaveRemaining ?? 0}
           />
         </Flex>
+      </HStack>
+      <HStack bg="white" rounded="md" p={3} gap="10px" shadow="2xl">
         <Tooltip
           placement="right"
           hasArrow
