@@ -132,7 +132,7 @@ function HomeHeader() {
                 />
               </Wrap>
             </Tooltip>
-            <Tooltip
+            {/* <Tooltip
               placement="bottom"
               hasArrow
               label="Go to Notification page"
@@ -168,7 +168,7 @@ function HomeHeader() {
                   </Box>
                 </Box>
               </Link>
-            </Tooltip>
+            </Tooltip> */}
             <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
               <Menu>
                 <MenuButton>
