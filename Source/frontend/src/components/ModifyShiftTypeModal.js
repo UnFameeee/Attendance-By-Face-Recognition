@@ -425,7 +425,7 @@ function ModifyShiftTypeModal(props) {
                         colorScheme="blue"
                         onClick={() => setToggleAddNewShiftType(true)}
                       >
-                        Add Another Shift
+                        Add Another Shift Type
                       </Button>
                     </Box>
                   )}

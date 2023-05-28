@@ -420,12 +420,6 @@ function LeaveRequestManagement() {
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
-      name: "role",
-      label: "Role",
-      isReadOnly: true,
-      placeholder: "---",
-    },
-    {
       name: "department",
       label: "Department",
       placeholder: "---",
@@ -474,13 +468,13 @@ function LeaveRequestManagement() {
       placeholder: "---",
     },
   ];
+  // console.log(editData)
   const initialValues = {
     status: editData?.status ?? "",
     fullname: editData["employee.fullname"] ?? "",
 
     email: editData?.email ?? "",
-    role: editData?.role ?? "",
-    department: editData?.department ?? "",
+    department: editData["employee.department.departmentName"] ?? "",
 
     leaveType: editData["leaveType.name"] ?? "",
     leaveTypeDescription: editData["leaveType.description"] ?? "",
