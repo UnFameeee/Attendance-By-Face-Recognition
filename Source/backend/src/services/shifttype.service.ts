@@ -102,7 +102,7 @@ export class ShifttypeService {
           }
         })
         if (!queryDeleteData) {
-          response.message = "Delete shifttype error";
+          response.message = "Modify shifttype error";
           return response;
         }
         const queryData = await prisma.shiftType.create({
