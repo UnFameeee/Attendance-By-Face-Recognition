@@ -80,16 +80,50 @@ export class LeavetypeService {
         return response;
       }
 
-      const queryData = await prisma.leaveType.update({
-        data: {
-          name: data.name,
-          description: data.description,
-          annualLeave: data.annualLeave,
-        },
+      //Check xem có leave request nào xài leavetype này chưa
+
+      const queryLeaveRequestClaim = await prisma.leaveRequest.findFirst({
         where: {
           leaveTypeId: data.leaveTypeId,
+          deleted: false
         }
       })
+
+      //Nếu xài rồi -> tạo cái mới, xóa cái này đi
+      if(queryLeaveRequestClaim){
+        const queryDeleteData = await prisma.leaveType.update({
+          data: {
+            deleted: true,
+          },
+          where: {
+            leaveTypeId: data.leaveTypeId,
+          }
+        })
+        if (!queryDeleteData) {
+          response.message = "Modify leavetype error";
+          return response;
+        }
+        const queryData = await prisma.leaveType.create({
+          data: {
+            name: data.name,
+            description: data.description,
+            annualLeave: data.annualLeave,
+          }
+        })
+      }
+      //Nếu chưa, chỉnh thẳng trên cái này 
+      else {
+        const queryData = await prisma.leaveType.update({
+          data: {
+            name: data.name,
+            description: data.description,
+            annualLeave: data.annualLeave,
+          },
+          where: {
+            leaveTypeId: data.leaveTypeId,
+          }
+        })
+      }
     }
     response.result = "Modify leavetype successfully";
     return response;

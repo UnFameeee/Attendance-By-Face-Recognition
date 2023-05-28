@@ -84,16 +84,48 @@ export class ShifttypeService {
         return response;
       }
 
-      const queryData = await prisma.shiftType.update({
-        data: {
-          shiftName: data.shiftName,
-          startTime: Helper.ConfigStaticDateTime(data.startTime),
-          endTime: Helper.ConfigStaticDateTime(data.endTime),
-        },
+      //Check xem có workshift nào xài shiftype này chưa
+      const queryWorkshiftClaimData = await prisma.workshift.findFirst({
         where: {
           shiftTypeId: data.shiftTypeId,
+          deleted: false
         }
       })
+      //Nếu xài rồi -> tạo cái mới, xóa cái này đi
+      if (queryWorkshiftClaimData) {
+        const queryDeleteData = await prisma.shiftType.update({
+          data: {
+            deleted: true,
+          },
+          where: {
+            shiftTypeId: data.shiftTypeId,
+          }
+        })
+        if (!queryDeleteData) {
+          response.message = "Delete shifttype error";
+          return response;
+        }
+        const queryData = await prisma.shiftType.create({
+          data: {
+            shiftName: data.shiftName,
+            startTime: Helper.ConfigStaticDateTime(data.startTime),
+            endTime: Helper.ConfigStaticDateTime(data.endTime),
+          }
+        })
+      }
+      //Nếu chưa, chỉnh thẳng trên cái này
+      else {
+        const queryData = await prisma.shiftType.update({
+          data: {
+            shiftName: data.shiftName,
+            startTime: Helper.ConfigStaticDateTime(data.startTime),
+            endTime: Helper.ConfigStaticDateTime(data.endTime),
+          },
+          where: {
+            shiftTypeId: data.shiftTypeId,
+          }
+        })
+      }
     }
     response.result = "Modify shifttype successfully";
     return response;
