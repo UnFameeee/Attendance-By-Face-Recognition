@@ -148,8 +148,8 @@ root.render(
                   <Route path="first-time-login" element={<FirstTimeLogin />} />
                   <Route path="training-qr" element={<TrainingQR />} />
 
-                  <Route path="test" element={<AttendanceModal />} />
-                  <Route path="test2" element={<ExceptionModal />} />
+                  {/* <Route path="test" element={<AttendanceModal />} />
+                  <Route path="test2" element={<ExceptionModal />} /> */}
                 </Route>
 
                 <Route path="*" element={<NotFound />} />

@@ -51,4 +51,7 @@ export const approvalCodeColor = [
   {
     WAITING: "yellow",
   },
+  {
+    OVERDATE:"purple"
+  }
 ];
