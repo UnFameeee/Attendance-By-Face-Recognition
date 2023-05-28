@@ -412,7 +412,7 @@ function LeaveRequestPersonal() {
           </Highlight>
           <Input
             readOnly
-            w="50px"
+            w="60px"
             size="md"
             type="number"
             value={LRAnnualDetailData?.result?.totalAnnualLeave ?? 0}
@@ -432,7 +432,7 @@ function LeaveRequestPersonal() {
           </Highlight>
           <Input
             readOnly
-            w="50px"
+            w="60px"
             size="md"
             type="number"
             value={LRAnnualDetailData?.result?.annualLeaveUsed ?? 0}
@@ -452,7 +452,7 @@ function LeaveRequestPersonal() {
           </Highlight>
           <Input
             readOnly
-            w="50px"
+            w="60px"
             size="md"
             type="number"
             value={LRAnnualDetailData?.result?.annualLeaveRemaining ?? 0}
