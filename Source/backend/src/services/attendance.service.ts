@@ -91,7 +91,7 @@ export class AttendanceService {
 
         //the latest punch in is startTime + 1 hour
         if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
-          response.message = "You are too late to checkin, please contact with the manager";
+          response.message = "You are too late to check in, please contact with the manager";
           return response;
         }
 
@@ -161,7 +161,7 @@ export class AttendanceService {
 
         //the earliest punch out is endTime - 1 hour
         if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
-          response.message = "You checkout too early, please contact with the manager";
+          response.message = "You check out too early, please contact with the manager";
           return response;
         }
 

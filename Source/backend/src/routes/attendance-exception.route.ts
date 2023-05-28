@@ -35,7 +35,7 @@ export class AttendanceExceptionRoute implements Routes {
       this.attendanceExceptionController.saveImage
     )
 
-    // api/attendance-exception/saveImage
+    // api/attendance-exception/saveAnonymousImage
     this.router.post(`${this.path}/saveAnonymousImage`,
       // authMiddleware,
       // zodValidate(submitAttendanceExceptionSchema),
