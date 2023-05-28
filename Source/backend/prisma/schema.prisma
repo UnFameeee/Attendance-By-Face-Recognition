@@ -256,7 +256,7 @@ model Workshift {
 
 model ShiftType {
   shiftTypeId String      @id @default(uuid())
-  shiftName   String      @unique
+  shiftName   String      
   startTime   DateTime
   endTime     DateTime
   deleted     Boolean     @default(false)
