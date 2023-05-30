@@ -103,8 +103,8 @@ const attendanceImageStorage = multer.diskStorage({
 
         if (!errorFlag) {
           //Check EmpID folder
-          if (!fs.existsSync(`${directory}\\${employeeId}`)) {
-            fs.mkdirSync(`${directory}\\${employeeId}`)
+          if (!fs.existsSync(`${directory}/${employeeId}`)) {
+            fs.mkdirSync(`${directory}/${employeeId}`)
           }
           staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
           //Check Date folder

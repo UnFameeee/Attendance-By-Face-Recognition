@@ -13,8 +13,8 @@ const trainingImagesStorage = multer.diskStorage({
     if (!fs.existsSync(`${directory}/${employeeId}`)) {
       fs.mkdirSync(`${directory}/${employeeId}`)
     }
-    console.log("MulterStorage: ", `${directory}\\${employeeId}`)
-    cb(null, `${directory}\\${employeeId}`)
+    console.log("MulterStorage: ", `${directory}/${employeeId}`)
+    cb(null, `${directory}/${employeeId}`)
   },
   filename: async (req: RequestWithProfile, file, cb) => {
     const employeeId: string = (req.query.employeeId).toString();
