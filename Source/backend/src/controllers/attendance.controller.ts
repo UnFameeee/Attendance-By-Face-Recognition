@@ -38,7 +38,7 @@ export class AttendanceController {
       if (req.error) {
         console.log(req.error)
         const response = new ResponseData<string>;
-        response.message = req.error;
+        response.result = "";
         res.status(201).json(response);
       }
       const files: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });

@@ -42,34 +42,6 @@ export default function FaceAttendance() {
           attendanceType: "FACE",
           image: data?.result,
         });
-      } else {
-        toast({
-          title: 'Attendance Result',
-          description: data.message,
-          position: "top",
-          status: "error",
-          variant: 'subtle',
-          duration: 5000,
-          containerStyle: {
-            width: "30vw",
-            padding: "0.3rem",
-            fontSize: "1.25rem",
-            textAlign: "center",
-          },
-        });
-
-        dispatch(setIsTakeAttendance({
-          isTakeAttendance: false,
-        }))
-
-        dispatch(setIsScaningPaused({
-          isScaningPaused: true,
-        }))
-        setTimeout(() => {
-          dispatch(setIsScaningPaused({
-            isScaningPaused: false,
-          }))
-        }, 5000);
       }
     },
     onError: (error) => {
