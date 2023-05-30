@@ -62,9 +62,11 @@ export default function FaceAttendance() {
           isTakeAttendance: false,
         }))
 
-        dispatch(setIsScaningPaused({
-          isScaningPaused: false,
-        }))
+        setTimeout(() => {
+          dispatch(setIsScaningPaused({
+            isScaningPaused: false,
+          }))
+        }, 5000);
       }
     },
   })
@@ -108,9 +110,9 @@ export default function FaceAttendance() {
         });
       }
 
-      dispatch(setIsScaningPaused({
-        isScaningPaused: true,
-      }))
+      // dispatch(setIsScaningPaused({
+      //   isScaningPaused: true,
+      // }))
       setTimeout(() => {
         dispatch(setIsScaningPaused({
           isScaningPaused: false,
