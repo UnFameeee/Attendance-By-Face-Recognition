@@ -6,7 +6,7 @@ import {
   Img,
   useToast,
 } from "@chakra-ui/react";
-import axiosBase from '../../../Utils/AxiosInstance';
+// import axiosBase from '../../../Utils/AxiosInstance';
 import { useMutation } from 'react-query';
 import { attendanceService } from '../../../services/attendance/attendance';
 import { Helper } from '../../../Utils/Helper';
@@ -18,6 +18,7 @@ import ExceptionModel from '../../../components/Attendance/ExceptionModal';
 import Webcam from 'react-webcam'
 import { resetFailedCount, setExceptionModalOpen } from '../../../store/Slice/AttendanceSlice/exceptionModalSlice';
 import { setImageCapture, setImageExceptionCapture } from '../../../store/Slice/AttendanceSlice/attendanceStorageSlice';
+import axiosFaceBase from '../../../Utils/AxiosFaceInstance';
 // const WebcamComponent = () => <Webcam />
 
 let streamObj;
@@ -196,7 +197,7 @@ export default function FaceAttendance() {
 
     async function addEvent() {
       //load the model
-      const FaceMatcherJson = await axiosBase.get(`/public/train-model/FaceMatcher.json`);
+      const FaceMatcherJson = await axiosFaceBase.get(`/public/train-model/FaceMatcher.json`);
       const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
 
       const faceDetectArray = [];
