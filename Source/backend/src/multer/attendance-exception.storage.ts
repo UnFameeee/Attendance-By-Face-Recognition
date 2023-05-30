@@ -91,8 +91,8 @@ const attendanceExceptionImageStorage = multer.diskStorage({
 
     if (queryEmployeeData && !errorFlag) {
       //Check EmpID folder
-      if (!fs.existsSync(`${directory}\\${queryEmployeeData.id}`)) {
-        fs.mkdirSync(`${directory}\\${queryEmployeeData.id}`)
+      if (!fs.existsSync(`${directory}/${queryEmployeeData.id}`)) {
+        fs.mkdirSync(`${directory}/${queryEmployeeData.id}`)
       }
 
       //Check Date folder
@@ -100,8 +100,8 @@ const attendanceExceptionImageStorage = multer.diskStorage({
         fs.mkdirSync(`${directory}/${queryEmployeeData.id}/${staticDateFolder}`)
       }
 
-      console.log("MulterStorage: ", `${directory}\\${queryEmployeeData.id}\\${staticDateFolder}`)
-      cb(null, `${directory}\\${queryEmployeeData.id}\\${staticDateFolder}`)
+      console.log("MulterStorage: ", `${directory}/${queryEmployeeData.id}/${staticDateFolder}`)
+      cb(null, `${directory}/${queryEmployeeData.id}/${staticDateFolder}`)
     }
   },
   filename: async (req: RequestWithProfile, file, cb) => {

@@ -11,7 +11,7 @@ export class URLService {
     // Get the current date and time
     let datetime = new Date();
     // Add 30 minutes to the current time
-    datetime.setMinutes(datetime.getMinutes() + 5);
+    datetime.setMinutes(datetime.getMinutes() + 30);
     let URL: string;
 
     if (URLtype == "AttendanceException") {

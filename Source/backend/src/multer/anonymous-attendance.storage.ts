@@ -16,12 +16,12 @@ const anonymousAttendanceImageStorage = multer.diskStorage({
     staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
 
     //Check Date folder
-    if (!fs.existsSync(`${directory}\\${staticDateFolder}`)) {
-      fs.mkdirSync(`${directory}\\${staticDateFolder}`)
+    if (!fs.existsSync(`${directory}/${staticDateFolder}`)) {
+      fs.mkdirSync(`${directory}/${staticDateFolder}`)
     }
 
-    console.log("MulterStorage: ", `${directory}\\${staticDateFolder}`)
-    cb(null, `${directory}\\${staticDateFolder}`)
+    console.log("MulterStorage: ", `${directory}/${staticDateFolder}`)
+    cb(null, `${directory}/${staticDateFolder}`)
 
   },
   filename: async (req: Request, file, cb) => {

@@ -63,31 +63,9 @@ export default function FaceAttendance() {
         }))
 
         dispatch(setIsScaningPaused({
-          isScaningPaused: true,
+          isScaningPaused: false,
         }))
-        setTimeout(() => {
-          dispatch(setIsScaningPaused({
-            isScaningPaused: false,
-          }))
-        }, 5000);
       }
-    },
-    onError: (error) => {
-      console.log(error);
-      toast({
-        title: 'Attendance Result',
-        description: error.response.data.message,
-        position: "top",
-        status: "error",
-        variant: 'subtle',
-        duration: 5000,
-        containerStyle: {
-          width: "30vw",
-          padding: "0.3rem",
-          fontSize: "1.25rem",
-          textAlign: "center",
-        },
-      });
     },
   })
 

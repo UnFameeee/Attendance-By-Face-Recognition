@@ -43,8 +43,8 @@ const imageStorage = multer.diskStorage({
     if (!fs.existsSync(`${directory}/${req.profile.id}`)) {
       fs.mkdirSync(`${directory}/${req.profile.id}`)
     }
-    console.log("MulterStorage: ", `${directory}\\${req.profile.id}`)
-    cb(null, `${directory}\\${req.profile.id}`)
+    console.log("MulterStorage: ", `${directory}/${req.profile.id}`)
+    cb(null, `${directory}/${req.profile.id}`)
   },
   filename: async (req: RequestWithProfile, file, cb) => {
     const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
