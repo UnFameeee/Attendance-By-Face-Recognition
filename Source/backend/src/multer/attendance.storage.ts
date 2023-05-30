@@ -19,7 +19,7 @@ const attendanceImageStorage = multer.diskStorage({
     const employeeId: string = (req.query.employeeId).toString();
 
     //error handler
-    var errorFlag: boolean = false;
+    errorFlag = false;
 
     now = new Date();
     const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
@@ -35,9 +35,10 @@ const attendanceImageStorage = multer.diskStorage({
     })
 
     if (!workShift) {
-      req.error = "You don't have a schedule for today";
-      let error: HttpException = new HttpException(201, "You don't have a schedule for today");
-      cb(error, null);
+      errorFlag = true;
+      // req.error = "You don't have a schedule for today";
+      // let error: HttpException = new HttpException(201, "You don't have a schedule for today");
+      // cb(error, null);
     } else {
       const queryAttendanceAbsent = await prisma.attendance.findFirst({
         where: {
@@ -52,9 +53,10 @@ const attendanceImageStorage = multer.diskStorage({
       })
 
       if (queryAttendanceAbsent) {
-        req.error = "This is your leave request day, you don't have a schedule for today";
-        let error: HttpException = new HttpException(201, "This is your leave request day, you don't have a schedule for today");
-        cb(error, null);
+        errorFlag = true;
+        // req.error = "This is your leave request day, you don't have a schedule for today";
+        // let error: HttpException = new HttpException(201, "This is your leave request day, you don't have a schedule for today");
+        // cb(error, null);
       } else {
         const queryAttendanceCheckoutData = await prisma.attendance.findFirst({
           where: {
@@ -74,25 +76,25 @@ const attendanceImageStorage = multer.diskStorage({
         })
         if (queryAttendanceCheckoutData) {
           errorFlag = true;
-          req.error = "You have already checkout, please check again";
-          let error: HttpException = new HttpException(201, "You have already checkout, please check again");
-          cb(error, null);
+          // req.error = "You have already checkout, please check again";
+          // let error: HttpException = new HttpException(201, "You have already checkout, please check again");
+          // cb(error, null);
         }
 
-        if (!errorFlag) {
-          //Check EmpID folder
-          if (!fs.existsSync(`${directory}/${employeeId}`)) {
-            fs.mkdirSync(`${directory}/${employeeId}`)
-          }
-          staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
-          //Check Date folder
-          if (!fs.existsSync(`${directory}/${employeeId}/${staticDateFolder}`)) {
-            fs.mkdirSync(`${directory}/${employeeId}/${staticDateFolder}`)
-          }
-
-          console.log("MulterStorage: ", `${directory}/${employeeId}/${staticDateFolder}`)
-          cb(null, `${directory}/${employeeId}/${staticDateFolder}`)
+        // if (!errorFlag) {
+        //Check EmpID folder
+        if (!fs.existsSync(`${directory}/${employeeId}`)) {
+          fs.mkdirSync(`${directory}/${employeeId}`)
         }
+        staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
+        //Check Date folder
+        if (!fs.existsSync(`${directory}/${employeeId}/${staticDateFolder}`)) {
+          fs.mkdirSync(`${directory}/${employeeId}/${staticDateFolder}`)
+        }
+
+        console.log("MulterStorage: ", `${directory}/${employeeId}/${staticDateFolder}`)
+        cb(null, `${directory}/${employeeId}/${staticDateFolder}`)
+        // }
       }
     }
   },
@@ -100,21 +102,25 @@ const attendanceImageStorage = multer.diskStorage({
     const employeeId: string = (req.query.employeeId).toString();
     const targetDate = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
 
-    const queryAttendanceData = await prisma.attendance.findFirst({
-      where: {
-        employeeId: employeeId,
-        attendanceDate: {
-          gte: targetDate.startOf('day').toDate(),
-          lte: targetDate.endOf('day').toDate(),
+    if (errorFlag) {
+      cb(null, `${employeeId}_${staticDateFolder}_unknown` + path.extname(file.originalname));
+    } else {
+      const queryAttendanceData = await prisma.attendance.findFirst({
+        where: {
+          employeeId: employeeId,
+          attendanceDate: {
+            gte: targetDate.startOf('day').toDate(),
+            lte: targetDate.endOf('day').toDate(),
+          }
         }
-      }
-    })
+      })
 
-    if (!queryAttendanceData) {
-      // const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
-      cb(null, `${employeeId}_${staticDateFolder}_checkin` + path.extname(file.originalname));
-    } else if (queryAttendanceData.checkIn != null && queryAttendanceData.checkOut == null) {
-      cb(null, `${employeeId}_${staticDateFolder}_checkout` + path.extname(file.originalname));
+      if (!queryAttendanceData) {
+        // const arrayUpload: { [fieldname: string]: Express.Multer.File[] } = (req.files as { [fieldname: string]: Express.Multer.File[] });
+        cb(null, `${employeeId}_${staticDateFolder}_checkin` + path.extname(file.originalname));
+      } else if (queryAttendanceData.checkIn != null && queryAttendanceData.checkOut == null) {
+        cb(null, `${employeeId}_${staticDateFolder}_checkout` + path.extname(file.originalname));
+      }
     }
   }
 });

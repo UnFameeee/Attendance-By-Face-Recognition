@@ -54,6 +54,12 @@ export class AttendanceService {
       }
     })
 
+    //Nếu đã checkout rồi
+    if(checkAttendance.checkOut != null){
+      response.message = "You have already checkout, please check again";
+      return response;
+    }
+
     //Get the shiftDate from workShift - YYYY-MM-DD
     const shiftDate = workShift.shiftDate;
     const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
