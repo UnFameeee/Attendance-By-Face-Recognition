@@ -54,12 +54,6 @@ export class AttendanceService {
       }
     })
 
-    //Nếu đã checkout rồi
-    if(checkAttendance.checkOut != null){
-      response.message = "You have already checkout, please check again";
-      return response;
-    }
-
     //Get the shiftDate from workShift - YYYY-MM-DD
     const shiftDate = workShift.shiftDate;
     const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
@@ -144,6 +138,12 @@ export class AttendanceService {
     }
     //If there IS attendance record, it is CHECKOUT
     else {
+      //Nếu đã checkout rồi
+      if (checkAttendance.checkOut != null) {
+        response.message = "You have already checkout, please check again";
+        return response;
+      }
+
       //Get the time from shiftType - HH:mm
       let endTime = workShift.shiftType.endTime;
       let time = moment(endTime, "HH:mm").format("HH:mm");
@@ -275,7 +275,7 @@ export class AttendanceService {
     var attendanceType: string;
     if (!queryAttendanceData) {
       attendanceType = attendance.checkin;
-    } else if(queryAttendanceData.checkIn){
+    } else if (queryAttendanceData.checkIn) {
       attendanceType = attendance.checkout;
     }
 
