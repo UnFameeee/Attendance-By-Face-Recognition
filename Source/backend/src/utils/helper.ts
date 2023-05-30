@@ -26,7 +26,13 @@ const ConfigStaticDateTime = (time: string, date?: string): Date => {
     result = temp;
   } else {
     //Fix the date to 1970-01-01, we only use the time. The time seperate from the date by T
-    const temp = new Date(`1970-01-01T00:00:00.000Z`);
+    // const temp = new Date(`1970-01-01T00:00:00.000Z`);
+    // temp.setHours(parseInt(timeSplitArr[0], 10));
+    // temp.setMinutes(parseInt(timeSplitArr[1], 10));
+    const temp = new Date();
+    temp.setDate(1);
+    temp.setMonth(0);
+    temp.setFullYear(2023);
     temp.setHours(parseInt(timeSplitArr[0], 10));
     temp.setMinutes(parseInt(timeSplitArr[1], 10));
     result = temp;
