@@ -43,32 +43,33 @@ export default function FaceAttendance() {
           attendanceType: "FACE",
           image: data?.result,
         });
-      } else {
-        toast({
-          title: 'Attendance Result',
-          description: data.message,
-          position: "top",
-          status: "error",
-          variant: 'subtle',
-          duration: 5000,
-          containerStyle: {
-            width: "30vw",
-            padding: "0.3rem",
-            fontSize: "1.25rem",
-            textAlign: "center",
-          },
-        });
+      } 
+      // else {
+        // toast({
+        //   title: 'Attendance Result',
+        //   description: data.message,
+        //   position: "top",
+        //   status: "error",
+        //   variant: 'subtle',
+        //   duration: 5000,
+        //   containerStyle: {
+        //     width: "30vw",
+        //     padding: "0.3rem",
+        //     fontSize: "1.25rem",
+        //     textAlign: "center",
+        //   },
+        // });
 
-        dispatch(setIsTakeAttendance({
-          isTakeAttendance: false,
-        }))
+        // dispatch(setIsTakeAttendance({
+        //   isTakeAttendance: false,
+        // }))
 
-        setTimeout(() => {
-          dispatch(setIsScaningPaused({
-            isScaningPaused: false,
-          }))
-        }, 5000);
-      }
+        // setTimeout(() => {
+        //   dispatch(setIsScaningPaused({
+        //     isScaningPaused: false,
+        //   }))
+        // }, 5000);
+      // }
     },
   })
 
@@ -111,9 +112,6 @@ export default function FaceAttendance() {
         });
       }
 
-      // dispatch(setIsScaningPaused({
-      //   isScaningPaused: true,
-      // }))
       setTimeout(() => {
         dispatch(setIsScaningPaused({
           isScaningPaused: false,
@@ -197,9 +195,10 @@ export default function FaceAttendance() {
 
     async function addEvent() {
       //load the model
-      const FaceMatcherJson = await axiosFaceBase.get(`/public/train-model/FaceMatcher.json`);
-      const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
 
+      const FaceMatcherJson = await axiosFaceBase.get(`/public/train-model/FaceMatcher.json`)
+      const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
+      
       const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
         if (!useTakeAttendance.isLoading) {
