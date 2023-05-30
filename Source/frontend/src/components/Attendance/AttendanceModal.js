@@ -79,10 +79,6 @@ export default function AttendanceModal() {
       isAttendanceModalOpen: false,
     }))
 
-    dispatch(setIsScaningPaused({
-      isScaningPaused: false,
-    }))
-
     onClose();
   }
 
