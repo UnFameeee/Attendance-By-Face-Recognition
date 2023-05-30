@@ -87,7 +87,7 @@ export default function AttendanceModal() {
   }
 
   if (employeeDetailIsFetching) {
-    return <></>;
+    return null;
   }
 
   return (

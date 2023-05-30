@@ -333,6 +333,7 @@ function AttendanceExceptionManagement() {
           currentApprovalAttendanceException?.employeeData?.image;
         tempObj["systemImage"] =
           currentApprovalAttendanceException?.systemData?.image;
+        tempObj["noWorkingDayFlag"] = currentApprovalAttendanceException?.systemData?.noWorkingDayFlag;
         tempObj["employeeTime"] = moment(
           currentApprovalAttendanceException?.employeeData?.datetime
         ).format("DD/MM/yyyy hh:mm A");
@@ -681,7 +682,7 @@ function AttendanceExceptionManagement() {
                             Shift Time:
                           </Text>
                           <Text fontWeight="medium">
-                            {initialValuesModal?.systemTime}
+                            {initialValuesModal?.noWorkingDayFlag ? "No Working Day!" : initialValuesModal?.systemTime }
                           </Text>
                         </VStack>
                       </HStack>
