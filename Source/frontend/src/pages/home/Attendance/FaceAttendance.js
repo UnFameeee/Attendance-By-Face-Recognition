@@ -36,12 +36,13 @@ export default function FaceAttendance() {
   const useSaveImageOfAttendance = useMutation(({ employeeId, formData }) =>
     attendanceService.saveImageOfAttendance(employeeId, formData), {
     onSuccess: (data) => {
-      console.log(data);
       if (data.result) {
+        const time = new Date();
         useTakeAttendance.mutate({
           employeeId: employeeId,
           attendanceType: "FACE",
           image: data?.result,
+          date: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`,
         });
       } 
       // else {

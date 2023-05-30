@@ -22,6 +22,12 @@ export const takeAttendanceSchema = z.object({
     })
     .trim()
     .min(1, 'Image cannot be empty'),
-
+  date: z
+    .string({
+      required_error: 'Date is required',
+      invalid_type_error: 'Date must be string',
+    })
+    .trim()
+    .min(1, 'Date cannot be empty'),
 });
 export type TakeAttendanceDTO = z.infer<typeof takeAttendanceSchema>;
