@@ -57,9 +57,19 @@ export default function FaceAttendance() {
             textAlign: "center",
           },
         });
+
         dispatch(setIsTakeAttendance({
           isTakeAttendance: false,
         }))
+
+        // dispatch(setIsScaningPaused({
+        //   isScaningPaused: true,
+        // }))
+        // setTimeout(() => {
+        //   dispatch(setIsScaningPaused({
+        //     isScaningPaused: false,
+        //   }))
+        // }, 5000);
       }
     },
     onError: (error) => {
@@ -127,7 +137,7 @@ export default function FaceAttendance() {
         dispatch(setIsScaningPaused({
           isScaningPaused: false,
         }))
-      }, 10000);
+      }, 5000);
     },
 
     onError: (error) => {
