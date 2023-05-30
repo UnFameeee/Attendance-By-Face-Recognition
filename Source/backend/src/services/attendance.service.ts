@@ -14,7 +14,9 @@ export class AttendanceService {
     const response = new ResponseData<string>();
 
     const now = new Date();
-    const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
+    console.log(now);
+    // const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
+    const modifyDate = Helper.ConfigStaticDateTime("00:00", data.date);
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
@@ -39,6 +41,8 @@ export class AttendanceService {
         }
       }
     })
+
+    console.log(workShift);
 
     if (!workShift) {
       response.message = "You don't have a schedule for today";
