@@ -7,7 +7,7 @@ const endPointAttendance = baseURL + "/attendance";
 const endPointAttendanceException = baseURL + "/attendance-exception";
 
 const takeAttendance = async (data) => {
-  const { employeeId, attendanceType, image } = data;
+  const { employeeId, attendanceType, image, date } = data;
 
   const response = await axiosBase.post(
     `${endPointAttendance}/takeAttendance`,
@@ -15,6 +15,7 @@ const takeAttendance = async (data) => {
       employeeId: employeeId,
       attendanceType: attendanceType,
       image: image,
+      date: date,
     }
   );
   return response.data;
