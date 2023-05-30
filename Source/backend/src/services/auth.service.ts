@@ -10,7 +10,7 @@ import { prisma } from '../database/prisma.singleton';
 import { CreateEmployeeDTO } from '../model/dtos/employee.dto';
 import { env } from "../config/env.config";
 import { application_permission } from "../config/permission.config";
-import { ResponseToken } from "../config/ResponseToken.config";
+import { ResponseToken } from "../config/responseToken.config";
 
 class AuthenticationService {
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {

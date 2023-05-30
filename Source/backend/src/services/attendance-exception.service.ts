@@ -262,8 +262,10 @@ export class AttendanceExceptionService {
     })
 
     var shiftTime;
+    var noWorkingDayFlag: boolean = false;
     if (!queryWorkshiftData) {
       shiftTime = null;
+      noWorkingDayFlag = true;
     } else {
       if (queryEmployeeData.attendanceType == attendance.checkin) {
         const time = moment(queryWorkshiftData.shiftType.startTime, "HH:mm").format("HH:mm");
@@ -280,6 +282,7 @@ export class AttendanceExceptionService {
       employeeData: queryEmployeeData,
       systemData: {
         shiftTime: shiftTime,
+        noWorkingDayFlag: noWorkingDayFlag,
         ...querySystemData
       },
     }
