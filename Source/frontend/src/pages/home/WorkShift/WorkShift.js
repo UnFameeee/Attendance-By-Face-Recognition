@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -29,6 +29,7 @@ import ModifyShiftTypeModal from "../../../components/ModifyShiftTypeModal";
 
 function WorkShift() {
   // #region declare variable
+  const formikRef = useRef()
   const toast = useToast();
   const queryClient = useQueryClient();
   const [userDecodeInfo, setUserDecodeInfo] = useState(
@@ -306,6 +307,8 @@ function WorkShift() {
             onSubmit={(values, actions) => {
               const departmentId = values.department;
               setDepartmentId(departmentId);
+              setEmployeeFilterId("");
+              formikRef.current?.resetForm()
               if (departmentId && userDecodeInfo.roleName == "employee") {
                 let employeeId = employeeFilterId;
                 useGetWorkShiftOfEmployee.mutate({
@@ -323,6 +326,7 @@ function WorkShift() {
                   workShiftType,
                 });
               }
+              
             }}
           >
             {(formik) => (
@@ -389,9 +393,9 @@ function WorkShift() {
                 Employee Filter:
               </Highlight>
             </Heading>
-            <Formik initialValues={initialValuesOfEmployeeFilter}>
+            <Formik initialValues={initialValuesOfEmployeeFilter} innerRef={formikRef}>
               {(formik) => (
-                <Box w="150px">
+                <Box w="200px">
                   <FormTextField
                     name="employeeFilter"
                     isSelectionField={true}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import * as Yup from "yup";
 import DynamicTable, {
@@ -40,6 +40,7 @@ function LeaveRequestManagement() {
     permissionLeaveRequestManagement,
     "leave-request-management"
   );
+  const formikRef = useRef();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [editData, setEditData] = useState({});
@@ -587,6 +588,7 @@ function LeaveRequestManagement() {
               } else {
                 setListLRDepartment([]);
               }
+              formikRef.current?.resetForm()
             }}
           >
             {(formik) => (
@@ -653,6 +655,7 @@ function LeaveRequestManagement() {
               <Formik
                 initialValues={initialValuesForDateFilterSelection}
                 validationSchema={validationSchemaForDateFilterSelection}
+                innerRef={formikRef}
               >
                 {(formik) => (
                   <Box w="150px">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Heading,
@@ -48,6 +48,7 @@ import * as Yup from "yup";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function AttendancePersonal() {
   // #region declare variable
+  const formikRef = useRef();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
@@ -925,6 +926,7 @@ function AttendancePersonal() {
                       const departmentId = values.department;
                       setDepartmentId(departmentId);
                       setEmployeeFilterId("")
+                      formikRef.current?.resetForm()
                     }}
                   >
                     {(formik) => (
@@ -986,7 +988,7 @@ function AttendancePersonal() {
                         Employee Filter:
                       </Highlight>
                     </Heading>
-                    <Formik initialValues={initialValuesOfEmployeeFilter}>
+                    <Formik initialValues={initialValuesOfEmployeeFilter} innerRef={formikRef}>
                       {(formik) => (
                         <Box w="200px">
                           <FormTextField

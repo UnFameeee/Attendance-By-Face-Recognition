@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionAttendanceExceptionManagement } from "../../../screen-permissions/permission";
 import { useMutation, useQueryClient } from "react-query";
@@ -52,6 +52,7 @@ function AttendanceExceptionManagement() {
     permissionAttendanceExceptionManagement,
     "attendance-management"
   );
+  const formikRef = useRef()
   const toast = useToast();
   const queryClient = useQueryClient();
   const finalRef = React.useRef(null);
@@ -409,7 +410,7 @@ function AttendanceExceptionManagement() {
           </Heading>
           <Formik
             initialValues={initialValuesForm}
-            onSubmit={(values, actions) => {
+            onSubmit={(values, actions) => {             
               const departmentId = values.departmentId;
               if (departmentId != "") {
                 setDepartmentId(departmentId);
@@ -422,6 +423,7 @@ function AttendanceExceptionManagement() {
               } else {
                 setListAttendanceException([]);
               }
+              formikRef.current?.resetForm()
             }}
           >
             {(formik) => (
@@ -475,7 +477,7 @@ function AttendanceExceptionManagement() {
                 </Highlight>
               </Heading>
 
-              <Formik initialValues={initialValuesForDateFilterSelection}>
+              <Formik initialValues={initialValuesForDateFilterSelection} innerRef={formikRef}>
                 {(formik) => (
                   <Box>
                     <FormTextField
