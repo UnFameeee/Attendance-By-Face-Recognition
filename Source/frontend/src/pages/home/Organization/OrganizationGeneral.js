@@ -10,7 +10,7 @@ import {
   useToast,
   Tooltip,
   VStack,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -211,7 +211,7 @@ function OrganizationGeneral() {
               <Stack as="form" onSubmit={formik.handleSubmit}>
                 {useSaveOrganizationDetail.isLoading ||
                 useCreateOrganizationDetail.isLoading ? (
-                  <LoadingSpinner />
+                    <LoadingSpinner />
                 ) : (
                   <>
                     <Flex
@@ -230,7 +230,7 @@ function OrganizationGeneral() {
                           p={2}
                           w="fit-content"
                           shadow="2xl"
-                          mb='10px'
+                          mb="10px"
                         >
                           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                           <Heading fontSize="3xl">Organization Details</Heading>

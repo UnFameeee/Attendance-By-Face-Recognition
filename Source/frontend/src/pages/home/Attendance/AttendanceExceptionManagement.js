@@ -333,13 +333,14 @@ function AttendanceExceptionManagement() {
           currentApprovalAttendanceException?.employeeData?.image;
         tempObj["systemImage"] =
           currentApprovalAttendanceException?.systemData?.image;
-        tempObj["noWorkingDayFlag"] = currentApprovalAttendanceException?.systemData?.noWorkingDayFlag;
-        tempObj["employeeTime"] = moment.utc(
-          currentApprovalAttendanceException?.employeeData?.datetime
-        ).format("DD/MM/YYYY hh:mm A");
-        tempObj["systemTime"] = moment.utc(
-          currentApprovalAttendanceException?.systemData?.shiftTime
-        ).format("DD/MM/YYYY hh:mm A");
+        tempObj["noWorkingDayFlag"] =
+          currentApprovalAttendanceException?.systemData?.noWorkingDayFlag;
+        tempObj["employeeTime"] = moment
+          .utc(currentApprovalAttendanceException?.employeeData?.datetime)
+          .format("DD/MM/YYYY hh:mm A");
+        tempObj["systemTime"] = moment
+          .utc(currentApprovalAttendanceException?.systemData?.shiftTime)
+          .format("DD/MM/YYYY hh:mm A");
         return tempObj;
       });
     }
@@ -432,13 +433,15 @@ function AttendanceExceptionManagement() {
                 gap="10px"
                 alignItems={{ base: "baseline", sm: "end" }}
               >
-                <FormTextField
-                  name="departmentId"
-                  isSelectionField={true}
-                  placeholder="---"
-                  isReadOnly={userRole?.role == "manager"}
-                  selectionArray={listDepartmentArray}
-                />
+                <Box w="200px">
+                  <FormTextField
+                    name="departmentId"
+                    isSelectionField={true}
+                    placeholder="---"
+                    isReadOnly={userRole?.role == "manager"}
+                    selectionArray={listDepartmentArray}
+                  />
+                </Box>
                 {userRole.role != "manager" && (
                   <div className=" mt-[6px]">
                     <Button colorScheme="blue" type="submit" size="md">
@@ -682,7 +685,9 @@ function AttendanceExceptionManagement() {
                             Shift Time:
                           </Text>
                           <Text fontWeight="medium">
-                            {initialValuesModal?.noWorkingDayFlag ? "No Working Day!" : initialValuesModal?.systemTime }
+                            {initialValuesModal?.noWorkingDayFlag
+                              ? "No Working Day!"
+                              : initialValuesModal?.systemTime}
                           </Text>
                         </VStack>
                       </HStack>

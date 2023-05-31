@@ -150,9 +150,9 @@ function ModifyShiftTypeModal(props) {
             "End time must be after start time",
             function (value) {
               const { startTime_New } = this.parent;
-              return moment.utc(value, "hh:mm").isAfter(
-                moment.utc(startTime_New, "hh:mm")
-              );
+              return moment
+                .utc(value, "hh:mm")
+                .isAfter(moment.utc(startTime_New, "hh:mm"));
             }
           )
           .required("This field is required"),
@@ -186,12 +186,12 @@ function ModifyShiftTypeModal(props) {
       let tempObject = {};
       if (listShiftType?.result?.data) {
         listShiftType?.result?.data.map((item) => {
-          tempObject[`startTime_${item.shiftTypeId}`] = moment.utc(
-            item.startTime
-          ).format("HH:mm");
-          tempObject[`endTime_${item.shiftTypeId}`] = moment.utc(
-            item.endTime
-          ).format("HH:mm");
+          tempObject[`startTime_${item.shiftTypeId}`] = moment
+            .utc(item.startTime)
+            .format("HH:mm");
+          tempObject[`endTime_${item.shiftTypeId}`] = moment
+            .utc(item.endTime)
+            .format("HH:mm");
           tempObject[`shiftName_${item.shiftTypeId}`] = item.shiftName;
         });
       }
@@ -217,9 +217,9 @@ function ModifyShiftTypeModal(props) {
               function (value) {
                 const { [`startTime_${splitArray[1]}`]: startTimeValue } =
                   this.parent;
-                return moment.utc(value, "hh:mm").isAfter(
-                  moment.utc(startTimeValue, "hh:mm")
-                );
+                return moment
+                  .utc(value, "hh:mm")
+                  .isAfter(moment.utc(startTimeValue, "hh:mm"));
               }
             )
             .required("This field is required");
@@ -229,7 +229,7 @@ function ModifyShiftTypeModal(props) {
       return temp;
     });
   }, [objectShiftType]);
-  if (isLoadingListShiftType) return <LoadingSpinner />;
+  if (isLoadingListShiftType) return;
   return (
     <>
       <Button

@@ -183,7 +183,7 @@ function ModifyLeaveTypeModal() {
       return temp;
     });
   }, [objectLeaveType]);
-  if (isLoadingLRLeaveTypeData) return <LoadingSpinner />;
+  if (isLoadingLRLeaveTypeData) return;
   return (
     <>
       <Button colorScheme="teal" onClick={onModifyLeaveTypeModalOpen}>
@@ -298,7 +298,7 @@ function ModifyLeaveTypeModal() {
                                 colorScheme="blue"
                                 onClick={() => {
                                   setCurrentModifyLeaveTypeId(item.leaveTypeId);
-                                  onSaveLeaveTypeAlertOpen()
+                                  onSaveLeaveTypeAlertOpen();
                                 }}
                               >
                                 Save
