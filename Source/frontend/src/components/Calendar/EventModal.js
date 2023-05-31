@@ -141,8 +141,10 @@ export default function EventModal(props) {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values, actions) => {
+          const date = new Date(daySelected.valueOf()).toUTCString();
+          const formatDate = moment(date).format("YYYY-MM-DD");
           const eventObj = {
-            shiftDate: Helper.getMomentDateFormat(daySelected.valueOf()),
+            shiftDate: formatDate,
             shiftTypeId: values.shiftTypeId,
             employeeId: values.employeeId,
             allowEarlyLeave:

@@ -213,7 +213,9 @@ function LeaveRequestManagement() {
     onDeleteSingleClose();
   };
   function isOverDate(value) {
-    let formatDate = moment.utc(new Date(value).toISOString()).format("YYYY-MM-DD");
+    let formatDate = moment
+      .utc(new Date(value).toISOString())
+      .format("YYYY-MM-DD");
     let currentDate = new Date().toISOString().split("T")[0];
     return currentDate > formatDate;
   }
@@ -539,7 +541,7 @@ function LeaveRequestManagement() {
   };
   if (isLoadingListDepartment) return <LoadingSpinner />;
   return (
-    <Stack h="100%" spacing={4}>
+    <Stack h="100%">
       <Flex
         gap="10px"
         bg="white"
@@ -547,6 +549,7 @@ function LeaveRequestManagement() {
         p={2}
         w="fit-content"
         shadow="2xl"
+        mb='10px'
       >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Management</Heading>
@@ -594,15 +597,17 @@ function LeaveRequestManagement() {
                 gap="10px"
                 alignItems={{ base: "baseline", sm: "end" }}
               >
-                <FormTextField
-                  name="department"
-                  placeholder="---"
-                  isReadOnly={userInfo?.roleName == "manager"}
-                  isSelectionField={true}
-                  selectionArray={
-                    listDepartmentArray ? [...listDepartmentArray] : []
-                  }
-                />
+                <Box w="200px">
+                  <FormTextField
+                    name="department"
+                    placeholder="---"
+                    isReadOnly={userInfo?.roleName == "manager"}
+                    isSelectionField={true}
+                    selectionArray={
+                      listDepartmentArray ? [...listDepartmentArray] : []
+                    }
+                  />
+                </Box>
                 {userInfo?.roleName != "manager" && (
                   <div className=" mt-[6px]">
                     <Button colorScheme="blue" type="submit" size="md">
@@ -614,8 +619,16 @@ function LeaveRequestManagement() {
             )}
           </Formik>
         </HStack>
-
-        {departmentId != "" && (
+      </HStack>
+      {departmentId != "" && (
+        <HStack
+          bg="white"
+          rounded="md"
+          p="3"
+          shadow="2xl"
+          gap="10px"
+          w="fit-content"
+        >
           <Tooltip hasArrow label="Filter for start date of the leave request">
             <HStack
               w="fit-content"
@@ -653,8 +666,8 @@ function LeaveRequestManagement() {
               </Formik>
             </HStack>
           </Tooltip>
-        )}
-      </HStack>
+        </HStack>
+      )}
       {useGetLeaveRequestOfDepartment.isLoading ||
       useDeleteLeaveRequest.isLoading ? (
         <LoadingSpinner />
