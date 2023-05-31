@@ -213,7 +213,7 @@ function LeaveRequestManagement() {
     onDeleteSingleClose();
   };
   function isOverDate(value) {
-    let formatDate = moment(new Date(value).toISOString()).format("YYYY-MM-DD");
+    let formatDate = moment.utc(new Date(value).toISOString()).format("YYYY-MM-DD");
     let currentDate = new Date().toISOString().split("T")[0];
     return currentDate > formatDate;
   }

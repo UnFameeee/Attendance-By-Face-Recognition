@@ -31,7 +31,7 @@ export class LeaveRequestService {
 
     if (data.filter) {
       var now = new Date(data.filter);
-      var dateFilter = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+      var dateFilter = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
     }
 
     const queryRoleData = await prisma.role.findFirst({
@@ -234,7 +234,7 @@ export class LeaveRequestService {
 
     if (data.filter) {
       var now = new Date(data.filter);
-      var dateFilter = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+      var dateFilter = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
     }
 
     var whereData: any;
@@ -589,7 +589,7 @@ export class LeaveRequestService {
 
         }
       } else {
-        const dateInMonth = moment(`${leaveRequestYear + 1}-${leaveRequestMonthStart}-01`, "YYYY-MM-DD").daysInMonth();
+        const dateInMonth = moment.utc(`${leaveRequestYear + 1}-${leaveRequestMonthStart}-01`, "YYYY-MM-DD").daysInMonth();
         for (let i = leaveRequestDateStart; i <= dateInMonth; ++i) {
           // Get the date in ISO 8601 format (e.g. "2023-04-01")
           const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)

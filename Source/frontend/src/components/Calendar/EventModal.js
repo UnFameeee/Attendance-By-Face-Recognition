@@ -124,7 +124,7 @@ export default function EventModal(props) {
         return true;
       }
       let currentDate = new Date().toISOString().split("T")[0];
-      const formattedDate = moment(selectedEvent?.shiftDate).format(
+      const formattedDate = moment.utc(selectedEvent?.shiftDate).format(
         "YYYY-MM-DD"
       );
       return currentDate > formattedDate;
@@ -217,7 +217,7 @@ export default function EventModal(props) {
                           <Text fontSize="xl">
                             From:{" "}
                             {selectedEvent?.shiftType?.startTime
-                              ? moment(
+                              ? moment.utc(
                                   selectedEvent?.shiftType?.startTime
                                 ).format("hh:mm A")
                               : ""}
@@ -227,7 +227,7 @@ export default function EventModal(props) {
                           <Text fontSize="xl">
                             To:{" "}
                             {selectedEvent?.shiftType?.endTime
-                              ? moment(
+                              ? moment.utc(
                                   selectedEvent?.shiftType?.endTime
                                 ).format("hh:mm A")
                               : ""}

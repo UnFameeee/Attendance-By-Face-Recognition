@@ -8,8 +8,8 @@ const endPointLeaveType = baseURL + "/leavetype";
 const getLeaveRequestOfDepartment = async (data) => {
   const { departmentId, currentDate, filter } = data;
   let extendData = {
-    month: parseInt(moment(currentDate).format("M")),
-    year: parseInt(moment(currentDate).format("yyyy")),
+    month: parseInt(moment.utc(currentDate).format("M")),
+    year: parseInt(moment.utc(currentDate).format("yyyy")),
     filter
   };
   let getLROfDepartmentObj = {
@@ -36,8 +36,8 @@ const useGetLeaveRequestOfDepartment = (data) => {
 const getLeaveRequestOfAnEmployee = async (data) => {
   const { userInfo, currentDate, filter } = data;
   let extendData = {
-    month: parseInt(moment(currentDate).format("M")),
-    year: parseInt(moment(currentDate).format("yyyy")),
+    month: parseInt(moment.utc(currentDate).format("M")),
+    year: parseInt(moment.utc(currentDate).format("yyyy")),
     filter,
   };
   let getLROfAnEmployeeObj = {

@@ -18,30 +18,34 @@ const ConfigStaticDateTime = (time: string, date?: string): Date => {
   let result: Date;
   const timeSplitArr = time.split(":");
 
-  const formatDate = moment(date, 'YYYY-MM-DD').format("YYYY-MM-DD");
+  const formatDate = moment.utc(date, 'YYYY-MM-DD').format("YYYY-MM-DD");
   if (date) {
     const temp = new Date(`${formatDate}T00:00:00.000Z`);
     temp.setHours(parseInt(timeSplitArr[0], 10));
     temp.setMinutes(parseInt(timeSplitArr[1], 10));
-    result = temp;
+    const record = new Date(temp).toISOString();
+    result = new Date(record);
   } else {
     //Fix the date to 1970-01-01, we only use the time. The time seperate from the date by T
     // const temp = new Date(`1970-01-01T00:00:00.000Z`);
     // temp.setHours(parseInt(timeSplitArr[0], 10));
     // temp.setMinutes(parseInt(timeSplitArr[1], 10));
     const temp = new Date();
+
     temp.setDate(1);
     temp.setMonth(0);
-    temp.setFullYear(2023);
+    temp.setFullYear(1970);
     temp.setHours(parseInt(timeSplitArr[0], 10));
     temp.setMinutes(parseInt(timeSplitArr[1], 10));
-    result = temp;
+
+    const record = new Date(temp).toISOString();
+    result = new Date(record);
   }
   return result
 }
 
 const MinusDate = (bigDate: Date, smallDate: Date, format?: boolean) => {
-  const millisecondDif = moment(new Date(bigDate.getTime()), "HH:mm").diff(moment(new Date(smallDate.getTime()), "HH:mm"));
+  const millisecondDif = moment.utc(new Date(bigDate.getTime()), "HH:mm").diff(moment.utc(new Date(smallDate.getTime()), "HH:mm"));
   if (format) {
     return moment.utc(millisecondDif).format('HH:mm');
   } else {
@@ -51,8 +55,8 @@ const MinusDate = (bigDate: Date, smallDate: Date, format?: boolean) => {
 
 const PlusDate = (firstDate: Date, secondDate: Date, format?: boolean) => {
   // Parse the time values into moment objects
-  const momentTime1 = moment(firstDate, 'HH:mm');
-  const momentTime2 = moment(secondDate, 'HH:mm');
+  const momentTime1 = moment.utc(firstDate, 'HH:mm');
+  const momentTime2 = moment.utc(secondDate, 'HH:mm');
 
   // Calculate the total duration by adding the durations of both times
   const duration1 = moment.duration(momentTime1.format('HH:mm'));
