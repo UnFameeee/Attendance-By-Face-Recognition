@@ -119,10 +119,10 @@ function HomeSidebar() {
                   >
                     {profileDetailData?.result?.email}
                   </Heading>
-                  <Box display="flex" alignItems="center" gap={1}>
+                  {/* <Box display="flex" alignItems="center" gap={1}>
                     <Icon as={RiRadioButtonLine} color="#19d819" boxSize={6} />
                     <Text color="white">Signed in</Text>
-                  </Box>
+                  </Box> */}
                 </Box>
               </Flex>
               <Tooltip placement="right" hasArrow label="Minimize the side bar">

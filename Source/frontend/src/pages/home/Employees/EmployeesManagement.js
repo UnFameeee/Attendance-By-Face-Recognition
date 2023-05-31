@@ -332,7 +332,7 @@ function EmployeesManagement() {
         //   filterType: FilterType.Text,
         // },
         // haveSort: true,
-        cellWidth: "150px",
+        cellWidth: "250px",
       },
       {
         Header: "Email",

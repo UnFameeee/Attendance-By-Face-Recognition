@@ -47,7 +47,7 @@ export default function InstructionModal() {
 
             <Text textAlign={"center"} fontSize={"1rem"} fontWeight={700}>Follow the below instructions</Text>
 
-            <Text textAlign={"justify"} fontSize={"0.9rem"} lineHeight={"1.5rem"} fontWeight={"bold"} color={"gray"}>Put your face in the blue marked area, after you have fixed the face in the right position, press the <b style={{ color: "blue" }}>"Scan My Face"</b> button to start scanning the face. During the scan, move the head <b style={{ color: "red" }}>up</b>, <b style={{ color: "red" }}>down</b>, <b style={{ color: "red" }}>left</b>, <b style={{ color: "red" }}>right</b> until the progress bar completes</Text>
+            <Text textAlign={"justify"} fontSize={"0.9rem"} lineHeight={"1.5rem"} fontWeight={"bold"} color={"gray"}>Please ensure that the lighting in the background is sufficient for optimal visibility and then put your face in the blue marked area, after you have fixed the face in the right position, press the <b style={{ color: "blue" }}>"Scan My Face"</b> button to start scanning the face. During the scan, move the head <b style={{ color: "red" }}>up</b>, <b style={{ color: "red" }}>down</b>, <b style={{ color: "red" }}>left</b>, <b style={{ color: "red" }}>right</b> until the progress bar completes</Text>
           </ModalBody>
 
           <ModalFooter gap={5}>

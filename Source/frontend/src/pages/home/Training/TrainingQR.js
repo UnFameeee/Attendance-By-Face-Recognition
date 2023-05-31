@@ -74,7 +74,7 @@ export default function TrainingQR() {
                   value={urlGenerateData?.result}
                   viewBox={`0 0 256 256`}
                 />
-                <Text textAlign={"justify"} fontSize={"1rem"} fontWeight={"bold"} color={"gray"} padding={"0px 24px"}>Use your phone and scan this QR code to go to the <b style={{ color: "red" }}>Scanning Face</b> website and doing the things in the instruction. After finish the scanning, click the <b style={{ color: "green" }}>Finish</b> button to going back to the <b style={{ color: "black" }}>login</b> page</Text>
+                <Text textAlign={"justify"} fontSize={"1rem"} fontWeight={"bold"} color={"gray"} padding={"0px 24px"}>Use your phone and scan this QR code to go to the <b style={{ color: "red" }}>Scanning Face</b> website and follow the instruction. After finish the scanning, click the <b style={{ color: "green" }}>Finish</b> button to going back to the <b style={{ color: "black" }}>login</b> page</Text>
               </Box>
             </Box>
 

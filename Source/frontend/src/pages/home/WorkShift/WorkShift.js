@@ -241,7 +241,7 @@ function WorkShift() {
       };
       return selection;
     });
-  }, [isWork,isLeave]);
+  }, [isWork, isLeave]);
   // #endregion
   // #region form & modal declare
   const initialValuesSelectDepartment = {
@@ -270,24 +270,16 @@ function WorkShift() {
   return (
     <Stack h="100%">
       <Flex
-        flexDirection={{ base: "column", md: "row" }}
-        alignItems={{ base: "start", md: "center" }}
-        rounded="md"
-        p="5px"
-        mb="10px"
         gap="10px"
+        bg="white"
+        rounded="md"
+        p={2}
+        w="fit-content"
+        shadow="2xl"
+        mb='10px'
       >
-        <Flex
-          gap="10px"
-          bg="white"
-          rounded="md"
-          p={2}
-          w="fit-content"
-          shadow="2xl"
-        >
-          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-          <Heading fontSize="3xl">Work Shift</Heading>
-        </Flex>
+        <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+        <Heading fontSize="3xl">Work Shift</Heading>
       </Flex>
       <HStack
         gap="10px"
@@ -341,18 +333,20 @@ function WorkShift() {
                 gap="5px"
                 alignItems={{ base: "baseline", sm: "center" }}
               >
-                <FormTextField
-                  name="department"
-                  placeholder="---"
-                  isReadOnly={
-                    userDecodeInfo?.roleName == "employee" ||
-                    userDecodeInfo?.roleName == "manager"
-                  }
-                  isSelectionField={true}
-                  selectionArray={
-                    listDepartmentArray ? [...listDepartmentArray] : []
-                  }
-                />
+                <Box w="200px">
+                  <FormTextField
+                    name="department"
+                    placeholder="---"
+                    isReadOnly={
+                      userDecodeInfo?.roleName == "employee" ||
+                      userDecodeInfo?.roleName == "manager"
+                    }
+                    isSelectionField={true}
+                    selectionArray={
+                      listDepartmentArray ? [...listDepartmentArray] : []
+                    }
+                  />
+                </Box>
                 {userDecodeInfo?.roleName != "employee" &&
                   userDecodeInfo?.roleName != "manager" && (
                     <div>

@@ -230,6 +230,7 @@ function OrganizationGeneral() {
                           p={2}
                           w="fit-content"
                           shadow="2xl"
+                          mb='10px'
                         >
                           <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                           <Heading fontSize="3xl">Organization Details</Heading>
