@@ -15,21 +15,26 @@ const axiosBase = axios.create({
     "Content-Type": "application/json",
   },
 });
-
+const cookies = new Cookies();
 export default axiosBase;
 axiosBase.interceptors.request.use((config) => {
   const accessTokenJSON = localStorage.getItem("accessToken");
   const accessToken = JSON.parse(accessTokenJSON);
-
+  const refreshToken = cookies.get("jwt_authentication");
   if (accessToken && !Helper.isTokenExpired(accessToken)) {
     config.headers.Authorization = `Bearer ${accessToken}`;
+  } else if (!refreshToken && accessToken != null) {
+    console.log(accessToken)
+    cookies.remove("jwt_authentication");
+    localStorage.removeItem("accessToken");
+    alert("Your token have been expired, please sign in again!")
+    globalNavigate("/sign-in");
   }
   return config;
 });
 axiosBase.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const cookies = new Cookies();
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -45,7 +50,7 @@ axiosBase.interceptors.response.use(
         const { data } = await axios.post("auth/refreshToken", undefined, {
           headers,
         });
-
+        console.log(data);
         const { refresh, access } = data;
         if (refresh && access) {
           const decoded = jwtDecode(refresh);
@@ -57,25 +62,11 @@ axiosBase.interceptors.response.use(
         } else {
           cookies.remove("jwt_authentication");
           localStorage.removeItem("accessToken");
-          toast({
-            title: "Your Credentials Are Incorrect or Have Expired",
-            position: "bottom-right",
-            status: "warning",
-            isClosable: true,
-            duration: 5000,
-          });
           globalNavigate("/sign-in");
         }
       } else {
         cookies.remove("jwt_authentication");
         localStorage.removeItem("accessToken");
-        toast({
-          title: "Your Credentials Are Incorrect or Have Expired",
-          position: "bottom-right",
-          status: "warning",
-          isClosable: true,
-          duration: 5000,
-        });
         globalNavigate("/sign-in");
         // Handle expired refresh token
         // Redirect to login page or show error message

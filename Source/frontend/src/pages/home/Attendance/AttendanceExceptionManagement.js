@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGetPermission } from "../../../hook/useGetPermission";
 import { permissionAttendanceExceptionManagement } from "../../../screen-permissions/permission";
 import { useMutation, useQueryClient } from "react-query";
@@ -52,6 +52,7 @@ function AttendanceExceptionManagement() {
     permissionAttendanceExceptionManagement,
     "attendance-management"
   );
+  const formikRef = useRef()
   const toast = useToast();
   const queryClient = useQueryClient();
   const finalRef = React.useRef(null);
@@ -333,13 +334,14 @@ function AttendanceExceptionManagement() {
           currentApprovalAttendanceException?.employeeData?.image;
         tempObj["systemImage"] =
           currentApprovalAttendanceException?.systemData?.image;
-        tempObj["noWorkingDayFlag"] = currentApprovalAttendanceException?.systemData?.noWorkingDayFlag;
-        tempObj["employeeTime"] = moment.utc(
-          currentApprovalAttendanceException?.employeeData?.datetime
-        ).format("DD/MM/YYYY hh:mm A");
-        tempObj["systemTime"] = moment.utc(
-          currentApprovalAttendanceException?.systemData?.shiftTime
-        ).format("DD/MM/YYYY hh:mm A");
+        tempObj["noWorkingDayFlag"] =
+          currentApprovalAttendanceException?.systemData?.noWorkingDayFlag;
+        tempObj["employeeTime"] = moment
+          .utc(currentApprovalAttendanceException?.employeeData?.datetime)
+          .format("DD/MM/YYYY hh:mm A");
+        tempObj["systemTime"] = moment
+          .utc(currentApprovalAttendanceException?.systemData?.shiftTime)
+          .format("DD/MM/YYYY hh:mm A");
         return tempObj;
       });
     }
@@ -408,7 +410,7 @@ function AttendanceExceptionManagement() {
           </Heading>
           <Formik
             initialValues={initialValuesForm}
-            onSubmit={(values, actions) => {
+            onSubmit={(values, actions) => {             
               const departmentId = values.departmentId;
               if (departmentId != "") {
                 setDepartmentId(departmentId);
@@ -421,6 +423,7 @@ function AttendanceExceptionManagement() {
               } else {
                 setListAttendanceException([]);
               }
+              formikRef.current?.resetForm()
             }}
           >
             {(formik) => (
@@ -432,13 +435,15 @@ function AttendanceExceptionManagement() {
                 gap="10px"
                 alignItems={{ base: "baseline", sm: "end" }}
               >
-                <FormTextField
-                  name="departmentId"
-                  isSelectionField={true}
-                  placeholder="---"
-                  isReadOnly={userRole?.role == "manager"}
-                  selectionArray={listDepartmentArray}
-                />
+                <Box w="200px">
+                  <FormTextField
+                    name="departmentId"
+                    isSelectionField={true}
+                    placeholder="---"
+                    isReadOnly={userRole?.role == "manager"}
+                    selectionArray={listDepartmentArray}
+                  />
+                </Box>
                 {userRole.role != "manager" && (
                   <div className=" mt-[6px]">
                     <Button colorScheme="blue" type="submit" size="md">
@@ -472,7 +477,7 @@ function AttendanceExceptionManagement() {
                 </Highlight>
               </Heading>
 
-              <Formik initialValues={initialValuesForDateFilterSelection}>
+              <Formik initialValues={initialValuesForDateFilterSelection} innerRef={formikRef}>
                 {(formik) => (
                   <Box>
                     <FormTextField
@@ -682,7 +687,9 @@ function AttendanceExceptionManagement() {
                             Shift Time:
                           </Text>
                           <Text fontWeight="medium">
-                            {initialValuesModal?.noWorkingDayFlag ? "No Working Day!" : initialValuesModal?.systemTime }
+                            {initialValuesModal?.noWorkingDayFlag
+                              ? "No Working Day!"
+                              : initialValuesModal?.systemTime}
                           </Text>
                         </VStack>
                       </HStack>

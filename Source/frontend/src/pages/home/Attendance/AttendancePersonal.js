@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Heading,
@@ -48,6 +48,7 @@ import * as Yup from "yup";
 import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function AttendancePersonal() {
   // #region declare variable
+  const formikRef = useRef();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor());
@@ -327,10 +328,10 @@ function AttendancePersonal() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            { isLoadingHistoryData ||
-              isFetchingMonthData ||
-              isFetchingTodayData ||
-              isFetchingEmployeeData ? (
+            {isLoadingHistoryData ||
+            isFetchingMonthData ||
+            isFetchingTodayData ||
+            isFetchingEmployeeData ? (
               <LoadingSpinner />
             ) : (
               <Stack spacing={5} h="100%">
@@ -924,6 +925,8 @@ function AttendancePersonal() {
                     onSubmit={(values, actions) => {
                       const departmentId = values.department;
                       setDepartmentId(departmentId);
+                      setEmployeeFilterId("")
+                      formikRef.current?.resetForm()
                     }}
                   >
                     {(formik) => (
@@ -934,18 +937,22 @@ function AttendancePersonal() {
                         gap="5px"
                         alignItems={{ base: "baseline", sm: "center" }}
                       >
-                        <FormTextField
-                          name="department"
-                          placeholder="---"
-                          isReadOnly={
-                            userInfo?.roleName == "employee" ||
-                            userInfo?.roleName == "manager"
-                          }
-                          isSelectionField={true}
-                          selectionArray={
-                            listDepartmentArray ? [...listDepartmentArray] : []
-                          }
-                        />
+                        <Box w="200px">
+                          <FormTextField
+                            name="department"
+                            placeholder="---"
+                            isReadOnly={
+                              userInfo?.roleName == "employee" ||
+                              userInfo?.roleName == "manager"
+                            }
+                            isSelectionField={true}
+                            selectionArray={
+                              listDepartmentArray
+                                ? [...listDepartmentArray]
+                                : []
+                            }
+                          />
+                        </Box>
                         {userInfo?.roleName != "employee" &&
                           userInfo?.roleName != "manager" && (
                             <div>
@@ -981,9 +988,9 @@ function AttendancePersonal() {
                         Employee Filter:
                       </Highlight>
                     </Heading>
-                    <Formik initialValues={initialValuesOfEmployeeFilter}>
+                    <Formik initialValues={initialValuesOfEmployeeFilter} innerRef={formikRef}>
                       {(formik) => (
-                        <Box w="150px">
+                        <Box w="200px">
                           <FormTextField
                             name="employeeFilter"
                             isSelectionField={true}
@@ -1042,9 +1049,9 @@ function AttendancePersonal() {
               {employeeFilterId && (
                 <>
                   {isFetchingFilterEmployeeData ||
-                    isLoadingHistoryFilterData ||
-                    isFetchingTodayFilterData ||
-                    isFetchingMonthFilterData ? (
+                  isLoadingHistoryFilterData ||
+                  isFetchingTodayFilterData ||
+                  isFetchingMonthFilterData ? (
                     <LoadingSpinner />
                   ) : (
                     <>
@@ -1222,7 +1229,7 @@ function AttendancePersonal() {
                             <Box color="white">
                               <Heading fontSize="2xl">
                                 {attendanceMonthFilterData?.totalWorkingHours ==
-                                  "00:00"
+                                "00:00"
                                   ? "--:--"
                                   : attendanceMonthFilterData?.totalWorkingHours}
                               </Heading>
@@ -1250,7 +1257,7 @@ function AttendancePersonal() {
                             <Box color="white">
                               <Heading fontSize="2xl">
                                 {attendanceMonthFilterData?.totalLateArrival ==
-                                  "00:00"
+                                "00:00"
                                   ? "--:--"
                                   : attendanceMonthFilterData?.totalLateArrival}
                               </Heading>
@@ -1273,7 +1280,7 @@ function AttendancePersonal() {
                             <Box color="white">
                               <Heading fontSize="2xl">
                                 {attendanceMonthFilterData?.totalEarlyLeave ==
-                                  "00:00"
+                                "00:00"
                                   ? "--:--"
                                   : attendanceMonthFilterData?.totalEarlyLeave}
                               </Heading>
@@ -1743,23 +1750,28 @@ function AttendancePersonal() {
                 {currentTab == "management" && (
                   <Button
                     ml="10px"
-                    colorScheme={isValid ? 'red' : 'teal'}
+                    colorScheme={isValid ? "red" : "teal"}
                     onClick={() => {
                       handleOnClickReportInvalid(
                         attendanceDetailObj.result?.attendanceId
                       );
                     }}
                   >
-                    {isValid ? 'Report Invalid' : 'Convert To Valid'}
+                    {isValid ? "Report Invalid" : "Convert To Valid"}
                   </Button>
                 )}
               </Flex>
             </Flex>
-            {
-              !isValid && <Flex margin='20px 0px 0px 0px'>
-                <Text fontSize='1.15rem' fontWeight='semibold'>Report Note: <b style={{ fontWeight: "normal" }}>{attendanceDetailObj?.result?.note}</b></Text>
+            {!isValid && (
+              <Flex margin="20px 0px 0px 0px">
+                <Text fontSize="1.15rem" fontWeight="semibold">
+                  Report Note:{" "}
+                  <b style={{ fontWeight: "normal" }}>
+                    {attendanceDetailObj?.result?.note}
+                  </b>
+                </Text>
               </Flex>
-            }
+            )}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -1860,7 +1872,11 @@ function AttendancePersonal() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{isValid ? 'Report Invalid Attendance' : 'Convert To Valid Attendance'}</ModalHeader>
+          <ModalHeader>
+            {isValid
+              ? "Report Invalid Attendance"
+              : "Convert To Valid Attendance"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Formik

@@ -116,7 +116,7 @@ function DynamicTable(props) {
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 25 },
+      initialState: { pageIndex: 0, pageSize: 10 },
     },
     (hooks) => {
       hooks?.visibleColumns?.push((columns) => [
@@ -442,7 +442,7 @@ function DynamicTable(props) {
                         setPageSize(Number(e.target.value));
                       }}
                     >
-                      {[25, 50, 75].map((pageSize) => (
+                      {[10, 20, 30].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
                           Show {pageSize}
                         </option>
