@@ -66,8 +66,6 @@ const isFirstTimeLogin = () => {
   return JSON.parse(isFirstTime);
 };
 const getMomentDateFormat = (dateInput) => {
-  // console.log(dateInput);
-  // console.log(new Date(dateInput).toUTCString());
   const date = new Date(dateInput).toUTCString();
   const formatDate = moment.utc(date).format("YYYY-MM-DD");
   return formatDate;
