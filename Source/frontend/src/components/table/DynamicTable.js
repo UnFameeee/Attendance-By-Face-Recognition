@@ -34,6 +34,7 @@ import ChakraAlertDialog from "../ChakraAlertDialog";
 import { Helper } from "../../Utils/Helper";
 import IndeterminateCheckbox from "../IndeterminateCheckbox";
 import NoDataToDisplay from "../NoDataToDisplay";
+import moment from "moment";
 const sortType = [{ asc: 0 }, { dsc: 1 }, { def: 2 }];
 const numberType = [
   "Is Greater Than Or Equal To",
@@ -651,6 +652,7 @@ function DynamicTable(props) {
                                 >
                                   <Text fontSize="1.05rem" fontWeight="medium">
                                     {Helper.getMomentDateFormat(cell?.value)}
+                                    {/* {moment.utc(Helper.getMomentDateFormat(cell?.value)).format("YYYY-MM-DD")} */}
                                   </Text>
                                 </Box>
                               ) : (

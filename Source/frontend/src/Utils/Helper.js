@@ -41,16 +41,16 @@ const convertDateISOToDDMMYYY = (dateISO) => {
 };
 const convertDateISOToHHmm = (dateISO) => {
   if (dateISO) {
-    if (moment(dateISO).format("HH:mm") != "Invalid date") {
-      return moment(dateISO).format("HH:mm");
+    if (moment.utc(dateISO).format("HH:mm") != "Invalid date") {
+      return moment.utc(dateISO).format("HH:mm");
     }
   }
   return "--:--";
 };
 const convertDateISOToDDMMyyyy = (dateISO) => {
   if (dateISO) {
-    if (moment(dateISO).format("DD/MM/yyyy") != "Invalid date") {
-      return moment(dateISO).format("DD/MM/yyyy");
+    if (moment.utc(dateISO).format("DD/MM/yyyy") != "Invalid date") {
+      return moment.utc(dateISO).format("DD/MM/yyyy");
     }
   }
   return "--/--/----";
@@ -66,9 +66,12 @@ const isFirstTimeLogin = () => {
   return JSON.parse(isFirstTime);
 };
 const getMomentDateFormat = (dateInput) => {
-  const date = new Date(new Date(dateInput).toISOString());
-  const formatDate = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
+  const date = new Date(dateInput).toUTCString();
+  const formatDate = moment.utc(date).format("YYYY-MM-DD");
   return formatDate;
+  // const date = new Date(new Date(dateInput).toISOString());
+  // const formatDate = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
+  // return formatDate;
 };
 
 function findMostDuplicatedValue(array) {

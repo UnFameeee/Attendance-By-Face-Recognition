@@ -55,7 +55,7 @@ export class URLService {
       }
 
       //Expire by not submiting for too long
-      if (moment(new Date(queryData.expiredTime.getTime()), "HH:mm:ss").diff(moment(new Date(now.getTime()), "HH:mm:ss")) < 0) {
+      if (moment.utc(new Date(queryData.expiredTime.getTime()), "HH:mm:ss").diff(moment.utc(new Date(now.getTime()), "HH:mm:ss")) < 0) {
         response.result = false;
         return response;
       }

@@ -23,7 +23,7 @@ const attendanceImageStorage = multer.diskStorage({
 
     now = new Date();
     const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
-    const targetDate = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
@@ -102,7 +102,7 @@ const attendanceImageStorage = multer.diskStorage({
   },
   filename: async (req: RequestWithMulter, file, cb) => {
     const employeeId: string = (req.query.employeeId).toString();
-    const targetDate = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
 
     if (errorFlag) {
       cb(null, `${employeeId}_${staticDateFolder}_unknown` + path.extname(file.originalname));

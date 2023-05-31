@@ -26,7 +26,7 @@ const attendanceExceptionImageStorage = multer.diskStorage({
     //config the datetime
     now = new Date();
     staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
-    const targetDate = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
 
     //error handler
     var errorFlag: boolean = false;

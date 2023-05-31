@@ -98,7 +98,7 @@ export class AttendanceExceptionService {
     let queryData: any;
     let totalElement: number;
     const now = new Date(data.filter);
-    const dateFilter = moment(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    const dateFilter = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
     //Nếu Role là Admin -> lấy hết data
     if (data.roleName == ROLE.ADMIN) {
       var whereQuery;
@@ -240,7 +240,7 @@ export class AttendanceExceptionService {
       }
     })
 
-    const targetDate = moment(`${queryEmployeeData.datetime.getFullYear()}-${queryEmployeeData.datetime.getMonth() + 1}-${queryEmployeeData.datetime.getDate()}`, "YYYY-MM-DD")
+    const targetDate = moment.utc(`${queryEmployeeData.datetime.getFullYear()}-${queryEmployeeData.datetime.getMonth() + 1}-${queryEmployeeData.datetime.getDate()}`, "YYYY-MM-DD")
 
     const queryWorkshiftData = await prisma.workshift.findFirst({
       where: {
@@ -248,9 +248,11 @@ export class AttendanceExceptionService {
         shiftDate: {
           gte: targetDate.startOf('day').toDate(),
           lte: targetDate.endOf('day').toDate(),
-        }
+        },
+        deleted: false,
       },
       select: {
+        shiftId: true,
         shiftDate: true,
         shiftType: {
           select: {
@@ -268,12 +270,12 @@ export class AttendanceExceptionService {
       noWorkingDayFlag = true;
     } else {
       if (queryEmployeeData.attendanceType == attendance.checkin) {
-        const time = moment(queryWorkshiftData.shiftType.startTime, "HH:mm").format("HH:mm");
-        const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+        const time = moment.utc(queryWorkshiftData.shiftType.startTime, "HH:mm").format("HH:mm");
+        const date = moment.utc(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
         shiftTime = Helper.ConfigStaticDateTime(time, date);
       } else if (queryEmployeeData.attendanceType == attendance.checkout) {
-        const time = moment(queryWorkshiftData.shiftType.endTime, "HH:mm").format("HH:mm");
-        const date = moment(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+        const time = moment.utc(queryWorkshiftData.shiftType.endTime, "HH:mm").format("HH:mm");
+        const date = moment.utc(queryWorkshiftData.shiftDate, "YYYY-MM-DD").format("YYYY-MM-DD");
         shiftTime = Helper.ConfigStaticDateTime(time, date);
       }
     }
@@ -381,13 +383,13 @@ export class AttendanceExceptionService {
       if (queryAttendanceException.attendanceType == attendance.checkin) {
         //Get the time from shiftType - HH:mm
         let startTime = workShift.shiftType.startTime;
-        let time = moment(startTime, "HH:mm").format("HH:mm");
+        let time = moment.utc(startTime, "HH:mm").format("HH:mm");
 
         //Convert both of startTime and shiftDate to Date value
         let startShift: Date = Helper.ConfigStaticDateTime(time, date);
 
         //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-        let diff = moment(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(dateException), "HH:mm"));
+        let diff = moment.utc(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(dateException), "HH:mm"));
 
         var lateArrival: Date;
         //if the value is negative -> lateArrival
@@ -416,11 +418,11 @@ export class AttendanceExceptionService {
       } else if (queryAttendanceException.attendanceType == attendance.checkout) {
         //Get the time from shiftType - HH:mm
         let endTime = workShift.shiftType.endTime;
-        let time = moment(endTime, "HH:mm").format("HH:mm");
+        let time = moment.utc(endTime, "HH:mm").format("HH:mm");
         //Convert both of startTime and shiftDate to Date value
         let endShift: Date = Helper.ConfigStaticDateTime(time, date);
         //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-        let diff = moment(new Date(dateException), "HH:mm").diff(moment(new Date(endShift.getTime()), "HH:mm"));
+        let diff = moment.utc(new Date(dateException), "HH:mm").diff(moment.utc(new Date(endShift.getTime()), "HH:mm"));
 
         var earlyLeave: Date;
         //if the value is positive -> earlyLeave

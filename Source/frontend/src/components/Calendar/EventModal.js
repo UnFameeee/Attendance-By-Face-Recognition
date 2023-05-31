@@ -123,13 +123,13 @@ export default function EventModal(props) {
       if (selectedEvent.absent) {
         return true;
       }
-      let currentDate = new Date().toISOString().split('T')[0];
-      const formattedDate = moment(
-        selectedEvent?.shiftDate
-      ).format("YYYY-MM-DD")
+      let currentDate = new Date().toISOString().split("T")[0];
+      const formattedDate = moment.utc(selectedEvent?.shiftDate).format(
+        "YYYY-MM-DD"
+      );
       return currentDate > formattedDate;
     } else {
-      let currentDate = new Date().toISOString().split('T')[0];
+      let currentDate = new Date().toISOString().split("T")[0];
       return currentDate > daySelected.format("YYYY-MM-DD");
     }
   }
@@ -145,8 +145,15 @@ export default function EventModal(props) {
             shiftDate: Helper.getMomentDateFormat(daySelected.valueOf()),
             shiftTypeId: values.shiftTypeId,
             employeeId: values.employeeId,
-            allowEarlyLeave: values.allowEarlyLeave == "true" ? true : false,
-            allowLateArrival: values.allowLateArrival == "true" ? true : false,
+            allowEarlyLeave:
+              values.allowEarlyLeave == "true" || values.allowEarlyLeave == true
+                ? true
+                : false,
+            allowLateArrival:
+              values.allowLateArrival == "true" ||
+              values.allowLateArrival == true
+                ? true
+                : false,
           };
           if (selectedEvent) {
             eventObj["shiftId"] = selectedEvent?.shiftId;
@@ -210,7 +217,7 @@ export default function EventModal(props) {
                           <Text fontSize="xl">
                             From:{" "}
                             {selectedEvent?.shiftType?.startTime
-                              ? moment(
+                              ? moment.utc(
                                   selectedEvent?.shiftType?.startTime
                                 ).format("hh:mm A")
                               : ""}
@@ -220,7 +227,7 @@ export default function EventModal(props) {
                           <Text fontSize="xl">
                             To:{" "}
                             {selectedEvent?.shiftType?.endTime
-                              ? moment(
+                              ? moment.utc(
                                   selectedEvent?.shiftType?.endTime
                                 ).format("hh:mm A")
                               : ""}

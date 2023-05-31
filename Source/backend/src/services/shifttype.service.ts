@@ -59,7 +59,7 @@ export class ShifttypeService {
   public modifyShiftType = async (data: ModifyShifttypeDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
 
-    if (Math.sign(moment(Helper.ConfigStaticDateTime(data.endTime)).diff(Helper.ConfigStaticDateTime(data.startTime))) === -1) {
+    if (Math.sign(moment.utc(Helper.ConfigStaticDateTime(data.endTime)).diff(Helper.ConfigStaticDateTime(data.startTime))) === -1) {
       response.message = "The EndTime must be after the StartTime";
       return response;
     };

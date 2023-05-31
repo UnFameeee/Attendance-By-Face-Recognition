@@ -334,12 +334,12 @@ function AttendanceExceptionManagement() {
         tempObj["systemImage"] =
           currentApprovalAttendanceException?.systemData?.image;
         tempObj["noWorkingDayFlag"] = currentApprovalAttendanceException?.systemData?.noWorkingDayFlag;
-        tempObj["employeeTime"] = moment(
+        tempObj["employeeTime"] = moment.utc(
           currentApprovalAttendanceException?.employeeData?.datetime
-        ).format("DD/MM/yyyy hh:mm A");
-        tempObj["systemTime"] = moment(
+        ).format("DD/MM/YYYY hh:mm A");
+        tempObj["systemTime"] = moment.utc(
           currentApprovalAttendanceException?.systemData?.shiftTime
-        ).format("DD/MM/yyyy hh:mm A");
+        ).format("DD/MM/YYYY hh:mm A");
         return tempObj;
       });
     }
