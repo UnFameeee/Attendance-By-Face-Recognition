@@ -50,8 +50,8 @@ const useGetEmployeeDetailById = (id) => {
 
 const getThisMonthAttendance = async (id) => {
   let thisMonthAttendanceObj = {
-    month: parseInt(moment(new Date().toISOString()).format("M")),
-    year: parseInt(moment(new Date().toISOString()).format("yyyy")),
+    month: parseInt(moment.utc(new Date().toISOString()).format("M")),
+    year: parseInt(moment.utc(new Date().toISOString()).format("yyyy")),
   };
   const response = await axiosBase.post(
     `${endPointAttendance}/getThisMonthAttendance/${id}`,
@@ -114,9 +114,9 @@ const useGetThisMonthAttendance = (id) => {
 
 const getTodayAttendance = async (id) => {
   let todayAttendanceObj = {
-    date: parseInt(moment(new Date().toISOString()).format("D")),
-    month: parseInt(moment(new Date().toISOString()).format("M")),
-    year: parseInt(moment(new Date().toISOString()).format("yyyy")),
+    date: parseInt(moment.utc(new Date().toISOString()).format("D")),
+    month: parseInt(moment.utc(new Date().toISOString()).format("M")),
+    year: parseInt(moment.utc(new Date().toISOString()).format("yyyy")),
   };
   const response = await axiosBase.post(
     `${endPointAttendance}/getTodayAttendance/${id}`,

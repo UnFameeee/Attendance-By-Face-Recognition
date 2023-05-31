@@ -16,16 +16,16 @@ export class WorkshiftService {
     } = data.selection;
 
     //Get last 7 days of the previous month and first 7 days of the next month 
-    daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
-    daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInPreviousmonth = moment.utc(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInNextmonth = moment.utc(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
 
     //12 1 2
     if (data.month.previousMonth == 12) {
-      daysInPreviousmonth = moment(`${data.year - 1}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+      daysInPreviousmonth = moment.utc(`${data.year - 1}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
     }
     //11 12 1
     if (data.month.nextMonth == 1) {
-      daysInNextmonth = moment(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+      daysInNextmonth = moment.utc(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
     }
 
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
@@ -143,16 +143,16 @@ export class WorkshiftService {
     } = data.selection;
 
     //Get last 7 days of the previous month and first 7 days of the next month 
-    daysInPreviousmonth = moment(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
-    daysInNextmonth = moment(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInPreviousmonth = moment.utc(`${data.year}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+    daysInNextmonth = moment.utc(`${data.year}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
 
     //12 1 2
     if (data.month.previousMonth == 12) {
-      daysInPreviousmonth = moment(`${data.year - 1}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
+      daysInPreviousmonth = moment.utc(`${data.year - 1}-${data.month.previousMonth}-01`, "YYYY-MM-DD").daysInMonth();
     }
     //11 12 1
     if (data.month.nextMonth == 1) {
-      daysInNextmonth = moment(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
+      daysInNextmonth = moment.utc(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
     }
 
     const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
