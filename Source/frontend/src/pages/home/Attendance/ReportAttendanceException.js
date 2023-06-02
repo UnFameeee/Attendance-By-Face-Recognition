@@ -33,7 +33,7 @@ function ReportAttendanceException() {
   const [images, setImages] = React.useState([]);
   const [imageSrc, setImageSrc] = React.useState("");
   const params = new URLSearchParams(window.location.search);
-  const urlImage = Helper.decodeWithCipher(params.get("session"));
+  const urlImage = Helper.decodeWithCipher(params.get("token"));
   // #endregion
   // #region hooks
   useEffect(() => {

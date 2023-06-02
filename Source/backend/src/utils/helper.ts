@@ -65,12 +65,12 @@ const MinusDate = (bigDate: Date, smallDate: Date): string => {
 
 function CountDaysFromStartDate(startDate: string, endDate: string) {
   // Convert the date strings to Date objects
-  var start = new Date(startDate);
-  var end = new Date(endDate);
+  var start = ConfigStaticDateTime("00:00", startDate);
+  var end = ConfigStaticDateTime("00:00", endDate);
 
   // Set the time for both dates to midnight
-  start.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
+  // start.setHours(0, 0, 0, 0);
+  // end.setHours(0, 0, 0, 0);
 
   // Calculate the time difference in milliseconds
   var timeDiff = Math.abs(end.getTime() - start.getTime());

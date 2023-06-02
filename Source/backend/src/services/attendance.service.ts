@@ -89,14 +89,12 @@ export class AttendanceService {
         let resultHour = moment.utc(baseStartTime.clone().add(baseLimitLateArrival.hour(), 'hours').add(baseLimitLateArrival.minute(), 'minutes')).format("HH:mm");
 
         let shiftThreshholdAfter = Helper.ConfigStaticDateTime(resultHour, date);
-        let threshHoldNow = Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD"))
 
         //the latest punch in is startTime + 1 hour
         if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(threshHoldNow.getTime()), "HH:mm")) < 0) {
           response.message = "You are too late to check in, please contact with the manager";
           return response;
         }
-
       }
 
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
@@ -454,7 +452,10 @@ export class AttendanceService {
         absent: true,
         isValid: true,
         note: true,
-      }
+      },
+      orderBy: {
+        attendanceDate: "asc"
+      },
     })
 
     response.result = queryData;

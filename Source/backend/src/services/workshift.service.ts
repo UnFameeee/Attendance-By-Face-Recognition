@@ -47,7 +47,7 @@ export class WorkshiftService {
           },
           shiftDate: {
             gte: startDate.startOf('day').toDate(),
-            lte: endDate.startOf('day').toDate(),
+            lte: endDate.endOf('day').toDate(),
           }
         }
       } else if (selection.work == true && selection.leave == false) {
