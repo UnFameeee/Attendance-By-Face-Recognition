@@ -14,7 +14,7 @@ import { ResponseToken } from "../config/responseToken.config";
 
 class AuthenticationService {
   public async createAccessToken(employeeData: Employee): Promise<TokenData> {
-    const expiresIn: number = Number.parseInt(env.SECRET_EXPRIED);
+    const expiresIn: number = Number.parseInt(env.SECRET_EXPIRED);
     const secret = env.SECRET_KEY;
 
     const queryRoleData = await prisma.role.findFirst({
