@@ -57,6 +57,8 @@ const CountDaysFromStartDate = (startDate: string, endDate: string) => {
   // Convert the time difference from milliseconds to days
   var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
+  console.log(daysDiff + 1);
+
   return daysDiff + 1; // Add 1 to include the start date
 }
 
@@ -66,7 +68,7 @@ const ConvertMillisecondsToHHMM = (milliseconds: any) => {
   var hours = Math.floor(minutes / 60);
   var remainingMinutes = minutes % 60;
 
-  var formattedTime = ("0" + hours).slice(-3) + ":" + ("0" + remainingMinutes).slice(-2);
+  var formattedTime = (Number.parseInt(("0" + hours).slice(-3))).toString() + ":" + ("0" + remainingMinutes).slice(-2);
   return formattedTime;
 }
 
