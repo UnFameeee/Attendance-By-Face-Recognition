@@ -507,7 +507,7 @@ function LeaveRequestPersonal() {
               handleDeleteRange={DeleteRange}
               tableRowAction={tableRowAction}
               columns={columns}
-              data={LREmployeeData?.result?.data ?? []}
+              data={LREmployeeData?.result?.data}
               permission={resultPermission}
             />
           }

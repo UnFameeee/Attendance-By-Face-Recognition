@@ -29,7 +29,7 @@ import ModifyShiftTypeModal from "../../../components/ModifyShiftTypeModal";
 
 function WorkShift() {
   // #region declare variable
-  const formikRef = useRef()
+  const formikRef = useRef();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [userDecodeInfo, setUserDecodeInfo] = useState(
@@ -68,8 +68,11 @@ function WorkShift() {
       }
     );
   };
-  const { data: listEmployeeOfDepartment, isLoading: isLoadingListEmployee } =
-    useGetListEmployeeOfDepartment(departmentId, enableGetListEmployee);
+  const {
+    data: listEmployeeOfDepartment,
+    isLoading: isLoadingListEmployee,
+    isFetching: isFetchingListEmployee,
+  } = useGetListEmployeeOfDepartment(departmentId, enableGetListEmployee);
   const [listEmployeeDataSelection, setListEmployeeDataSelection] = useState(
     []
   );
@@ -277,7 +280,7 @@ function WorkShift() {
         p={2}
         w="fit-content"
         shadow="2xl"
-        mb='10px'
+        mb="10px"
       >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Work Shift</Heading>
@@ -308,7 +311,7 @@ function WorkShift() {
               const departmentId = values.department;
               setDepartmentId(departmentId);
               setEmployeeFilterId("");
-              formikRef.current?.resetForm()
+              formikRef.current?.resetForm();
               if (departmentId && userDecodeInfo.roleName == "employee") {
                 let employeeId = employeeFilterId;
                 useGetWorkShiftOfEmployee.mutate({
@@ -326,7 +329,6 @@ function WorkShift() {
                   workShiftType,
                 });
               }
-              
             }}
           >
             {(formik) => (
@@ -393,7 +395,10 @@ function WorkShift() {
                 Employee Filter:
               </Highlight>
             </Heading>
-            <Formik initialValues={initialValuesOfEmployeeFilter} innerRef={formikRef}>
+            <Formik
+              initialValues={initialValuesOfEmployeeFilter}
+              innerRef={formikRef}
+            >
               {(formik) => (
                 <Box w="200px">
                   <FormTextField
@@ -459,10 +464,18 @@ function WorkShift() {
           <CalendarHeader />
           <div className="flex flex-1">
             {/* <Sidebar /> */}
-            <Month
-              month={currentMonth}
-              listWorkShift={listWorkShiftDepartment}
-            />
+            {isFetchingListEmployee ||
+            useGetWorkShiftDepartment.isLoading || useModifyWorkShift.isLoading ||
+            useGetWorkShiftOfEmployee.isLoading ? (
+              <Box h="500px" w='100%'>
+                <LoadingSpinner />
+              </Box>
+            ) : (
+              <Month
+                month={currentMonth}
+                listWorkShift={listWorkShiftDepartment}
+              />
+            )}
           </div>
         </div>
       ) : (
