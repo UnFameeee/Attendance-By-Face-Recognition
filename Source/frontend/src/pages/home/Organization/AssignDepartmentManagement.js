@@ -295,10 +295,10 @@ function AssignDepartmentManagement() {
   const validationSchema = Yup.object().shape(
     editData?.department?.departmentId != undefined
       ? {
-          department: Yup.string().required(
-            "You can not set department to null if it already have one before"
-          ),
-        }
+        department: Yup.string().required(
+          "You can not set department to null if it already have one before"
+        ),
+      }
       : {}
   );
   // #endregion
@@ -318,19 +318,22 @@ function AssignDepartmentManagement() {
         <Heading fontSize="3xl">Assigning Department Management</Heading>
       </Flex>
       {useAssignEmployeeToDepartment.isLoading ||
-      useAssignManagerToDepartment.isLoading ||
-      isFetchingListEmployee ? (
+        useAssignManagerToDepartment.isLoading ||
+        isFetchingListEmployee ? (
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={listEmployeeData?.result?.data}
-            permission={resultPermission}
-          />
+          {
+            listEmployeeData?.result?.data &&
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={listEmployeeData?.result?.data}
+              permission={resultPermission}
+            />
+          }
           <DynamicDrawer
             handleEdit={handleAssignDepartment}
             isAddEditOpen={isAddEditOpen}

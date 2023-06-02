@@ -214,10 +214,9 @@ function LeaveRequestManagement() {
     onDeleteSingleClose();
   };
   function isOverDate(value) {
-    let formatDate = moment
-      .utc(new Date(value).toISOString())
-      .format("YYYY-MM-DD");
-    let currentDate = new Date().toISOString().split("T")[0];
+    // let currentDate = new Date().toISOString().split("T")[0];
+    let currentDate = moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD");
+    let formatDate = moment(value).format("YYYY-MM-DD");
     return currentDate > formatDate;
   }
   const Edit = (row, action) => {
@@ -550,7 +549,7 @@ function LeaveRequestManagement() {
         p={2}
         w="fit-content"
         shadow="2xl"
-        mb='10px'
+        mb="10px"
       >
         <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
         <Heading fontSize="3xl">Leave Request Management</Heading>
@@ -588,7 +587,7 @@ function LeaveRequestManagement() {
               } else {
                 setListLRDepartment([]);
               }
-              formikRef.current?.resetForm()
+              formikRef.current?.resetForm();
             }}
           >
             {(formik) => (
@@ -676,14 +675,16 @@ function LeaveRequestManagement() {
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={listLRDepartment}
-            permission={resultPermission}
-          />
+          {listLRDepartment && (
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={listLRDepartment}
+              permission={resultPermission}
+            />
+          )}
           <DynamicDrawer
             handleEdit={handleApprovalLeaveRequest}
             isAddEditOpen={isAddEditOpen}

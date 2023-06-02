@@ -2,6 +2,7 @@ import moment from "moment";
 import axiosBase from "../../Utils/AxiosInstance";
 import { baseURL } from "./../../Utils/AxiosInstance";
 import { useQuery } from "react-query";
+import axiosFaceBase from "../../Utils/AxiosFaceInstance";
 
 const endPointAttendance = baseURL + "/attendance";
 const endPointAttendanceException = baseURL + "/attendance-exception";
@@ -9,7 +10,7 @@ const endPointAttendanceException = baseURL + "/attendance-exception";
 const takeAttendance = async (data) => {
   const { employeeId, attendanceType, image, date } = data;
 
-  const response = await axiosBase.post(
+  const response = await axiosFaceBase.post(
     `${endPointAttendance}/takeAttendance`,
     {
       employeeId: employeeId,
@@ -24,7 +25,7 @@ const takeAttendance = async (data) => {
 const getEmployeeDetailById = async (id) => {
   if (id) {
     const time = new Date();
-    const response = await axiosBase.post(
+    const response = await axiosFaceBase.post(
       `${endPointAttendance}/getEmployeeDetailById/${id}`,
       {
         date: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`,
@@ -201,7 +202,7 @@ const saveImageOfExceptionAttendance = async (data) => {
   const headers = {
     "Content-Type": "multipart/form-data",
   };
-  const response = await axiosBase.post(
+  const response = await axiosFaceBase.post(
     `${endPointAttendanceException}/saveImage?email=${email}&type=${checkType}`,
     image,
     {
@@ -215,7 +216,7 @@ const saveImageOfAnonymousAttendance = async (formData) => {
   const headers = {
     "Content-Type": "multipart/form-data",
   };
-  const response = await axiosBase.post(
+  const response = await axiosFaceBase.post(
     `${endPointAttendanceException}/saveAnonymousImage`,
     formData,
     {
@@ -228,7 +229,7 @@ const saveImageOfAnonymousAttendance = async (formData) => {
 const submissionOfExceptionAttendance = async (submissionData) => {
   console.log(submissionData);
 
-  const response = await axiosBase.post(
+  const response = await axiosFaceBase.post(
     `${endPointAttendanceException}/submission?`,
     submissionData
   );
@@ -265,7 +266,7 @@ const saveImageOfAttendance = async (employeeId, formData) => {
     "Content-Type": "multipart/form-data",
   };
 
-  const response = await axiosBase.post(
+  const response = await axiosFaceBase.post(
     `${endPointAttendance}/saveImage?employeeId=${employeeId}`,
     formData,
     { headers }

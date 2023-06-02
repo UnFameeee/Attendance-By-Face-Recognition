@@ -146,8 +146,13 @@ function AttendancePersonal() {
             "attendanceHistoryData",
             employeeFilterId,
           ]);
+          queryClient.invalidateQueries([
+            "thisMonthAttendanceData",
+            employeeFilterId,
+          ]);
         } else {
           queryClient.invalidateQueries(["attendanceHistoryData", userId]);
+          queryClient.invalidateQueries(["thisMonthAttendanceData", userId]);
         }
         toast({
           title: "Report Invalid Attendance Successfully",
@@ -552,7 +557,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight="bold">
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.totalHours
                         )}
@@ -567,7 +572,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight="bold">
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.checkIn
                         )}
@@ -582,7 +587,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight="bold">
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.checkOut
                         )}
@@ -598,7 +603,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight="bold">
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.lateArrival
                         )}
@@ -614,7 +619,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight="bold">
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.earlyLeave
                         )}
@@ -643,79 +648,12 @@ function AttendancePersonal() {
                         Attendance History
                       </Heading>
                     </Flex>
-
-                    <Flex
-                      flex="1"
-                      justifyContent="flex-end"
-                      gap="10px"
-                      flexDirection={{ base: "column", md: "row" }}
-                    >
-                      <Flex alignItems="center" gap="5px">
-                        <Badge
-                          rounded="md"
-                          colorScheme="green"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          O.T
-                        </Badge>
-                        <Text>
-                          <FaEquals />{" "}
-                        </Text>
-                        <Badge
-                          rounded="md"
-                          colorScheme="green"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          On Time
-                        </Badge>
-                      </Flex>
-                      <Flex alignItems="center" gap="5px">
-                        <Badge
-                          rounded="md"
-                          colorScheme="yellow"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          L.A
-                        </Badge>
-                        <Text>
-                          <FaEquals />{" "}
-                        </Text>
-                        <Badge
-                          rounded="md"
-                          colorScheme="yellow"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          Late Arrival
-                        </Badge>
-                      </Flex>
-                      <Flex alignItems="center" gap="5px">
-                        <Badge
-                          rounded="md"
-                          colorScheme="orange"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          E.L
-                        </Badge>
-                        <Text>
-                          <FaEquals />{" "}
-                        </Text>
-                        <Badge
-                          rounded="md"
-                          colorScheme="orange"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          Early Leave
-                        </Badge>
-                      </Flex>
-                    </Flex>
                   </Flex>
-                  <HStack>
+                  <HStack
+                    display="flex"
+                    flexDirection={{ base: "column", sm: "row" }}
+                    alignItems={{ base: "baseline", sm: "center" }}
+                  >
                     <Heading fontSize="xl" fontWeight="medium" mb="6px">
                       <Highlight
                         query={["Type Filter:"]}
@@ -752,8 +690,8 @@ function AttendancePersonal() {
                   </HStack>
                   <HStack
                     w="fit-content"
-                    justifyContent="flex-end"
-                    alignItems="flex-end"
+                    flexDir={{ base: "column", md: "row" }}
+                    alignItems={{ base: "baseline", md: "flex-end" }}
                   >
                     <Heading fontSize="xl" fontWeight="medium" mb="6px">
                       <Highlight
@@ -778,8 +716,8 @@ function AttendancePersonal() {
                     >
                       {(formik) => (
                         <Stack
-                          flexDirection="row"
-                          alignItems="flex-end"
+                          flexDirection={{ base: "column", md: "row" }}
+                          alignItems={{ base: "baseline", md: "center" }}
                           gap="5px"
                         >
                           <Flex gap="5px">
@@ -838,17 +776,19 @@ function AttendancePersonal() {
                                   )}
                                 </Text>
                               </HStack>
-                              {!item?.earlyLeave && !item?.lateArrival && (
-                                <Badge
-                                  rounded="md"
-                                  colorScheme="green"
-                                  fontSize="md"
-                                  p="5px"
-                                >
-                                  O.T
-                                </Badge>
-                              )}
-                              {item?.lateArrival && (
+                              {!item?.earlyLeave &&
+                                !item?.lateArrival &&
+                                item?.absent && (
+                                  <Badge
+                                    rounded="md"
+                                    colorScheme="green"
+                                    fontSize="md"
+                                    p="5px"
+                                  >
+                                    O.T
+                                  </Badge>
+                                )}
+                              {item?.lateArrival && item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="yellow"
@@ -858,7 +798,17 @@ function AttendancePersonal() {
                                   L.A
                                 </Badge>
                               )}
-                              {item?.earlyLeave && (
+                              {item?.absent && (
+                                <Badge
+                                  rounded="md"
+                                  colorScheme="teal"
+                                  fontSize="md"
+                                  p="5px"
+                                >
+                                  L.D
+                                </Badge>
+                              )}
+                              {item?.earlyLeave && item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="orange"
@@ -900,12 +850,13 @@ function AttendancePersonal() {
                 bg="white"
                 rounded="md"
                 p={2}
-                w="fit-content"
                 shadow="2xl"
+                w={{ base: "100%", md: "fit-content" }}
               >
                 <HStack
-                  alignItems={{ base: "baseline", sm: "center" }}
                   gap="10px"
+                  flexDir={{ base: "column", md: "row" }}
+                  alignItems={{ base: "baseline", md: "center" }}
                 >
                   <Heading fontSize="xl" fontWeight="medium">
                     <Highlight
@@ -925,16 +876,16 @@ function AttendancePersonal() {
                     onSubmit={(values, actions) => {
                       const departmentId = values.department;
                       setDepartmentId(departmentId);
-                      setEmployeeFilterId("")
-                      formikRef.current?.resetForm()
+                      setEmployeeFilterId("");
+                      formikRef.current?.resetForm();
                     }}
                   >
                     {(formik) => (
                       <HStack
                         as="form"
                         onSubmit={formik.handleSubmit}
-                        flexDirection={{ sm: "row", base: "column" }}
                         gap="5px"
+                        flexDir={{ base: "column", sm: "row" }}
                         alignItems={{ base: "baseline", sm: "center" }}
                       >
                         <Box w="200px">
@@ -973,7 +924,8 @@ function AttendancePersonal() {
                   <HStack
                     w="fit-content"
                     gap="10px"
-                    alignItems={{ base: "baseline", sm: "center" }}
+                    flexDir={{ base: "column", md: "row" }}
+                    alignItems={{ base: "baseline", md: "center" }}
                   >
                     <Heading fontSize="xl" fontWeight="medium">
                       <Highlight
@@ -988,7 +940,10 @@ function AttendancePersonal() {
                         Employee Filter:
                       </Highlight>
                     </Heading>
-                    <Formik initialValues={initialValuesOfEmployeeFilter} innerRef={formikRef}>
+                    <Formik
+                      initialValues={initialValuesOfEmployeeFilter}
+                      innerRef={formikRef}
+                    >
                       {(formik) => (
                         <Box w="200px">
                           <FormTextField
@@ -1319,7 +1274,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight="bold">
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.totalHours
                               )}
@@ -1334,7 +1289,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight="bold">
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.checkIn
                               )}
@@ -1349,7 +1304,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight="bold">
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.checkOut
                               )}
@@ -1365,7 +1320,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight="bold">
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.lateArrival
                               )}
@@ -1381,7 +1336,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight="bold">
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.earlyLeave
                               )}
@@ -1414,7 +1369,7 @@ function AttendancePersonal() {
                               Attendance History
                             </Heading>
                           </Flex>
-                          <Flex
+                          {/* <Flex
                             flex="1"
                             justifyContent="flex-end"
                             gap="10px"
@@ -1483,9 +1438,14 @@ function AttendancePersonal() {
                                 Early Leave
                               </Badge>
                             </Flex>
-                          </Flex>
+                          </Flex> */}
                         </Flex>
-                        <HStack>
+                        <HStack
+                          display="flex"
+                          gap="10px"
+                          flexDirection={{ base: "column", sm: "row" }}
+                          alignItems={{ base: "baseline", sm: "center" }}
+                        >
                           <Heading fontSize="xl" fontWeight="medium" mb="6px">
                             <Highlight
                               query={["Type Filter:"]}
@@ -1499,31 +1459,33 @@ function AttendancePersonal() {
                               Type Filter:
                             </Highlight>
                           </Heading>
-                          <Box>
-                            <Button
-                              onClick={() => {
-                                setIsValid(true);
-                              }}
-                              colorScheme={isValid ? "blue" : "gray"}
-                            >
-                              Valid
-                            </Button>
-                          </Box>
-                          <Box>
-                            <Button
-                              onClick={() => {
-                                setIsValid(false);
-                              }}
-                              colorScheme={!isValid ? "blue" : "gray"}
-                            >
-                              Invalid
-                            </Button>
-                          </Box>
+                          <Flex gap="5px">
+                            <Box>
+                              <Button
+                                onClick={() => {
+                                  setIsValid(true);
+                                }}
+                                colorScheme={isValid ? "blue" : "gray"}
+                              >
+                                Valid
+                              </Button>
+                            </Box>
+                            <Box>
+                              <Button
+                                onClick={() => {
+                                  setIsValid(false);
+                                }}
+                                colorScheme={!isValid ? "blue" : "gray"}
+                              >
+                                Invalid
+                              </Button>
+                            </Box>
+                          </Flex>
                         </HStack>
                         <HStack
                           w="fit-content"
-                          justifyContent="flex-end"
-                          alignItems="flex-end"
+                          flexDir={{ base: "column", md: "row" }}
+                          alignItems={{ base: "baseline", md: "flex-end" }}
                         >
                           <Heading fontSize="xl" fontWeight="medium" mb="6px">
                             <Highlight
@@ -1550,9 +1512,9 @@ function AttendancePersonal() {
                           >
                             {(formik) => (
                               <Stack
-                                flexDirection="row"
-                                alignItems="flex-end"
                                 gap="5px"
+                                flexDirection={{ base: "column", md: "row" }}
+                                alignItems={{ base: "baseline", md: "center" }}
                               >
                                 <Flex gap="5px">
                                   <Box w="100px">
@@ -1613,7 +1575,8 @@ function AttendancePersonal() {
                                       </Text>
                                     </HStack>
                                     {!item?.earlyLeave &&
-                                      !item?.lateArrival && (
+                                      !item?.lateArrival &&
+                                      !item?.absent && (
                                         <Badge
                                           rounded="md"
                                           colorScheme="green"
@@ -1623,7 +1586,7 @@ function AttendancePersonal() {
                                           O.T
                                         </Badge>
                                       )}
-                                    {item?.lateArrival && (
+                                    {item?.lateArrival && !item?.absent && (
                                       <Badge
                                         rounded="md"
                                         colorScheme="yellow"
@@ -1633,7 +1596,17 @@ function AttendancePersonal() {
                                         L.A
                                       </Badge>
                                     )}
-                                    {item?.earlyLeave && (
+                                    {item?.absent && (
+                                      <Badge
+                                        rounded="md"
+                                        colorScheme="teal"
+                                        fontSize="md"
+                                        p="5px"
+                                      >
+                                        L.D
+                                      </Badge>
+                                    )}
+                                    {item?.earlyLeave && !item?.absent && (
                                       <Badge
                                         rounded="md"
                                         colorScheme="orange"
@@ -1704,12 +1677,7 @@ function AttendancePersonal() {
                   </Badge>
                 )}
                 {attendanceDetailObj?.result?.absent && (
-                  <Badge
-                    rounded="md"
-                    colorScheme="yellow"
-                    fontSize="md"
-                    p="5px"
-                  >
+                  <Badge rounded="md" colorScheme="teal" fontSize="md" p="5px">
                     Leave Day
                   </Badge>
                 )}
@@ -1764,9 +1732,9 @@ function AttendancePersonal() {
             </Flex>
             {!isValid && (
               <Flex margin="20px 0px 0px 0px">
-                <Text fontSize="1.15rem" fontWeight="semibold">
+                <Text fontSize="1.15rem" fontWeight="semibold" color={"red"}>
                   Report Note:{" "}
-                  <b style={{ fontWeight: "normal" }}>
+                  <b style={{ fontWeight: "normal", color: "black" }}>
                     {attendanceDetailObj?.result?.note}
                   </b>
                 </Text>

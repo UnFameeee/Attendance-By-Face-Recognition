@@ -5,8 +5,8 @@ import { createStandaloneToast } from "@chakra-ui/toast";
 import { globalNavigate } from "./GlobalHistory";
 import jwtDecode from "jwt-decode";
 
-// export const baseURL = "http://localhost:8081/api";
-export const baseURL = "https://unfame.tech:8081/api";
+export const baseURL = "http://localhost:8081/api";
+// export const baseURL = "https://unfame.tech:8081/api";
 
 const { toast } = createStandaloneToast();
 const axiosBase = axios.create({
@@ -27,7 +27,7 @@ axiosBase.interceptors.request.use((config) => {
     console.log(accessToken)
     cookies.remove("jwt_authentication");
     localStorage.removeItem("accessToken");
-    alert("Your token have been expired, please sign in again!")
+    // alert("Your token have been expired, please sign in again!")
     globalNavigate("/sign-in");
   }
   return config;

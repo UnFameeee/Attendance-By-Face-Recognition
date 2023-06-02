@@ -64,7 +64,7 @@ function EmployeesManagement() {
 
   // #endregion
   // #region hook
-  const { data: listEmployeeData, isFetching: isFetchingListEmployee, isLoading: isLoadingListEmployee  } =
+  const { data: listEmployeeData, isFetching: isFetchingListEmployee, isLoading: isLoadingListEmployee } =
     useGetListEmployee();
   const {
     isOpen: isDeleteSingleOpen,
@@ -558,11 +558,10 @@ function EmployeesManagement() {
     displayName: editData?.["role.displayName"] ?? "",
     department: editData?.department?.departmentName ?? "",
     gender: editData?.gender ?? "male",
-    dateOfBirth: `${
-      editData?.dateOfBirth
+    dateOfBirth: `${editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
-    }`,
+      }`,
     description: `${editData?.description ?? ""}`,
     location: {
       country: `${editData["location.country"] ?? ""}`,
@@ -574,24 +573,24 @@ function EmployeesManagement() {
   const validationSchema = Yup.object().shape(
     Object.keys(editData).length === 0
       ? {
-          fullname: Yup.string().min(8,"Full name must be more than 8 characters").required("This field is required"),
-          email: Yup.string().required("This field is required"),
-          displayName: Yup.string().required("This field is required"),
-          password: Yup.string()
-            .matches(
-              passwordRegex,
-              "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
-            )
-            .required("This field is required"),
-        }
-      : {
-          fullname: Yup.string().required("This field is required"),
-          email: Yup.string().required("This field is required"),
-          password: Yup.string().matches(
+        fullname: Yup.string().min(8, "Full name must be more than 8 characters").required("This field is required"),
+        email: Yup.string().required("This field is required"),
+        displayName: Yup.string().required("This field is required"),
+        password: Yup.string()
+          .matches(
             passwordRegex,
             "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
-          ),
-        }
+          )
+          .required("This field is required"),
+      }
+      : {
+        fullname: Yup.string().required("This field is required"),
+        email: Yup.string().required("This field is required"),
+        password: Yup.string().matches(
+          passwordRegex,
+          "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+        ),
+      }
   );
   // #endregion
   if (isLoadingListEmployee) return <LoadingSpinner />;
@@ -610,42 +609,23 @@ function EmployeesManagement() {
           <Heading fontSize="3xl">Employees Overview</Heading>
         </Flex>
       </HStack>
-      <Flex
-        justifyContent="space-between"
-        gap={5}
-        flexDirection={{
-          base: "column",
-          sm: "column",
-          md: "row",
-          lg: "row",
-          xl: "row",
-        }}
-      >
-        {/* <Box
-          width={{ base: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" }}
-        >
-          <PieChart />
-        </Box>
-        <Box
-          width={{ base: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" }}
-        >
-          <ColumnChart />
-        </Box> */}
-      </Flex>
       {useCreateEmployee.isLoading ||
-      useSaveEmployee.isLoading || useDeleteEmployee.isLoading || 
-      isFetchingListEmployee ? (
+        useSaveEmployee.isLoading || useDeleteEmployee.isLoading ||
+        isFetchingListEmployee ? (
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={listEmployeeData?.result?.data}
-            permission={resultPermission}
-          />
+          {
+            listEmployeeData?.result?.data &&
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={listEmployeeData?.result?.data}
+              permission={resultPermission}
+            />
+          }
           <DynamicDrawer
             handleEdit={handleEditEmployee}
             handleCreate={handleCreateEmployee}

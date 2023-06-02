@@ -353,19 +353,17 @@ function DepartmentManagement() {
   ];
   const initialValues = {
     departmentName: `${editData.departmentName ? editData.departmentName : ""}`,
-    organization: `${
-      editData?.organization?.organizationId
+    organization: `${editData?.organization?.organizationId
         ? editData?.organization?.organizationId
         : ""
-    }`,
+      }`,
     location: {
       country: `${editData["location.country"] ?? ""}`,
       state: `${editData["location.state"] ?? ""}`,
       city: `${editData["location.city"] ?? ""}`,
     },
-    address: `${
-      editData["location.address"] ? editData["location.address"] : ""
-    }`,
+    address: `${editData["location.address"] ? editData["location.address"] : ""
+      }`,
   };
   const validationSchema = Yup.object().shape({
     departmentName: Yup.string().required("This field is required"),
@@ -392,14 +390,17 @@ function DepartmentManagement() {
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={dataListDepartment?.result?.data}
-            permission={resultPermission}
-          />
+          {
+            dataListDepartment?.result?.data &&
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={dataListDepartment?.result?.data}
+              permission={resultPermission}
+            />
+          }
           <DynamicDrawer
             handleEdit={handleEditDepartment}
             handleCreate={handleCreateDepartment}
