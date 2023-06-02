@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import axiosBase, { baseURL } from "../../Utils/AxiosInstance";
+import axiosFaceBase, { baseURL } from "../../Utils/AxiosFaceInstance";
 
 const endPoint = baseURL + "/url-generate";
 
@@ -7,7 +7,7 @@ const validateURL = async (url) => {
   const dataURL = {
     URL: url,
   }
-  const response = await axiosBase.post(`${endPoint}/qr/validate`, dataURL);
+  const response = await axiosFaceBase.post(`${endPoint}/qr/validate`, dataURL);
   return response.data;
 }
 
@@ -25,9 +25,9 @@ const useValidateURL = ({ url }) => {
 const generateURL = async (urlType, employeeId, urlImage) => {
   var response;
   if (employeeId) {
-    response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
+    response = await axiosFaceBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
   } else if (urlImage) {
-    response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&url=${urlImage}`);
+    response = await axiosFaceBase.get(`${endPoint}/qr?type=${urlType}&url=${urlImage}`);
   }
   return response.data;
 }
@@ -44,9 +44,9 @@ const useGenerateURL = ({ urlType, employeeId, urlImage }) => {
       //   console.log(urlImage);
       // }
       if (employeeId) {
-        response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
+        response = await axiosFaceBase.get(`${endPoint}/qr?type=${urlType}&id=${employeeId}`);
       } else if (urlImage) {
-        response = await axiosBase.get(`${endPoint}/qr?type=${urlType}&url=${urlImage}`);
+        response = await axiosFaceBase.get(`${endPoint}/qr?type=${urlType}&url=${urlImage}`);
       }
       response = await generateURL(urlType, employeeId, urlImage);
       return response;
@@ -56,7 +56,7 @@ const useGenerateURL = ({ urlType, employeeId, urlImage }) => {
 }
 
 const changeURLtoExpire = async (url) => {
-  const response = await axiosBase.post(`${endPoint}/qr/changeURLtoExpire`, { URL: url });
+  const response = await axiosFaceBase.post(`${endPoint}/qr/changeURLtoExpire`, { URL: url });
   return response.data;
 }
 

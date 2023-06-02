@@ -672,18 +672,21 @@ function LeaveRequestManagement() {
         </HStack>
       )}
       {useGetLeaveRequestOfDepartment.isLoading ||
-      useDeleteLeaveRequest.isLoading ? (
+        useDeleteLeaveRequest.isLoading ? (
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={listLRDepartment}
-            permission={resultPermission}
-          />
+          {
+            listLRDepartment &&
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={listLRDepartment}
+              permission={resultPermission}
+            />
+          }
           <DynamicDrawer
             handleEdit={handleApprovalLeaveRequest}
             isAddEditOpen={isAddEditOpen}

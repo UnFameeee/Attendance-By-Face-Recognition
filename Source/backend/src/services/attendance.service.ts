@@ -7,22 +7,26 @@ import { env } from '../config/env.config';
 import { TakeAttendanceDTO } from '../model/dtos/attendance.dto';
 import { DateTimeV2DTO } from '../model/dtos/workshift.dto';
 import { attendance } from '../constant/attendance-exception.constant';
+import { timezoneConfig } from '../constant/moment-timezone.constant';
 
 export class AttendanceService {
 
   public takeAttendance = async (data: TakeAttendanceDTO) => {
     const response = new ResponseData<string>();
 
-    const now = new Date();
-    console.log(now);
-    // const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
-    const modifyDate = Helper.ConfigStaticDateTime("00:00", data.date);
+    const momentNow = moment(new Date()).tz(timezoneConfig);
+    let threshHoldNow = Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD"));
+
+    const modifyDate = moment.utc(data.date, "YYYY-MM-DD")
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
       where: {
         employeeId: data.employeeId,
-        shiftDate: modifyDate,
+        shiftDate: {
+          gte: modifyDate.startOf('day').toDate(),
+          lte: modifyDate.endOf('day').toDate(),
+        },
         deleted: false,
       },
       select: {
@@ -42,8 +46,6 @@ export class AttendanceService {
       }
     })
 
-    console.log(workShift);
-
     if (!workShift) {
       response.message = "You don't have a schedule for today";
       return response;
@@ -53,7 +55,10 @@ export class AttendanceService {
     const checkAttendance = await prisma.attendance.findFirst({
       where: {
         employeeId: data.employeeId,
-        attendanceDate: modifyDate,
+        attendanceDate: {
+          gte: modifyDate.startOf('day').toDate(),
+          lte: modifyDate.endOf('day').toDate(),
+        },
         deleted: false,
       }
     })
@@ -77,7 +82,6 @@ export class AttendanceService {
 
       //Convert both of startTime and shiftDate to Date value
       let startShift: Date = Helper.ConfigStaticDateTime(time, date);
-
       //Nếu allowLateArrival == false => nhân viên được phép đi trễ
       if (workShift.allowLateArrival == false) {
         let baseStartTime = moment.utc(startTime, 'HH:mm');
@@ -85,34 +89,25 @@ export class AttendanceService {
         let resultHour = moment.utc(baseStartTime.clone().add(baseLimitLateArrival.hour(), 'hours').add(baseLimitLateArrival.minute(), 'minutes')).format("HH:mm");
 
         let shiftThreshholdAfter = Helper.ConfigStaticDateTime(resultHour, date);
-
-        // //create a threshhold, which is the startTime +1 and -1 hour
-        // let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
-        // shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
-
-        // let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
-        // shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
+        let threshHoldNow = Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD"))
 
         //the latest punch in is startTime + 1 hour
-        if (moment.utc(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
+        if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(threshHoldNow.getTime()), "HH:mm")) < 0) {
           response.message = "You are too late to check in, please contact with the manager";
           return response;
         }
 
-        // if (moment(new Date(now.getTime()), "HH:mm").diff(moment(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
-        //   response.message = "You checkin so soon, comeback 1 hour before the shift start";
-        //   return response;
-        // }
       }
 
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-      let diff = moment.utc(new Date(startShift.getTime()), "HH:mm").diff(moment.utc(new Date(now.getTime()), "HH:mm"));
+      let diff = moment(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(threshHoldNow.getTime()), "HH:mm"));
 
       var lateArrival: Date;
       //if the value is negative -> lateArrival
       if (Math.sign(diff) === -1) {
         let duration = moment.duration(Math.abs(diff));
-        let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
+        // let formattedTimeDiff = moment(duration.asMilliseconds()).format('HH:mm');
+        let formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
         lateArrival = Helper.ConfigStaticDateTime(formattedTimeDiff);
       }
       //if the value is positive or equal 0 -> right on time
@@ -123,8 +118,8 @@ export class AttendanceService {
       let queryData = await prisma.attendance.create({
         data: {
           employeeId: data.employeeId,
-          attendanceDate: modifyDate,
-          checkIn: new Date(now.toISOString()),
+          attendanceDate: Helper.ConfigStaticDateTime("00:00", data.date),
+          checkIn: Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD")),
           checkinCapture: data.image,
           checkOut: null,
           lateArrival: lateArrival,
@@ -153,7 +148,6 @@ export class AttendanceService {
       let time = moment.utc(endTime, "HH:mm").format("HH:mm");
       //Convert both of startTime and shiftDate to Date value
       let endShift: Date = Helper.ConfigStaticDateTime(time, date);
-
       //Nếu allowEarlyLeave == false => nhân viên được phép về sớm
       if (workShift.allowEarlyLeave == false) {
         let baseEndTime = moment.utc(endTime, 'HH:mm');
@@ -162,27 +156,15 @@ export class AttendanceService {
 
         let shiftThreshholdBefore = Helper.ConfigStaticDateTime(resultHour, date);
 
-        // //create a threshhold, which is the startTime +1 and -1 hour
-        // let shiftThreshholdAfter = Helper.ConfigStaticDateTime(time, date);
-        // shiftThreshholdAfter.setHours(shiftThreshholdAfter.getHours() + 1);
-
-        // let shiftThreshholdBefore = Helper.ConfigStaticDateTime(time, date);
-        // shiftThreshholdBefore.setHours(shiftThreshholdBefore.getHours() - 1);
-
         //the earliest punch out is endTime - 1 hour
-        if (moment.utc(new Date(now.getTime()), "HH:mm").diff(moment.utc(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) < 0) {
+        if (moment.utc(new Date(threshHoldNow.getTime()), "HH:mm").diff(moment.utc(new Date(shiftThreshholdBefore.getTime()), "HH:mm")) <= 0) {
           response.message = "You check out too early, please contact with the manager";
           return response;
         }
-
-        // if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(now.getTime()), "HH:mm")) < 0) {
-        //   response.message = "You checkout too late, please contact with the manager";
-        //   return response;
-        // }
       }
 
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-      let diff = moment.utc(new Date(now.getTime()), "HH:mm").diff(moment.utc(new Date(endShift.getTime()), "HH:mm"));
+      let diff = moment.utc(new Date(threshHoldNow.getTime()), "HH:mm").diff(moment.utc(new Date(endShift.getTime()), "HH:mm"));
 
       var earlyLeave: Date;
       //if the value is positive -> earlyLeave
@@ -192,19 +174,24 @@ export class AttendanceService {
       //if the value is negative or equal 0 -> right on time
       else {
         let duration = moment.duration(Math.abs(diff));
-        let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
+        // let formattedTimeDiff = moment.utc(duration.asMilliseconds()).format('HH:mm');
+        let formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
         earlyLeave = Helper.ConfigStaticDateTime(formattedTimeDiff);
       }
 
+      const attendanceDateFilter = moment.utc(date, "YYYY-MM-DD");
       const queryShiftData = await prisma.attendance.findFirst({
         where: {
           employeeId: data.employeeId,
-          attendanceDate: Helper.ConfigStaticDateTime("00:00", date),
+          attendanceDate: {
+            gte: attendanceDateFilter.startOf('day').toDate(),
+            lte: attendanceDateFilter.endOf('day').toDate(),
+          },
           deleted: false,
         }
       })
 
-      const totalHours = Helper.MinusDate(new Date(now.toISOString()), queryShiftData.checkIn, true);
+      const totalHours = Helper.MinusDate(new Date(threshHoldNow), queryShiftData.checkIn);
 
       let queryData = await prisma.attendance.update({
         where: {
@@ -212,8 +199,7 @@ export class AttendanceService {
         },
         data: {
           employeeId: data.employeeId,
-          attendanceDate: modifyDate,
-          checkOut: new Date(now.toISOString()),
+          checkOut: Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD")),
           checkoutCapture: data.image,
           earlyLeave: earlyLeave,
           totalHours: Helper.ConfigStaticDateTime(totalHours),
@@ -308,8 +294,10 @@ export class AttendanceService {
     const response = new ResponseData<any>();
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryData = await prisma.attendance.findMany({
       where: {
@@ -440,8 +428,11 @@ export class AttendanceService {
     const isValid = data.isValid;
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryData = await prisma.attendance.findMany({
       where: {
@@ -520,8 +511,11 @@ export class AttendanceService {
 
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+
+    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryAttendanceData = await prisma.attendance.count({
       where: {
@@ -574,8 +568,11 @@ export class AttendanceService {
     for (var i = 1; i <= 12; ++i) {
       const daysInMonth = moment.utc(`${data.year}-${i}-01`, "YYYY-MM-DD").daysInMonth();
 
-      const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${i}-${1}`)
-      const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${i}-${daysInMonth}`)
+      // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${i}-${1}`)
+      // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${i}-${daysInMonth}`)
+
+      const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+      const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
       const queryAttendanceData = await prisma.attendance.count({
         where: {

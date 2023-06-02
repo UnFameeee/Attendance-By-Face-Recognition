@@ -1,7 +1,6 @@
 // Import the 'crypto' module for encryption and decryption
 import CryptoJS from 'crypto-js';
-import moment from "moment";
-import { env } from '../config/env.config';
+import moment from 'moment-timezone';
 
 const UppercaseFirstLetter = (prop: string): string => {
   return prop.charAt(0).toUpperCase() + prop.slice(1);
@@ -16,59 +15,53 @@ const ConfigStaticDateTime = (time: string, date?: string): Date => {
   //time -> "HH:mm"
   //date -> "YYYY-MM-DD"
   let result: Date;
-  const timeSplitArr = time.split(":");
+  var formatTime = moment(time, "HH:mm");
 
-  const formatDate = moment.utc(date, 'YYYY-MM-DD').format("YYYY-MM-DD");
   if (date) {
-    const temp = new Date(`${formatDate}T00:00:00.000Z`);
-    temp.setHours(parseInt(timeSplitArr[0], 10));
-    temp.setMinutes(parseInt(timeSplitArr[1], 10));
-    const record = new Date(temp).toISOString();
-    result = new Date(record);
+    const dataArr = date.split("-");
+    const formatDate = new Date();
+    formatDate.setUTCDate(Number.parseInt(dataArr[2]));
+    formatDate.setUTCMonth(Number.parseInt(dataArr[1]) - 1);
+    formatDate.setUTCFullYear(Number.parseInt(dataArr[0]));
+    formatDate.setUTCHours(formatTime.hours())
+    formatDate.setUTCMinutes(formatTime.minutes())
+    result = formatDate;
   } else {
     //Fix the date to 1970-01-01, we only use the time. The time seperate from the date by T
-    // const temp = new Date(`1970-01-01T00:00:00.000Z`);
-    // temp.setHours(parseInt(timeSplitArr[0], 10));
-    // temp.setMinutes(parseInt(timeSplitArr[1], 10));
-    const temp = new Date();
-
-    temp.setDate(1);
-    temp.setMonth(0);
-    temp.setFullYear(1970);
-    temp.setHours(parseInt(timeSplitArr[0], 10));
-    temp.setMinutes(parseInt(timeSplitArr[1], 10));
-
-    const record = new Date(temp).toISOString();
-    result = new Date(record);
+    const formatDate = new Date("1970-01-01");
+    formatDate.setUTCHours(formatTime.hours())
+    formatDate.setUTCMinutes(formatTime.minutes())
+    result = formatDate;
   }
   return result
 }
 
-const MinusDate = (bigDate: Date, smallDate: Date, format?: boolean) => {
+const MinusDate = (bigDate: Date, smallDate: Date): string => {
   const millisecondDif = moment.utc(new Date(bigDate.getTime()), "HH:mm").diff(moment.utc(new Date(smallDate.getTime()), "HH:mm"));
-  if (format) {
-    return moment.utc(millisecondDif).format('HH:mm');
-  } else {
-    return moment.utc(millisecondDif);
-  }
+
+  let formattedTimeDiff = new Date(millisecondDif).toISOString().split("T")[1].slice(0, 5);
+
+  return formattedTimeDiff;
 };
 
-const PlusDate = (firstDate: Date, secondDate: Date, format?: boolean) => {
-  // Parse the time values into moment objects
-  const momentTime1 = moment.utc(firstDate, 'HH:mm');
-  const momentTime2 = moment.utc(secondDate, 'HH:mm');
+// const PlusDate = (firstDate: Date, secondDate: Date): string => {
+//   // Parse the time values into moment objects
+//   const momentTime1 = moment.utc(firstDate, 'HH:mm');
+//   const momentTime2 = moment.utc(secondDate, 'HH:mm');
 
-  // Calculate the total duration by adding the durations of both times
-  const duration1 = moment.duration(momentTime1.format('HH:mm'));
-  const duration2 = moment.duration(momentTime2.format('HH:mm'));
-  const totalDuration = duration1.add(duration2);
+//   // Calculate the total duration by adding the durations of both times
+//   const duration1 = moment.duration(momentTime1.format('HH:mm'));
+//   const duration2 = moment.duration(momentTime2.format('HH:mm'));
+//   const totalDuration = duration1.add(duration2);
 
-  if (format) {
-    return moment.utc(totalDuration.asMilliseconds()).format('HH:mm');
-  } else {
-    return moment.utc(totalDuration.asMilliseconds());
-  }
-};
+//   let formattedTimeDiff = new Date(totalDuration).toISOString().split("T")[1].slice(0, 5);
+
+//   if (format) {
+//     return moment.tz(moment(totalDuration.asMilliseconds(), "HH:mm").format("HH:mm"), "HH:mm", timezoneConfig).format('HH:mm');
+//   } else {
+//     return moment.tz(moment(totalDuration.asMilliseconds(), "HH:mm").format("HH:mm"), "HH:mm", timezoneConfig);
+//   }
+// };
 
 function CountDaysFromStartDate(startDate: string, endDate: string) {
   // Convert the date strings to Date objects
@@ -106,7 +99,7 @@ interface IHelper {
   ConvertDoubleSlashURL: Function,
   ConfigStaticDateTime: Function,
   MinusDate: Function,
-  PlusDate: Function,
+  // PlusDate: Function,
   CountDaysFromStartDate: Function,
   EncodeWithCipher: Function,
   DecodeWithCipher: Function,
@@ -117,7 +110,7 @@ export const Helper: IHelper = {
   ConvertDoubleSlashURL,
   ConfigStaticDateTime,
   MinusDate,
-  PlusDate,
+  // PlusDate,
   CountDaysFromStartDate,
   EncodeWithCipher,
   DecodeWithCipher,

@@ -410,7 +410,7 @@ function AttendanceExceptionManagement() {
           </Heading>
           <Formik
             initialValues={initialValuesForm}
-            onSubmit={(values, actions) => {             
+            onSubmit={(values, actions) => {
               const departmentId = values.departmentId;
               if (departmentId != "") {
                 setDepartmentId(departmentId);
@@ -527,14 +527,17 @@ function AttendanceExceptionManagement() {
             <TabPanel p="0">
               {attendanceExceptionGetListObj?.departmentId ? (
                 <Box w="100%">
-                  <DynamicTable
-                    onAddEditOpen={onAddEditOpen}
-                    handleDeleteRange={DeleteRange}
-                    tableRowAction={tableRowAction}
-                    columns={columns}
-                    data={listAttendanceException}
-                    permission={resultPermission}
-                  />
+                  {
+                    listAttendanceException &&
+                      <DynamicTable
+                        onAddEditOpen={onAddEditOpen}
+                        handleDeleteRange={DeleteRange}
+                        tableRowAction={tableRowAction}
+                        columns={columns}
+                        data={listAttendanceException}
+                        permission={resultPermission}
+                      /> 
+                  }
                 </Box>
               ) : (
                 <Stack>
