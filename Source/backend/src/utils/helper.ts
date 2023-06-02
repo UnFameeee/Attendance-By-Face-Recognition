@@ -57,6 +57,8 @@ const CountDaysFromStartDate = (startDate: string, endDate: string) => {
   // Convert the time difference from milliseconds to days
   var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
+  console.log(daysDiff + 1);
+
   return daysDiff + 1; // Add 1 to include the start date
 }
 
