@@ -18,15 +18,25 @@ export class LeaveRequestService {
 
     var startDate;
     var endDate;
+    // if (data.month == 1) {
+    //   startDate = Helper.ConfigStaticDateTime("00:00", `${data.year - 1}-${data.month}-${12}`)
+    //   endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    // } else if (data.month == 12) {
+    //   startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+    //   endDate = Helper.ConfigStaticDateTime("00:00", `${data.year + 1}-${1}-${12}`)
+    // } else {
+    //   startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+    //   endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    // }
     if (data.month == 1) {
-      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year - 1}-${data.month}-${12}`)
-      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+      startDate = moment.utc(`${data.year - 1}-${data.month}-${12}`, "YYYY-MM-DD")
+      endDate = moment.utc(`${data.year}-${data.month + 1}-${12}`, "YYYY-MM-DD")
     } else if (data.month == 12) {
-      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
-      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year + 1}-${1}-${12}`)
+      startDate = moment.utc(`${data.year}-${data.month - 1}-${12}`, "YYYY-MM-DD")
+      endDate = moment.utc(`${data.year + 1}-${1}-${12}`, "YYYY-MM-DD");
     } else {
-      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
-      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+      startDate = moment.utc(`${data.year}-${data.month - 1}-${12}`, "YYYY-MM-DD");
+      endDate = moment.utc(`${data.year}-${data.month + 1}-${12}`, "YYYY-MM-DD")
     }
 
     if (data.filter) {
@@ -69,10 +79,10 @@ export class LeaveRequestService {
           },
           deleted: false,
           startDate: {
-            gte: startDate,
+            gte: startDate.startOf('day').toDate(),
           },
           endDate: {
-            lte: endDate,
+            lte: endDate.endOf('day').toDate(),
           }
         }
       }
@@ -153,10 +163,10 @@ export class LeaveRequestService {
             deleted: false,
           },
           startDate: {
-            gte: startDate,
+            gte: startDate.startOf('day').toDate(),
           },
           endDate: {
-            lte: endDate,
+            lte: endDate.endOf('day').toDate(),
           }
         }
       }
@@ -221,15 +231,25 @@ export class LeaveRequestService {
 
     var startDate;
     var endDate;
+    // if (data.month == 1) {
+    //   startDate = Helper.ConfigStaticDateTime("00:00", `${data.year - 1}-${data.month}-${12}`)
+    //   endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    // } else if (data.month == 12) {
+    //   startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+    //   endDate = Helper.ConfigStaticDateTime("00:00", `${data.year + 1}-${1}-${12}`)
+    // } else {
+    //   startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
+    //   endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+    // }
     if (data.month == 1) {
-      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year - 1}-${data.month}-${12}`)
-      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+      startDate = moment.utc(`${data.year - 1}-${data.month}-${12}`, "YYYY-MM-DD")
+      endDate = moment.utc(`${data.year}-${data.month + 1}-${12}`, "YYYY-MM-DD")
     } else if (data.month == 12) {
-      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
-      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year + 1}-${1}-${12}`)
+      startDate = moment.utc(`${data.year}-${data.month - 1}-${12}`, "YYYY-MM-DD")
+      endDate = moment.utc(`${data.year + 1}-${1}-${12}`, "YYYY-MM-DD");
     } else {
-      startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month - 1}-${12}`)
-      endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month + 1}-${12}`)
+      startDate = moment.utc(`${data.year}-${data.month - 1}-${12}`, "YYYY-MM-DD");
+      endDate = moment.utc(`${data.year}-${data.month + 1}-${12}`, "YYYY-MM-DD")
     }
 
     if (data.filter) {
@@ -247,7 +267,7 @@ export class LeaveRequestService {
           lte: dateFilter.endOf('day').toDate(),
         },
         endDate: {
-          lte: endDate,
+          lte: endDate.endOf('day').toDate(),
         }
       }
     } else {
@@ -255,14 +275,13 @@ export class LeaveRequestService {
         deleted: false,
         employeeId: employeeId,
         startDate: {
-          gte: startDate,
+          gte: startDate.startOf('day').toDate(),
         },
         endDate: {
-          lte: endDate,
+          lte: endDate.endOf('day').toDate(),
         }
       }
     }
-
 
     const queryData = await prisma.leaveRequest.findMany({
       where: whereData,
@@ -309,10 +328,10 @@ export class LeaveRequestService {
         deleted: false,
         employeeId: employeeId,
         startDate: {
-          gte: startDate,
+          gte: startDate.startOf('day').toDate(),
         },
         endDate: {
-          lte: endDate,
+          lte: endDate.endOf('day').toDate(),
         }
       },
     })
@@ -326,8 +345,10 @@ export class LeaveRequestService {
 
   public createLeaveRequest = async (employeeId: string, data: CreateLeaveRequestDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
-    const startDate = Helper.ConfigStaticDateTime("00:00", data.startDate)
-    const endDate = Helper.ConfigStaticDateTime("00:00", data.endDate)
+    // const startDate = Helper.ConfigStaticDateTime("00:00", data.startDate)
+    // const endDate = Helper.ConfigStaticDateTime("00:00", data.endDate)
+    const startDate = moment.utc(data.startDate, "YYYY-MM-DD").toDate();
+    const endDate = moment.utc(data.endDate, "YYYY-MM-DD").toDate();
 
     //Nếu nhân viên đã có lịch nghỉ phép trong cùng ngày -> hủy
     const queryData = await prisma.leaveRequest.findFirst({
@@ -532,12 +553,16 @@ export class LeaveRequestService {
       if (leaveRequestMonthStart == leaveRequestMonthEnd) {
         for (let i = leaveRequestDateStart; i <= leaveRequestDateEnd; ++i) {
           // Get the date in ISO 8601 format (e.g. "2023-04-01")
-          const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
+          // const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
+          const date = moment.utc(`${leaveRequestYear}-${leaveRequestMonthStart}-${i}`, "YYYY-MM-DD")
 
           const queryWorkshiftData = await prisma.workshift.findFirst({
             where: {
               employeeId: queryData.employeeId,
-              shiftDate: date,
+              shiftDate: {
+                gte: date.startOf('day').toDate(),
+                lte: date.endOf('day').toDate(),
+              },
               deleted: false,
             }
           })
@@ -547,7 +572,7 @@ export class LeaveRequestService {
             await prisma.workshift.create({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: date,
+                shiftDate: date.toDate(),
                 absent: true,
               }
             })
@@ -555,7 +580,7 @@ export class LeaveRequestService {
             await prisma.workshift.update({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: date,
+                shiftDate: date.toDate(),
                 absent: true,
               },
               where: {
@@ -576,9 +601,9 @@ export class LeaveRequestService {
           const queryCreateAttendance = await prisma.attendance.create({
             data: {
               employeeId: queryData.employeeId,
-              attendanceDate: date,
-              checkIn: date,
-              checkOut: date,
+              attendanceDate: date.toDate(),
+              checkIn: date.toDate(),
+              checkOut: date.toDate(),
               lateArrival: Helper.ConfigStaticDateTime("00:00"),
               earlyLeave: Helper.ConfigStaticDateTime("00:00"),
               totalHours: totalHours,
@@ -592,12 +617,16 @@ export class LeaveRequestService {
         const dateInMonth = moment.utc(`${leaveRequestYear + 1}-${leaveRequestMonthStart}-01`, "YYYY-MM-DD").daysInMonth();
         for (let i = leaveRequestDateStart; i <= dateInMonth; ++i) {
           // Get the date in ISO 8601 format (e.g. "2023-04-01")
-          const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
+          // const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
+          const date = moment.utc(`${leaveRequestYear}-${leaveRequestMonthStart}-${i}`, "YYYY-MM-DD");
 
           const queryWorkshiftData = await prisma.workshift.findFirst({
             where: {
               employeeId: queryData.employeeId,
-              shiftDate: date,
+              shiftDate: {
+                gte: date.startOf('day').toDate(),
+                lte: date.endOf('day').toDate(),
+              },
               deleted: false,
             }
           })
@@ -606,7 +635,7 @@ export class LeaveRequestService {
             await prisma.workshift.create({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: date,
+                shiftDate: date.toDate(),
                 absent: true,
               }
             })
@@ -614,7 +643,7 @@ export class LeaveRequestService {
             await prisma.workshift.update({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: date,
+                shiftDate: date.toDate(),
                 absent: true,
               },
               where: {
@@ -635,9 +664,9 @@ export class LeaveRequestService {
           const queryCreateAttendance = await prisma.attendance.create({
             data: {
               employeeId: queryData.employeeId,
-              attendanceDate: date,
-              checkIn: date,
-              checkOut: date,
+              attendanceDate: date.toDate(),
+              checkIn: date.toDate(),
+              checkOut: date.toDate(),
               lateArrival: Helper.ConfigStaticDateTime("00:00"),
               earlyLeave: Helper.ConfigStaticDateTime("00:00"),
               totalHours: totalHours,
@@ -648,12 +677,16 @@ export class LeaveRequestService {
         }
         for (let i = 1; i <= leaveRequestDateEnd; ++i) {
           // Get the date in ISO 8601 format (e.g. "2023-04-01")
-          const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthEnd}-${i}`)
+          // const date = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthEnd}-${i}`)
+          const date = moment.utc(`${leaveRequestYear}-${leaveRequestMonthEnd}-${i}`, "YYYY-MM-DD");
 
           const queryWorkshiftData = await prisma.workshift.findFirst({
             where: {
               employeeId: queryData.employeeId,
-              shiftDate: date,
+              shiftDate: {
+                gte: date.startOf('day').toDate(),
+                lte: date.endOf('day').toDate(),
+              },
               deleted: false,
             }
           })
@@ -662,7 +695,7 @@ export class LeaveRequestService {
             await prisma.workshift.create({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: date,
+                shiftDate: date.toDate(),
                 absent: true,
               }
             })
@@ -670,7 +703,7 @@ export class LeaveRequestService {
             await prisma.workshift.update({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: date,
+                shiftDate: date.toDate(),
                 absent: true,
               },
               where: {
@@ -691,9 +724,9 @@ export class LeaveRequestService {
           const queryCreateAttendance = await prisma.attendance.create({
             data: {
               employeeId: queryData.employeeId,
-              attendanceDate: date,
-              checkIn: date,
-              checkOut: date,
+              attendanceDate: date.toDate(),
+              checkIn: date.toDate(),
+              checkOut: date.toDate(),
               lateArrival: Helper.ConfigStaticDateTime("00:00"),
               earlyLeave: Helper.ConfigStaticDateTime("00:00"),
               totalHours: totalHours,

@@ -28,8 +28,10 @@ export class WorkshiftService {
       daysInNextmonth = moment.utc(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
     }
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
+    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
+    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
+    const startDate = moment.utc(`${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`, "YYYY-MM-DD");
+    const endDate = moment.utc(`${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`, "YYYY-MM-DD");
 
     var whereData;
     if (selection) {
@@ -44,8 +46,8 @@ export class WorkshiftService {
             deleted: false,
           },
           shiftDate: {
-            gte: startDate,
-            lte: endDate,
+            gte: startDate.startOf('day').toDate(),
+            lte: endDate.startOf('day').toDate(),
           }
         }
       } else if (selection.work == true && selection.leave == false) {
@@ -60,8 +62,8 @@ export class WorkshiftService {
             deleted: false,
           },
           shiftDate: {
-            gte: startDate,
-            lte: endDate,
+            gte: startDate.startOf('day').toDate(),
+            lte: endDate.startOf('day').toDate(),
           }
         }
       } else if (selection.work == false && selection.leave == true) {
@@ -76,8 +78,8 @@ export class WorkshiftService {
             deleted: false,
           },
           shiftDate: {
-            gte: startDate,
-            lte: endDate,
+            gte: startDate.startOf('day').toDate(),
+            lte: endDate.startOf('day').toDate(),
           }
         }
       } else if (selection.work == false && selection.leave == false) {
@@ -95,8 +97,8 @@ export class WorkshiftService {
           deleted: false,
         },
         shiftDate: {
-          gte: startDate,
-          lte: endDate,
+          gte: startDate.startOf('day').toDate(),
+          lte: endDate.startOf('day').toDate(),
         }
       }
     }
@@ -155,8 +157,10 @@ export class WorkshiftService {
       daysInNextmonth = moment.utc(`${data.year + 1}-${data.month.nextMonth}-01`, "YYYY-MM-DD").daysInMonth();
     }
 
-    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
-    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
+    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`)
+    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`)
+    const startDate = moment.utc(`${data.year}-${data.month.previousMonth}-${daysInPreviousmonth - 7}`, "YYYY-MM-DD");
+    const endDate = moment.utc(`${data.year}-${data.month.nextMonth}-${daysInNextmonth - 24}`, "YYYY-MM-DD")
 
     var whereData;
     if (selection) {
@@ -166,8 +170,8 @@ export class WorkshiftService {
           deleted: false,
           employeeId: employeeId,
           shiftDate: {
-            gte: startDate,
-            lte: endDate,
+            gte: startDate.startOf('day').toDate(),
+            lte: endDate.startOf('day').toDate(),
           }
         }
       } else if (selection.work == true && selection.leave == false) {
@@ -177,8 +181,8 @@ export class WorkshiftService {
           absent: false,
           employeeId: employeeId,
           shiftDate: {
-            gte: startDate,
-            lte: endDate,
+            gte: startDate.startOf('day').toDate(),
+            lte: endDate.startOf('day').toDate(),
           }
         }
       } else if (selection.work == false && selection.leave == true) {
@@ -188,8 +192,8 @@ export class WorkshiftService {
           absent: true,
           employeeId: employeeId,
           shiftDate: {
-            gte: startDate,
-            lte: endDate,
+            gte: startDate.startOf('day').toDate(),
+            lte: endDate.startOf('day').toDate(),
           }
         }
       } else if (selection.work == false && selection.leave == false) {
@@ -202,8 +206,8 @@ export class WorkshiftService {
         deleted: false,
         employeeId: employeeId,
         shiftDate: {
-          gte: startDate,
-          lte: endDate,
+          gte: startDate.startOf('day').toDate(),
+          lte: endDate.startOf('day').toDate(),
         }
       }
     }
@@ -254,12 +258,16 @@ export class WorkshiftService {
       //looping through days in the specify month
       for (let i = data.fromDate; i <= data.toDate; ++i) {
         // Get the date in ISO 8601 format (e.g. "2023-04-01")
-        const date = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${i}`)
+        // const date = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${i}`)
+        const date = moment.utc(`${data.year}-${data.month}-${i}`, "YYYY-MM-DD")
 
         const queryData = await prisma.workshift.findFirst({
           where: {
             employeeId: empId,
-            shiftDate: date,
+            shiftDate: {
+              gte: date.startOf('day').toDate(),
+              lte: date.endOf('day').toDate(),
+            },
             deleted: false,
           }
         })
@@ -275,7 +283,7 @@ export class WorkshiftService {
           await prisma.workshift.create({
             data: {
               employeeId: empId,
-              shiftDate: date,
+              shiftDate: date.toDate(),
               shiftTypeId: shiftType.shiftTypeId
             }
           })
@@ -283,7 +291,7 @@ export class WorkshiftService {
           await prisma.workshift.update({
             data: {
               employeeId: empId,
-              shiftDate: date,
+              shiftDate: date.toDate(),
               shiftTypeId: shiftType.shiftTypeId
             },
             where: {
@@ -300,7 +308,9 @@ export class WorkshiftService {
 
   public modifyWorkshift = async (data: ModifyWorkshiftDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
-    const modifyDate = Helper.ConfigStaticDateTime("00:00", data.shiftDate)
+    // const modifyDate = Helper.ConfigStaticDateTime("00:00", data.shiftDate)
+
+    const modifyDate = moment.utc(data.shiftDate, "YYYY-MM-DD")
 
     //create
     if (!data.shiftId) {
@@ -308,7 +318,10 @@ export class WorkshiftService {
       const queryData = await prisma.workshift.findFirst({
         where: {
           employeeId: data.employeeId,
-          shiftDate: modifyDate,
+          shiftDate: {
+            gte: modifyDate.startOf('day').toDate(),
+            lte: modifyDate.endOf('day').toDate(),
+          },
           deleted: false,
         }
       })
@@ -322,7 +335,7 @@ export class WorkshiftService {
         data: {
           employeeId: data.employeeId,
           shiftTypeId: data.shiftTypeId,
-          shiftDate: modifyDate,
+          shiftDate: modifyDate.toDate(),
         }
       })
       if (queryModifyData) {
@@ -344,7 +357,10 @@ export class WorkshiftService {
         const queryData = await prisma.workshift.findFirst({
           where: {
             employeeId: data.employeeId,
-            shiftDate: modifyDate,
+            shiftDate: {
+              gte: modifyDate.startOf('day').toDate(),
+              lte: modifyDate.endOf('day').toDate(),
+            },
             deleted: false,
           }
         })
@@ -359,7 +375,7 @@ export class WorkshiftService {
           data: {
             employeeId: data.employeeId,
             shiftTypeId: data.shiftTypeId,
-            shiftDate: modifyDate,
+            shiftDate: modifyDate.toDate(),
             allowEarlyLeave: false,
             allowLateArrival: false,
           },
@@ -376,7 +392,7 @@ export class WorkshiftService {
       const queryModifyData = await prisma.workshift.update({
         data: {
           shiftTypeId: data.shiftTypeId,
-          shiftDate: modifyDate,
+          shiftDate: modifyDate.toDate(),
           allowEarlyLeave: data.allowEarlyLeave,
           allowLateArrival: data.allowLateArrival,
         },

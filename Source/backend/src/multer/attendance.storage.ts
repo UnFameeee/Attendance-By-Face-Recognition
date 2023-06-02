@@ -14,7 +14,7 @@ var staticDateFolder: string;
 var errorFlag: boolean = false;
 const attendanceImageStorage = multer.diskStorage({
   // Destination to store image     
-  //Attendance - EmpID - Date - imageIn, imageOut
+  // Attendance - EmpID - Date - imageIn, imageOut
   destination: async (req: RequestWithMulter, file, cb) => {
     const employeeId: string = (req.query.employeeId).toString();
 
@@ -22,23 +22,23 @@ const attendanceImageStorage = multer.diskStorage({
     errorFlag = false;
 
     now = new Date();
-    const modifyDate = Helper.ConfigStaticDateTime("00:00", `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`)
+    const modifyDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD").toDate();
     const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
       where: {
         employeeId: employeeId,
-        shiftDate: modifyDate,
+        shiftDate: {
+          gte: targetDate.startOf('day').toDate(),
+          lte: targetDate.endOf('day').toDate(),
+        },
         deleted: false,
       },
     })
 
     if (!workShift) {
       errorFlag = true;
-      // req.error = "You don't have a schedule for today";
-      // let error: HttpException = new HttpException(201, "You don't have a schedule for today");
-      // cb(error, null);
     } else {
       const queryAttendanceAbsent = await prisma.attendance.findFirst({
         where: {
@@ -54,9 +54,6 @@ const attendanceImageStorage = multer.diskStorage({
 
       if (queryAttendanceAbsent) {
         errorFlag = true;
-        // req.error = "This is your leave request day, you don't have a schedule for today";
-        // let error: HttpException = new HttpException(201, "This is your leave request day, you don't have a schedule for today");
-        // cb(error, null);
       } else {
         const queryAttendanceCheckoutData = await prisma.attendance.findFirst({
           where: {
@@ -76,14 +73,7 @@ const attendanceImageStorage = multer.diskStorage({
         })
         if (queryAttendanceCheckoutData) {
           errorFlag = true;
-          // req.error = "You have already checkout, please check again";
-          // let error: HttpException = new HttpException(201, "You have already checkout, please check again");
-          // cb(error, null);
         }
-
-        // if (!errorFlag) {
-
-        // }
       }
     }
 

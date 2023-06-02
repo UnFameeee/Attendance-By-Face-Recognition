@@ -1764,9 +1764,9 @@ function AttendancePersonal() {
             </Flex>
             {!isValid && (
               <Flex margin="20px 0px 0px 0px">
-                <Text fontSize="1.15rem" fontWeight="semibold">
+                <Text fontSize="1.15rem" fontWeight="semibold" color={"red"}>
                   Report Note:{" "}
-                  <b style={{ fontWeight: "normal" }}>
+                  <b style={{ fontWeight: "normal", color: "black" }}>
                     {attendanceDetailObj?.result?.note}
                   </b>
                 </Text>
@@ -1829,9 +1829,7 @@ function AttendancePersonal() {
                   <Flex gap="5px" alignItems="center">
                     <MdWorkHistory />
                     <Text>
-                      {Helper.convertDateISOToHHmm(
-                        attendanceDetailObj?.result?.totalHours
-                      )}
+                      {Helper.convertDateISOToHHmm(attendanceDetailObj?.result?.totalHours)}
                     </Text>
                   </Flex>
                   <Text>Total working hours</Text>

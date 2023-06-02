@@ -35,6 +35,7 @@ import {
 import { approvalCodeColor } from "../../../data/ColorData";
 import { Formik } from "formik";
 import FormTextField from "../../../components/field/FormTextField";
+import NoDataToDisplay from "../../../components/NoDataToDisplay";
 function LeaveRequestPersonal() {
   // #region declare variable
   const resultPermission = useGetPermission(
@@ -499,14 +500,17 @@ function LeaveRequestPersonal() {
         </Box>
       ) : (
         <Box w="100%" mt="10px">
-          <DynamicTable
-            onAddEditOpen={onAddEditOpen}
-            handleDeleteRange={DeleteRange}
-            tableRowAction={tableRowAction}
-            columns={columns}
-            data={LREmployeeData?.result?.data}
-            permission={resultPermission}
-          />
+          {
+            LREmployeeData?.result?.data &&
+            <DynamicTable
+              onAddEditOpen={onAddEditOpen}
+              handleDeleteRange={DeleteRange}
+              tableRowAction={tableRowAction}
+              columns={columns}
+              data={LREmployeeData?.result?.data ?? []}
+              permission={resultPermission}
+            />
+          }
           <DynamicDrawer
             handleCreate={handleSubmitLeaveRequest}
             isAddEditOpen={isAddEditOpen}
