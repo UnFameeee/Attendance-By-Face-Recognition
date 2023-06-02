@@ -557,7 +557,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight='bold'>
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.totalHours
                         )}
@@ -572,7 +572,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight='bold'>
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.checkIn
                         )}
@@ -587,7 +587,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight='bold'>
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.checkOut
                         )}
@@ -603,7 +603,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight='bold'>
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.lateArrival
                         )}
@@ -619,7 +619,7 @@ function AttendancePersonal() {
                       fontSize="xl"
                       flex="1"
                     >
-                      <Text>
+                      <Text fontWeight='bold'>
                         {Helper.convertDateISOToHHmm(
                           attendanceTodayData?.earlyLeave
                         )}
@@ -647,77 +647,6 @@ function AttendancePersonal() {
                       <Heading fontWeight="medium" fontSize="2rem">
                         Attendance History
                       </Heading>
-                    </Flex>
-
-                    <Flex
-                      flex="1"
-                      justifyContent="flex-end"
-                      gap="10px"
-                      flexDirection={{ base: "column", md: "row" }}
-                    >
-                      <Flex alignItems="center" gap="5px">
-                        <Badge
-                          rounded="md"
-                          colorScheme="green"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          O.T
-                        </Badge>
-                        <Text>
-                          <FaEquals />{" "}
-                        </Text>
-                        <Badge
-                          rounded="md"
-                          colorScheme="green"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          On Time
-                        </Badge>
-                      </Flex>
-                      <Flex alignItems="center" gap="5px">
-                        <Badge
-                          rounded="md"
-                          colorScheme="yellow"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          L.A
-                        </Badge>
-                        <Text>
-                          <FaEquals />{" "}
-                        </Text>
-                        <Badge
-                          rounded="md"
-                          colorScheme="yellow"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          Late Arrival
-                        </Badge>
-                      </Flex>
-                      <Flex alignItems="center" gap="5px">
-                        <Badge
-                          rounded="md"
-                          colorScheme="orange"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          E.L
-                        </Badge>
-                        <Text>
-                          <FaEquals />{" "}
-                        </Text>
-                        <Badge
-                          rounded="md"
-                          colorScheme="orange"
-                          fontSize="md"
-                          p="5px"
-                        >
-                          Early Leave
-                        </Badge>
-                      </Flex>
                     </Flex>
                   </Flex>
                   <HStack>
@@ -843,7 +772,7 @@ function AttendancePersonal() {
                                   )}
                                 </Text>
                               </HStack>
-                              {!item?.earlyLeave && !item?.lateArrival && (
+                              {!item?.earlyLeave && !item?.lateArrival && item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="green"
@@ -853,7 +782,7 @@ function AttendancePersonal() {
                                   O.T
                                 </Badge>
                               )}
-                              {item?.lateArrival && (
+                              {item?.lateArrival && item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="yellow"
@@ -863,7 +792,17 @@ function AttendancePersonal() {
                                   L.A
                                 </Badge>
                               )}
-                              {item?.earlyLeave && (
+                              {item?.absent && (
+                                <Badge
+                                  rounded="md"
+                                  colorScheme='teal'
+                                  fontSize="md"
+                                  p="5px"
+                                >
+                                  L.D
+                                </Badge>
+                              )}
+                              {item?.earlyLeave && item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="orange"
@@ -1327,7 +1266,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight='bold'>
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.totalHours
                               )}
@@ -1342,7 +1281,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight='bold'>
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.checkIn
                               )}
@@ -1357,7 +1296,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight='bold'>
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.checkOut
                               )}
@@ -1373,7 +1312,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight='bold'>
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.lateArrival
                               )}
@@ -1389,7 +1328,7 @@ function AttendancePersonal() {
                             fontSize="xl"
                             flex="1"
                           >
-                            <Text>
+                            <Text fontWeight='bold'>
                               {Helper.convertDateISOToHHmm(
                                 attendanceTodayFilterData?.earlyLeave
                               )}
@@ -1422,7 +1361,7 @@ function AttendancePersonal() {
                               Attendance History
                             </Heading>
                           </Flex>
-                          <Flex
+                          {/* <Flex
                             flex="1"
                             justifyContent="flex-end"
                             gap="10px"
@@ -1491,7 +1430,7 @@ function AttendancePersonal() {
                                 Early Leave
                               </Badge>
                             </Flex>
-                          </Flex>
+                          </Flex> */}
                         </Flex>
                         <HStack>
                           <Heading fontSize="xl" fontWeight="medium" mb="6px">
@@ -1621,7 +1560,8 @@ function AttendancePersonal() {
                                       </Text>
                                     </HStack>
                                     {!item?.earlyLeave &&
-                                      !item?.lateArrival && (
+                                      !item?.lateArrival &&
+                                      !item?.absent && (
                                         <Badge
                                           rounded="md"
                                           colorScheme="green"
@@ -1631,7 +1571,7 @@ function AttendancePersonal() {
                                           O.T
                                         </Badge>
                                       )}
-                                    {item?.lateArrival && (
+                                    {item?.lateArrival && !item?.absent && (
                                       <Badge
                                         rounded="md"
                                         colorScheme="yellow"
@@ -1641,7 +1581,17 @@ function AttendancePersonal() {
                                         L.A
                                       </Badge>
                                     )}
-                                    {item?.earlyLeave && (
+                                    {item?.absent && (
+                                      <Badge
+                                        rounded="md"
+                                        colorScheme='teal'
+                                        fontSize="md"
+                                        p="5px"
+                                      >
+                                        L.D
+                                      </Badge>
+                                    )}
+                                    {item?.earlyLeave && !item?.absent && (
                                       <Badge
                                         rounded="md"
                                         colorScheme="orange"
@@ -1714,7 +1664,7 @@ function AttendancePersonal() {
                 {attendanceDetailObj?.result?.absent && (
                   <Badge
                     rounded="md"
-                    colorScheme="yellow"
+                    colorScheme="teal"
                     fontSize="md"
                     p="5px"
                   >
