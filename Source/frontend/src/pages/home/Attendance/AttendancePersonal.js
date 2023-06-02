@@ -146,8 +146,13 @@ function AttendancePersonal() {
             "attendanceHistoryData",
             employeeFilterId,
           ]);
+          queryClient.invalidateQueries([
+            "thisMonthAttendanceData",
+            employeeFilterId,
+          ]);
         } else {
           queryClient.invalidateQueries(["attendanceHistoryData", userId]);
+          queryClient.invalidateQueries(["thisMonthAttendanceData", userId]);
         }
         toast({
           title: "Report Invalid Attendance Successfully",
@@ -925,8 +930,8 @@ function AttendancePersonal() {
                     onSubmit={(values, actions) => {
                       const departmentId = values.department;
                       setDepartmentId(departmentId);
-                      setEmployeeFilterId("")
-                      formikRef.current?.resetForm()
+                      setEmployeeFilterId("");
+                      formikRef.current?.resetForm();
                     }}
                   >
                     {(formik) => (
@@ -988,7 +993,10 @@ function AttendancePersonal() {
                         Employee Filter:
                       </Highlight>
                     </Heading>
-                    <Formik initialValues={initialValuesOfEmployeeFilter} innerRef={formikRef}>
+                    <Formik
+                      initialValues={initialValuesOfEmployeeFilter}
+                      innerRef={formikRef}
+                    >
                       {(formik) => (
                         <Box w="200px">
                           <FormTextField
@@ -1829,7 +1837,9 @@ function AttendancePersonal() {
                   <Flex gap="5px" alignItems="center">
                     <MdWorkHistory />
                     <Text>
-                      {Helper.convertDateISOToHHmm(attendanceDetailObj?.result?.totalHours)}
+                      {Helper.convertDateISOToHHmm(
+                        attendanceDetailObj?.result?.totalHours
+                      )}
                     </Text>
                   </Flex>
                   <Text>Total working hours</Text>

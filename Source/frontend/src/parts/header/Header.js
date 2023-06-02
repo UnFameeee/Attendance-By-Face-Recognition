@@ -6,18 +6,21 @@ import {
   Heading,
   Show,
   Hide,
+  Avatar,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import webLogo from '../../assets/favicon.ico';
 function Header() {
   const location = useLocation();
   return (
-    <Box paddingX="5" paddingY="5" height="80px"  width="100vw">
+    <Box paddingX="5" paddingY="5" height="80px" width="100vw">
       <Flex alignItems="center">
         <Hide below="sm">
-          <Box  bg='white' p='3' rounded='md'>
+          <Flex alignItems='center' gap='5px' bg="white" p="3" rounded="md">
+            <Avatar boxSize='40px' src={webLogo} />
             <Heading fontSize="lg">Attendance By Face Recognition</Heading>
-          </Box>
+          </Flex>
         </Hide>
         <Box flex="1">
           <nav>

@@ -52,7 +52,7 @@ function AttendanceExceptionManagement() {
     permissionAttendanceExceptionManagement,
     "attendance-management"
   );
-  const formikRef = useRef()
+  const formikRef = useRef();
   const toast = useToast();
   const queryClient = useQueryClient();
   const finalRef = React.useRef(null);
@@ -64,7 +64,7 @@ function AttendanceExceptionManagement() {
   const [approvalId, setApprovalId] = useState("");
   const [readOnlyApproval, setReadOnlyApproval] = useState(false);
   const [attendanceExceptionGetListObj, setAttendanceExceptionGetListObj] =
-    useState();
+    useState({});
   const [checkType, setCheckType] = useState("CHECKIN");
   const [userRole, setUserRole] = useState(Helper.getUserRole());
   const [departmentId, setDepartmentId] = useState(
@@ -203,6 +203,8 @@ function AttendanceExceptionManagement() {
     let verifyApprovalObj = {};
     verifyApprovalObj["status"] = "APPROVE";
     verifyApprovalObj["id"] = approvalId;
+    console.log(attendanceExceptionGetListObj, "attendanceExceptionGetListObj");
+
     useVerifyExceptionAttendance.mutate(verifyApprovalObj);
     onAddEditClose();
   };
@@ -369,6 +371,12 @@ function AttendanceExceptionManagement() {
     useGetListAttendanceException.mutate(attendanceExceptionObj);
   };
   useEffect(() => {
+    setAttendanceExceptionGetListObj((prev) => {
+      prev["attendanceType"] = checkType;
+      return prev;
+    });
+  }, [checkType]);
+  useEffect(() => {
     if (userRole.role == "manager") {
       getListAttendanceException();
     }
@@ -423,7 +431,7 @@ function AttendanceExceptionManagement() {
               } else {
                 setListAttendanceException([]);
               }
-              formikRef.current?.resetForm()
+              formikRef.current?.resetForm();
             }}
           >
             {(formik) => (
@@ -477,7 +485,10 @@ function AttendanceExceptionManagement() {
                 </Highlight>
               </Heading>
 
-              <Formik initialValues={initialValuesForDateFilterSelection} innerRef={formikRef}>
+              <Formik
+                initialValues={initialValuesForDateFilterSelection}
+                innerRef={formikRef}
+              >
                 {(formik) => (
                   <Box>
                     <FormTextField
@@ -527,17 +538,16 @@ function AttendanceExceptionManagement() {
             <TabPanel p="0">
               {attendanceExceptionGetListObj?.departmentId ? (
                 <Box w="100%">
-                  {
-                    listAttendanceException &&
-                      <DynamicTable
-                        onAddEditOpen={onAddEditOpen}
-                        handleDeleteRange={DeleteRange}
-                        tableRowAction={tableRowAction}
-                        columns={columns}
-                        data={listAttendanceException}
-                        permission={resultPermission}
-                      /> 
-                  }
+                  {listAttendanceException && (
+                    <DynamicTable
+                      onAddEditOpen={onAddEditOpen}
+                      handleDeleteRange={DeleteRange}
+                      tableRowAction={tableRowAction}
+                      columns={columns}
+                      data={listAttendanceException}
+                      permission={resultPermission}
+                    />
+                  )}
                 </Box>
               ) : (
                 <Stack>
