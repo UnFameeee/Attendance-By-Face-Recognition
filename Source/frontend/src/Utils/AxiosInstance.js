@@ -24,10 +24,8 @@ axiosBase.interceptors.request.use((config) => {
   if (accessToken && !Helper.isTokenExpired(accessToken)) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   } else if (!refreshToken && accessToken != null) {
-    console.log(accessToken)
     cookies.remove("jwt_authentication");
     localStorage.removeItem("accessToken");
-    // alert("Your token have been expired, please sign in again!")
     globalNavigate("/sign-in");
   }
   return config;
