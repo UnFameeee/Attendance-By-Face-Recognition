@@ -66,7 +66,7 @@ const ConvertMillisecondsToHHMM = (milliseconds: any) => {
   var hours = Math.floor(minutes / 60);
   var remainingMinutes = minutes % 60;
 
-  var formattedTime = ("0" + hours).slice(-3) + ":" + ("0" + remainingMinutes).slice(-2);
+  var formattedTime = (Number.parseInt(("0" + hours).slice(-3))).toString() + ":" + ("0" + remainingMinutes).slice(-2);
   return formattedTime;
 }
 
