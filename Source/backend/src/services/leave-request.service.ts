@@ -471,9 +471,10 @@ export class LeaveRequestService {
     })
 
     var countAnnualLeaves: number = 0;
-    for (var x of queryAnnualLeaveData) {
-      const startDate = new Date(x.startDate).toISOString().split("T")[0];
-      const endDate = new Date(x.endDate).toISOString().split("T")[0];
+    for (var i = 0, length = queryAnnualLeaveData.length; i < length; ++i) {
+      const startDate = new Date(queryAnnualLeaveData[i].startDate).toISOString().split("T")[0];
+      const endDate = new Date(queryAnnualLeaveData[i].endDate).toISOString().split("T")[0];
+      console.log(`startDate: ${startDate}, endDate: ${endDate}`);
       countAnnualLeaves += Helper.CountDaysFromStartDate(startDate, endDate);
     }
 
@@ -656,7 +657,7 @@ export class LeaveRequestService {
             await prisma.workshift.update({
               data: {
                 employeeId: queryData.employeeId,
-                shiftDate: dateEnd,
+                shiftDate: dateStart,
                 absent: true,
               },
               where: {

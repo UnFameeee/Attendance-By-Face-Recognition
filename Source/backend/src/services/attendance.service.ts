@@ -292,10 +292,10 @@ export class AttendanceService {
     const response = new ResponseData<any>();
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
-    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
-    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    // const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    // const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryData = await prisma.attendance.findMany({
       where: {
@@ -370,9 +370,12 @@ export class AttendanceService {
     const returnData = {
       totalAttendance: totalAttendance,
       totalLeaveDays: queryLeaveData,
-      totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
-      totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
-      totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
+      // totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
+      // totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
+      // totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
+      totalWorkingHours: Helper.ConvertMillisecondsToHHMM(totalWorkingHours),
+      totalLateArrival: Helper.ConvertMillisecondsToHHMM(totalLateArrival),
+      totalEarlyLeave: Helper.ConvertMillisecondsToHHMM(totalEarlyLeave),
     }
 
     response.result = returnData;
@@ -426,11 +429,11 @@ export class AttendanceService {
     const isValid = data.isValid;
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
 
-    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
-    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
+    // const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    // const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryData = await prisma.attendance.findMany({
       where: {
