@@ -717,7 +717,7 @@ function AttendancePersonal() {
                       {(formik) => (
                         <Stack
                           flexDirection={{ base: "column", md: "row" }}
-                          alignItems={{ base: "baseline", md: "center" }}
+                          alignItems={{ base: "baseline", md: "flex-end" }}
                           gap="5px"
                         >
                           <Flex gap="5px">
@@ -778,7 +778,7 @@ function AttendancePersonal() {
                               </HStack>
                               {!item?.earlyLeave &&
                                 !item?.lateArrival &&
-                                item?.absent && (
+                                !item?.absent && (
                                   <Badge
                                     rounded="md"
                                     colorScheme="green"
@@ -788,7 +788,7 @@ function AttendancePersonal() {
                                     O.T
                                   </Badge>
                                 )}
-                              {item?.lateArrival && item?.absent && (
+                              {item?.lateArrival && !item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="yellow"
@@ -808,7 +808,7 @@ function AttendancePersonal() {
                                   L.D
                                 </Badge>
                               )}
-                              {item?.earlyLeave && item?.absent && (
+                              {item?.earlyLeave && !item?.absent && (
                                 <Badge
                                   rounded="md"
                                   colorScheme="orange"
@@ -1514,7 +1514,10 @@ function AttendancePersonal() {
                               <Stack
                                 gap="5px"
                                 flexDirection={{ base: "column", md: "row" }}
-                                alignItems={{ base: "baseline", md: "center" }}
+                                alignItems={{
+                                  base: "baseline",
+                                  md: "flex-end",
+                                }}
                               >
                                 <Flex gap="5px">
                                   <Box w="100px">
@@ -1657,180 +1660,207 @@ function AttendancePersonal() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            <Flex gap="10px" flexDirection="row">
-              <Flex gap="10px">
-                <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                <Heading fontWeight="medium" fontSize="2rem">
-                  Detail
-                </Heading>
-              </Flex>
-              <Flex gap="5px">
-                {isValid && currentTab == "management" && (
-                  <Badge rounded="md" colorScheme="blue" fontSize="md" p="5px">
-                    Valid
-                  </Badge>
-                )}
-                {!isValid && currentTab == "management" && (
-                  <Badge rounded="md" colorScheme="red" fontSize="md" p="5px">
-                    Invalid
-                  </Badge>
-                )}
-                {attendanceDetailObj?.result?.absent && (
-                  <Badge rounded="md" colorScheme="teal" fontSize="md" p="5px">
-                    Leave Day
-                  </Badge>
-                )}
-                {!attendanceDetailObj?.result?.earlyLeave &&
-                  !attendanceDetailObj?.result?.lateArrival &&
-                  !attendanceDetailObj?.result?.absent && (
-                    <Badge
-                      rounded="md"
-                      colorScheme="green"
-                      fontSize="md"
-                      p="5px"
-                    >
-                      On Time
-                    </Badge>
-                  )}
-                {attendanceDetailObj?.result?.lateArrival &&
-                  !attendanceDetailObj?.result?.absent && (
-                    <Badge
-                      rounded="md"
-                      colorScheme="yellow"
-                      fontSize="md"
-                      p="5px"
-                    >
-                      Late Arrival
-                    </Badge>
-                  )}
-                {attendanceDetailObj?.result?.earlyLeave &&
-                  !attendanceDetailObj?.result?.absent && (
-                    <Badge
-                      rounded="md"
-                      colorScheme="orange"
-                      fontSize="md"
-                      p="5px"
-                    >
-                      Early Leave
-                    </Badge>
-                  )}
-                {currentTab == "management" && (
-                  <Button
-                    ml="10px"
-                    colorScheme={isValid ? "red" : "teal"}
-                    onClick={() => {
-                      handleOnClickReportInvalid(
-                        attendanceDetailObj.result?.attendanceId
-                      );
-                    }}
-                  >
-                    {isValid ? "Report Invalid" : "Convert To Valid"}
-                  </Button>
-                )}
-              </Flex>
-            </Flex>
-            {!isValid && (
-              <Flex margin="20px 0px 0px 0px">
-                <Text fontSize="1.15rem" fontWeight="semibold" color={"red"}>
-                  Report Note:{" "}
-                  <b style={{ fontWeight: "normal", color: "black" }}>
-                    {attendanceDetailObj?.result?.note}
-                  </b>
-                </Text>
-              </Flex>
-            )}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <HStack w="100%" spacing="20px">
-              <VStack alignItems="center" flex="1">
-                <Box
-                  w="100%"
-                  ml="7rem"
-                  flex="1"
-                  fontSize="1.2rem"
-                  fontWeight="medium"
-                >
-                  <Flex alignItems="center" gap="5px">
-                    <AiFillClockCircle />
-                    <Text>
-                      {Helper.convertDateISOToDDMMyyyy(
-                        attendanceDetailObj?.result?.attendanceDate
+          {useGetAttendanceDetail.isLoading ? (
+            <Box w="100%" h="546px">
+              <LoadingSpinner />
+            </Box>
+          ) : (
+            <>
+              <ModalHeader>
+                <Flex gap="10px" flexDirection="row">
+                  <Flex gap="10px">
+                    <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                    <Heading fontWeight="medium" fontSize="2rem">
+                      Detail
+                    </Heading>
+                  </Flex>
+                  <Flex gap="5px">
+                    {isValid && currentTab == "management" && (
+                      <Badge
+                        rounded="md"
+                        colorScheme="blue"
+                        fontSize="md"
+                        p="5px"
+                      >
+                        Valid
+                      </Badge>
+                    )}
+                    {!isValid && currentTab == "management" && (
+                      <Badge
+                        rounded="md"
+                        colorScheme="red"
+                        fontSize="md"
+                        p="5px"
+                      >
+                        Invalid
+                      </Badge>
+                    )}
+                    {attendanceDetailObj?.result?.absent && (
+                      <Badge
+                        rounded="md"
+                        colorScheme="teal"
+                        fontSize="md"
+                        p="5px"
+                      >
+                        Leave Day
+                      </Badge>
+                    )}
+                    {!attendanceDetailObj?.result?.earlyLeave &&
+                      !attendanceDetailObj?.result?.lateArrival &&
+                      !attendanceDetailObj?.result?.absent && (
+                        <Badge
+                          rounded="md"
+                          colorScheme="green"
+                          fontSize="md"
+                          p="5px"
+                        >
+                          On Time
+                        </Badge>
                       )}
+                    {attendanceDetailObj?.result?.lateArrival &&
+                      !attendanceDetailObj?.result?.absent && (
+                        <Badge
+                          rounded="md"
+                          colorScheme="yellow"
+                          fontSize="md"
+                          p="5px"
+                        >
+                          Late Arrival
+                        </Badge>
+                      )}
+                    {attendanceDetailObj?.result?.earlyLeave &&
+                      !attendanceDetailObj?.result?.absent && (
+                        <Badge
+                          rounded="md"
+                          colorScheme="orange"
+                          fontSize="md"
+                          p="5px"
+                        >
+                          Early Leave
+                        </Badge>
+                      )}
+                    {currentTab == "management" && (
+                      <Button
+                        ml="10px"
+                        colorScheme={isValid ? "red" : "teal"}
+                        onClick={() => {
+                          handleOnClickReportInvalid(
+                            attendanceDetailObj.result?.attendanceId
+                          );
+                        }}
+                      >
+                        {isValid ? "Report Invalid" : "Convert To Valid"}
+                      </Button>
+                    )}
+                  </Flex>
+                </Flex>
+                {!isValid && (
+                  <Flex margin="20px 0px 0px 0px">
+                    <Text
+                      fontSize="1.15rem"
+                      fontWeight="semibold"
+                      color={"red"}
+                    >
+                      Report Note:{" "}
+                      <b style={{ fontWeight: "normal", color: "black" }}>
+                        {attendanceDetailObj?.result?.note}
+                      </b>
                     </Text>
                   </Flex>
-                  <Text>Date</Text>
-                </Box>
-                <VStack alignItems="center">
-                  <AvatarWithPreview
-                    className="h-[300px] w-[300px] rounded-md"
-                    src={attendanceDetailObj?.result?.checkinCapture}
-                    alt="Check In Image"
-                    altBoxSide="300px"
-                    altRounded="5px"
-                  />
-                  <Box fontSize="1.1rem" fontWeight="medium">
-                    <Text color="green.600">
-                      Check In:
-                      {Helper.convertDateISOToHHmm(
-                        attendanceDetailObj?.result?.checkIn
-                      )}
-                    </Text>
-                    <Text color="orange.400">
-                      Late Arrival:{" "}
-                      {Helper.convertDateISOToHHmm(
-                        attendanceDetailObj?.result?.lateArrival
-                      )}
-                    </Text>
-                  </Box>
-                </VStack>
-              </VStack>
-              <VStack alignItems="center" flex="1">
-                <Box
-                  w="100%"
-                  ml="7rem"
-                  flex="1"
-                  fontSize="1.2rem"
-                  fontWeight="medium"
-                >
-                  <Flex gap="5px" alignItems="center">
-                    <MdWorkHistory />
-                    <Text>
-                      {Helper.convertDateISOToHHmm(
-                        attendanceDetailObj?.result?.totalHours
-                      )}
-                    </Text>
-                  </Flex>
-                  <Text>Total working hours</Text>
-                </Box>
-                <VStack alignItems="center">
-                  <AvatarWithPreview
-                    className="h-[300px] w-[300px] rounded-md"
-                    src={attendanceDetailObj?.result?.checkoutCapture}
-                    alt="Check Out Image"
-                    altBoxSide="300px"
-                    altRounded="5px"
-                  />
-                  <Box fontSize="1.1rem" fontWeight="medium">
-                    <Text color="pink.600">
-                      Check Out:{" "}
-                      {Helper.convertDateISOToHHmm(
-                        attendanceDetailObj?.result?.checkOut
-                      )}
-                    </Text>
-                    <Text color="orange.400">
-                      Early Leave:
-                      {Helper.convertDateISOToHHmm(
-                        attendanceDetailObj?.result?.earlyLeave
-                      )}
-                    </Text>
-                  </Box>
-                </VStack>
-              </VStack>
-            </HStack>
-          </ModalBody>
-          <ModalFooter></ModalFooter>
+                )}
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <HStack w="100%" spacing="20px">
+                  <VStack alignItems="center" flex="1">
+                    <Box
+                      w="100%"
+                      ml="7rem"
+                      flex="1"
+                      fontSize="1.2rem"
+                      fontWeight="medium"
+                    >
+                      <Flex alignItems="center" gap="5px">
+                        <AiFillClockCircle />
+                        <Text>
+                          {Helper.convertDateISOToDDMMyyyy(
+                            attendanceDetailObj?.result?.attendanceDate
+                          )}
+                        </Text>
+                      </Flex>
+                      <Text>Date</Text>
+                    </Box>
+                    <VStack alignItems="center">
+                      <AvatarWithPreview
+                        className="h-[300px] w-[300px] rounded-md"
+                        src={attendanceDetailObj?.result?.checkinCapture}
+                        alt="Check In Image"
+                        altBoxSide="300px"
+                        altRounded="5px"
+                      />
+                      <Box fontSize="1.1rem" fontWeight="medium">
+                        <Text color="green.600">
+                          Check In:
+                          {Helper.convertDateISOToHHmm(
+                            attendanceDetailObj?.result?.checkIn
+                          )}
+                        </Text>
+                        <Text color="orange.400">
+                          Late Arrival:{" "}
+                          {Helper.convertDateISOToHHmm(
+                            attendanceDetailObj?.result?.lateArrival
+                          )}
+                        </Text>
+                      </Box>
+                    </VStack>
+                  </VStack>
+                  <VStack alignItems="center" flex="1">
+                    <Box
+                      w="100%"
+                      ml="7rem"
+                      flex="1"
+                      fontSize="1.2rem"
+                      fontWeight="medium"
+                    >
+                      <Flex gap="5px" alignItems="center">
+                        <MdWorkHistory />
+                        <Text>
+                          {Helper.convertDateISOToHHmm(
+                            attendanceDetailObj?.result?.totalHours
+                          )}
+                        </Text>
+                      </Flex>
+                      <Text>Total working hours</Text>
+                    </Box>
+                    <VStack alignItems="center">
+                      <AvatarWithPreview
+                        className="h-[300px] w-[300px] rounded-md"
+                        src={attendanceDetailObj?.result?.checkoutCapture}
+                        alt="Check Out Image"
+                        altBoxSide="300px"
+                        altRounded="5px"
+                      />
+                      <Box fontSize="1.1rem" fontWeight="medium">
+                        <Text color="pink.600">
+                          Check Out:{" "}
+                          {Helper.convertDateISOToHHmm(
+                            attendanceDetailObj?.result?.checkOut
+                          )}
+                        </Text>
+                        <Text color="orange.400">
+                          Early Leave:
+                          {Helper.convertDateISOToHHmm(
+                            attendanceDetailObj?.result?.earlyLeave
+                          )}
+                        </Text>
+                      </Box>
+                    </VStack>
+                  </VStack>
+                </HStack>
+              </ModalBody>
+              <ModalFooter></ModalFooter>
+            </>
+          )}
         </ModalContent>
       </Modal>
       <Modal

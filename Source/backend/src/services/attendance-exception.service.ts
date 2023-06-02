@@ -343,8 +343,6 @@ export class AttendanceExceptionService {
       }
     })
 
-    console.log(queryEmployeeAttendanceExceptionData);
-
     if (!queryEmployeeAttendanceExceptionData) {
       response.result = "Attendance recorded";
       return response;
@@ -447,8 +445,6 @@ export class AttendanceExceptionService {
           let formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
           earlyLeave = Helper.ConfigStaticDateTime(formattedTimeDiff);
         }
-
-        console.log(date);
 
         const attendanceDateFilter = moment.utc(date, "YYYY-MM-DD");
         const queryShiftData = await prisma.attendance.findFirst({

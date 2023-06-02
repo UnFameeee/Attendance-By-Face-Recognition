@@ -4,18 +4,25 @@ import { ResponseData } from "../config/responseData.config";
 import { prisma } from "../database/prisma.singleton";
 import moment from "moment";
 import { Helper } from "../utils/helper";
+import { timezoneConfig } from "../constant/moment-timezone.constant";
 
 export class URLService {
   public generateURL = async (URLtype: string, employeeId: string, urlImage: string) => {
     const response = new ResponseData<string>();
-    // Get the current date and time
-    let datetime = new Date();
-    // Add 30 minutes to the current time
-    datetime.setMinutes(datetime.getMinutes() + 30);
+
+    const momentNow = moment(new Date()).tz(timezoneConfig);
+    let threshHoldNow = Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD"));
+
+    let baseStartTime = moment.utc(momentNow.format("HH:mm"), 'HH:mm');
+    let baseThreshold = moment.utc("00:30", 'HH:mm');
+    let resultHour = moment.utc(baseStartTime.clone().add(baseThreshold.hour(), 'hours').add(baseThreshold.minute(), 'minutes')).format("HH:mm");
+
+    let thresholdLimit = Helper.ConfigStaticDateTime(resultHour, momentNow.format("YYYY-MM-DD"));
+
     let URL: string;
 
     if (URLtype == "AttendanceException") {
-      URL = `${env.CLIENT_URL}/report-attendance-exception?session=${Helper.EncodeWithCipher(urlImage)}`
+      URL = `${env.CLIENT_URL}/report-attendance-exception?token=${Helper.EncodeWithCipher(urlImage)}&session=${v4()}`
     } else if (URLtype == "TrainingFace") {
       URL = `${env.CLIENT_URL}/training-face?id=${Helper.EncodeWithCipher(employeeId)}&session=${v4()}`;
     }
@@ -23,7 +30,7 @@ export class URLService {
     const queryData = await prisma.urlmanagement.create({
       data: {
         URL: URL,
-        expiredTime: datetime,
+        expiredTime: thresholdLimit,
         isExpired: false,
       }
     })
@@ -54,8 +61,11 @@ export class URLService {
         return response;
       }
 
+      const momentNow = moment(new Date()).tz(timezoneConfig);
+      let threshHoldNow = Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD"))
+
       //Expire by not submiting for too long
-      if (moment.utc(new Date(queryData.expiredTime.getTime()), "HH:mm:ss").diff(moment.utc(new Date(now.getTime()), "HH:mm:ss")) < 0) {
+      if (moment(new Date(queryData.expiredTime.getTime()), "HH:mm:ss").diff(moment(new Date(threshHoldNow.getTime()), "HH:mm:ss")) < 0) {
         response.result = false;
         return response;
       }

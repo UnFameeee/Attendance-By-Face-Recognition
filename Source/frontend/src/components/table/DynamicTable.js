@@ -319,11 +319,11 @@ function DynamicTable(props) {
                     </Button>
                   </Tooltip>
                 )}
-                <Tooltip placement="top" hasArrow label="Reset table">
+                {/* <Tooltip placement="top" hasArrow label="Reset table paging">
                   <Button shadow="2xl" colorScheme="blue" onClick={handleReset}>
                     Reset
                   </Button>
-                </Tooltip>
+                </Tooltip> */}
                 {/* {permission?.delete && (
                   <Tooltip
                     placement="top"

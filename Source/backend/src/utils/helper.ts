@@ -44,33 +44,12 @@ const MinusDate = (bigDate: Date, smallDate: Date): string => {
   return formattedTimeDiff;
 };
 
-// const PlusDate = (firstDate: Date, secondDate: Date): string => {
-//   // Parse the time values into moment objects
-//   const momentTime1 = moment.utc(firstDate, 'HH:mm');
-//   const momentTime2 = moment.utc(secondDate, 'HH:mm');
-
-//   // Calculate the total duration by adding the durations of both times
-//   const duration1 = moment.duration(momentTime1.format('HH:mm'));
-//   const duration2 = moment.duration(momentTime2.format('HH:mm'));
-//   const totalDuration = duration1.add(duration2);
-
-//   let formattedTimeDiff = new Date(totalDuration).toISOString().split("T")[1].slice(0, 5);
-
-//   if (format) {
-//     return moment.tz(moment(totalDuration.asMilliseconds(), "HH:mm").format("HH:mm"), "HH:mm", timezoneConfig).format('HH:mm');
-//   } else {
-//     return moment.tz(moment(totalDuration.asMilliseconds(), "HH:mm").format("HH:mm"), "HH:mm", timezoneConfig);
-//   }
-// };
-
-function CountDaysFromStartDate(startDate: string, endDate: string) {
+const CountDaysFromStartDate = (startDate: string, endDate: string) => {
   // Convert the date strings to Date objects
-  var start = new Date(startDate);
-  var end = new Date(endDate);
+  var start = Helper.ConfigStaticDateTime("00:00", startDate);
+  var end = Helper.ConfigStaticDateTime("00:00", endDate);
 
   // Set the time for both dates to midnight
-  start.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
 
   // Calculate the time difference in milliseconds
   var timeDiff = Math.abs(end.getTime() - start.getTime());
@@ -81,6 +60,15 @@ function CountDaysFromStartDate(startDate: string, endDate: string) {
   return daysDiff + 1; // Add 1 to include the start date
 }
 
+const ConvertMillisecondsToHHMM = (milliseconds: any) => {
+  var seconds = Math.floor(milliseconds / 1000);
+  var minutes = Math.floor(seconds / 60);
+  var hours = Math.floor(minutes / 60);
+  var remainingMinutes = minutes % 60;
+
+  var formattedTime = ("0" + hours).slice(-3) + ":" + ("0" + remainingMinutes).slice(-2);
+  return formattedTime;
+}
 
 // Function to encode a message using Cipher
 const EncodeWithCipher = (message: string) => {
@@ -99,7 +87,7 @@ interface IHelper {
   ConvertDoubleSlashURL: Function,
   ConfigStaticDateTime: Function,
   MinusDate: Function,
-  // PlusDate: Function,
+  ConvertMillisecondsToHHMM: Function,
   CountDaysFromStartDate: Function,
   EncodeWithCipher: Function,
   DecodeWithCipher: Function,
@@ -110,7 +98,7 @@ export const Helper: IHelper = {
   ConvertDoubleSlashURL,
   ConfigStaticDateTime,
   MinusDate,
-  // PlusDate,
+  ConvertMillisecondsToHHMM,
   CountDaysFromStartDate,
   EncodeWithCipher,
   DecodeWithCipher,

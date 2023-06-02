@@ -89,14 +89,12 @@ export class AttendanceService {
         let resultHour = moment.utc(baseStartTime.clone().add(baseLimitLateArrival.hour(), 'hours').add(baseLimitLateArrival.minute(), 'minutes')).format("HH:mm");
 
         let shiftThreshholdAfter = Helper.ConfigStaticDateTime(resultHour, date);
-        let threshHoldNow = Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD"))
 
         //the latest punch in is startTime + 1 hour
         if (moment(new Date(shiftThreshholdAfter.getTime()), "HH:mm").diff(moment(new Date(threshHoldNow.getTime()), "HH:mm")) < 0) {
           response.message = "You are too late to check in, please contact with the manager";
           return response;
         }
-
       }
 
       //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
@@ -294,10 +292,10 @@ export class AttendanceService {
     const response = new ResponseData<any>();
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
-    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
-    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    // const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    // const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryData = await prisma.attendance.findMany({
       where: {
@@ -372,9 +370,12 @@ export class AttendanceService {
     const returnData = {
       totalAttendance: totalAttendance,
       totalLeaveDays: queryLeaveData,
-      totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
-      totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
-      totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
+      // totalWorkingHours: moment.utc(totalWorkingHours).format("HH:mm"),
+      // totalLateArrival: moment.utc(totalLateArrival).format("HH:mm"),
+      // totalEarlyLeave: moment.utc(totalEarlyLeave).format("HH:mm"),
+      totalWorkingHours: Helper.ConvertMillisecondsToHHMM(totalWorkingHours),
+      totalLateArrival: Helper.ConvertMillisecondsToHHMM(totalLateArrival),
+      totalEarlyLeave: Helper.ConvertMillisecondsToHHMM(totalEarlyLeave),
     }
 
     response.result = returnData;
@@ -428,11 +429,11 @@ export class AttendanceService {
     const isValid = data.isValid;
     const daysInMonth = moment.utc(`${data.year}-${data.month}-01`, "YYYY-MM-DD").daysInMonth();
 
-    // const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
-    // const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
+    const startDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${1}`)
+    const endDate = Helper.ConfigStaticDateTime("00:00", `${data.year}-${data.month}-${daysInMonth}`)
 
-    const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
-    const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
+    // const startDate = moment.utc(`${data.year}-${data.month}-${1}`, "YYYY-MM-DD").toDate();
+    // const endDate = moment.utc(`${data.year}-${data.month}-${daysInMonth}`, "YYYY-MM-DD").toDate();
 
     const queryData = await prisma.attendance.findMany({
       where: {
@@ -454,7 +455,10 @@ export class AttendanceService {
         absent: true,
         isValid: true,
         note: true,
-      }
+      },
+      orderBy: {
+        attendanceDate: "asc"
+      },
     })
 
     response.result = queryData;

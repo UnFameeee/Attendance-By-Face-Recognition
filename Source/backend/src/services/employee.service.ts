@@ -702,6 +702,24 @@ export class EmployeeService {
       return response;
     }
 
+    if (queryData) {
+      //remove employee data out of FaceMatcher.json
+      const pathToFaceDescriptors: string = path.join(__dirname, "/../public/train-model");
+      const JSONparseFaceMatcher = JSON.parse(fs.readFileSync(`${pathToFaceDescriptors}/FaceMatcher.json`).toString());
+      const FaceMatcherFromJSON: faceapi.FaceMatcher = faceapi.FaceMatcher.fromJSON(JSONparseFaceMatcher);
+
+      const newLabeledDescriptors = FaceMatcherFromJSON.labeledDescriptors.filter(obj => obj.label !== employeeId);
+
+      const faceMatcher = new faceapi.FaceMatcher(newLabeledDescriptors, 0.4);
+      const modelJSON = faceMatcher.toJSON();
+      const modelName = "FaceMatcher.json";
+      fs.writeFileSync(path.join(__dirname, `/../public/train-model/${modelName}`), JSON.stringify(faceMatcher));
+
+      response.result = "Delete employee successfully";
+    } else {
+      response.message = "Server Error - Delete unsuccessfully";
+    }
+
     response.result = "Assign employee re-scan face sucessfully";
     return response;
   }

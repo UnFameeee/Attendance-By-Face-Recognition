@@ -39,6 +39,7 @@ const ImageStyle = {
   display: "flex",
   justifySelf: "center",
   alignSelf: "center",
+  objectFit: "contain",
 };
 
 export default function AttendanceModal() {
