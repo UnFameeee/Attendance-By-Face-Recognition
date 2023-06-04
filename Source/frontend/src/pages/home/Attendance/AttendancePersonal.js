@@ -1771,7 +1771,7 @@ function AttendancePersonal() {
                           )}
                         </Text>
                         <Text color="orange.400">
-                          Early Leave:
+                          Early Leave:{" "}
                           {Helper.convertDateISOToHHmm(
                             attendanceDetailObj?.result?.earlyLeave
                           )}

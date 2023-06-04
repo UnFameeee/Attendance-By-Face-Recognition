@@ -74,6 +74,10 @@ const getMomentDateFormat = (dateInput) => {
   // return formatDate;
 };
 
+const convertDateISOToYYYY_MM_DD = (dateISO) => {
+  return dateISO.split("T")[0];
+};
+
 function findMostDuplicatedValue(array) {
   let counts = {};
   let maxCount = 0;
@@ -209,6 +213,7 @@ export const Helper = {
   getUseDecodeInfor,
   isFirstTimeLogin,
   getMomentDateFormat,
+  convertDateISOToYYYY_MM_DD,
   getUserRole,
   getScreenAuthorization,
   splitUrlPath,
