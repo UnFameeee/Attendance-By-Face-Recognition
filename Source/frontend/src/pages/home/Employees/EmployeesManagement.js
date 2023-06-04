@@ -64,8 +64,11 @@ function EmployeesManagement() {
 
   // #endregion
   // #region hook
-  const { data: listEmployeeData, isFetching: isFetchingListEmployee, isLoading: isLoadingListEmployee } =
-    useGetListEmployee();
+  const {
+    data: listEmployeeData,
+    isFetching: isFetchingListEmployee,
+    isLoading: isLoadingListEmployee,
+  } = useGetListEmployee();
   const {
     isOpen: isDeleteSingleOpen,
     onOpen: onDeleteSingleOpen,
@@ -281,7 +284,7 @@ function EmployeesManagement() {
   };
   const handleAcceptDelete = () => {
     console.log(deleteSingleData);
-    useDeleteEmployee.mutate(deleteSingleData.id)
+    useDeleteEmployee.mutate(deleteSingleData.id);
     setDeleteSingleData({});
     onDeleteSingleClose();
   };
@@ -558,10 +561,11 @@ function EmployeesManagement() {
     displayName: editData?.["role.displayName"] ?? "",
     department: editData?.department?.departmentName ?? "",
     gender: editData?.gender ?? "male",
-    dateOfBirth: `${editData?.dateOfBirth
+    dateOfBirth: `${
+      editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
-      }`,
+    }`,
     description: `${editData?.description ?? ""}`,
     location: {
       country: `${editData["location.country"] ?? ""}`,
@@ -573,24 +577,26 @@ function EmployeesManagement() {
   const validationSchema = Yup.object().shape(
     Object.keys(editData).length === 0
       ? {
-        fullname: Yup.string().min(8, "Full name must be more than 8 characters").required("This field is required"),
-        email: Yup.string().required("This field is required"),
-        displayName: Yup.string().required("This field is required"),
-        password: Yup.string()
-          .matches(
+          fullname: Yup.string()
+            .min(8, "Full name must be more than 8 characters")
+            .required("This field is required"),
+          email: Yup.string().required("This field is required"),
+          displayName: Yup.string().required("This field is required"),
+          password: Yup.string()
+            .matches(
+              passwordRegex,
+              "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+            )
+            .required("This field is required"),
+        }
+      : {
+          fullname: Yup.string().required("This field is required"),
+          email: Yup.string().required("This field is required"),
+          password: Yup.string().matches(
             passwordRegex,
             "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
-          )
-          .required("This field is required"),
-      }
-      : {
-        fullname: Yup.string().required("This field is required"),
-        email: Yup.string().required("This field is required"),
-        password: Yup.string().matches(
-          passwordRegex,
-          "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
-        ),
-      }
+          ),
+        }
   );
   // #endregion
   if (isLoadingListEmployee) return <LoadingSpinner />;
@@ -610,13 +616,13 @@ function EmployeesManagement() {
         </Flex>
       </HStack>
       {useCreateEmployee.isLoading ||
-        useSaveEmployee.isLoading || useDeleteEmployee.isLoading ||
-        isFetchingListEmployee ? (
+      useSaveEmployee.isLoading ||
+      useDeleteEmployee.isLoading ||
+      isFetchingListEmployee ? (
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
-          {
-            listEmployeeData?.result?.data &&
+          {listEmployeeData?.result?.data && (
             <DynamicTable
               onAddEditOpen={onAddEditOpen}
               handleDeleteRange={DeleteRange}
@@ -625,7 +631,7 @@ function EmployeesManagement() {
               data={listEmployeeData?.result?.data}
               permission={resultPermission}
             />
-          }
+          )}
           <DynamicDrawer
             handleEdit={handleEditEmployee}
             handleCreate={handleCreateEmployee}
@@ -661,46 +667,54 @@ function EmployeesManagement() {
           >
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader textTransform="capitalize">
-                {editData.fullname}'s Photos
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <SimpleGrid
-                  spacing={3}
-                  gridTemplateColumns="repeat(auto-fit, minmax(150px,1fr))"
-                >
-                  {listEmployeePhotos.map((item, index) => (
-                    <Flex
-                      alignItems="center"
-                      key={index}
-                      boxSize="150px"
-                      bg="black"
+              {useGetEmployeePhotos.isLoading ? (
+                <Box h="500px">
+                  <LoadingSpinner />
+                </Box>
+              ) : (
+                <>
+                  <ModalHeader textTransform="capitalize">
+                    {editData.fullname}'s Photos
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <SimpleGrid
+                      spacing={3}
+                      gridTemplateColumns="repeat(auto-fit, minmax(150px,1fr))"
                     >
-                      {/* <Image src={test_image} /> */}
-                      <AvatarWithPreview
-                        src={item.link}
-                        altBoxSide="150px"
-                        altRounded="none"
-                        className="rounded-none"
-                        alt={`${editData.fullname}-training-photo`}
-                      />
-                    </Flex>
-                  ))}
-                </SimpleGrid>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  colorScheme="blue"
-                  mr={3}
-                  onClick={() => {
-                    onPhotoViewModalClose();
-                    setEditData({});
-                  }}
-                >
-                  Close
-                </Button>
-              </ModalFooter>
+                      {listEmployeePhotos.map((item, index) => (
+                        <Flex
+                          alignItems="center"
+                          key={index}
+                          boxSize="150px"
+                          bg="black"
+                        >
+                          {/* <Image src={test_image} /> */}
+                          <AvatarWithPreview
+                            src={item.link}
+                            altBoxSide="150px"
+                            altRounded="none"
+                            className="rounded-none"
+                            alt={`${editData.fullname}-training-photo`}
+                          />
+                        </Flex>
+                      ))}
+                    </SimpleGrid>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={() => {
+                        onPhotoViewModalClose();
+                        setEditData({});
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
             </ModalContent>
           </Modal>
         </Box>

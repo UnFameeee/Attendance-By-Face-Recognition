@@ -229,11 +229,7 @@ function AttendancePersonal() {
     setEmployeeFilterId(value);
   };
   function handleChangeTab(value) {
-    if (value == "personal") {
-      setCurrentTab("personal");
-    } else if (value == "management") {
-      setCurrentTab("management");
-    }
+    setCurrentTab(value);
   }
   function refreshAttendanceManagement() {
     refetchAttendanceHistoryFilterData();
@@ -299,10 +295,10 @@ function AttendancePersonal() {
   useEffect(() => {
     refetchAttendanceHistoryFilterData();
   }, [monthManagement, yearManagement, isValid]);
- useEffect(()=>{
-  setIsValid(true);
-  setIsValidPersonal(true)
- },[currentTab])
+  useEffect(() => {
+    setIsValid(true);
+    setIsValidPersonal(true);
+  }, [currentTab]);
   // #endregion
   return (
     <>
@@ -1608,7 +1604,7 @@ function AttendancePersonal() {
                     </Heading>
                   </Flex>
                   <Flex gap="5px">
-                    {isValid && currentTab == "management" && (
+                    {/* {isValid && currentTab == "management" && (
                       <Badge
                         rounded="md"
                         colorScheme="blue"
@@ -1627,7 +1623,7 @@ function AttendancePersonal() {
                       >
                         Invalid
                       </Badge>
-                    )}
+                    )} */}
                     {attendanceDetailObj?.result?.absent && (
                       <Badge
                         rounded="md"
@@ -1689,7 +1685,7 @@ function AttendancePersonal() {
                 </Flex>
                 <Flex margin="20px 0px 0px 0px">
                   <Text fontSize="1.15rem" fontWeight="semibold" color={"red"}>
-                    Report Note:{" "}
+                    Note:{" "}
                     <b style={{ fontWeight: "normal", color: "black" }}>
                       {attendanceDetailObj?.result?.note}
                     </b>
