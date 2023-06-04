@@ -144,8 +144,10 @@ function LeaveRequestPersonal() {
   const handleSubmitLeaveRequest = (values) => {
     const leaveRequestObj = {
       leaveTypeId: values.leaveType,
-      startDate: new Date(values?.startDate).toISOString(),
-      endDate: new Date(values?.endDate).toISOString(),
+      // startDate: new Date(values?.startDate).toISOString(),
+      // endDate: new Date(values?.endDate).toISOString(),
+      startDate: Helper.convertDateISOToYYYY_MM_DD(new Date(values?.startDate).toISOString()),
+      endDate: Helper.convertDateISOToYYYY_MM_DD(new Date(values?.endDate).toISOString()),
       reason: values.reason,
       note: values.note,
     };
