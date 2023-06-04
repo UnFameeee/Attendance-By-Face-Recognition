@@ -322,31 +322,33 @@ export class AttendanceExceptionService {
       return response;
     }
 
-    const queryData = await prisma.attendanceException.update({
-      data: {
-        status: statusUpdate,
-        approverId: employeeId,
-      },
+    let queryEmployeeAttendanceExceptionData;
+
+    //nếu != reject
+    //kiểm tra xem nhân viên bị xóa chưa - rồi thì tbao là đã bị xóa, cần chọn reject
+    if (statusUpdate != attendanceExceptionStatus.reject) {
+      //Tìm ID của nhân viên theo email
+      queryEmployeeAttendanceExceptionData = await prisma.employee.findFirst({
+        where: {
+          email: queryAttendanceException.email,
+          deleted: false,
+        },
+        select: {
+          id: true,
+        }
+      })
+
+      if (!queryEmployeeAttendanceExceptionData) {
+        response.result = "This employee has been deleted, please REJECT this attendance exception.";
+        return response;
+      }
+    }
+
+    const queryAttendanceExceptionData = await prisma.attendanceException.findFirst({
       where: {
         attendanceExceptionId: attendanceExceptionId,
       }
     })
-
-    //Tìm ID của nhân viên theo email
-    const queryEmployeeAttendanceExceptionData = await prisma.employee.findFirst({
-      where: {
-        email: queryAttendanceException.email,
-        deleted: false,
-      },
-      select: {
-        id: true,
-      }
-    })
-
-    if (!queryEmployeeAttendanceExceptionData) {
-      response.result = "Attendance recorded";
-      return response;
-    }
 
     if (statusUpdate == attendanceExceptionStatus.approve) {
       const dateException = queryAttendanceException.datetime;
@@ -390,22 +392,47 @@ export class AttendanceExceptionService {
       const shiftDate = workShift.shiftDate;
       const date = `${shiftDate.getFullYear()}-${shiftDate.getMonth() + 1}-${shiftDate.getDate()}`;
 
+      //Kiểm tra ngày hôm đó nhân viên có attendance nào được record chưa (NHƯNG MÀ VALID), nếu có thì thông báo cho quản lý check lại.
+      const attendanceDateFilter = moment.utc(date, "YYYY-MM-DD");
+      const queryCheckAttendanceData = await prisma.attendance.findFirst({
+        where: {
+          employeeId: queryEmployeeAttendanceExceptionData.id,
+          attendanceDate: {
+            gte: attendanceDateFilter.startOf('day').toDate(),
+            lte: attendanceDateFilter.endOf('day').toDate(),
+          },
+          checkIn: {
+            not: null
+          },
+          checkOut: {
+            not: null
+          },
+          isValid: true,
+          deleted: false,
+        }
+      })
+
+      if (queryCheckAttendanceData) {
+        response.message = "There is an attendance recorded on this day, please check again before verify this attendance exception";
+        return response;
+      }
+
       if (queryAttendanceException.attendanceType == attendance.checkin) {
         //Get the time from shiftType - HH:mm
-        let startTime = workShift.shiftType.startTime;
-        let time = moment.utc(startTime, "HH:mm").format("HH:mm");
+        const startTime = workShift.shiftType.startTime;
+        const time = moment.utc(startTime, "HH:mm").format("HH:mm");
 
         //Convert both of startTime and shiftDate to Date value
-        let startShift: Date = Helper.ConfigStaticDateTime(time, date);
+        const startShift: Date = Helper.ConfigStaticDateTime(time, date);
 
         //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-        let diff = moment.utc(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(threshHoldException), "HH:mm"));
+        const diff = moment.utc(new Date(startShift.getTime()), "HH:mm").diff(moment(new Date(threshHoldException), "HH:mm"));
 
         var lateArrival: Date;
         //if the value is negative -> lateArrival
         if (Math.sign(diff) === -1) {
-          let duration = moment.duration(Math.abs(diff));
-          let formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
+          const duration = moment.duration(Math.abs(diff));
+          const formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
           lateArrival = Helper.ConfigStaticDateTime(formattedTimeDiff);
         }
         //if the value is positive or equal 0 -> right on time
@@ -413,12 +440,13 @@ export class AttendanceExceptionService {
           lateArrival = null;
         }
 
-        const queryData = await prisma.attendance.create({
+        const queryAttendanceCreateData = await prisma.attendance.create({
           data: {
             employeeId: queryEmployeeAttendanceExceptionData.id,
             attendanceDate: Helper.ConfigStaticDateTime("00:00", `${dateException.getFullYear()}-${dateException.getMonth() + 1}-${dateException.getDate()}`),
             checkIn: threshHoldException,
             checkOut: null,
+            checkinCapture: queryAttendanceExceptionData.image,
             lateArrival: lateArrival,
             totalHours: Helper.ConfigStaticDateTime("00:00"),
             absent: false,
@@ -427,12 +455,12 @@ export class AttendanceExceptionService {
         })
       } else if (queryAttendanceException.attendanceType == attendance.checkout) {
         //Get the time from shiftType - HH:mm
-        let endTime = workShift.shiftType.endTime;
-        let time = moment.utc(endTime, "HH:mm").format("HH:mm");
+        const endTime = workShift.shiftType.endTime;
+        const time = moment.utc(endTime, "HH:mm").format("HH:mm");
         //Convert both of startTime and shiftDate to Date value
-        let endShift: Date = Helper.ConfigStaticDateTime(time, date);
+        const endShift: Date = Helper.ConfigStaticDateTime(time, date);
         //Check the time different from the checkIn time and the workShift startTime (startTime - checkIn)
-        let diff = moment.utc(new Date(threshHoldException), "HH:mm").diff(moment.utc(new Date(endShift.getTime()), "HH:mm"));
+        const diff = moment.utc(new Date(threshHoldException), "HH:mm").diff(moment.utc(new Date(endShift.getTime()), "HH:mm"));
 
         var earlyLeave: Date;
         //if the value is positive -> earlyLeave
@@ -441,39 +469,57 @@ export class AttendanceExceptionService {
         }
         //if the value is negative or equal 0 -> right on time
         else {
-          let duration = moment.duration(Math.abs(diff));
-          let formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
+          const duration = moment.duration(Math.abs(diff));
+          const formattedTimeDiff = new Date(duration.asMilliseconds()).toISOString().split("T")[1].slice(0, 5);
           earlyLeave = Helper.ConfigStaticDateTime(formattedTimeDiff);
         }
 
         const attendanceDateFilter = moment.utc(date, "YYYY-MM-DD");
-        const queryShiftData = await prisma.attendance.findFirst({
+        const queryAttendanceData = await prisma.attendance.findFirst({
           where: {
             employeeId: queryEmployeeAttendanceExceptionData.id,
             attendanceDate: {
               gte: attendanceDateFilter.startOf('day').toDate(),
               lte: attendanceDateFilter.endOf('day').toDate(),
             },
+            isValid: true,
             deleted: false,
           }
         })
 
-        const totalHours = Helper.MinusDate(new Date(threshHoldException), queryShiftData.checkIn);
+        if (!queryAttendanceData) {
+          response.message = "There is no attendance check-in recorded on this day, please check again before verify this attendance exception";
+          return response;
+        }
 
-        let queryData = await prisma.attendance.update({
+        const totalHours = Helper.MinusDate(new Date(threshHoldException), queryAttendanceData.checkIn);
+
+        const queryAttendanceCreateData = await prisma.attendance.update({
           where: {
-            attendanceId: queryShiftData.attendanceId,
+            attendanceId: queryAttendanceData.attendanceId,
           },
           data: {
             employeeId: queryEmployeeAttendanceExceptionData.id,
             attendanceDate: modifyDate.toDate(),
             checkOut: threshHoldException,
+            checkoutCapture: queryAttendanceExceptionData.image,
             earlyLeave: earlyLeave,
             totalHours: Helper.ConfigStaticDateTime(totalHours),
           }
         })
       }
     }
+
+    const queryUpdateAttendanceExceptionData = await prisma.attendanceException.update({
+      data: {
+        status: statusUpdate,
+        approverId: employeeId,
+      },
+      where: {
+        attendanceExceptionId: attendanceExceptionId,
+      }
+    })
+
     response.result = "Attendance recorded";
     return response;
   }
