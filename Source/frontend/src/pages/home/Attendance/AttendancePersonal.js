@@ -299,7 +299,10 @@ function AttendancePersonal() {
   useEffect(() => {
     refetchAttendanceHistoryFilterData();
   }, [monthManagement, yearManagement, isValid]);
-
+ useEffect(()=>{
+  setIsValid(true);
+  setIsValidPersonal(true)
+ },[currentTab])
   // #endregion
   return (
     <>
@@ -1369,76 +1372,6 @@ function AttendancePersonal() {
                               Attendance History
                             </Heading>
                           </Flex>
-                          {/* <Flex
-                            flex="1"
-                            justifyContent="flex-end"
-                            gap="10px"
-                            flexDirection={{ base: "column", md: "row" }}
-                          >
-                            <Flex alignItems="center" gap="5px">
-                              <Badge
-                                rounded="md"
-                                colorScheme="green"
-                                fontSize="md"
-                                p="5px"
-                              >
-                                O.T
-                              </Badge>
-                              <Text>
-                                <FaEquals />{" "}
-                              </Text>
-                              <Badge
-                                rounded="md"
-                                colorScheme="green"
-                                fontSize="md"
-                                p="5px"
-                              >
-                                On Time
-                              </Badge>
-                            </Flex>
-                            <Flex alignItems="center" gap="5px">
-                              <Badge
-                                rounded="md"
-                                colorScheme="yellow"
-                                fontSize="md"
-                                p="5px"
-                              >
-                                L.A
-                              </Badge>
-                              <Text>
-                                <FaEquals />{" "}
-                              </Text>
-                              <Badge
-                                rounded="md"
-                                colorScheme="yellow"
-                                fontSize="md"
-                                p="5px"
-                              >
-                                Late Arrival
-                              </Badge>
-                            </Flex>
-                            <Flex alignItems="center" gap="5px">
-                              <Badge
-                                rounded="md"
-                                colorScheme="orange"
-                                fontSize="md"
-                                p="5px"
-                              >
-                                E.L
-                              </Badge>
-                              <Text>
-                                <FaEquals />{" "}
-                              </Text>
-                              <Badge
-                                rounded="md"
-                                colorScheme="orange"
-                                fontSize="md"
-                                p="5px"
-                              >
-                                Early Leave
-                              </Badge>
-                            </Flex>
-                          </Flex> */}
                         </Flex>
                         <HStack
                           display="flex"
@@ -1754,20 +1687,14 @@ function AttendancePersonal() {
                     )}
                   </Flex>
                 </Flex>
-                {!isValid && (
-                  <Flex margin="20px 0px 0px 0px">
-                    <Text
-                      fontSize="1.15rem"
-                      fontWeight="semibold"
-                      color={"red"}
-                    >
-                      Report Note:{" "}
-                      <b style={{ fontWeight: "normal", color: "black" }}>
-                        {attendanceDetailObj?.result?.note}
-                      </b>
-                    </Text>
-                  </Flex>
-                )}
+                <Flex margin="20px 0px 0px 0px">
+                  <Text fontSize="1.15rem" fontWeight="semibold" color={"red"}>
+                    Report Note:{" "}
+                    <b style={{ fontWeight: "normal", color: "black" }}>
+                      {attendanceDetailObj?.result?.note}
+                    </b>
+                  </Text>
+                </Flex>
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody>
