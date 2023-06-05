@@ -3,7 +3,7 @@ import React from "react";
 
 function LoadingSpinner() {
   return (
-    <Center h="100%" minH="500px">
+    <Center h="100%" >
       <Spinner
         thickness="4px"
         speed="0.65s"
