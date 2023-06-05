@@ -52,7 +52,7 @@ function LeaveRequestManagement() {
   );
   const [isVerifyOverDate, setIsVerifyOverDate] = useState(false);
   const [listLRDepartment, setListLRDepartment] = useState([]);
-
+  const [editOverDate, setEditOverDate] = useState(false);
   // #endregion
   // #region hooks
   const {
@@ -226,21 +226,47 @@ function LeaveRequestManagement() {
   const handleApprovalLeaveRequest = (values) => {
     let leaveRequestId = editData.leaveRequestId;
     let status = values.status;
+    let leaveRequestObj = {
+      leaveRequestId,
+      status,
+    };
     if (!isOverDate(editData.startDate)) {
-      let leaveRequestObj = {
-        leaveRequestId,
-        status,
-      };
       closeDrawer();
       if (status != "WAITING") useVerifyLeaveRequest.mutate(leaveRequestObj);
+      else {
+        toast({
+          title: `This leave request is already ` + editData.status,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
     } else {
-      status = "OVERDATE";
-      let leaveRequestObj = {
-        leaveRequestId,
-        status,
-      };
-      useVerifyLeaveRequest.mutate(leaveRequestObj);
-      setIsVerifyOverDate(true);
+      closeDrawer();
+      leaveRequestObj.status = "OVERDATE";
+      if (status != "WAITING") {
+        if (editData.status != "OVERDATE") {
+          useVerifyLeaveRequest.mutate(leaveRequestObj);
+        } else {
+          toast({
+            title: `This leave request is already ` + editData.status,
+            position: "bottom-right",
+            status: "error",
+            isClosable: true,
+            duration: 5000,
+          });
+        }
+      } else {
+        toast({
+          title: `This leave request is already ` + editData.status,
+          position: "bottom-right",
+          status: "error",
+          isClosable: true,
+          duration: 5000,
+        });
+      }
+      // setIsVerifyOverDate(true);
     }
   };
   const closeDrawer = () => {
@@ -324,7 +350,7 @@ function LeaveRequestManagement() {
         //   filterType: FilterType.Text,
         // },
 
-        cellWidth: "150px",
+        cellWidth: "250px",
       },
       {
         Header: "Email",
@@ -399,7 +425,78 @@ function LeaveRequestManagement() {
   );
   // #endregion
   // #region drawer
-  const drawerFieldData = [
+  // const drawerFieldData = [
+  //   {
+  //     name: "status",
+  //     label: "Status",
+  //     isSelectionField: true,
+  //     selectionArray: selectionData.verifyData,
+  //   },
+  //   {
+  //     name: "fullname",
+  //     isReadOnly: true,
+  //     label: "Full Name",
+  //     placeholder: "Enter your Full Name",
+  //     leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
+  //   },
+  //   {
+  //     name: "email",
+  //     label: "Email",
+  //     type: "email",
+  //     placeholder: "abc@gmail.com",
+  //     isReadOnly: true,
+  //     leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
+  //   },
+  //   {
+  //     name: "department",
+  //     label: "Department",
+  //     placeholder: "---",
+  //     isReadOnly: true,
+  //   },
+  //   {
+  //     name: "leaveType",
+  //     label: "Leave Type",
+  //     placeholder: "---",
+  //     isReadOnly: true,
+  //   },
+  //   {
+  //     name: "leaveTypeDescription",
+  //     label: "Leave Type Description",
+  //     isReadOnly: true,
+  //     isTextAreaField: true,
+  //   },
+  //   {
+  //     name: "reason",
+  //     label: "Reason",
+  //     isReadOnly: true,
+  //     isTextAreaField: true,
+  //   },
+  //   {
+  //     name: "note",
+  //     label: "Note",
+  //     isReadOnly: true,
+  //     isTextAreaField: true,
+  //   },
+  //   {
+  //     name: "requestDate",
+  //     label: "Request Date",
+  //     isReadOnly: true,
+  //     placeholder: "---",
+  //   },
+  //   {
+  //     name: "startDate",
+  //     label: "Start Date",
+  //     isReadOnly: true,
+  //     placeholder: "---",
+  //   },
+  //   {
+  //     name: "endDate",
+  //     label: "End Date",
+  //     isReadOnly: true,
+  //     placeholder: "---",
+  //   },
+  // ];
+  const [drawerFieldData, setDrawerFieldData] = useState([
     {
       name: "status",
       label: "Status",
@@ -469,8 +566,78 @@ function LeaveRequestManagement() {
       isReadOnly: true,
       placeholder: "---",
     },
-  ];
-  // console.log(editData)
+  ]);
+  const [drawerFieldOverDateData, setDrawerFieldOverDateData] = useState([
+    {
+      name: "status",
+      label: "Status",
+      isSelectionField: true,
+      selectionArray: selectionData.verifyDataOverDate,
+    },
+    {
+      name: "fullname",
+      isReadOnly: true,
+      label: "Full Name",
+      placeholder: "Enter your Full Name",
+      leftIcon: <FaRegUserCircle color="#999" fontSize="1.5rem" />,
+    },
+    {
+      name: "email",
+      label: "Email",
+      type: "email",
+      placeholder: "abc@gmail.com",
+      isReadOnly: true,
+      leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
+    },
+    {
+      name: "department",
+      label: "Department",
+      placeholder: "---",
+      isReadOnly: true,
+    },
+    {
+      name: "leaveType",
+      label: "Leave Type",
+      placeholder: "---",
+      isReadOnly: true,
+    },
+    {
+      name: "leaveTypeDescription",
+      label: "Leave Type Description",
+      isReadOnly: true,
+      isTextAreaField: true,
+    },
+    {
+      name: "reason",
+      label: "Reason",
+      isReadOnly: true,
+      isTextAreaField: true,
+    },
+    {
+      name: "note",
+      label: "Note",
+      isReadOnly: true,
+      isTextAreaField: true,
+    },
+    {
+      name: "requestDate",
+      label: "Request Date",
+      isReadOnly: true,
+      placeholder: "---",
+    },
+    {
+      name: "startDate",
+      label: "Start Date",
+      isReadOnly: true,
+      placeholder: "---",
+    },
+    {
+      name: "endDate",
+      label: "End Date",
+      isReadOnly: true,
+      placeholder: "---",
+    },
+  ]);
   const initialValues = {
     status: editData?.status ?? "",
     fullname: editData["employee.fullname"] ?? "",
@@ -539,6 +706,12 @@ function LeaveRequestManagement() {
       });
     }
   };
+
+  useEffect(() => {
+    if (Object.keys(editData).length > 0) {
+      setEditOverDate(isOverDate(editData.startDate));
+    }
+  }, [editData]);
   if (isLoadingListDepartment) return <LoadingSpinner />;
   return (
     <Stack h="100%">
@@ -685,16 +858,29 @@ function LeaveRequestManagement() {
               permission={resultPermission}
             />
           )}
-          <DynamicDrawer
-            handleEdit={handleApprovalLeaveRequest}
-            isAddEditOpen={isAddEditOpen}
-            onAddEditClose={onAddEditClose}
-            editData={editData}
-            setEditData={setEditData}
-            validationSchema={validationSchema}
-            initialValues={initialValues}
-            drawerFieldData={drawerFieldData}
-          />
+          {editOverDate ? (
+            <DynamicDrawer
+              handleEdit={handleApprovalLeaveRequest}
+              isAddEditOpen={isAddEditOpen}
+              onAddEditClose={onAddEditClose}
+              editData={editData}
+              setEditData={setEditData}
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              drawerFieldData={drawerFieldOverDateData}
+            />
+          ) : (
+            <DynamicDrawer
+              handleEdit={handleApprovalLeaveRequest}
+              isAddEditOpen={isAddEditOpen}
+              onAddEditClose={onAddEditClose}
+              editData={editData}
+              setEditData={setEditData}
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              drawerFieldData={drawerFieldData}
+            />
+          )}
           <ChakraAlertDialog
             title="Delete Single"
             isOpen={isDeleteSingleOpen}

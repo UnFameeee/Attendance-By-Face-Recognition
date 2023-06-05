@@ -187,13 +187,14 @@ export function Profile() {
       ? {
           fullname: Yup.string().required("This field is required"),
           phone: Yup.string().required("This field is required"),
-
+          email:Yup.string().email("Invalid email format").required("This field is required"),
           dateOfBirth: Yup.date()
             .max(new Date(), "Your birth date is invalid")
             .required("This field is required"),
         }
       : {
           fullname: Yup.string().required("This field is required"),
+          email:Yup.string().email("Invalid email format").required("This field is required"),
           dateOfBirth: Yup.date()
             .max(new Date(), "Your birth date is invalid")
             .required("This field is required"),

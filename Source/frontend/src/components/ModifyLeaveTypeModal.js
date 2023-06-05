@@ -218,7 +218,7 @@ function ModifyLeaveTypeModal() {
                     } else if (splitArray.includes("description")) {
                       modifyLeaveTypeObject["description"] = values[key];
                     } else if (splitArray.includes("annualLeave")) {
-                      modifyLeaveTypeObject["annualLeave"] = values[key];
+                      modifyLeaveTypeObject["annualLeave"] = values[key] == "true" ? true : false;
                     }
                   }
                 });
