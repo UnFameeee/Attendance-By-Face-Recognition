@@ -16,6 +16,7 @@ import {
   Tooltip,
   Wrap,
   Hide,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useProSidebar } from "react-pro-sidebar";
 import { Link, useNavigate } from "react-router-dom";
@@ -30,6 +31,9 @@ import { Helper } from "../../Utils/Helper";
 import { useGetProfileDetail } from "../../services/setting/profile";
 import dayjs from "dayjs";
 import AvatarWithPreview from "../../components/AvatarWithPreview";
+import ChakraAlertDialog from "../../components/ChakraAlertDialog";
+import background from '../../assets/bg2.jpg'
+import LoadingSpinner from "../../components/LoadingSpinner";
 function HomeHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -40,7 +44,11 @@ function HomeHeader() {
   const { data: profileDetailData, isFetching: isFetchingProfileDetailData } =
     useGetProfileDetail(decoded.id);
   const { collapseSidebar, toggleSidebar, toggled } = useProSidebar();
-
+  const {
+    isOpen: isSignOutAlertOpen,
+    onOpen: onSignOutAlertOpen,
+    onClose: onSignOutAlertClose,
+  } = useDisclosure();
   const handleCollapseSidebar = () => {
     collapseSidebar();
     // console.log("collapsed", collapsed, " toggled", toggled);
@@ -76,6 +84,12 @@ function HomeHeader() {
       setUserAvatar(profileDetailData?.result?.image + "?" + dayjs());
     }
   }, [isFetchingProfileDetailData]);
+  if (useLogoutMutation.isLoading)
+    return (
+      <Box h="100vh" w="100vw" backgroundImage={background}>
+        <LoadingSpinner />
+      </Box>
+    );
   return (
     <>
       <Show breakpoint="(max-width: 1005px)">
@@ -192,9 +206,18 @@ function HomeHeader() {
                   <Link to="/setting/profile">
                     <MenuItem>Profile</MenuItem>
                   </Link>
-                  <MenuItem onClick={handleLogout}>Sign Out</MenuItem>
+                  <MenuItem onClick={onSignOutAlertOpen}>Sign Out</MenuItem>
                 </MenuList>
               </Menu>
+              <ChakraAlertDialog
+                title="Sign out account"
+                message="Are you sure? This action will sign out your account."
+                isOpen={isSignOutAlertOpen}
+                onClose={onSignOutAlertClose}
+                onAccept={handleLogout}
+                acceptButtonLabel="Accept"
+                acceptButtonColor="blue"
+              />
             </div>
           </div>
         </Flex>
