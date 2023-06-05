@@ -303,7 +303,7 @@ export function Profile() {
                             name="email"
                             label="Email"
                             type="email"
-                            isReadOnly={true}
+                            isReadOnly={userDecodeData.roleName == 'admin' ? false : true}
                             placeholder="abc@gmail.com"
                             leftIcon={
                               <MdOutlineAlternateEmail
@@ -592,7 +592,7 @@ export function Profile() {
                               name="email"
                               label="Email"
                               type="email"
-                              isReadOnly={true}
+                              isReadOnly={userDecodeData.roleName == 'admin' ? false : true}
                               placeholder="abc@gmail.com"
                               leftIcon={
                                 <MdOutlineAlternateEmail

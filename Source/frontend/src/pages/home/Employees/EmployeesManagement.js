@@ -59,9 +59,8 @@ function EmployeesManagement() {
   const [editData, setEditData] = useState({});
   const [deleteSingleData, setDeleteSingleData] = useState({});
   const [employeeRetrainId, setEmployeeRetrainId] = useState();
-
   const [listEmployeePhotos, setListEmployeePhotos] = useState([]);
-
+  const [userInfo,setUserInfo] = useState(Helper.getUseDecodeInfor())
   // #endregion
   // #region hook
   const {
@@ -484,7 +483,7 @@ function EmployeesManagement() {
       label: "Email",
       type: "email",
       placeholder: "abc@gmail.com",
-      isReadOnly: Object.keys(editData).length === 0 ? false : true,
+      isReadOnly: Object.keys(editData).length === 0 || userInfo.roleName =="admin" ? false : true,
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
