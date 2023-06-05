@@ -336,7 +336,9 @@ function AttendancePersonal() {
             isFetchingMonthData ||
             isFetchingTodayData ||
             isFetchingEmployeeData ? (
-              <LoadingSpinner />
+              <Box w="100%" h="500px">
+                <LoadingSpinner />
+              </Box>
             ) : (
               <Stack spacing={5} h="100%">
                 <VStack
@@ -745,97 +747,105 @@ function AttendancePersonal() {
                       )}
                     </Formik>
                   </HStack>
-                  <SimpleGrid
-                    w="100%"
-                    spacing={3}
-                    gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
-                  >
-                    {attendanceHistoryData &&
-                      attendanceHistoryData.map((item, index) => {
-                        return (
-                          <VStack
-                            color="white"
-                            alignItems="start"
-                            bg="gray.500"
-                            rounded="xl"
-                            p="20px"
-                            key={index}
-                            shadow="lg"
-                            onClick={() =>
-                              handleOpenAttendanceDetail(item.attendanceId)
-                            }
-                            cursor="pointer"
-                          >
-                            <HStack w="100%">
-                              <HStack w="100%" flex="1" spacing="5px">
-                                <Icon as={AiFillClockCircle} />
-                                <Text fontSize="xl" fontWeight="bold">
-                                  {Helper.convertDateISOToDDMMyyyy(
-                                    item?.attendanceDate
+                  {isFetchingHistoryData ? (
+                    <Box h="100px" w="100%">
+                      <LoadingSpinner />
+                    </Box>
+                  ) : (
+                    <SimpleGrid
+                      w="100%"
+                      spacing={3}
+                      gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
+                    >
+                      {attendanceHistoryData &&
+                        attendanceHistoryData.map((item, index) => {
+                          return (
+                            <VStack
+                              color="white"
+                              alignItems="start"
+                              bg="gray.500"
+                              rounded="xl"
+                              p="20px"
+                              key={index}
+                              shadow="lg"
+                              onClick={() =>
+                                handleOpenAttendanceDetail(item.attendanceId)
+                              }
+                              cursor="pointer"
+                            >
+                              <HStack w="100%">
+                                <HStack w="100%" flex="1" spacing="5px">
+                                  <Icon as={AiFillClockCircle} />
+                                  <Text fontSize="xl" fontWeight="bold">
+                                    {Helper.convertDateISOToDDMMyyyy(
+                                      item?.attendanceDate
+                                    )}
+                                  </Text>
+                                </HStack>
+                                {!item?.earlyLeave &&
+                                  !item?.lateArrival &&
+                                  !item?.absent && (
+                                    <Badge
+                                      rounded="md"
+                                      colorScheme="green"
+                                      fontSize="md"
+                                      p="5px"
+                                    >
+                                      O.T
+                                    </Badge>
                                   )}
-                                </Text>
-                              </HStack>
-                              {!item?.earlyLeave &&
-                                !item?.lateArrival &&
-                                !item?.absent && (
+                                {item?.lateArrival && !item?.absent && (
                                   <Badge
                                     rounded="md"
-                                    colorScheme="green"
+                                    colorScheme="yellow"
                                     fontSize="md"
                                     p="5px"
                                   >
-                                    O.T
+                                    L.A
                                   </Badge>
                                 )}
-                              {item?.lateArrival && !item?.absent && (
-                                <Badge
-                                  rounded="md"
-                                  colorScheme="yellow"
-                                  fontSize="md"
-                                  p="5px"
-                                >
-                                  L.A
-                                </Badge>
-                              )}
-                              {item?.absent && (
-                                <Badge
-                                  rounded="md"
-                                  colorScheme="teal"
-                                  fontSize="md"
-                                  p="5px"
-                                >
-                                  L.D
-                                </Badge>
-                              )}
-                              {item?.earlyLeave && !item?.absent && (
-                                <Badge
-                                  rounded="md"
-                                  colorScheme="orange"
-                                  fontSize="md"
-                                  p="5px"
-                                >
-                                  E.L
-                                </Badge>
-                              )}
-                            </HStack>
-                            <HStack w="100%" spacing="50px">
-                              <VStack alignItems="start">
-                                <Text fontSize="xl">Check in</Text>
-                                <Text fontSize="2xl" fontWeight="bold">
-                                  {Helper.convertDateISOToHHmm(item?.checkIn)}
-                                </Text>
-                              </VStack>
-                              <VStack alignItems="start">
-                                <Text fontSize="xl">Check out</Text>
-                                <Text fontSize="2xl" fontWeight="bold">
-                                  {Helper.convertDateISOToHHmm(item?.checkOut)}
-                                </Text>
-                              </VStack>
-                            </HStack>
-                          </VStack>
-                        );
-                      })}
-                  </SimpleGrid>
+                                {item?.absent && (
+                                  <Badge
+                                    rounded="md"
+                                    colorScheme="teal"
+                                    fontSize="md"
+                                    p="5px"
+                                  >
+                                    L.D
+                                  </Badge>
+                                )}
+                                {item?.earlyLeave && !item?.absent && (
+                                  <Badge
+                                    rounded="md"
+                                    colorScheme="orange"
+                                    fontSize="md"
+                                    p="5px"
+                                  >
+                                    E.L
+                                  </Badge>
+                                )}
+                              </HStack>
+                              <HStack w="100%" spacing="50px">
+                                <VStack alignItems="start">
+                                  <Text fontSize="xl">Check in</Text>
+                                  <Text fontSize="2xl" fontWeight="bold">
+                                    {Helper.convertDateISOToHHmm(item?.checkIn)}
+                                  </Text>
+                                </VStack>
+                                <VStack alignItems="start">
+                                  <Text fontSize="xl">Check out</Text>
+                                  <Text fontSize="2xl" fontWeight="bold">
+                                    {Helper.convertDateISOToHHmm(
+                                      item?.checkOut
+                                    )}
+                                  </Text>
+                                </VStack>
+                              </HStack>
+                            </VStack>
+                          );
+                        })}
+                    </SimpleGrid>
+                  )}
                 </VStack>
               </Stack>
             )}
@@ -1006,7 +1016,9 @@ function AttendancePersonal() {
                   isLoadingHistoryFilterData ||
                   isFetchingTodayFilterData ||
                   isFetchingMonthFilterData ? (
-                    <LoadingSpinner />
+                    <Box w="100%" h="500px">
+                      <LoadingSpinner />
+                    </Box>
                   ) : (
                     <>
                       <VStack
@@ -1474,103 +1486,109 @@ function AttendancePersonal() {
                             )}
                           </Formik>
                         </HStack>
-                        <SimpleGrid
-                          w="100%"
-                          spacing={3}
-                          gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
-                        >
-                          {attendanceHistoryFilterData &&
-                            attendanceHistoryFilterData.map((item, index) => {
-                              return (
-                                <VStack
-                                  color="white"
-                                  alignItems="start"
-                                  bg="gray.500"
-                                  rounded="xl"
-                                  p="20px"
-                                  key={index}
-                                  shadow="lg"
-                                  onClick={() =>
-                                    handleOpenAttendanceDetail(
-                                      item.attendanceId
-                                    )
-                                  }
-                                  cursor="pointer"
-                                >
-                                  <HStack w="100%">
-                                    <HStack w="100%" flex="1" spacing="5px">
-                                      <Icon as={AiFillClockCircle} />
-                                      <Text fontSize="xl" fontWeight="bold">
-                                        {Helper.convertDateISOToDDMMyyyy(
-                                          item?.attendanceDate
+                        {isFetchingHistoryFilterData ? (
+                          <Box w="100%" h="100px">
+                            <LoadingSpinner />
+                          </Box>
+                        ) : (
+                          <SimpleGrid
+                            w="100%"
+                            spacing={3}
+                            gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
+                          >
+                            {attendanceHistoryFilterData &&
+                              attendanceHistoryFilterData.map((item, index) => {
+                                return (
+                                  <VStack
+                                    color="white"
+                                    alignItems="start"
+                                    bg="gray.500"
+                                    rounded="xl"
+                                    p="20px"
+                                    key={index}
+                                    shadow="lg"
+                                    onClick={() =>
+                                      handleOpenAttendanceDetail(
+                                        item.attendanceId
+                                      )
+                                    }
+                                    cursor="pointer"
+                                  >
+                                    <HStack w="100%">
+                                      <HStack w="100%" flex="1" spacing="5px">
+                                        <Icon as={AiFillClockCircle} />
+                                        <Text fontSize="xl" fontWeight="bold">
+                                          {Helper.convertDateISOToDDMMyyyy(
+                                            item?.attendanceDate
+                                          )}
+                                        </Text>
+                                      </HStack>
+                                      {!item?.earlyLeave &&
+                                        !item?.lateArrival &&
+                                        !item?.absent && (
+                                          <Badge
+                                            rounded="md"
+                                            colorScheme="green"
+                                            fontSize="md"
+                                            p="5px"
+                                          >
+                                            O.T
+                                          </Badge>
                                         )}
-                                      </Text>
-                                    </HStack>
-                                    {!item?.earlyLeave &&
-                                      !item?.lateArrival &&
-                                      !item?.absent && (
+                                      {item?.lateArrival && !item?.absent && (
                                         <Badge
                                           rounded="md"
-                                          colorScheme="green"
+                                          colorScheme="yellow"
                                           fontSize="md"
                                           p="5px"
                                         >
-                                          O.T
+                                          L.A
                                         </Badge>
                                       )}
-                                    {item?.lateArrival && !item?.absent && (
-                                      <Badge
-                                        rounded="md"
-                                        colorScheme="yellow"
-                                        fontSize="md"
-                                        p="5px"
-                                      >
-                                        L.A
-                                      </Badge>
-                                    )}
-                                    {item?.absent && (
-                                      <Badge
-                                        rounded="md"
-                                        colorScheme="teal"
-                                        fontSize="md"
-                                        p="5px"
-                                      >
-                                        L.D
-                                      </Badge>
-                                    )}
-                                    {item?.earlyLeave && !item?.absent && (
-                                      <Badge
-                                        rounded="md"
-                                        colorScheme="orange"
-                                        fontSize="md"
-                                        p="5px"
-                                      >
-                                        E.L
-                                      </Badge>
-                                    )}
-                                  </HStack>
-                                  <HStack w="100%" spacing="50px">
-                                    <VStack alignItems="start">
-                                      <Text fontSize="xl">Check in</Text>
-                                      <Text fontSize="2xl" fontWeight="bold">
-                                        {Helper.convertDateISOToHHmm(
-                                          item?.checkIn
-                                        )}
-                                      </Text>
-                                    </VStack>
-                                    <VStack alignItems="start">
-                                      <Text fontSize="xl">Check out</Text>
-                                      <Text fontSize="2xl" fontWeight="bold">
-                                        {Helper.convertDateISOToHHmm(
-                                          item?.checkOut
-                                        )}
-                                      </Text>
-                                    </VStack>
-                                  </HStack>
-                                </VStack>
-                              );
-                            })}
-                        </SimpleGrid>
+                                      {item?.absent && (
+                                        <Badge
+                                          rounded="md"
+                                          colorScheme="teal"
+                                          fontSize="md"
+                                          p="5px"
+                                        >
+                                          L.D
+                                        </Badge>
+                                      )}
+                                      {item?.earlyLeave && !item?.absent && (
+                                        <Badge
+                                          rounded="md"
+                                          colorScheme="orange"
+                                          fontSize="md"
+                                          p="5px"
+                                        >
+                                          E.L
+                                        </Badge>
+                                      )}
+                                    </HStack>
+                                    <HStack w="100%" spacing="50px">
+                                      <VStack alignItems="start">
+                                        <Text fontSize="xl">Check in</Text>
+                                        <Text fontSize="2xl" fontWeight="bold">
+                                          {Helper.convertDateISOToHHmm(
+                                            item?.checkIn
+                                          )}
+                                        </Text>
+                                      </VStack>
+                                      <VStack alignItems="start">
+                                        <Text fontSize="xl">Check out</Text>
+                                        <Text fontSize="2xl" fontWeight="bold">
+                                          {Helper.convertDateISOToHHmm(
+                                            item?.checkOut
+                                          )}
+                                        </Text>
+                                      </VStack>
+                                    </HStack>
+                                  </VStack>
+                                );
+                              })}
+                          </SimpleGrid>
+                        )}
                       </VStack>
                     </>
                   )}
