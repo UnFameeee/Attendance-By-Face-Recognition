@@ -46,10 +46,9 @@ const MinusDate = (bigDate: Date, smallDate: Date): string => {
 
 const CountDaysFromStartDate = (startDate: string, endDate: string) => {
   // Convert the date strings to Date objects
+  // Set the time for both dates to midnight
   var start = Helper.ConfigStaticDateTime("00:00", startDate);
   var end = Helper.ConfigStaticDateTime("00:00", endDate);
-
-  // Set the time for both dates to midnight
 
   // Calculate the time difference in milliseconds
   var timeDiff = Math.abs(end.getTime() - start.getTime());
