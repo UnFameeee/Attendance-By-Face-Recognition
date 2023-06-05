@@ -60,7 +60,7 @@ function EmployeesManagement() {
   const [deleteSingleData, setDeleteSingleData] = useState({});
   const [employeeRetrainId, setEmployeeRetrainId] = useState();
   const [listEmployeePhotos, setListEmployeePhotos] = useState([]);
-  const [userInfo,setUserInfo] = useState(Helper.getUseDecodeInfor())
+  const [userInfo, setUserInfo] = useState(Helper.getUseDecodeInfor())
   // #endregion
   // #region hook
   const {
@@ -483,7 +483,7 @@ function EmployeesManagement() {
       label: "Email",
       type: "email",
       placeholder: "abc@gmail.com",
-      isReadOnly: Object.keys(editData).length === 0 || userInfo.roleName =="admin" ? false : true,
+      isReadOnly: Object.keys(editData).length === 0 || userInfo.roleName == "admin" ? false : true,
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
@@ -500,6 +500,7 @@ function EmployeesManagement() {
       label: "Role",
       isSelectionField: true,
       placeholder: "---",
+      isReadOnly: userInfo.roleName == "admin" ? false : true,
       selectionArray: [
         { label: "Employee", value: "Employee" },
         { label: "Manager", value: "Manager" },
@@ -560,11 +561,10 @@ function EmployeesManagement() {
     displayName: editData?.["role.displayName"] ?? "",
     department: editData?.department?.departmentName ?? "",
     gender: editData?.gender ?? "male",
-    dateOfBirth: `${
-      editData?.dateOfBirth
+    dateOfBirth: `${editData?.dateOfBirth
         ? new Date(editData?.dateOfBirth).toISOString().substring(0, 10)
         : ""
-    }`,
+      }`,
     description: `${editData?.description ?? ""}`,
     location: {
       country: `${editData["location.country"] ?? ""}`,
@@ -576,26 +576,26 @@ function EmployeesManagement() {
   const validationSchema = Yup.object().shape(
     Object.keys(editData).length === 0
       ? {
-          fullname: Yup.string()
-            .min(8, "Full name must be more than 8 characters")
-            .required("This field is required"),
-          email: Yup.string().required("This field is required"),
-          displayName: Yup.string().required("This field is required"),
-          password: Yup.string()
-            .matches(
-              passwordRegex,
-              "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
-            )
-            .required("This field is required"),
-        }
-      : {
-          fullname: Yup.string().required("This field is required"),
-          email: Yup.string().required("This field is required"),
-          password: Yup.string().matches(
+        fullname: Yup.string()
+          .min(8, "Full name must be more than 8 characters")
+          .required("This field is required"),
+        email: Yup.string().required("This field is required"),
+        displayName: Yup.string().required("This field is required"),
+        password: Yup.string()
+          .matches(
             passwordRegex,
             "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
-          ),
-        }
+          )
+          .required("This field is required"),
+      }
+      : {
+        fullname: Yup.string().required("This field is required"),
+        email: Yup.string().required("This field is required"),
+        password: Yup.string().matches(
+          passwordRegex,
+          "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character and be at least 8 characters long"
+        ),
+      }
   );
   // #endregion
   if (isLoadingListEmployee) return <LoadingSpinner />;
@@ -615,9 +615,9 @@ function EmployeesManagement() {
         </Flex>
       </HStack>
       {useCreateEmployee.isLoading ||
-      useSaveEmployee.isLoading ||
-      useDeleteEmployee.isLoading ||
-      isFetchingListEmployee ? (
+        useSaveEmployee.isLoading ||
+        useDeleteEmployee.isLoading ||
+        isFetchingListEmployee ? (
         <LoadingSpinner />
       ) : (
         <Box marginTop="10px">
