@@ -23,6 +23,13 @@ export const updateProfileSchema = z.object({
     })
     .trim(),
 
+  email: z
+    .string({
+      required_error: 'Email is required',
+      invalid_type_error: "Email must be string"
+    })
+    .trim(),
+
   description: z
     .string()
     .trim()
@@ -65,12 +72,12 @@ export type UpdateProfileDTO = z.infer<typeof updateProfileSchema>;
 
 export const updateProfilePasswordSchema = z.object({
   oldPassword: z
-  .string({
-    required_error: 'Old Password is required',
-    invalid_type_error: "Old Password must be string"
-  })
-  .trim()
-  .refine((value) => /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/.test(value), "Old Password require 1 Uppercase, 1 Lowercase, 1 Special Character, 1 Number and minimum length is 8"),
+    .string({
+      required_error: 'Old Password is required',
+      invalid_type_error: "Old Password must be string"
+    })
+    .trim()
+    .refine((value) => /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/.test(value), "Old Password require 1 Uppercase, 1 Lowercase, 1 Special Character, 1 Number and minimum length is 8"),
 
   newPassword: z
     .string({

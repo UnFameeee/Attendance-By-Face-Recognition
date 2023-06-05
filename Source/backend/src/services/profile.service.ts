@@ -77,6 +77,7 @@ export class ProfileService {
         firsttimeLogin: false,
         fullname: data.fullname,
         gender: data.gender,
+        email: data.email,
         dateOfBirth: data.dateOfBirth,
         phoneNumber: data.phoneNumber,
         location: {

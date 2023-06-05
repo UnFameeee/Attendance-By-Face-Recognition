@@ -567,12 +567,36 @@ export class LeaveRequestService {
 
       const leaveRequestYear = new Date(queryData.startDate).getFullYear();
 
+      //Kiểm tra xem nhân vi
+      const queryCheckIsAbsentData = await prisma.attendance.findMany({
+        where: {
+          employeeId: queryData.employeeId,
+          attendanceDate: {
+            gte: Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${leaveRequestDateStart}`),
+            lte: Helper.ConfigStaticDateTime("23:59", `${leaveRequestYear}-${leaveRequestMonthEnd}-${leaveRequestDateEnd}`),
+          },
+          absent: true,
+          isValid: true,
+        },
+        select:{
+          attendanceId: true,
+        }
+      })
+  
+      console.log(queryCheckIsAbsentData)
+
+      if (queryCheckIsAbsentData.length != 0) {
+        response.message = "This employee already had requested a leave for one of these days, please reject this leave request";
+        return response;
+      }
+
+
       //Nếu trong cùng 1 tháng
       if (leaveRequestMonthStart == leaveRequestMonthEnd) {
         for (let i = leaveRequestDateStart; i <= leaveRequestDateEnd; ++i) {
           // Get the date in ISO 8601 format (e.g. "2023-04-01")
           const dateStart = Helper.ConfigStaticDateTime("00:00", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
-          const dateEnd = Helper.ConfigStaticDateTime("23:59", `${leaveRequestYear}-${leaveRequestMonthStart}-${i}`)
+          const dateEnd = Helper.ConfigStaticDateTime("23:59", `${leaveRequestYear}-${leaveRequestMonthEnd}-${i}`)
           // const date = moment.utc(`${leaveRequestYear}-${leaveRequestMonthStart}-${i}`, "YYYY-MM-DD")
 
           const queryWorkshiftData = await prisma.workshift.findFirst({
