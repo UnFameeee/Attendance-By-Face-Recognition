@@ -9,6 +9,7 @@ import { leaveRequestStatus } from "../constant/leave-request.constant";
 import { Page, Paging, paginate } from "../config/paginate.config";
 import { Employee } from "@prisma/client";
 import { ROLE } from "../constant/database.constant";
+import { timezoneConfig } from "../constant/moment-timezone.constant";
 
 export class LeaveRequestService {
   public getLeaveRequestOfDepartment = async (employee: Employee, departmentId: string, page: Page): Promise<ResponseData<Paging<LeaveRequestModel[]>>> => {
@@ -337,8 +338,13 @@ export class LeaveRequestService {
 
   public createLeaveRequest = async (employeeId: string, data: CreateLeaveRequestDTO): Promise<ResponseData<String>> => {
     const response = new ResponseData<String>;
+    const momentNow = moment(new Date()).tz(timezoneConfig);
     const startDate = Helper.ConfigStaticDateTime("00:00", data.startDate)
     const endDate = Helper.ConfigStaticDateTime("00:00", data.endDate)
+
+    console.log(data.startDate)
+    console.log(data.endDate)
+
     // const startDate = moment.utc(data.startDate, "YYYY-MM-DD").toDate();
     // const endDate = moment.utc(data.endDate, "YYYY-MM-DD").toDate();
 
@@ -372,7 +378,7 @@ export class LeaveRequestService {
       const dateYear = new Date(startDate).getFullYear();
       const startYearDate = Helper.ConfigStaticDateTime("00:00", `${dateYear}-01-01`);
       const endYearDate = Helper.ConfigStaticDateTime("00:00", `${dateYear}-12-31`);
-      
+
       const queryAnnualLeaveData = await prisma.leaveRequest.findMany({
         where: {
           employeeId: employeeId,
@@ -389,7 +395,7 @@ export class LeaveRequestService {
           deleted: false,
         }
       })
-  
+
       var countAnnualLeaves: number = 0;
       for (var x of queryAnnualLeaveData) {
         const startDate = new Date(x.startDate).toISOString().split("T")[0];
@@ -411,7 +417,7 @@ export class LeaveRequestService {
         response.message = "You are out of the Annual Leave Days";
         return response;
       } else {
-        if ((Helper.CountDaysFromStartDate(startDate, endDate) + countAnnualLeaves) > queryEmployeeAnnualLeave.annualLeaveDays) {
+        if ((Helper.CountDaysFromStartDate(data.startDate, data.endDate) + countAnnualLeaves) > queryEmployeeAnnualLeave.annualLeaveDays) {
           response.message = "You have request more than Annual Leave Days given";
           return response;
         }
@@ -422,7 +428,7 @@ export class LeaveRequestService {
       data: {
         employeeId: employeeId,
         leaveTypeId: data.leaveTypeId,
-        requestDate: new Date(),
+        requestDate: Helper.ConfigStaticDateTime(momentNow.format("HH:mm"), momentNow.format("YYYY-MM-DD")),
         startDate: startDate,
         endDate: endDate,
         status: leaveRequestStatus.waiting,
