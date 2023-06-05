@@ -25,12 +25,16 @@ const ConfigStaticDateTime = (time: string, date?: string): Date => {
     formatDate.setUTCFullYear(Number.parseInt(dataArr[0]));
     formatDate.setUTCHours(formatTime.hours())
     formatDate.setUTCMinutes(formatTime.minutes())
+    formatDate.setUTCSeconds(0)
+    formatDate.setUTCMilliseconds(0);
     result = formatDate;
   } else {
     //Fix the date to 1970-01-01, we only use the time. The time seperate from the date by T
     const formatDate = new Date("1970-01-01");
     formatDate.setUTCHours(formatTime.hours())
     formatDate.setUTCMinutes(formatTime.minutes())
+    formatDate.setUTCSeconds(0)
+    formatDate.setUTCMilliseconds(0);
     result = formatDate;
   }
   return result
