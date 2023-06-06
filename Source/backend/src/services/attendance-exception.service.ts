@@ -500,7 +500,7 @@ export class AttendanceExceptionService {
           },
           data: {
             employeeId: queryEmployeeAttendanceExceptionData.id,
-            attendanceDate: modifyDate.toDate(),
+            // attendanceDate: modifyDate.toDate(),
             checkOut: threshHoldException,
             checkoutCapture: queryAttendanceExceptionData.image,
             earlyLeave: earlyLeave,
