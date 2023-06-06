@@ -2,6 +2,9 @@ const verifyData = [
   { label: "WAITING", value: "WAITING" },
   { label: "APPROVE", value: "APPROVE" },
   { label: "REJECT", value: "REJECT" },
+];
+const verifyDataOverDate = [
+  { label: "WAITING", value: "WAITING" },
   { label: "OVERDATE", value: "OVERDATE" },
 ];
 const boolean = [
@@ -10,5 +13,6 @@ const boolean = [
 ];
 export const selectionData = {
   verifyData,
-  boolean
+  boolean,
+  verifyDataOverDate
 };

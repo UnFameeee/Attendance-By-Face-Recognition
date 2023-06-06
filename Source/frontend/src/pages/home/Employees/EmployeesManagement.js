@@ -483,7 +483,7 @@ function EmployeesManagement() {
       label: "Email",
       type: "email",
       placeholder: "abc@gmail.com",
-      isReadOnly: Object.keys(editData).length === 0 || userInfo.roleName == "admin" ? false : true,
+      isReadOnly: Object.keys(editData).length === 0 ? false : true,
       leftIcon: <MdOutlineAlternateEmail color="#999" fontSize="1.5rem" />,
     },
     {
