@@ -504,151 +504,79 @@ function AttendanceExceptionManagement() {
         )}
       </HStack>
       <Box w="100%">
-        <Tabs
-          isFitted
-          variant="solid-rounded"
-          colorScheme={checkType == "CHECKIN" ? "green" : "red"}
-        >
-          <TabList
-            mb="1em"
-            gap="5px"
-            flexDirection={{ base: "column", md: "row" }}
+        <Flex gap="10px" mb='10px'>
+          <Button
+            w="100%"
+            border="1px solid gray"
+            colorScheme={checkType == "CHECKIN" ? "green" : "gray"}
+            onClick={() => handleChangeTab("CHECKIN")}
           >
-            <Tab
-              border="1px solid gray"
-              rounded="md"
-              onClick={() => handleChangeTab("CHECKIN")}
-              shadow="2xl"
-            >
-              <Text fontSize="xl" fontWeight="bold">
-                Check In
-              </Text>
-            </Tab>
-            <Tab
-              border="1px solid gray"
-              rounded="md"
-              onClick={() => handleChangeTab("CHECKOUT")}
-            >
-              <Text fontSize="xl" fontWeight="bold">
-                Check Out
-              </Text>
-            </Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel p="0">
-              {attendanceExceptionGetListObj?.departmentId ? (
-                <Box w="100%">
-                  {listAttendanceException && (
-                    <DynamicTable
-                      onAddEditOpen={onAddEditOpen}
-                      handleDeleteRange={DeleteRange}
-                      tableRowAction={tableRowAction}
-                      columns={columns}
-                      data={listAttendanceException}
-                      permission={resultPermission}
-                    />
-                  )}
-                </Box>
-              ) : (
-                <Stack>
-                  <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
-                    <Heading
-                      fontSize="2xl"
-                      fontWeight="medium"
-                      textAlign="center"
-                      lineHeight="tall"
-                    >
-                      <Highlight
-                        query={["Department"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "md",
-                          bg: "white",
-                          color: "black",
-                          fontSize: "xl",
-                        }}
-                      >
-                        Please at least choose your Department
-                      </Highlight>{" "}
-                      <Highlight
-                        query={["Submit"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "md",
-                          bg: "#3182ce",
-                          color: "white",
-                          fontSize: "xl",
-                        }}
-                      >
-                        and hit Submit to see the attendance exception
-                      </Highlight>
-                    </Heading>
-                  </Box>
-                  <Box h="500px">
-                    <NoDataToDisplay />
-                  </Box>
-                </Stack>
-              )}
-            </TabPanel>
-            <TabPanel p="0">
-              {attendanceExceptionGetListObj?.departmentId ? (
-                <Box w="100%">
-                  <DynamicTable
-                    onAddEditOpen={onAddEditOpen}
-                    handleDeleteRange={DeleteRange}
-                    tableRowAction={tableRowAction}
-                    columns={columns}
-                    data={listAttendanceException}
-                    permission={resultPermission}
-                  />
-                </Box>
-              ) : (
-                <Stack>
-                  <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
-                    <Heading
-                      fontSize="2xl"
-                      fontWeight="medium"
-                      textAlign="center"
-                      lineHeight="tall"
-                    >
-                      <Highlight
-                        query={["Department"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "md",
-                          bg: "white",
-                          color: "black",
-                          fontSize: "xl",
-                        }}
-                      >
-                        Please at least choose your Department
-                      </Highlight>{" "}
-                      <Highlight
-                        query={["Submit"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "md",
-                          bg: "#3182ce",
-                          color: "white",
-                          fontSize: "xl",
-                        }}
-                      >
-                        and hit Submit to see the attendance exception
-                      </Highlight>
-                    </Heading>
-                  </Box>
-                  <Box h="500px">
-                    <NoDataToDisplay />
-                  </Box>
-                </Stack>
-              )}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+            Check in
+          </Button>
+          <Button
+            w="100%"
+            border="1px solid gray"
+            colorScheme={checkType == "CHECKOUT" ? "red" : "gray"}
+            onClick={() => handleChangeTab("CHECKOUT")}
+          >
+            Check out
+          </Button>
+        </Flex>
+        {attendanceExceptionGetListObj?.departmentId ? (
+          <Box w="100%">
+            {listAttendanceException && (
+              <DynamicTable
+                onAddEditOpen={onAddEditOpen}
+                handleDeleteRange={DeleteRange}
+                tableRowAction={tableRowAction}
+                columns={columns}
+                data={listAttendanceException}
+                permission={resultPermission}
+              />
+            )}
+          </Box>
+        ) : (
+          <Stack>
+            <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
+              <Heading
+                fontSize="2xl"
+                fontWeight="medium"
+                textAlign="center"
+                lineHeight="tall"
+              >
+                <Highlight
+                  query={["Department"]}
+                  styles={{
+                    px: "2",
+                    py: "1",
+                    rounded: "md",
+                    bg: "white",
+                    color: "black",
+                    fontSize: "xl",
+                  }}
+                >
+                  Please at least choose your Department
+                </Highlight>{" "}
+                <Highlight
+                  query={["Submit"]}
+                  styles={{
+                    px: "2",
+                    py: "1",
+                    rounded: "md",
+                    bg: "#3182ce",
+                    color: "white",
+                    fontSize: "xl",
+                  }}
+                >
+                  and hit Submit to see the attendance exception
+                </Highlight>
+              </Heading>
+            </Box>
+            <Box h="500px">
+              <NoDataToDisplay />
+            </Box>
+          </Stack>
+        )}
       </Box>
       <Modal
         finalFocusRef={finalRef}
