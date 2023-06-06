@@ -76,12 +76,12 @@ function WorkShift() {
   const [listEmployeeDataSelection, setListEmployeeDataSelection] = useState(
     []
   );
-  const [employeeFilterId, setEmployeeFilterId] = useState(() => {
+  const [employeeFilterId, setEmployeeFilterId] = useState("");
+  useEffect(() => {
     if (userDecodeInfo.roleName == "employee") {
-      return userDecodeInfo.id;
+      setEmployeeFilterId(userDecodeInfo.id);
     }
-    return "";
-  });
+  }, []);
   useEffect(() => {
     setListEmployeeDataSelection(
       Helper.convertToArraySelection(
@@ -179,20 +179,12 @@ function WorkShift() {
             duration: 5000,
           });
         } else {
-          if (employeeFilterId != "") {
-            setListWorkShiftDepartment((prevList) => {
-              let resultData = data?.result;
-              queryClient.setQueryData("listWorkShiftDepartment", resultData);
-              return resultData;
-            });
-          } else {
-            setListWorkShiftDepartment((prevList) => {
-              let resultData = [...data?.result];
-              const mergedResult = unionBy(resultData, prevList, "shiftId");
-              queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
-              return mergedResult;
-            });
-          }
+          setListWorkShiftDepartment((prevList) => {
+            let resultData = [...data?.result];
+            // const mergedResult = unionBy(resultData, prevList, "shiftId");
+            queryClient.setQueryData("listWorkShiftDepartment", resultData);
+            return resultData;
+          });
         }
       },
       onError: (error) => {
@@ -242,7 +234,9 @@ function WorkShift() {
       }
     }
   };
-
+  useEffect(() => {
+    refreshListWork();
+  }, [employeeFilterId, workShiftType]);
   useEffect(() => {
     setWorkShiftType(() => {
       let selection = {
@@ -259,20 +253,16 @@ function WorkShift() {
   };
   // #endregion
   // #region useEffect
-  // useEffect(() => {
-  //   console.log('heere')
-  //   setCurrentMonth(Helper.getMonth(monthIndex));
-  //   refreshListWork();
-  // }, [monthIndex]);
+  useEffect(() => {
+    setCurrentMonth(Helper.getMonth(monthIndex));
+    refreshListWork();
+  }, [monthIndex]);
   useEffect(() => {
     setListWorkShiftDepartment([]);
     if (departmentId) {
       setEnableGetListEmployee(true);
     }
   }, [departmentId]);
-  useEffect(() => {
-    refreshListWork();
-  }, [employeeFilterId, workShiftType,monthIndex]);
   // #endregion
   if (
     isLoadingListEmployee &&
