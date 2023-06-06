@@ -55,7 +55,7 @@ https://www.python.org/downloads/release/python-2716/
 2. Then type: **"npm start"** to run the Front-End
 3. The Frontend will start on http://localhost:3000
 
-## Link deployment:
+## Link deployment
 - Human resource management website:
 ```sh
 https://unfame.tech:3000/
