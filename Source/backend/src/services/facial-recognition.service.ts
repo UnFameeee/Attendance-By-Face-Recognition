@@ -85,7 +85,7 @@ export class FacialRecognitionService {
 
     // create a FaceMatcher object
     //currently best: 0.55
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.4);
+    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.42);
 
     const modelJSON = faceMatcher.toJSON();
     const modelName = "FaceMatcher.json";
@@ -150,7 +150,7 @@ export class FacialRecognitionService {
 
     // create a FaceMatcher object
     //currently best: 0.55
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.4);
+    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.42);
 
     const modelJSON = faceMatcher.toJSON();
     const modelName = "FaceMatcher.json";

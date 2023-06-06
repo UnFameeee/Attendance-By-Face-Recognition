@@ -141,6 +141,15 @@ export const updateEmployeeSchema = z.object({
     .optional()
     .nullable(),
 
+  displayName: z
+    .string({
+      required_error: 'Display Role Name is required',
+      invalid_type_error: "Display Role Name must be string"
+    })
+    .trim()
+    .optional()
+    .nullable(),
+
   phoneNumber: z
     .string({
       required_error: 'Phone is required',

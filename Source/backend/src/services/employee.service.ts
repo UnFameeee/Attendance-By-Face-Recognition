@@ -300,6 +300,12 @@ export class EmployeeService {
       return response;
     }
 
+    const role = await prisma.role.findUnique({
+      where: {
+        displayName: data.displayName
+      }
+    })
+
     const queryData = await prisma.employee.update({
       where: {
         id: employeeId,
@@ -311,6 +317,11 @@ export class EmployeeService {
         dateOfBirth: data.dateOfBirth,
         phoneNumber: data.phoneNumber,
         description: data.description,
+        role: {
+          connect: {
+            roleId: role.roleId,
+          }
+        },
         location: {
           upsert: {
             update: {
