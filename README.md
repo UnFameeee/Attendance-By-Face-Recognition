@@ -46,14 +46,14 @@ https://www.python.org/downloads/release/python-2716/
 ```
 ## How to run the project on local (Follow the sequence)
 ### Back-End
-1. Go to Back-End folder, then type **"npm i"** in the terminal to install all the necessary libraries
+1. Go to backend folder, then type **"npm i"** in the terminal to install all the necessary libraries
 2. Then type: **"npm run dev"** to run the Back-End
 3. The Backend will start on http://localhost:8081
 
 ### Front-End 
 1. Go to frontend folder, then type **"npm i"** in the terminal to install all the necessary libraries
 2. Then type: **"npm start"** to run the Front-End
-3. The Frontend will start on localhost:3000
+3. The Frontend will start on http://localhost:3000
 
 ## Link deployment:
 - Human resource management website:
@@ -65,7 +65,7 @@ https://unfame.tech:3000/
 https://unfame.tech:3000/face-attendance
 ```
 ## Contribution
-Any information please contact me through this email: 
+Any information please contact us through these email: 
 ```sh
 quocthang036@gmail.com
 junrante@gmail.com
