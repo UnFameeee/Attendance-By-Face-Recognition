@@ -7,9 +7,10 @@ import moment from "moment";
 import { Helper } from "../utils/helper";
 import { RequestWithMulter } from "../interfaces/request.interface";
 import { HttpException } from "../config/httpException";
+import { timezoneConfig } from "../constant/moment-timezone.constant";
 
 const directory = path.join(__dirname, "../public/attendance");
-var now: Date;
+var now;
 var staticDateFolder: string;
 var errorFlag: boolean = false;
 const attendanceImageStorage = multer.diskStorage({
@@ -21,18 +22,25 @@ const attendanceImageStorage = multer.diskStorage({
     //error handler
     errorFlag = false;
 
-    now = new Date();
-    const modifyDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD").toDate();
-    const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    // now = new Date();
+    const momentNow = moment(new Date()).tz(timezoneConfig);
+    now = momentNow;
+    // const modifyDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD").toDate();
+    // const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    const targetDate = Helper.ConfigStaticDateTime("00:00", `${momentNow.format("YYYY-MM-DD")}`)
+    // const targetDateEnd = Helper.ConfigStaticDateTime("00:00", `${momentNow.format("YYYY-MM-DD")}`)
+
+    console.log("attendance status date", targetDate);
 
     //Kiểm tra lịch làm xem ngày đấy NV có ca làm hay ko
     const workShift = await prisma.workshift.findFirst({
       where: {
         employeeId: employeeId,
-        shiftDate: {
-          gte: targetDate.startOf('day').toDate(),
-          lte: targetDate.endOf('day').toDate(),
-        },
+        // shiftDate: {
+        //   gte: targetDate.startOf('day').toDate(),
+        //   lte: targetDate.endOf('day').toDate(),
+        // },
+        shiftDate: targetDate,
         deleted: false,
       },
     })
@@ -43,10 +51,11 @@ const attendanceImageStorage = multer.diskStorage({
       const queryAttendanceAbsent = await prisma.attendance.findFirst({
         where: {
           employeeId: employeeId,
-          attendanceDate: {
-            gte: targetDate.startOf('day').toDate(),
-            lte: targetDate.endOf('day').toDate(),
-          },
+          // attendanceDate: {
+          //   gte: targetDate.startOf('day').toDate(),
+          //   lte: targetDate.endOf('day').toDate(),
+          // },
+          attendanceDate: targetDate,
           deleted: false,
           absent: true,
         }
@@ -58,10 +67,11 @@ const attendanceImageStorage = multer.diskStorage({
         const queryAttendanceCheckoutData = await prisma.attendance.findFirst({
           where: {
             employeeId: employeeId,
-            attendanceDate: {
-              gte: targetDate.startOf('day').toDate(),
-              lte: targetDate.endOf('day').toDate(),
-            },
+            // attendanceDate: {
+            //   gte: targetDate.startOf('day').toDate(),
+            //   lte: targetDate.endOf('day').toDate(),
+            // },
+            attendanceDate: targetDate,
             checkIn: {
               not: null
             },
@@ -81,7 +91,7 @@ const attendanceImageStorage = multer.diskStorage({
     if (!fs.existsSync(`${directory}/${employeeId}`)) {
       fs.mkdirSync(`${directory}/${employeeId}`)
     }
-    staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
+    staticDateFolder = momentNow.format("YYYY-MM-DD");
     //Check Date folder
     if (!fs.existsSync(`${directory}/${employeeId}/${staticDateFolder}`)) {
       fs.mkdirSync(`${directory}/${employeeId}/${staticDateFolder}`)
@@ -92,7 +102,9 @@ const attendanceImageStorage = multer.diskStorage({
   },
   filename: async (req: RequestWithMulter, file, cb) => {
     const employeeId: string = (req.query.employeeId).toString();
-    const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+    // const targetDate = moment.utc(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`, "YYYY-MM-DD")
+
+    const targetDate = Helper.ConfigStaticDateTime("00:00", `${now.format("YYYY-MM-DD")}`)    
 
     if (errorFlag) {
       cb(null, `${employeeId}_${staticDateFolder}_unknown` + path.extname(file.originalname));
@@ -100,10 +112,11 @@ const attendanceImageStorage = multer.diskStorage({
       const queryAttendanceData = await prisma.attendance.findFirst({
         where: {
           employeeId: employeeId,
-          attendanceDate: {
-            gte: targetDate.startOf('day').toDate(),
-            lte: targetDate.endOf('day').toDate(),
-          }
+          // attendanceDate: {
+          //   gte: targetDate.startOf('day').toDate(),
+          //   lte: targetDate.endOf('day').toDate(),
+          // }
+          attendanceDate: targetDate,
         }
       })
 

@@ -3,6 +3,8 @@ import path from "path";
 import fs from 'fs';
 import { Request } from "express";
 import { v4 } from "uuid";
+import { timezoneConfig } from "../constant/moment-timezone.constant";
+import moment from "moment";
 
 const directory = path.join(__dirname, "../public/attendance-exception");
 var now: Date;
@@ -12,9 +14,11 @@ const anonymousAttendanceImageStorage = multer.diskStorage({
   // Attendance - EmpID - Date - imageIn, imageOut
   destination: async (req: Request, file, cb) => {
     //config the datetime
-    now = new Date();
-    staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
-
+    // now = new Date();
+    // staticDateFolder = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}`;
+    const momentNow = moment(new Date()).tz(timezoneConfig);
+    staticDateFolder = momentNow.format("YYYY-MM-DD");
+    
     //Check Date folder
     if (!fs.existsSync(`${directory}/${staticDateFolder}`)) {
       fs.mkdirSync(`${directory}/${staticDateFolder}`)
