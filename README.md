@@ -22,7 +22,7 @@ A big thanks for Mr. Nguyen Duc Khoan for helping us with this project.
 
 ## Contributors
 - UnFameeee a.k.a Nguyễn Phạm Quốc Thắng
-- duyduong689 a.k.a Thạch Dương Duy
+- Duyduong689 a.k.a Thạch Dương Duy
 
 ## Framework and Technology
 ### Requirement
