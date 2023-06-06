@@ -429,6 +429,12 @@ function WorkShift() {
           </Heading>
           <Box>
             <Button
+              isLoading={
+                useGetWorkShiftDepartment.isLoading ||
+                useGetWorkShiftOfEmployee.isLoading
+                  ? true
+                  : false
+              }
               onClick={() => {
                 setIsWork((prev) => !prev);
               }}
@@ -439,6 +445,12 @@ function WorkShift() {
           </Box>
           <Box>
             <Button
+              isLoading={
+                useGetWorkShiftDepartment.isLoading ||
+                useGetWorkShiftOfEmployee.isLoading
+                  ? true
+                  : false
+              }
               onClick={() => {
                 setIsLeave((prev) => !prev);
               }}
@@ -465,9 +477,10 @@ function WorkShift() {
           <div className="flex flex-1">
             {/* <Sidebar /> */}
             {isFetchingListEmployee ||
-            useGetWorkShiftDepartment.isLoading || useModifyWorkShift.isLoading ||
+            useGetWorkShiftDepartment.isLoading ||
+            useModifyWorkShift.isLoading ||
             useGetWorkShiftOfEmployee.isLoading ? (
-              <Box h="500px" w='100%'>
+              <Box h="500px" w="100%">
                 <LoadingSpinner />
               </Box>
             ) : (
