@@ -24,7 +24,7 @@ A big thanks for Mr. Nguyen Duc Khoan for helping us with this project.
 - UnFameeee a.k.a Nguyễn Phạm Quốc Thắng
 - duyduong689 a.k.a Thạch Dương Duy
 
-## Framework and Technology used
+## Framework and Technology
 ### Requirement
 - npm version greater than 6.14.17
 ```sh
