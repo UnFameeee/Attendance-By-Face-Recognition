@@ -670,6 +670,7 @@ function AttendancePersonal() {
                     </Heading>
                     <Box>
                       <Button
+                        isLoading={isFetchingHistoryData ? true : false}
                         onClick={() => {
                           setIsValidPersonal(true);
                         }}
@@ -680,6 +681,7 @@ function AttendancePersonal() {
                     </Box>
                     <Box>
                       <Button
+                        isLoading={isFetchingHistoryData ? true : false}
                         onClick={() => {
                           setIsValidPersonal(false);
                         }}
@@ -1403,6 +1405,9 @@ function AttendancePersonal() {
                           <Flex gap="5px">
                             <Box>
                               <Button
+                                isLoading={
+                                  isFetchingHistoryFilterData ? true : false
+                                }
                                 onClick={() => {
                                   setIsValid(true);
                                 }}
@@ -1413,6 +1418,9 @@ function AttendancePersonal() {
                             </Box>
                             <Box>
                               <Button
+                                isLoading={
+                                  isFetchingHistoryFilterData ? true : false
+                                }
                                 onClick={() => {
                                   setIsValid(false);
                                 }}
