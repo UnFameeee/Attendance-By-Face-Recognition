@@ -181,9 +181,9 @@ function WorkShift() {
         } else {
           setListWorkShiftDepartment((prevList) => {
             let resultData = [...data?.result];
-            const mergedResult = unionBy(resultData, prevList, "shiftId");
-            queryClient.setQueryData("listWorkShiftDepartment", mergedResult);
-            return mergedResult;
+            // const mergedResult = unionBy(resultData, prevList, "shiftId");
+            queryClient.setQueryData("listWorkShiftDepartment", resultData);
+            return resultData;
           });
         }
       },
