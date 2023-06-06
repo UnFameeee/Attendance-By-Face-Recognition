@@ -3,7 +3,9 @@ import "./FaceAttendance.css"
 import * as faceapi from '@vladmandic/face-api';
 
 import {
+  Box,
   Img,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 // import axiosBase from '../../../Utils/AxiosInstance';
@@ -23,15 +25,41 @@ import axiosFaceBase from '../../../Utils/AxiosFaceInstance';
 
 let streamObj;
 var unknownCount = 0;
+const textArr = [
+  {
+    title:"READY",
+    color:'yellow.500'
+  },
+  {
+    title:"PROCESSING",
+    color:'blue.500'
+  },
+  {
+    title:"COMPLETED",
+    color:'green.500'
+  },
+  {
+    title:"STOPPED",
+    color:'red.500'
+  },
+  // "READY", "PROCESSING", "COMPLETED", "STOPPED"
+]
 export default function FaceAttendance() {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const videoRef = useRef(null);
   const intervalRef = useRef(null);
   const toast = useToast();
+  const [textProgress, setTextProgress] = useState({
+    title:"READY",
+    color:'black'
+  });
+  const [isProcessing, setIsProcessing] = useState(false);
   const dispatch = useDispatch();
   const { isScaningPaused, isTakeAttendance } = useSelector(state => state.takeAttendance);
   const imageCapture = useSelector(state => state.attendanceStorage.imageCapture);
   const employeeId = useSelector(state => state.attendanceModal.employeeId);
+  const { isAttendanceModalOpen } = useSelector((state) => state.attendanceModal);
+  const { isExceptionModalOpen } = useSelector(state => state.exceptionModal);
 
   const useSaveImageOfAttendance = useMutation(({ employeeId, formData }) =>
     attendanceService.saveImageOfAttendance(employeeId, formData), {
@@ -44,33 +72,7 @@ export default function FaceAttendance() {
           image: data?.result,
           date: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`,
         });
-      } 
-      // else {
-        // toast({
-        //   title: 'Attendance Result',
-        //   description: data.message,
-        //   position: "top",
-        //   status: "error",
-        //   variant: 'subtle',
-        //   duration: 5000,
-        //   containerStyle: {
-        //     width: "30vw",
-        //     padding: "0.3rem",
-        //     fontSize: "1.25rem",
-        //     textAlign: "center",
-        //   },
-        // });
-
-        // dispatch(setIsTakeAttendance({
-        //   isTakeAttendance: false,
-        // }))
-
-        // setTimeout(() => {
-        //   dispatch(setIsScaningPaused({
-        //     isScaningPaused: false,
-        //   }))
-        // }, 5000);
-      // }
+      }
     },
   })
 
@@ -199,7 +201,7 @@ export default function FaceAttendance() {
 
       const FaceMatcherJson = await axiosFaceBase.get(`/public/train-model/FaceMatcher.json`)
       const faceMatcher = faceapi.FaceMatcher.fromJSON(FaceMatcherJson.data);
-      
+
       const faceDetectArray = [];
       const realtimeFaceRegconition = async () => {
         if (!useTakeAttendance.isLoading) {
@@ -208,6 +210,12 @@ export default function FaceAttendance() {
             .detectAllFaces(videoRef.current.video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.85, maxResults: 1 }))
             .withFaceLandmarks()
             .withFaceDescriptors()
+            
+          if(detections.length === 0){
+            setIsProcessing(false)
+          } else {
+            setIsProcessing(true)
+          }
 
           const resizedDetections = faceapi.resizeResults(
             detections,
@@ -309,6 +317,25 @@ export default function FaceAttendance() {
   }, [isTakeAttendance]);
 
   useEffect(() => {
+    // console.log("isAttendanceModalOpen: ", isAttendanceModalOpen)
+    // console.log("isExceptionModalOpen: ", isExceptionModalOpen)
+    // console.log("isProcessing: ", isProcessing)
+
+    //"READY", "PROCESSING", "COMPLETED", "STOPPED"
+    if (!isProcessing && !isScaningPaused && !isAttendanceModalOpen && !isExceptionModalOpen) {
+      setTextProgress(textArr[0])
+    } else if (isProcessing && !isScaningPaused && !isAttendanceModalOpen && !isExceptionModalOpen) {
+      setTextProgress(textArr[1])
+    } else if ((isProcessing || !isProcessing) && isScaningPaused && isAttendanceModalOpen && !isExceptionModalOpen) {
+      setTextProgress(textArr[2])
+    } else if ((isProcessing || !isProcessing) && isScaningPaused && !isAttendanceModalOpen && isExceptionModalOpen) {
+      setTextProgress(textArr[2])
+    } else if ((isProcessing || !isProcessing) && isScaningPaused && !isAttendanceModalOpen && !isExceptionModalOpen) {
+      setTextProgress(textArr[3])
+    }
+  }, [isAttendanceModalOpen, isExceptionModalOpen, isScaningPaused, isProcessing])
+
+  useEffect(() => {
     return () => {
       if (streamObj) {
         streamObj.getTracks().forEach(track => track.stop());
@@ -328,6 +355,10 @@ export default function FaceAttendance() {
           WebkitTransform: "rotateY(180deg)",
           MozTransform: "rotateY(180deg)",
         }}></Webcam>
+        <Box zIndex={1000000000} position={"absolute"} w={"160px"} h={"50px"} top={0} right={0} textAlign={"right"} display={"flex"} alignItems={"center"} justifyContent={"center"} border={"3px solid"} borderColor={textProgress.color}
+          bg='white' rounded='md' textTransform='uppercase'>
+          <Text fontSize={"20px"} fontWeight={"700"} color={textProgress.color} >{textProgress.title}</Text>
+        </Box>
       </div>
       <div>
         <Img style={{ border: "1px solid red" }} id='captureImage' src={null} />
