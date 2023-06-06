@@ -302,645 +302,579 @@ function AttendancePersonal() {
   // #endregion
   return (
     <>
-      <Tabs
-        variant="soft-rounded"
-        colorScheme={`${currentTab == "personal" ? "green" : "blue"}`}
-      >
-        <TabList ml="12px">
-          <Tab
-            fontSize="2xl"
-            fontWeight="bold"
+      <Flex flexDirection="column">
+        <Flex gap="10px" mb="10px">
+          <Button
+            w="100%"
             border="1px solid gray"
-            onClick={() => {
-              handleChangeTab("personal");
-            }}
+            colorScheme={currentTab == "personal" ? "green" : "gray"}
+            onClick={() => handleChangeTab("personal")}
           >
             Personal
-          </Tab>
+          </Button>
           {userInfo.roleName != "employee" && (
-            <Tab
-              fontSize="2xl"
-              fontWeight="bold"
+            <Button
+              w="100%"
               border="1px solid gray"
-              onClick={() => {
-                handleChangeTab("management");
-              }}
+              colorScheme={currentTab == "management" ? "blue" : "gray"}
+              onClick={() => handleChangeTab("management")}
             >
               Management
-            </Tab>
+            </Button>
           )}
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            {isLoadingHistoryData ||
-            isFetchingMonthData ||
-            isFetchingTodayData ||
-            isFetchingEmployeeData ? (
-              <Box w="100%" h="500px">
-                <LoadingSpinner />
-              </Box>
-            ) : (
-              <Stack spacing={5} h="100%">
-                <VStack
-                  paddingX={5}
-                  paddingY={4}
-                  bg="#ffffffdb"
-                  rounded="xl"
-                  alignItems="start"
-                  spacing="15px"
-                  shadow="2xl"
-                >
-                  <Flex gap="10px">
-                    <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                    <Heading fontSize="2rem" fontWeight="medium">
-                      Detail Employee
-                    </Heading>
-                  </Flex>
-                  <HStack
-                    w="100%"
-                    justifyContent="start"
-                    spacing="30px"
-                    gap={{
-                      base: "5px",
-                      md: "30px",
-                    }}
-                    flexDirection={{
-                      base: "column",
-                      md: "row",
-                    }}
+        </Flex>
+        <Stack>
+          {currentTab == "personal" ? (
+            <>
+              {isLoadingHistoryData ||
+              isFetchingMonthData ||
+              isFetchingTodayData ||
+              isFetchingEmployeeData ? (
+                <Box w="100%" h="500px">
+                  <LoadingSpinner />
+                </Box>
+              ) : (
+                <Stack spacing={5} h="100%">
+                  <VStack
+                    paddingX={5}
+                    paddingY={4}
+                    bg="#ffffffdb"
+                    rounded="xl"
+                    alignItems="start"
+                    spacing="15px"
+                    shadow="2xl"
                   >
-                    <Avatar boxSize="120px" src={employeeData?.image} />
-                    <VStack
-                      ml="0 !important"
+                    <Flex gap="10px">
+                      <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                      <Heading fontSize="2rem" fontWeight="medium">
+                        Detail Employee
+                      </Heading>
+                    </Flex>
+                    <HStack
                       w="100%"
-                      alignItems={{
-                        base: "center",
-                        md: "start",
+                      justifyContent="start"
+                      spacing="30px"
+                      gap={{
+                        base: "5px",
+                        md: "30px",
+                      }}
+                      flexDirection={{
+                        base: "column",
+                        md: "row",
                       }}
                     >
-                      <Heading fontSize="1.7rem">
-                        {employeeData?.fullname}
-                      </Heading>
-                      <HStack
+                      <Avatar boxSize="120px" src={employeeData?.image} />
+                      <VStack
+                        ml="0 !important"
                         w="100%"
-                        spacing="3rem"
-                        flexDirection={{
-                          base: "column",
-                          md: "row",
-                        }}
-                        gap={{
-                          base: "5px",
-                          md: "30px",
+                        alignItems={{
+                          base: "center",
+                          md: "start",
                         }}
                       >
-                        <Flex
-                          alignItems={{
-                            base: "center",
-                            md: "start",
+                        <Heading fontSize="1.7rem">
+                          {employeeData?.fullname}
+                        </Heading>
+                        <HStack
+                          w="100%"
+                          spacing="3rem"
+                          flexDirection={{
+                            base: "column",
+                            md: "row",
                           }}
-                          flexDirection="column"
-                        >
-                          <Text fontSize="1.2rem">Role</Text>
-                          <Heading fontWeight="medium" fontSize="2xl">
-                            {employeeData?.role?.displayName}
-                          </Heading>
-                        </Flex>
-                        <Flex
-                          alignItems={{
-                            base: "center",
-                            md: "start",
+                          gap={{
+                            base: "5px",
+                            md: "30px",
                           }}
-                          flexDirection="column"
-                          ml="0 !important"
                         >
-                          <Text fontSize="1.2rem">Phone Number</Text>
-                          <Heading fontWeight="medium" fontSize="2xl">
-                            {employeeData?.phoneNumber}
-                          </Heading>
-                        </Flex>
-                        <Flex
-                          alignItems={{
-                            base: "center",
-                            md: "start",
-                          }}
-                          flexDirection="column"
-                          ml="0 !important"
-                        >
-                          <Text fontSize="1.2rem">Email Address</Text>
-                          <Heading fontWeight="medium" fontSize="2xl">
-                            {employeeData?.email}
-                          </Heading>
-                        </Flex>
-                      </HStack>
-                    </VStack>
-                  </HStack>
-                </VStack>
-                <VStack
-                  paddingX={5}
-                  paddingY={4}
-                  bg="#ffffffdb"
-                  rounded="xl"
-                  alignItems="start"
-                  justifyContent="center"
-                  spacing="15px"
-                  shadow="2xl"
-                >
-                  <Flex gap="10px">
-                    <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                    <Heading fontWeight="medium" fontSize="2rem">
-                      This Month Attendance Detail
-                    </Heading>
-                  </Flex>
-                  <SimpleGrid
-                    w="100%"
-                    spacing={4}
-                    gridTemplateColumns="repeat(auto-fit, minmax(240px,1fr))"
-                  >
-                    <HStack bg="cyan.500" rounded="xl" p="15px" shadow="lg">
-                      <Center bg="cyan.300" rounded="50%" boxSize="3rem">
-                        <Icon
-                          color="white"
-                          boxSize="30px"
-                          as={AiFillCheckCircle}
-                        />
-                      </Center>
-                      <Box color="white">
-                        <Heading fontSize="2xl">
-                          {attendanceMonthData?.totalAttendance}
-                        </Heading>
-                        <Text fontSize="xl">Total Attendance</Text>
-                      </Box>
+                          <Flex
+                            alignItems={{
+                              base: "center",
+                              md: "start",
+                            }}
+                            flexDirection="column"
+                          >
+                            <Text fontSize="1.2rem">Role</Text>
+                            <Heading fontWeight="medium" fontSize="2xl">
+                              {employeeData?.role?.displayName}
+                            </Heading>
+                          </Flex>
+                          <Flex
+                            alignItems={{
+                              base: "center",
+                              md: "start",
+                            }}
+                            flexDirection="column"
+                            ml="0 !important"
+                          >
+                            <Text fontSize="1.2rem">Phone Number</Text>
+                            <Heading fontWeight="medium" fontSize="2xl">
+                              {employeeData?.phoneNumber}
+                            </Heading>
+                          </Flex>
+                          <Flex
+                            alignItems={{
+                              base: "center",
+                              md: "start",
+                            }}
+                            flexDirection="column"
+                            ml="0 !important"
+                          >
+                            <Text fontSize="1.2rem">Email Address</Text>
+                            <Heading fontWeight="medium" fontSize="2xl">
+                              {employeeData?.email}
+                            </Heading>
+                          </Flex>
+                        </HStack>
+                      </VStack>
                     </HStack>
-                    <HStack bg="teal.500" rounded="xl" p="15px" shadow="lg">
-                      <Center bg="teal.300" rounded="50%" boxSize="3rem">
-                        <Icon
-                          color="white"
-                          boxSize="30px"
-                          as={RiUserVoiceFill}
-                        />
-                      </Center>
-                      <Box color="white">
-                        <Heading fontSize="2xl">
-                          {attendanceMonthData?.totalLeaveDays}
-                        </Heading>
-                        <Text fontSize="xl">Total Leave Days</Text>
-                      </Box>
-                    </HStack>
-                    <HStack bg="blue.500" rounded="xl" p="15px" shadow="lg">
-                      <Center bg="blue.300" rounded="50%" boxSize="3rem">
-                        <Icon color="white" boxSize="30px" as={MdWorkHistory} />
-                      </Center>
-                      <Box color="white">
-                        <Heading fontSize="2xl">
-                          {attendanceMonthData?.totalWorkingHours == "00:00"
-                            ? "--:--"
-                            : attendanceMonthData?.totalWorkingHours}
-                        </Heading>
-                        <Text fontSize="xl">Total Working Hours</Text>
-                      </Box>
-                    </HStack>
-
-                    <HStack bg="yellow.500" rounded="xl" p="15px" shadow="lg">
-                      <Center bg="yellow.300" rounded="50%" boxSize="3rem">
-                        <Icon color="white" boxSize="30px" as={MdTimerOff} />
-                      </Center>
-                      <Box color="white">
-                        <Heading fontSize="2xl">
-                          {attendanceMonthData?.totalLateArrival == "00:00"
-                            ? "--:--"
-                            : attendanceMonthData?.totalLateArrival}
-                        </Heading>
-                        <Text fontSize="xl">Total Late Arrival</Text>
-                      </Box>
-                    </HStack>
-                    <HStack bg="orange.500" rounded="xl" p="15px" shadow="lg">
-                      <Center bg="orange.300" rounded="50%" boxSize="3rem">
-                        <Icon color="white" boxSize="30px" as={BiTimer} />
-                      </Center>
-                      <Box color="white">
-                        <Heading fontSize="2xl">
-                          {attendanceMonthData?.totalEarlyLeave == "00:00"
-                            ? "--:--"
-                            : attendanceMonthData?.totalEarlyLeave}
-                        </Heading>
-                        <Text fontSize="xl">Total Early Leave</Text>
-                      </Box>
-                    </HStack>
-                  </SimpleGrid>
-                </VStack>
-                <VStack
-                  paddingX={5}
-                  paddingY={4}
-                  bg="#ffffffdb"
-                  rounded="xl"
-                  alignItems="start"
-                  justifyContent="center"
-                  spacing="15px"
-                  shadow="2xl"
-                >
-                  <Flex gap="10px">
-                    <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                    <Heading fontWeight="medium" fontSize="2rem">
-                      Today Attendance
-                    </Heading>
-                  </Flex>
-                  <SimpleGrid
-                    w="100%"
-                    spacing={4}
-                    gridTemplateColumns="repeat(auto-fit, minmax(100px,1fr))"
-                    justifyContent="space-around"
-                  >
-                    <Box
-                      bg="blue.500"
-                      color="white"
-                      p={5}
-                      rounded="md"
-                      fontSize="xl"
-                      flex="1"
-                    >
-                      <Text fontWeight="bold">
-                        {Helper.convertDateISOToHHmm(
-                          attendanceTodayData?.totalHours
-                        )}
-                      </Text>
-                      <Text fontWeight="medium">Working Hours</Text>
-                    </Box>
-                    <Box
-                      bg="green.500"
-                      color="white"
-                      p={5}
-                      rounded="md"
-                      fontSize="xl"
-                      flex="1"
-                    >
-                      <Text fontWeight="bold">
-                        {Helper.convertDateISOToHHmm(
-                          attendanceTodayData?.checkIn
-                        )}
-                      </Text>
-                      <Text fontWeight="medium">Check In</Text>
-                    </Box>
-                    <Box
-                      bg="purple.500"
-                      color="white"
-                      p={5}
-                      rounded="md"
-                      fontSize="xl"
-                      flex="1"
-                    >
-                      <Text fontWeight="bold">
-                        {Helper.convertDateISOToHHmm(
-                          attendanceTodayData?.checkOut
-                        )}
-                      </Text>
-                      <Text fontWeight="medium">Check Out</Text>
-                    </Box>
-
-                    <Box
-                      bg="yellow.500"
-                      color="white"
-                      p={5}
-                      rounded="md"
-                      fontSize="xl"
-                      flex="1"
-                    >
-                      <Text fontWeight="bold">
-                        {Helper.convertDateISOToHHmm(
-                          attendanceTodayData?.lateArrival
-                        )}
-                      </Text>
-                      <Text fontWeight="medium">Late Arrival</Text>
-                    </Box>
-
-                    <Box
-                      bg="orange.500"
-                      color="white"
-                      p={5}
-                      rounded="md"
-                      fontSize="xl"
-                      flex="1"
-                    >
-                      <Text fontWeight="bold">
-                        {Helper.convertDateISOToHHmm(
-                          attendanceTodayData?.earlyLeave
-                        )}
-                      </Text>
-                      <Text fontWeight="medium">Early Leave</Text>
-                    </Box>
-                  </SimpleGrid>
-                </VStack>
-                <VStack
-                  paddingX={5}
-                  paddingY={4}
-                  bg="#ffffffdb"
-                  rounded="xl"
-                  alignItems="start"
-                  spacing="15px"
-                  shadow="2xl"
-                >
-                  <Flex
-                    gap="10px"
-                    w="100%"
-                    flexDirection={{ base: "column", md: "row" }}
+                  </VStack>
+                  <VStack
+                    paddingX={5}
+                    paddingY={4}
+                    bg="#ffffffdb"
+                    rounded="xl"
+                    alignItems="start"
+                    justifyContent="center"
+                    spacing="15px"
+                    shadow="2xl"
                   >
                     <Flex gap="10px">
                       <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
                       <Heading fontWeight="medium" fontSize="2rem">
-                        Attendance History
+                        This Month Attendance Detail
                       </Heading>
                     </Flex>
-                  </Flex>
-                  <HStack
-                    display="flex"
-                    flexDirection={{ base: "column", sm: "row" }}
-                    alignItems={{ base: "baseline", sm: "center" }}
-                  >
-                    <Heading fontSize="xl" fontWeight="medium" mb="6px">
-                      <Highlight
-                        query={["Type Filter:"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "full",
-                          bg: "purple.100",
-                        }}
-                      >
-                        Type Filter:
-                      </Highlight>
-                    </Heading>
-                    <Box>
-                      <Button
-                        isLoading={isFetchingHistoryData ? true : false}
-                        onClick={() => {
-                          setIsValidPersonal(true);
-                        }}
-                        colorScheme={isValidPersonal ? "blue" : "gray"}
-                      >
-                        Valid
-                      </Button>
-                    </Box>
-                    <Box>
-                      <Button
-                        isLoading={isFetchingHistoryData ? true : false}
-                        onClick={() => {
-                          setIsValidPersonal(false);
-                        }}
-                        colorScheme={!isValidPersonal ? "blue" : "gray"}
-                      >
-                        Invalid
-                      </Button>
-                    </Box>
-                  </HStack>
-                  <HStack
-                    w="fit-content"
-                    flexDir={{ base: "column", md: "row" }}
-                    alignItems={{ base: "baseline", md: "flex-end" }}
-                  >
-                    <Heading fontSize="xl" fontWeight="medium" mb="6px">
-                      <Highlight
-                        query={["Date Filter:"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "full",
-                          bg: "purple.100",
-                        }}
-                      >
-                        Date Filter:
-                      </Highlight>
-                    </Heading>
-                    <Formik
-                      initialValues={initialValuesForDateFilterSelection}
-                      validationSchema={validationSchemaForDateFilterSelection}
-                      onSubmit={(values, action) => {
-                        setMonthPersonal(values.month);
-                        setYearPersonal(values.year);
-                      }}
-                    >
-                      {(formik) => (
-                        <Stack
-                          flexDirection={{ base: "column", md: "row" }}
-                          alignItems={{ base: "baseline", md: "flex-end" }}
-                          gap="5px"
-                        >
-                          <Flex gap="5px">
-                            <Box w="100px">
-                              <FormTextField
-                                label="Month"
-                                name="month"
-                                type="number"
-                              />
-                            </Box>
-                            <Box w="100px">
-                              <FormTextField
-                                label="Year"
-                                name="year"
-                                type="number"
-                              />
-                            </Box>
-                          </Flex>
-                          <Button
-                            onClick={formik.handleSubmit}
-                            colorScheme="blue"
-                          >
-                            Submit
-                          </Button>
-                        </Stack>
-                      )}
-                    </Formik>
-                  </HStack>
-                  {isFetchingHistoryData ? (
-                    <Box h="100px" w="100%">
-                      <LoadingSpinner />
-                    </Box>
-                  ) : (
                     <SimpleGrid
                       w="100%"
-                      spacing={3}
-                      gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
+                      spacing={4}
+                      gridTemplateColumns="repeat(auto-fit, minmax(240px,1fr))"
                     >
-                      {attendanceHistoryData &&
-                        attendanceHistoryData.map((item, index) => {
-                          return (
-                            <VStack
-                              color="white"
-                              alignItems="start"
-                              bg="gray.500"
-                              rounded="xl"
-                              p="20px"
-                              key={index}
-                              shadow="lg"
-                              onClick={() =>
-                                handleOpenAttendanceDetail(item.attendanceId)
-                              }
-                              cursor="pointer"
+                      <HStack bg="cyan.500" rounded="xl" p="15px" shadow="lg">
+                        <Center bg="cyan.300" rounded="50%" boxSize="3rem">
+                          <Icon
+                            color="white"
+                            boxSize="30px"
+                            as={AiFillCheckCircle}
+                          />
+                        </Center>
+                        <Box color="white">
+                          <Heading fontSize="2xl">
+                            {attendanceMonthData?.totalAttendance}
+                          </Heading>
+                          <Text fontSize="xl">Total Attendance</Text>
+                        </Box>
+                      </HStack>
+                      <HStack bg="teal.500" rounded="xl" p="15px" shadow="lg">
+                        <Center bg="teal.300" rounded="50%" boxSize="3rem">
+                          <Icon
+                            color="white"
+                            boxSize="30px"
+                            as={RiUserVoiceFill}
+                          />
+                        </Center>
+                        <Box color="white">
+                          <Heading fontSize="2xl">
+                            {attendanceMonthData?.totalLeaveDays}
+                          </Heading>
+                          <Text fontSize="xl">Total Leave Days</Text>
+                        </Box>
+                      </HStack>
+                      <HStack bg="blue.500" rounded="xl" p="15px" shadow="lg">
+                        <Center bg="blue.300" rounded="50%" boxSize="3rem">
+                          <Icon
+                            color="white"
+                            boxSize="30px"
+                            as={MdWorkHistory}
+                          />
+                        </Center>
+                        <Box color="white">
+                          <Heading fontSize="2xl">
+                            {attendanceMonthData?.totalWorkingHours == "00:00"
+                              ? "--:--"
+                              : attendanceMonthData?.totalWorkingHours}
+                          </Heading>
+                          <Text fontSize="xl">Total Working Hours</Text>
+                        </Box>
+                      </HStack>
+
+                      <HStack bg="yellow.500" rounded="xl" p="15px" shadow="lg">
+                        <Center bg="yellow.300" rounded="50%" boxSize="3rem">
+                          <Icon color="white" boxSize="30px" as={MdTimerOff} />
+                        </Center>
+                        <Box color="white">
+                          <Heading fontSize="2xl">
+                            {attendanceMonthData?.totalLateArrival == "00:00"
+                              ? "--:--"
+                              : attendanceMonthData?.totalLateArrival}
+                          </Heading>
+                          <Text fontSize="xl">Total Late Arrival</Text>
+                        </Box>
+                      </HStack>
+                      <HStack bg="orange.500" rounded="xl" p="15px" shadow="lg">
+                        <Center bg="orange.300" rounded="50%" boxSize="3rem">
+                          <Icon color="white" boxSize="30px" as={BiTimer} />
+                        </Center>
+                        <Box color="white">
+                          <Heading fontSize="2xl">
+                            {attendanceMonthData?.totalEarlyLeave == "00:00"
+                              ? "--:--"
+                              : attendanceMonthData?.totalEarlyLeave}
+                          </Heading>
+                          <Text fontSize="xl">Total Early Leave</Text>
+                        </Box>
+                      </HStack>
+                    </SimpleGrid>
+                  </VStack>
+                  <VStack
+                    paddingX={5}
+                    paddingY={4}
+                    bg="#ffffffdb"
+                    rounded="xl"
+                    alignItems="start"
+                    justifyContent="center"
+                    spacing="15px"
+                    shadow="2xl"
+                  >
+                    <Flex gap="10px">
+                      <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                      <Heading fontWeight="medium" fontSize="2rem">
+                        Today Attendance
+                      </Heading>
+                    </Flex>
+                    <SimpleGrid
+                      w="100%"
+                      spacing={4}
+                      gridTemplateColumns="repeat(auto-fit, minmax(100px,1fr))"
+                      justifyContent="space-around"
+                    >
+                      <Box
+                        bg="blue.500"
+                        color="white"
+                        p={5}
+                        rounded="md"
+                        fontSize="xl"
+                        flex="1"
+                      >
+                        <Text fontWeight="bold">
+                          {Helper.convertDateISOToHHmm(
+                            attendanceTodayData?.totalHours
+                          )}
+                        </Text>
+                        <Text fontWeight="medium">Working Hours</Text>
+                      </Box>
+                      <Box
+                        bg="green.500"
+                        color="white"
+                        p={5}
+                        rounded="md"
+                        fontSize="xl"
+                        flex="1"
+                      >
+                        <Text fontWeight="bold">
+                          {Helper.convertDateISOToHHmm(
+                            attendanceTodayData?.checkIn
+                          )}
+                        </Text>
+                        <Text fontWeight="medium">Check In</Text>
+                      </Box>
+                      <Box
+                        bg="purple.500"
+                        color="white"
+                        p={5}
+                        rounded="md"
+                        fontSize="xl"
+                        flex="1"
+                      >
+                        <Text fontWeight="bold">
+                          {Helper.convertDateISOToHHmm(
+                            attendanceTodayData?.checkOut
+                          )}
+                        </Text>
+                        <Text fontWeight="medium">Check Out</Text>
+                      </Box>
+
+                      <Box
+                        bg="yellow.500"
+                        color="white"
+                        p={5}
+                        rounded="md"
+                        fontSize="xl"
+                        flex="1"
+                      >
+                        <Text fontWeight="bold">
+                          {Helper.convertDateISOToHHmm(
+                            attendanceTodayData?.lateArrival
+                          )}
+                        </Text>
+                        <Text fontWeight="medium">Late Arrival</Text>
+                      </Box>
+
+                      <Box
+                        bg="orange.500"
+                        color="white"
+                        p={5}
+                        rounded="md"
+                        fontSize="xl"
+                        flex="1"
+                      >
+                        <Text fontWeight="bold">
+                          {Helper.convertDateISOToHHmm(
+                            attendanceTodayData?.earlyLeave
+                          )}
+                        </Text>
+                        <Text fontWeight="medium">Early Leave</Text>
+                      </Box>
+                    </SimpleGrid>
+                  </VStack>
+                  <VStack
+                    paddingX={5}
+                    paddingY={4}
+                    bg="#ffffffdb"
+                    rounded="xl"
+                    alignItems="start"
+                    spacing="15px"
+                    shadow="2xl"
+                  >
+                    <Flex
+                      gap="10px"
+                      w="100%"
+                      flexDirection={{ base: "column", md: "row" }}
+                    >
+                      <Flex gap="10px">
+                        <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
+                        <Heading fontWeight="medium" fontSize="2rem">
+                          Attendance History
+                        </Heading>
+                      </Flex>
+                    </Flex>
+                    <HStack
+                      display="flex"
+                      flexDirection={{ base: "column", sm: "row" }}
+                      alignItems={{ base: "baseline", sm: "center" }}
+                    >
+                      <Heading fontSize="xl" fontWeight="medium" mb="6px">
+                        <Highlight
+                          query={["Type Filter:"]}
+                          styles={{
+                            px: "2",
+                            py: "1",
+                            rounded: "full",
+                            bg: "purple.100",
+                          }}
+                        >
+                          Type Filter:
+                        </Highlight>
+                      </Heading>
+                      <Box>
+                        <Button
+                          isLoading={isFetchingHistoryData ? true : false}
+                          onClick={() => {
+                            setIsValidPersonal(true);
+                          }}
+                          colorScheme={isValidPersonal ? "blue" : "gray"}
+                        >
+                          Valid
+                        </Button>
+                      </Box>
+                      <Box>
+                        <Button
+                          isLoading={isFetchingHistoryData ? true : false}
+                          onClick={() => {
+                            setIsValidPersonal(false);
+                          }}
+                          colorScheme={!isValidPersonal ? "blue" : "gray"}
+                        >
+                          Invalid
+                        </Button>
+                      </Box>
+                    </HStack>
+                    <HStack
+                      w="fit-content"
+                      flexDir={{ base: "column", md: "row" }}
+                      alignItems={{ base: "baseline", md: "flex-end" }}
+                    >
+                      <Heading fontSize="xl" fontWeight="medium" mb="6px">
+                        <Highlight
+                          query={["Date Filter:"]}
+                          styles={{
+                            px: "2",
+                            py: "1",
+                            rounded: "full",
+                            bg: "purple.100",
+                          }}
+                        >
+                          Date Filter:
+                        </Highlight>
+                      </Heading>
+                      <Formik
+                        initialValues={initialValuesForDateFilterSelection}
+                        validationSchema={
+                          validationSchemaForDateFilterSelection
+                        }
+                        onSubmit={(values, action) => {
+                          setMonthPersonal(values.month);
+                          setYearPersonal(values.year);
+                        }}
+                      >
+                        {(formik) => (
+                          <Stack
+                            flexDirection={{ base: "column", md: "row" }}
+                            alignItems={{ base: "baseline", md: "flex-end" }}
+                            gap="5px"
+                          >
+                            <Flex gap="5px">
+                              <Box w="100px">
+                                <FormTextField
+                                  label="Month"
+                                  name="month"
+                                  type="number"
+                                />
+                              </Box>
+                              <Box w="100px">
+                                <FormTextField
+                                  label="Year"
+                                  name="year"
+                                  type="number"
+                                />
+                              </Box>
+                            </Flex>
+                            <Button
+                              onClick={formik.handleSubmit}
+                              colorScheme="blue"
                             >
-                              <HStack w="100%">
-                                <HStack w="100%" flex="1" spacing="5px">
-                                  <Icon as={AiFillClockCircle} />
-                                  <Text fontSize="xl" fontWeight="bold">
-                                    {Helper.convertDateISOToDDMMyyyy(
-                                      item?.attendanceDate
+                              Submit
+                            </Button>
+                          </Stack>
+                        )}
+                      </Formik>
+                    </HStack>
+                    {isFetchingHistoryData ? (
+                      <Box h="100px" w="100%">
+                        <LoadingSpinner />
+                      </Box>
+                    ) : (
+                      <SimpleGrid
+                        w="100%"
+                        spacing={3}
+                        gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
+                      >
+                        {attendanceHistoryData &&
+                          attendanceHistoryData.map((item, index) => {
+                            return (
+                              <VStack
+                                color="white"
+                                alignItems="start"
+                                bg="gray.500"
+                                rounded="xl"
+                                p="20px"
+                                key={index}
+                                shadow="lg"
+                                onClick={() =>
+                                  handleOpenAttendanceDetail(item.attendanceId)
+                                }
+                                cursor="pointer"
+                              >
+                                <HStack w="100%">
+                                  <HStack w="100%" flex="1" spacing="5px">
+                                    <Icon as={AiFillClockCircle} />
+                                    <Text fontSize="xl" fontWeight="bold">
+                                      {Helper.convertDateISOToDDMMyyyy(
+                                        item?.attendanceDate
+                                      )}
+                                    </Text>
+                                  </HStack>
+                                  {!item?.earlyLeave &&
+                                    !item?.lateArrival &&
+                                    !item?.absent && (
+                                      <Badge
+                                        rounded="md"
+                                        colorScheme="green"
+                                        fontSize="md"
+                                        p="5px"
+                                      >
+                                        O.T
+                                      </Badge>
                                     )}
-                                  </Text>
-                                </HStack>
-                                {!item?.earlyLeave &&
-                                  !item?.lateArrival &&
-                                  !item?.absent && (
+                                  {item?.lateArrival && !item?.absent && (
                                     <Badge
                                       rounded="md"
-                                      colorScheme="green"
+                                      colorScheme="yellow"
                                       fontSize="md"
                                       p="5px"
                                     >
-                                      O.T
+                                      L.A
                                     </Badge>
                                   )}
-                                {item?.lateArrival && !item?.absent && (
-                                  <Badge
-                                    rounded="md"
-                                    colorScheme="yellow"
-                                    fontSize="md"
-                                    p="5px"
-                                  >
-                                    L.A
-                                  </Badge>
-                                )}
-                                {item?.absent && (
-                                  <Badge
-                                    rounded="md"
-                                    colorScheme="teal"
-                                    fontSize="md"
-                                    p="5px"
-                                  >
-                                    L.D
-                                  </Badge>
-                                )}
-                                {item?.earlyLeave && !item?.absent && (
-                                  <Badge
-                                    rounded="md"
-                                    colorScheme="orange"
-                                    fontSize="md"
-                                    p="5px"
-                                  >
-                                    E.L
-                                  </Badge>
-                                )}
-                              </HStack>
-                              <HStack w="100%" spacing="50px">
-                                <VStack alignItems="start">
-                                  <Text fontSize="xl">Check in</Text>
-                                  <Text fontSize="2xl" fontWeight="bold">
-                                    {Helper.convertDateISOToHHmm(item?.checkIn)}
-                                  </Text>
-                                </VStack>
-                                <VStack alignItems="start">
-                                  <Text fontSize="xl">Check out</Text>
-                                  <Text fontSize="2xl" fontWeight="bold">
-                                    {Helper.convertDateISOToHHmm(
-                                      item?.checkOut
-                                    )}
-                                  </Text>
-                                </VStack>
-                              </HStack>
-                            </VStack>
-                          );
-                        })}
-                    </SimpleGrid>
-                  )}
-                </VStack>
-              </Stack>
-            )}
-          </TabPanel>
-          <TabPanel>
-            <Stack spacing={5} h="100%">
-              <HStack
-                gap="10px"
-                flexDirection={{ base: "column", lg: "row" }}
-                alignItems={{ base: "baseline", lg: "center" }}
-                bg="white"
-                rounded="md"
-                p={2}
-                shadow="2xl"
-                w={{ base: "100%", md: "fit-content" }}
-              >
+                                  {item?.absent && (
+                                    <Badge
+                                      rounded="md"
+                                      colorScheme="teal"
+                                      fontSize="md"
+                                      p="5px"
+                                    >
+                                      L.D
+                                    </Badge>
+                                  )}
+                                  {item?.earlyLeave && !item?.absent && (
+                                    <Badge
+                                      rounded="md"
+                                      colorScheme="orange"
+                                      fontSize="md"
+                                      p="5px"
+                                    >
+                                      E.L
+                                    </Badge>
+                                  )}
+                                </HStack>
+                                <HStack w="100%" spacing="50px">
+                                  <VStack alignItems="start">
+                                    <Text fontSize="xl">Check in</Text>
+                                    <Text fontSize="2xl" fontWeight="bold">
+                                      {Helper.convertDateISOToHHmm(
+                                        item?.checkIn
+                                      )}
+                                    </Text>
+                                  </VStack>
+                                  <VStack alignItems="start">
+                                    <Text fontSize="xl">Check out</Text>
+                                    <Text fontSize="2xl" fontWeight="bold">
+                                      {Helper.convertDateISOToHHmm(
+                                        item?.checkOut
+                                      )}
+                                    </Text>
+                                  </VStack>
+                                </HStack>
+                              </VStack>
+                            );
+                          })}
+                      </SimpleGrid>
+                    )}
+                  </VStack>
+                </Stack>
+              )}
+            </>
+          ) : (
+            <>
+              <Stack spacing={5} h="100%">
                 <HStack
                   gap="10px"
-                  flexDir={{ base: "column", md: "row" }}
-                  alignItems={{ base: "baseline", md: "center" }}
+                  flexDirection={{ base: "column", lg: "row" }}
+                  alignItems={{ base: "baseline", lg: "center" }}
+                  bg="white"
+                  rounded="md"
+                  p={2}
+                  shadow="2xl"
+                  w={{ base: "100%", md: "fit-content" }}
                 >
-                  <Heading fontSize="xl" fontWeight="medium">
-                    <Highlight
-                      query={["Department:"]}
-                      styles={{
-                        px: "2",
-                        py: "1",
-                        rounded: "full",
-                        bg: "purple.100",
-                      }}
-                    >
-                      Department:
-                    </Highlight>
-                  </Heading>
-                  <Formik
-                    initialValues={initialValuesSelectDepartment}
-                    onSubmit={(values, actions) => {
-                      const departmentId = values.department;
-                      setDepartmentId(departmentId);
-                      setEmployeeFilterId("");
-                      formikRef.current?.resetForm();
-                    }}
-                  >
-                    {(formik) => (
-                      <HStack
-                        as="form"
-                        onSubmit={formik.handleSubmit}
-                        gap="5px"
-                        flexDir={{ base: "column", sm: "row" }}
-                        alignItems={{ base: "baseline", sm: "center" }}
-                      >
-                        <Box w="200px">
-                          <FormTextField
-                            name="department"
-                            placeholder="---"
-                            isReadOnly={
-                              userInfo?.roleName == "employee" ||
-                              userInfo?.roleName == "manager"
-                            }
-                            isSelectionField={true}
-                            selectionArray={
-                              listDepartmentArray
-                                ? [...listDepartmentArray]
-                                : []
-                            }
-                          />
-                        </Box>
-                        {userInfo?.roleName != "employee" &&
-                          userInfo?.roleName != "manager" && (
-                            <div>
-                              <Button
-                                colorScheme="blue"
-                                type="submit"
-                                size="md"
-                              >
-                                Submit
-                              </Button>
-                            </div>
-                          )}
-                      </HStack>
-                    )}
-                  </Formik>
-                </HStack>
-                {userInfo.roleName != "employee" && departmentId && (
                   <HStack
-                    w="fit-content"
                     gap="10px"
                     flexDir={{ base: "column", md: "row" }}
                     alignItems={{ base: "baseline", md: "center" }}
                   >
                     <Heading fontSize="xl" fontWeight="medium">
                       <Highlight
-                        query={["Employee Filter:"]}
+                        query={["Department:"]}
                         styles={{
                           px: "2",
                           py: "1",
@@ -948,429 +882,266 @@ function AttendancePersonal() {
                           bg: "purple.100",
                         }}
                       >
-                        Employee Filter:
+                        Department:
                       </Highlight>
                     </Heading>
                     <Formik
-                      initialValues={initialValuesOfEmployeeFilter}
-                      innerRef={formikRef}
+                      initialValues={initialValuesSelectDepartment}
+                      onSubmit={(values, actions) => {
+                        const departmentId = values.department;
+                        setDepartmentId(departmentId);
+                        setEmployeeFilterId("");
+                        formikRef.current?.resetForm();
+                      }}
                     >
                       {(formik) => (
-                        <Box w="200px">
-                          <FormTextField
-                            name="employeeFilter"
-                            isSelectionField={true}
-                            selectionArray={listEmployeeDataSelection}
-                            placeholder="---"
-                            handleOnChange={selectionHandleOnChange}
-                          />
-                        </Box>
+                        <HStack
+                          as="form"
+                          onSubmit={formik.handleSubmit}
+                          gap="5px"
+                          flexDir={{ base: "column", sm: "row" }}
+                          alignItems={{ base: "baseline", sm: "center" }}
+                        >
+                          <Box w="200px">
+                            <FormTextField
+                              name="department"
+                              placeholder="---"
+                              isReadOnly={
+                                userInfo?.roleName == "employee" ||
+                                userInfo?.roleName == "manager"
+                              }
+                              isSelectionField={true}
+                              selectionArray={
+                                listDepartmentArray
+                                  ? [...listDepartmentArray]
+                                  : []
+                              }
+                            />
+                          </Box>
+                          {userInfo?.roleName != "employee" &&
+                            userInfo?.roleName != "manager" && (
+                              <div>
+                                <Button
+                                  colorScheme="blue"
+                                  type="submit"
+                                  size="md"
+                                >
+                                  Submit
+                                </Button>
+                              </div>
+                            )}
+                        </HStack>
                       )}
                     </Formik>
                   </HStack>
-                )}
-              </HStack>
-              {!employeeFilterId && (
-                <Stack>
-                  <Box w="100%" bg="yellow.100" p="10px" mb="10px" rounded="md">
-                    <Heading
-                      fontSize="2xl"
-                      fontWeight="medium"
-                      textAlign="center"
-                      lineHeight="tall"
+                  {userInfo.roleName != "employee" && departmentId && (
+                    <HStack
+                      w="fit-content"
+                      gap="10px"
+                      flexDir={{ base: "column", md: "row" }}
+                      alignItems={{ base: "baseline", md: "center" }}
                     >
-                      <Highlight
-                        query={["Department"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "2xl",
-                          bg: "purple.100",
-                          color: "black",
-                          fontSize: "xl",
-                        }}
-                      >
-                        Please at least choose your Department
-                      </Highlight>{" "}
-                      <Highlight
-                        query={["Employee"]}
-                        styles={{
-                          px: "2",
-                          py: "1",
-                          rounded: "2xl",
-                          bg: "purple.100",
-                          color: "black",
-                          fontSize: "xl",
-                        }}
-                      >
-                        and Employee to see the information
-                      </Highlight>
-                    </Heading>
-                  </Box>
-                  <Box h="500px">
-                    <NoDataToDisplay />
-                  </Box>
-                </Stack>
-              )}
-              {employeeFilterId && (
-                <>
-                  {isFetchingFilterEmployeeData ||
-                  isLoadingHistoryFilterData ||
-                  isFetchingTodayFilterData ||
-                  isFetchingMonthFilterData ? (
-                    <Box w="100%" h="500px">
-                      <LoadingSpinner />
-                    </Box>
-                  ) : (
-                    <>
-                      <VStack
-                        paddingX={5}
-                        paddingY={4}
-                        bg="#ffffffdb"
-                        rounded="xl"
-                        alignItems="start"
-                        spacing="15px"
-                        shadow="2xl"
-                      >
-                        <Flex gap="10px">
-                          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                          <Heading fontSize="2rem" fontWeight="medium">
-                            Detail Employee
-                          </Heading>
-                        </Flex>
-                        <HStack
-                          w="100%"
-                          justifyContent="start"
-                          spacing="30px"
-                          gap={{
-                            base: "5px",
-                            md: "30px",
-                          }}
-                          flexDirection={{
-                            base: "column",
-                            md: "row",
+                      <Heading fontSize="xl" fontWeight="medium">
+                        <Highlight
+                          query={["Employee Filter:"]}
+                          styles={{
+                            px: "2",
+                            py: "1",
+                            rounded: "full",
+                            bg: "purple.100",
                           }}
                         >
-                          <Avatar
-                            boxSize="120px"
-                            src={employeeFilterData?.image}
-                          />
-                          <VStack
-                            ml="0 !important"
+                          Employee Filter:
+                        </Highlight>
+                      </Heading>
+                      <Formik
+                        initialValues={initialValuesOfEmployeeFilter}
+                        innerRef={formikRef}
+                      >
+                        {(formik) => (
+                          <Box w="200px">
+                            <FormTextField
+                              name="employeeFilter"
+                              isSelectionField={true}
+                              selectionArray={listEmployeeDataSelection}
+                              placeholder="---"
+                              handleOnChange={selectionHandleOnChange}
+                            />
+                          </Box>
+                        )}
+                      </Formik>
+                    </HStack>
+                  )}
+                </HStack>
+                {!employeeFilterId && (
+                  <Stack>
+                    <Box
+                      w="100%"
+                      bg="yellow.100"
+                      p="10px"
+                      mb="10px"
+                      rounded="md"
+                    >
+                      <Heading
+                        fontSize="2xl"
+                        fontWeight="medium"
+                        textAlign="center"
+                        lineHeight="tall"
+                      >
+                        <Highlight
+                          query={["Department"]}
+                          styles={{
+                            px: "2",
+                            py: "1",
+                            rounded: "2xl",
+                            bg: "purple.100",
+                            color: "black",
+                            fontSize: "xl",
+                          }}
+                        >
+                          Please at least choose your Department
+                        </Highlight>{" "}
+                        <Highlight
+                          query={["Employee"]}
+                          styles={{
+                            px: "2",
+                            py: "1",
+                            rounded: "2xl",
+                            bg: "purple.100",
+                            color: "black",
+                            fontSize: "xl",
+                          }}
+                        >
+                          and Employee to see the information
+                        </Highlight>
+                      </Heading>
+                    </Box>
+                    <Box h="500px">
+                      <NoDataToDisplay />
+                    </Box>
+                  </Stack>
+                )}
+                {employeeFilterId && (
+                  <>
+                    {isFetchingFilterEmployeeData ||
+                    isLoadingHistoryFilterData ||
+                    isFetchingTodayFilterData ||
+                    isFetchingMonthFilterData ? (
+                      <Box w="100%" h="500px">
+                        <LoadingSpinner />
+                      </Box>
+                    ) : (
+                      <>
+                        <VStack
+                          paddingX={5}
+                          paddingY={4}
+                          bg="#ffffffdb"
+                          rounded="xl"
+                          alignItems="start"
+                          spacing="15px"
+                          shadow="2xl"
+                        >
+                          <Flex gap="10px">
+                            <Box
+                              w="10px"
+                              bg="blue.700"
+                              borderRadius="5px"
+                            ></Box>
+                            <Heading fontSize="2rem" fontWeight="medium">
+                              Detail Employee
+                            </Heading>
+                          </Flex>
+                          <HStack
                             w="100%"
-                            alignItems={{
-                              base: "center",
-                              md: "start",
+                            justifyContent="start"
+                            spacing="30px"
+                            gap={{
+                              base: "5px",
+                              md: "30px",
+                            }}
+                            flexDirection={{
+                              base: "column",
+                              md: "row",
                             }}
                           >
-                            <Heading fontSize="1.7rem">
-                              {employeeFilterData?.fullname}
-                            </Heading>
-                            <HStack
+                            <Avatar
+                              boxSize="120px"
+                              src={employeeFilterData?.image}
+                            />
+                            <VStack
+                              ml="0 !important"
                               w="100%"
-                              spacing="3rem"
-                              flexDirection={{
-                                base: "column",
-                                md: "row",
-                              }}
-                              gap={{
-                                base: "5px",
-                                md: "30px",
+                              alignItems={{
+                                base: "center",
+                                md: "start",
                               }}
                             >
-                              <Flex
-                                alignItems={{
-                                  base: "center",
-                                  md: "start",
+                              <Heading fontSize="1.7rem">
+                                {employeeFilterData?.fullname}
+                              </Heading>
+                              <HStack
+                                w="100%"
+                                spacing="3rem"
+                                flexDirection={{
+                                  base: "column",
+                                  md: "row",
                                 }}
-                                flexDirection="column"
-                              >
-                                <Text fontSize="1.2rem">Role</Text>
-                                <Heading fontWeight="medium" fontSize="2xl">
-                                  {employeeFilterData?.role?.displayName}
-                                </Heading>
-                              </Flex>
-                              <Flex
-                                alignItems={{
-                                  base: "center",
-                                  md: "start",
+                                gap={{
+                                  base: "5px",
+                                  md: "30px",
                                 }}
-                                flexDirection="column"
-                                ml="0 !important"
                               >
-                                <Text fontSize="1.2rem">Phone Number</Text>
-                                <Heading fontWeight="medium" fontSize="2xl">
-                                  {employeeFilterData?.phoneNumber}
-                                </Heading>
-                              </Flex>
-                              <Flex
-                                alignItems={{
-                                  base: "center",
-                                  md: "start",
-                                }}
-                                flexDirection="column"
-                                ml="0 !important"
-                              >
-                                <Text fontSize="1.2rem">Email Address</Text>
-                                <Heading fontWeight="medium" fontSize="2xl">
-                                  {employeeFilterData?.email}
-                                </Heading>
-                              </Flex>
-                            </HStack>
-                          </VStack>
-                        </HStack>
-                      </VStack>
-                      <VStack
-                        paddingX={5}
-                        paddingY={4}
-                        bg="#ffffffdb"
-                        rounded="xl"
-                        alignItems="start"
-                        justifyContent="center"
-                        spacing="15px"
-                        shadow="2xl"
-                      >
-                        <Flex gap="10px">
-                          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                          <Heading fontWeight="medium" fontSize="2rem">
-                            This Month Attendance Detail
-                          </Heading>
-                        </Flex>
-                        <SimpleGrid
-                          w="100%"
-                          spacing={4}
-                          gridTemplateColumns="repeat(auto-fit, minmax(240px,1fr))"
-                        >
-                          <HStack
-                            bg="cyan.500"
-                            rounded="xl"
-                            p="15px"
-                            shadow="lg"
-                          >
-                            <Center bg="cyan.300" rounded="50%" boxSize="3rem">
-                              <Icon
-                                color="white"
-                                boxSize="30px"
-                                as={AiFillCheckCircle}
-                              />
-                            </Center>
-                            <Box color="white">
-                              <Heading fontSize="2xl">
-                                {attendanceMonthFilterData?.totalAttendance}
-                              </Heading>
-                              <Text fontSize="xl">Total Attendance</Text>
-                            </Box>
+                                <Flex
+                                  alignItems={{
+                                    base: "center",
+                                    md: "start",
+                                  }}
+                                  flexDirection="column"
+                                >
+                                  <Text fontSize="1.2rem">Role</Text>
+                                  <Heading fontWeight="medium" fontSize="2xl">
+                                    {employeeFilterData?.role?.displayName}
+                                  </Heading>
+                                </Flex>
+                                <Flex
+                                  alignItems={{
+                                    base: "center",
+                                    md: "start",
+                                  }}
+                                  flexDirection="column"
+                                  ml="0 !important"
+                                >
+                                  <Text fontSize="1.2rem">Phone Number</Text>
+                                  <Heading fontWeight="medium" fontSize="2xl">
+                                    {employeeFilterData?.phoneNumber}
+                                  </Heading>
+                                </Flex>
+                                <Flex
+                                  alignItems={{
+                                    base: "center",
+                                    md: "start",
+                                  }}
+                                  flexDirection="column"
+                                  ml="0 !important"
+                                >
+                                  <Text fontSize="1.2rem">Email Address</Text>
+                                  <Heading fontWeight="medium" fontSize="2xl">
+                                    {employeeFilterData?.email}
+                                  </Heading>
+                                </Flex>
+                              </HStack>
+                            </VStack>
                           </HStack>
-                          <HStack
-                            bg="teal.500"
-                            rounded="xl"
-                            p="15px"
-                            shadow="lg"
-                          >
-                            <Center bg="teal.300" rounded="50%" boxSize="3rem">
-                              <Icon
-                                color="white"
-                                boxSize="30px"
-                                as={RiUserVoiceFill}
-                              />
-                            </Center>
-                            <Box color="white">
-                              <Heading fontSize="2xl">
-                                {attendanceMonthFilterData?.totalLeaveDays}
-                              </Heading>
-                              <Text fontSize="xl">Total Leave Days</Text>
-                            </Box>
-                          </HStack>
-                          <HStack
-                            bg="blue.500"
-                            rounded="xl"
-                            p="15px"
-                            shadow="lg"
-                          >
-                            <Center bg="blue.300" rounded="50%" boxSize="3rem">
-                              <Icon
-                                color="white"
-                                boxSize="30px"
-                                as={MdWorkHistory}
-                              />
-                            </Center>
-                            <Box color="white">
-                              <Heading fontSize="2xl">
-                                {attendanceMonthFilterData?.totalWorkingHours ==
-                                "00:00"
-                                  ? "--:--"
-                                  : attendanceMonthFilterData?.totalWorkingHours}
-                              </Heading>
-                              <Text fontSize="xl">Total Working Hours</Text>
-                            </Box>
-                          </HStack>
-
-                          <HStack
-                            bg="yellow.500"
-                            rounded="xl"
-                            p="15px"
-                            shadow="lg"
-                          >
-                            <Center
-                              bg="yellow.300"
-                              rounded="50%"
-                              boxSize="3rem"
-                            >
-                              <Icon
-                                color="white"
-                                boxSize="30px"
-                                as={MdTimerOff}
-                              />
-                            </Center>
-                            <Box color="white">
-                              <Heading fontSize="2xl">
-                                {attendanceMonthFilterData?.totalLateArrival ==
-                                "00:00"
-                                  ? "--:--"
-                                  : attendanceMonthFilterData?.totalLateArrival}
-                              </Heading>
-                              <Text fontSize="xl">Total Late Arrival</Text>
-                            </Box>
-                          </HStack>
-                          <HStack
-                            bg="orange.500"
-                            rounded="xl"
-                            p="15px"
-                            shadow="lg"
-                          >
-                            <Center
-                              bg="orange.300"
-                              rounded="50%"
-                              boxSize="3rem"
-                            >
-                              <Icon color="white" boxSize="30px" as={BiTimer} />
-                            </Center>
-                            <Box color="white">
-                              <Heading fontSize="2xl">
-                                {attendanceMonthFilterData?.totalEarlyLeave ==
-                                "00:00"
-                                  ? "--:--"
-                                  : attendanceMonthFilterData?.totalEarlyLeave}
-                              </Heading>
-                              <Text fontSize="xl">Total Early Leave</Text>
-                            </Box>
-                          </HStack>
-                        </SimpleGrid>
-                      </VStack>
-                      <VStack
-                        paddingX={5}
-                        paddingY={4}
-                        bg="#ffffffdb"
-                        rounded="xl"
-                        alignItems="start"
-                        justifyContent="center"
-                        spacing="15px"
-                        shadow="2xl"
-                      >
-                        <Flex gap="10px">
-                          <Box w="10px" bg="blue.700" borderRadius="5px"></Box>
-                          <Heading fontWeight="medium" fontSize="2rem">
-                            Today Attendance
-                          </Heading>
-                        </Flex>
-                        <SimpleGrid
-                          w="100%"
-                          spacing={4}
-                          gridTemplateColumns="repeat(auto-fit, minmax(100px,1fr))"
-                          justifyContent="space-around"
-                        >
-                          <Box
-                            bg="blue.500"
-                            color="white"
-                            p={5}
-                            rounded="md"
-                            fontSize="xl"
-                            flex="1"
-                          >
-                            <Text fontWeight="bold">
-                              {Helper.convertDateISOToHHmm(
-                                attendanceTodayFilterData?.totalHours
-                              )}
-                            </Text>
-                            <Text fontWeight="medium">Working Hours</Text>
-                          </Box>
-                          <Box
-                            bg="green.500"
-                            color="white"
-                            p={5}
-                            rounded="md"
-                            fontSize="xl"
-                            flex="1"
-                          >
-                            <Text fontWeight="bold">
-                              {Helper.convertDateISOToHHmm(
-                                attendanceTodayFilterData?.checkIn
-                              )}
-                            </Text>
-                            <Text fontWeight="medium">Check In</Text>
-                          </Box>
-                          <Box
-                            bg="purple.500"
-                            color="white"
-                            p={5}
-                            rounded="md"
-                            fontSize="xl"
-                            flex="1"
-                          >
-                            <Text fontWeight="bold">
-                              {Helper.convertDateISOToHHmm(
-                                attendanceTodayFilterData?.checkOut
-                              )}
-                            </Text>
-                            <Text fontWeight="medium">Check Out</Text>
-                          </Box>
-
-                          <Box
-                            bg="yellow.500"
-                            color="white"
-                            p={5}
-                            rounded="md"
-                            fontSize="xl"
-                            flex="1"
-                          >
-                            <Text fontWeight="bold">
-                              {Helper.convertDateISOToHHmm(
-                                attendanceTodayFilterData?.lateArrival
-                              )}
-                            </Text>
-                            <Text fontWeight="medium">Late Arrival</Text>
-                          </Box>
-
-                          <Box
-                            bg="orange.500"
-                            color="white"
-                            p={5}
-                            rounded="md"
-                            fontSize="xl"
-                            flex="1"
-                          >
-                            <Text fontWeight="bold">
-                              {Helper.convertDateISOToHHmm(
-                                attendanceTodayFilterData?.earlyLeave
-                              )}
-                            </Text>
-                            <Text fontWeight="medium">Early Leave</Text>
-                          </Box>
-                        </SimpleGrid>
-                      </VStack>
-                      <VStack
-                        paddingX={5}
-                        paddingY={4}
-                        bg="#ffffffdb"
-                        rounded="xl"
-                        alignItems="start"
-                        spacing="15px"
-                        shadow="2xl"
-                      >
-                        <Flex
-                          gap="10px"
-                          w="100%"
-                          flexDirection={{ base: "column", md: "row" }}
+                        </VStack>
+                        <VStack
+                          paddingX={5}
+                          paddingY={4}
+                          bg="#ffffffdb"
+                          rounded="xl"
+                          alignItems="start"
+                          justifyContent="center"
+                          spacing="15px"
+                          shadow="2xl"
                         >
                           <Flex gap="10px">
                             <Box
@@ -1379,234 +1150,519 @@ function AttendancePersonal() {
                               borderRadius="5px"
                             ></Box>
                             <Heading fontWeight="medium" fontSize="2rem">
-                              Attendance History
+                              This Month Attendance Detail
                             </Heading>
                           </Flex>
-                        </Flex>
-                        <HStack
-                          display="flex"
-                          gap="10px"
-                          flexDirection={{ base: "column", sm: "row" }}
-                          alignItems={{ base: "baseline", sm: "center" }}
-                        >
-                          <Heading fontSize="xl" fontWeight="medium" mb="6px">
-                            <Highlight
-                              query={["Type Filter:"]}
-                              styles={{
-                                px: "2",
-                                py: "1",
-                                rounded: "full",
-                                bg: "purple.100",
-                              }}
-                            >
-                              Type Filter:
-                            </Highlight>
-                          </Heading>
-                          <Flex gap="5px">
-                            <Box>
-                              <Button
-                                isLoading={
-                                  isFetchingHistoryFilterData ? true : false
-                                }
-                                onClick={() => {
-                                  setIsValid(true);
-                                }}
-                                colorScheme={isValid ? "blue" : "gray"}
-                              >
-                                Valid
-                              </Button>
-                            </Box>
-                            <Box>
-                              <Button
-                                isLoading={
-                                  isFetchingHistoryFilterData ? true : false
-                                }
-                                onClick={() => {
-                                  setIsValid(false);
-                                }}
-                                colorScheme={!isValid ? "blue" : "gray"}
-                              >
-                                Invalid
-                              </Button>
-                            </Box>
-                          </Flex>
-                        </HStack>
-                        <HStack
-                          w="fit-content"
-                          flexDir={{ base: "column", md: "row" }}
-                          alignItems={{ base: "baseline", md: "flex-end" }}
-                        >
-                          <Heading fontSize="xl" fontWeight="medium" mb="6px">
-                            <Highlight
-                              query={["Date Filter:"]}
-                              styles={{
-                                px: "2",
-                                py: "1",
-                                rounded: "full",
-                                bg: "purple.100",
-                              }}
-                            >
-                              Date Filter:
-                            </Highlight>
-                          </Heading>
-                          <Formik
-                            initialValues={initialValuesForDateFilterSelection}
-                            validationSchema={
-                              validationSchemaForDateFilterSelection
-                            }
-                            onSubmit={(values, action) => {
-                              setMonthManagement(values.month);
-                              setYearManagement(values.year);
-                            }}
-                          >
-                            {(formik) => (
-                              <Stack
-                                gap="5px"
-                                flexDirection={{ base: "column", md: "row" }}
-                                alignItems={{
-                                  base: "baseline",
-                                  md: "flex-end",
-                                }}
-                              >
-                                <Flex gap="5px">
-                                  <Box w="100px">
-                                    <FormTextField
-                                      label="Month"
-                                      name="month"
-                                      type="number"
-                                    />
-                                  </Box>
-                                  <Box w="100px">
-                                    <FormTextField
-                                      label="Year"
-                                      name="year"
-                                      type="number"
-                                    />
-                                  </Box>
-                                </Flex>
-                                <Button
-                                  onClick={formik.handleSubmit}
-                                  colorScheme="blue"
-                                >
-                                  Submit
-                                </Button>
-                              </Stack>
-                            )}
-                          </Formik>
-                        </HStack>
-                        {isFetchingHistoryFilterData ? (
-                          <Box w="100%" h="100px">
-                            <LoadingSpinner />
-                          </Box>
-                        ) : (
                           <SimpleGrid
                             w="100%"
-                            spacing={3}
-                            gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
+                            spacing={4}
+                            gridTemplateColumns="repeat(auto-fit, minmax(240px,1fr))"
                           >
-                            {attendanceHistoryFilterData &&
-                              attendanceHistoryFilterData.map((item, index) => {
-                                return (
-                                  <VStack
-                                    color="white"
-                                    alignItems="start"
-                                    bg="gray.500"
-                                    rounded="xl"
-                                    p="20px"
-                                    key={index}
-                                    shadow="lg"
-                                    onClick={() =>
-                                      handleOpenAttendanceDetail(
-                                        item.attendanceId
-                                      )
-                                    }
-                                    cursor="pointer"
-                                  >
-                                    <HStack w="100%">
-                                      <HStack w="100%" flex="1" spacing="5px">
-                                        <Icon as={AiFillClockCircle} />
-                                        <Text fontSize="xl" fontWeight="bold">
-                                          {Helper.convertDateISOToDDMMyyyy(
-                                            item?.attendanceDate
-                                          )}
-                                        </Text>
-                                      </HStack>
-                                      {!item?.earlyLeave &&
-                                        !item?.lateArrival &&
-                                        !item?.absent && (
-                                          <Badge
-                                            rounded="md"
-                                            colorScheme="green"
-                                            fontSize="md"
-                                            p="5px"
-                                          >
-                                            O.T
-                                          </Badge>
-                                        )}
-                                      {item?.lateArrival && !item?.absent && (
-                                        <Badge
-                                          rounded="md"
-                                          colorScheme="yellow"
-                                          fontSize="md"
-                                          p="5px"
-                                        >
-                                          L.A
-                                        </Badge>
-                                      )}
-                                      {item?.absent && (
-                                        <Badge
-                                          rounded="md"
-                                          colorScheme="teal"
-                                          fontSize="md"
-                                          p="5px"
-                                        >
-                                          L.D
-                                        </Badge>
-                                      )}
-                                      {item?.earlyLeave && !item?.absent && (
-                                        <Badge
-                                          rounded="md"
-                                          colorScheme="orange"
-                                          fontSize="md"
-                                          p="5px"
-                                        >
-                                          E.L
-                                        </Badge>
-                                      )}
-                                    </HStack>
-                                    <HStack w="100%" spacing="50px">
-                                      <VStack alignItems="start">
-                                        <Text fontSize="xl">Check in</Text>
-                                        <Text fontSize="2xl" fontWeight="bold">
-                                          {Helper.convertDateISOToHHmm(
-                                            item?.checkIn
-                                          )}
-                                        </Text>
-                                      </VStack>
-                                      <VStack alignItems="start">
-                                        <Text fontSize="xl">Check out</Text>
-                                        <Text fontSize="2xl" fontWeight="bold">
-                                          {Helper.convertDateISOToHHmm(
-                                            item?.checkOut
-                                          )}
-                                        </Text>
-                                      </VStack>
-                                    </HStack>
-                                  </VStack>
-                                );
-                              })}
-                          </SimpleGrid>
-                        )}
-                      </VStack>
-                    </>
-                  )}
-                </>
-              )}
-            </Stack>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+                            <HStack
+                              bg="cyan.500"
+                              rounded="xl"
+                              p="15px"
+                              shadow="lg"
+                            >
+                              <Center
+                                bg="cyan.300"
+                                rounded="50%"
+                                boxSize="3rem"
+                              >
+                                <Icon
+                                  color="white"
+                                  boxSize="30px"
+                                  as={AiFillCheckCircle}
+                                />
+                              </Center>
+                              <Box color="white">
+                                <Heading fontSize="2xl">
+                                  {attendanceMonthFilterData?.totalAttendance}
+                                </Heading>
+                                <Text fontSize="xl">Total Attendance</Text>
+                              </Box>
+                            </HStack>
+                            <HStack
+                              bg="teal.500"
+                              rounded="xl"
+                              p="15px"
+                              shadow="lg"
+                            >
+                              <Center
+                                bg="teal.300"
+                                rounded="50%"
+                                boxSize="3rem"
+                              >
+                                <Icon
+                                  color="white"
+                                  boxSize="30px"
+                                  as={RiUserVoiceFill}
+                                />
+                              </Center>
+                              <Box color="white">
+                                <Heading fontSize="2xl">
+                                  {attendanceMonthFilterData?.totalLeaveDays}
+                                </Heading>
+                                <Text fontSize="xl">Total Leave Days</Text>
+                              </Box>
+                            </HStack>
+                            <HStack
+                              bg="blue.500"
+                              rounded="xl"
+                              p="15px"
+                              shadow="lg"
+                            >
+                              <Center
+                                bg="blue.300"
+                                rounded="50%"
+                                boxSize="3rem"
+                              >
+                                <Icon
+                                  color="white"
+                                  boxSize="30px"
+                                  as={MdWorkHistory}
+                                />
+                              </Center>
+                              <Box color="white">
+                                <Heading fontSize="2xl">
+                                  {attendanceMonthFilterData?.totalWorkingHours ==
+                                  "00:00"
+                                    ? "--:--"
+                                    : attendanceMonthFilterData?.totalWorkingHours}
+                                </Heading>
+                                <Text fontSize="xl">Total Working Hours</Text>
+                              </Box>
+                            </HStack>
 
+                            <HStack
+                              bg="yellow.500"
+                              rounded="xl"
+                              p="15px"
+                              shadow="lg"
+                            >
+                              <Center
+                                bg="yellow.300"
+                                rounded="50%"
+                                boxSize="3rem"
+                              >
+                                <Icon
+                                  color="white"
+                                  boxSize="30px"
+                                  as={MdTimerOff}
+                                />
+                              </Center>
+                              <Box color="white">
+                                <Heading fontSize="2xl">
+                                  {attendanceMonthFilterData?.totalLateArrival ==
+                                  "00:00"
+                                    ? "--:--"
+                                    : attendanceMonthFilterData?.totalLateArrival}
+                                </Heading>
+                                <Text fontSize="xl">Total Late Arrival</Text>
+                              </Box>
+                            </HStack>
+                            <HStack
+                              bg="orange.500"
+                              rounded="xl"
+                              p="15px"
+                              shadow="lg"
+                            >
+                              <Center
+                                bg="orange.300"
+                                rounded="50%"
+                                boxSize="3rem"
+                              >
+                                <Icon
+                                  color="white"
+                                  boxSize="30px"
+                                  as={BiTimer}
+                                />
+                              </Center>
+                              <Box color="white">
+                                <Heading fontSize="2xl">
+                                  {attendanceMonthFilterData?.totalEarlyLeave ==
+                                  "00:00"
+                                    ? "--:--"
+                                    : attendanceMonthFilterData?.totalEarlyLeave}
+                                </Heading>
+                                <Text fontSize="xl">Total Early Leave</Text>
+                              </Box>
+                            </HStack>
+                          </SimpleGrid>
+                        </VStack>
+                        <VStack
+                          paddingX={5}
+                          paddingY={4}
+                          bg="#ffffffdb"
+                          rounded="xl"
+                          alignItems="start"
+                          justifyContent="center"
+                          spacing="15px"
+                          shadow="2xl"
+                        >
+                          <Flex gap="10px">
+                            <Box
+                              w="10px"
+                              bg="blue.700"
+                              borderRadius="5px"
+                            ></Box>
+                            <Heading fontWeight="medium" fontSize="2rem">
+                              Today Attendance
+                            </Heading>
+                          </Flex>
+                          <SimpleGrid
+                            w="100%"
+                            spacing={4}
+                            gridTemplateColumns="repeat(auto-fit, minmax(100px,1fr))"
+                            justifyContent="space-around"
+                          >
+                            <Box
+                              bg="blue.500"
+                              color="white"
+                              p={5}
+                              rounded="md"
+                              fontSize="xl"
+                              flex="1"
+                            >
+                              <Text fontWeight="bold">
+                                {Helper.convertDateISOToHHmm(
+                                  attendanceTodayFilterData?.totalHours
+                                )}
+                              </Text>
+                              <Text fontWeight="medium">Working Hours</Text>
+                            </Box>
+                            <Box
+                              bg="green.500"
+                              color="white"
+                              p={5}
+                              rounded="md"
+                              fontSize="xl"
+                              flex="1"
+                            >
+                              <Text fontWeight="bold">
+                                {Helper.convertDateISOToHHmm(
+                                  attendanceTodayFilterData?.checkIn
+                                )}
+                              </Text>
+                              <Text fontWeight="medium">Check In</Text>
+                            </Box>
+                            <Box
+                              bg="purple.500"
+                              color="white"
+                              p={5}
+                              rounded="md"
+                              fontSize="xl"
+                              flex="1"
+                            >
+                              <Text fontWeight="bold">
+                                {Helper.convertDateISOToHHmm(
+                                  attendanceTodayFilterData?.checkOut
+                                )}
+                              </Text>
+                              <Text fontWeight="medium">Check Out</Text>
+                            </Box>
+
+                            <Box
+                              bg="yellow.500"
+                              color="white"
+                              p={5}
+                              rounded="md"
+                              fontSize="xl"
+                              flex="1"
+                            >
+                              <Text fontWeight="bold">
+                                {Helper.convertDateISOToHHmm(
+                                  attendanceTodayFilterData?.lateArrival
+                                )}
+                              </Text>
+                              <Text fontWeight="medium">Late Arrival</Text>
+                            </Box>
+
+                            <Box
+                              bg="orange.500"
+                              color="white"
+                              p={5}
+                              rounded="md"
+                              fontSize="xl"
+                              flex="1"
+                            >
+                              <Text fontWeight="bold">
+                                {Helper.convertDateISOToHHmm(
+                                  attendanceTodayFilterData?.earlyLeave
+                                )}
+                              </Text>
+                              <Text fontWeight="medium">Early Leave</Text>
+                            </Box>
+                          </SimpleGrid>
+                        </VStack>
+                        <VStack
+                          paddingX={5}
+                          paddingY={4}
+                          bg="#ffffffdb"
+                          rounded="xl"
+                          alignItems="start"
+                          spacing="15px"
+                          shadow="2xl"
+                        >
+                          <Flex
+                            gap="10px"
+                            w="100%"
+                            flexDirection={{ base: "column", md: "row" }}
+                          >
+                            <Flex gap="10px">
+                              <Box
+                                w="10px"
+                                bg="blue.700"
+                                borderRadius="5px"
+                              ></Box>
+                              <Heading fontWeight="medium" fontSize="2rem">
+                                Attendance History
+                              </Heading>
+                            </Flex>
+                          </Flex>
+                          <HStack
+                            display="flex"
+                            gap="10px"
+                            flexDirection={{ base: "column", sm: "row" }}
+                            alignItems={{ base: "baseline", sm: "center" }}
+                          >
+                            <Heading fontSize="xl" fontWeight="medium" mb="6px">
+                              <Highlight
+                                query={["Type Filter:"]}
+                                styles={{
+                                  px: "2",
+                                  py: "1",
+                                  rounded: "full",
+                                  bg: "purple.100",
+                                }}
+                              >
+                                Type Filter:
+                              </Highlight>
+                            </Heading>
+                            <Flex gap="5px">
+                              <Box>
+                                <Button
+                                  isLoading={
+                                    isFetchingHistoryFilterData ? true : false
+                                  }
+                                  onClick={() => {
+                                    setIsValid(true);
+                                  }}
+                                  colorScheme={isValid ? "blue" : "gray"}
+                                >
+                                  Valid
+                                </Button>
+                              </Box>
+                              <Box>
+                                <Button
+                                  isLoading={
+                                    isFetchingHistoryFilterData ? true : false
+                                  }
+                                  onClick={() => {
+                                    setIsValid(false);
+                                  }}
+                                  colorScheme={!isValid ? "blue" : "gray"}
+                                >
+                                  Invalid
+                                </Button>
+                              </Box>
+                            </Flex>
+                          </HStack>
+                          <HStack
+                            w="fit-content"
+                            flexDir={{ base: "column", md: "row" }}
+                            alignItems={{ base: "baseline", md: "flex-end" }}
+                          >
+                            <Heading fontSize="xl" fontWeight="medium" mb="6px">
+                              <Highlight
+                                query={["Date Filter:"]}
+                                styles={{
+                                  px: "2",
+                                  py: "1",
+                                  rounded: "full",
+                                  bg: "purple.100",
+                                }}
+                              >
+                                Date Filter:
+                              </Highlight>
+                            </Heading>
+                            <Formik
+                              initialValues={
+                                initialValuesForDateFilterSelection
+                              }
+                              validationSchema={
+                                validationSchemaForDateFilterSelection
+                              }
+                              onSubmit={(values, action) => {
+                                setMonthManagement(values.month);
+                                setYearManagement(values.year);
+                              }}
+                            >
+                              {(formik) => (
+                                <Stack
+                                  gap="5px"
+                                  flexDirection={{ base: "column", md: "row" }}
+                                  alignItems={{
+                                    base: "baseline",
+                                    md: "flex-end",
+                                  }}
+                                >
+                                  <Flex gap="5px">
+                                    <Box w="100px">
+                                      <FormTextField
+                                        label="Month"
+                                        name="month"
+                                        type="number"
+                                      />
+                                    </Box>
+                                    <Box w="100px">
+                                      <FormTextField
+                                        label="Year"
+                                        name="year"
+                                        type="number"
+                                      />
+                                    </Box>
+                                  </Flex>
+                                  <Button
+                                    onClick={formik.handleSubmit}
+                                    colorScheme="blue"
+                                  >
+                                    Submit
+                                  </Button>
+                                </Stack>
+                              )}
+                            </Formik>
+                          </HStack>
+                          {isFetchingHistoryFilterData ? (
+                            <Box w="100%" h="100px">
+                              <LoadingSpinner />
+                            </Box>
+                          ) : (
+                            <SimpleGrid
+                              w="100%"
+                              spacing={3}
+                              gridTemplateColumns="repeat(auto-fit, minmax(285px,1fr))"
+                            >
+                              {attendanceHistoryFilterData &&
+                                attendanceHistoryFilterData.map(
+                                  (item, index) => {
+                                    return (
+                                      <VStack
+                                        color="white"
+                                        alignItems="start"
+                                        bg="gray.500"
+                                        rounded="xl"
+                                        p="20px"
+                                        key={index}
+                                        shadow="lg"
+                                        onClick={() =>
+                                          handleOpenAttendanceDetail(
+                                            item.attendanceId
+                                          )
+                                        }
+                                        cursor="pointer"
+                                      >
+                                        <HStack w="100%">
+                                          <HStack
+                                            w="100%"
+                                            flex="1"
+                                            spacing="5px"
+                                          >
+                                            <Icon as={AiFillClockCircle} />
+                                            <Text
+                                              fontSize="xl"
+                                              fontWeight="bold"
+                                            >
+                                              {Helper.convertDateISOToDDMMyyyy(
+                                                item?.attendanceDate
+                                              )}
+                                            </Text>
+                                          </HStack>
+                                          {!item?.earlyLeave &&
+                                            !item?.lateArrival &&
+                                            !item?.absent && (
+                                              <Badge
+                                                rounded="md"
+                                                colorScheme="green"
+                                                fontSize="md"
+                                                p="5px"
+                                              >
+                                                O.T
+                                              </Badge>
+                                            )}
+                                          {item?.lateArrival &&
+                                            !item?.absent && (
+                                              <Badge
+                                                rounded="md"
+                                                colorScheme="yellow"
+                                                fontSize="md"
+                                                p="5px"
+                                              >
+                                                L.A
+                                              </Badge>
+                                            )}
+                                          {item?.absent && (
+                                            <Badge
+                                              rounded="md"
+                                              colorScheme="teal"
+                                              fontSize="md"
+                                              p="5px"
+                                            >
+                                              L.D
+                                            </Badge>
+                                          )}
+                                          {item?.earlyLeave &&
+                                            !item?.absent && (
+                                              <Badge
+                                                rounded="md"
+                                                colorScheme="orange"
+                                                fontSize="md"
+                                                p="5px"
+                                              >
+                                                E.L
+                                              </Badge>
+                                            )}
+                                        </HStack>
+                                        <HStack w="100%" spacing="50px">
+                                          <VStack alignItems="start">
+                                            <Text fontSize="xl">Check in</Text>
+                                            <Text
+                                              fontSize="2xl"
+                                              fontWeight="bold"
+                                            >
+                                              {Helper.convertDateISOToHHmm(
+                                                item?.checkIn
+                                              )}
+                                            </Text>
+                                          </VStack>
+                                          <VStack alignItems="start">
+                                            <Text fontSize="xl">Check out</Text>
+                                            <Text
+                                              fontSize="2xl"
+                                              fontWeight="bold"
+                                            >
+                                              {Helper.convertDateISOToHHmm(
+                                                item?.checkOut
+                                              )}
+                                            </Text>
+                                          </VStack>
+                                        </HStack>
+                                      </VStack>
+                                    );
+                                  }
+                                )}
+                            </SimpleGrid>
+                          )}
+                        </VStack>
+                      </>
+                    )}
+                  </>
+                )}
+              </Stack>
+            </>
+          )}
+        </Stack>
+      </Flex>
       <Modal
         isOpen={isOpenAttendanceDetailModal}
         onClose={onCloseAttendanceDetailModal}
